@@ -1,4 +1,5 @@
 #summary Instrucciones para la instalación de Eclipse con JavaFX
+#labels restrict
 
 = Introducción =
 
@@ -18,4 +19,5 @@ Eclipse/Help/Install New Software -> http://subclipse.tigris.org/update_1.8.x
 == Color Theme ==
 
 Eclipse/Help/Install New Software -> http://eclipse-color-theme.github.com/update
+
 Seleccionar  -> Eclipse/Window/Preferences/General/Appearence/Color Theme
