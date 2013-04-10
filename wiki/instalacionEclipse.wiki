@@ -1,5 +1,5 @@
 #summary Instrucciones para la instalación de Eclipse con JavaFX
-#labels restrict
+#labels Restrict-View-Commit
 
 = Introducción =
 
