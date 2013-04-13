@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Tablero {
     
-    private List<Casillero> casilleros;
+    private List<Casillero> casillerosList;
 
     
     /**
@@ -22,18 +22,21 @@ public class Tablero {
     public Tablero(){
 	
     }
-    /**
-     * @return the casilleros
-     */
-    public List<Casillero> getCasilleros() {
-        return casilleros;
-    }
+
 
     /**
-     * @param casilleros the casilleros to set
+     * @return the casillerosList
      */
-    public void setCasilleros(List<Casillero> casilleros) {
-        this.casilleros = casilleros;
+    public List<Casillero> getCasillerosList() {
+        return casillerosList;
     }
-    
+
+
+    /**
+     * @param casillerosList the casillerosList to set
+     */
+    public void setCasillerosList(List<Casillero> casillerosList) {
+        this.casillerosList = casillerosList;
+    }
+   
 }

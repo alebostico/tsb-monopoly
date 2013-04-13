@@ -15,21 +15,20 @@ import monopoly.model.Juego;
  */
 public class GestorJuego {
 
-    private List<Juego> juegos;
+    private List<Juego> juegosList;
 
     /**
-     * @return the juegos
+     * @return the juegosList
      */
-    public List<Juego> getJuegos() {
-        return juegos;
+    public List<Juego> getJuegosList() {
+        return juegosList;
     }
 
     /**
-     * @param juegos the juegos to set
+     * @param juegosList the juegosList to set
      */
-    public void setJuegos(List<Juego> juegos) {
-        this.juegos = juegos;
+    public void setJuegosList(List<Juego> juegosList) {
+        this.juegosList = juegosList;
     }
-    
-    
+
 }

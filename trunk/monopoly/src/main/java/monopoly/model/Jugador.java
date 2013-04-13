@@ -3,6 +3,8 @@
  */
 package monopoly.model;
 
+import java.util.List;
+
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
@@ -12,43 +14,49 @@ package monopoly.model;
 public class Jugador {
     
     private Ficha ficha;
-    private TarjetaPropiedad tarjPropiedad;
+    private List<TarjetaPropiedad> tarjPropiedadList;
     private Juego juego;
     
     public Jugador(){
 	
     }
-    
+
+
     /**
      * @return the ficha
      */
     public Ficha getFicha() {
         return ficha;
     }
+    
     /**
      * @param ficha the ficha to set
      */
     public void setFicha(Ficha ficha) {
         this.ficha = ficha;
     }
+
     /**
-     * @return the tarjPropiedad
+     * @return the tarjPropiedadList
      */
-    public TarjetaPropiedad getTarjPropiedad() {
-        return tarjPropiedad;
+    public List<TarjetaPropiedad> getTarjPropiedadList() {
+        return tarjPropiedadList;
     }
+
     /**
-     * @param tarjPropiedad the tarjPropiedad to set
+     * @param tarjPropiedadList the tarjPropiedadList to set
      */
-    public void setTarjPropiedad(TarjetaPropiedad tarjPropiedad) {
-        this.tarjPropiedad = tarjPropiedad;
+    public void setTarjPropiedadList(List<TarjetaPropiedad> tarjPropiedadList) {
+        this.tarjPropiedadList = tarjPropiedadList;
     }
+
     /**
      * @return the juego
      */
     public Juego getJuego() {
         return juego;
     }
+
     /**
      * @param juego the juego to set
      */
@@ -56,5 +64,4 @@ public class Jugador {
         this.juego = juego;
     }
     
-
 }
