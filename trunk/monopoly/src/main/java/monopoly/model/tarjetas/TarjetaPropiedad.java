@@ -1,7 +1,9 @@
 /**
  * 
  */
-package monopoly.model;
+package monopoly.model.tarjetas;
+
+import monopoly.model.Jugador;
 
 /**
  * @author Bostico Alejandro
