@@ -1,7 +1,7 @@
 /**
  * 
  */
-package monopoly.model;
+package monopoly.model.tarjetas;
 
 /**
  * @author Bostico Alejandro
@@ -9,7 +9,7 @@ package monopoly.model;
  * @author Oliva Pablo
  *
  */
-public class TarjetaCompanias extends TarjetaPropiedad {
+public class TarjetaCompania extends TarjetaPropiedad {
 
     private Integer vecesPorUnaCarta;
     
@@ -18,7 +18,7 @@ public class TarjetaCompanias extends TarjetaPropiedad {
     /**
      * 
      */
-    public TarjetaCompanias() {
+    public TarjetaCompania() {
 	super();
     }
 

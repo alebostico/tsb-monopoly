@@ -1,7 +1,7 @@
 /**
  * 
  */
-package monopoly.model;
+package monopoly.model.tablero;
 
 import java.util.List;
 

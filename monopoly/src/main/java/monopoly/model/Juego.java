@@ -5,6 +5,9 @@ package monopoly.model;
 
 import java.util.List;
 
+import monopoly.model.tablero.Tablero;
+import monopoly.model.tarjetas.TarjetaPropiedad;
+
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
