@@ -22,7 +22,7 @@ public class CasilleroEstacion extends Casillero {
 		this.tarjetaEstacion = tarjetaEstacion;
 	}
 	
-	public String getNombreEstación() {
+	public String getNombreEstacion() {
 		return nombreEstacion;
 	}
 
