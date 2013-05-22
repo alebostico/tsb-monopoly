@@ -3,12 +3,25 @@
  */
 package monopoly.model.tarjetas;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
  * @author Oliva Pablo
  *
  */
+@Entity
+@Table(name="tarjeta_compania", catalog = "monopoly_db")
+@AttributeOverrides({
+    @AttributeOverride(name="jugador", column=@Column(name="jugadorID")),
+    @AttributeOverride(name="nombre", column=@Column(name="nombre")),
+    @AttributeOverride(name="valorHipoticario", column=@Column(name="valorHipoticario"))
+})
 public class TarjetaCompania extends TarjetaPropiedad {
 
     private Integer vecesPorUnaCarta;
