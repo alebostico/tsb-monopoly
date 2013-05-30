@@ -46,5 +46,61 @@ public abstract class TarjetaPropiedad {
     public TarjetaPropiedad(){
 	
     }
+
+    /**
+     * @return the jugador
+     */
+    public Jugador getJugador() {
+        return jugador;
+    }
+
+    /**
+     * @param jugador the jugador to set
+     */
+    public void setJugador(Jugador jugador) {
+        this.jugador = jugador;
+    }
+
+    /**
+     * @return the idTarjeta
+     */
+    public Integer getIdTarjeta() {
+        return idTarjeta;
+    }
+
+    /**
+     * @param idTarjeta the idTarjeta to set
+     */
+    public void setIdTarjeta(Integer idTarjeta) {
+        this.idTarjeta = idTarjeta;
+    }
+
+    /**
+     * @return the nombre
+     */
+    public String getNombre() {
+        return nombre;
+    }
+
+    /**
+     * @param nombre the nombre to set
+     */
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    /**
+     * @return the valorHipotecario
+     */
+    public Integer getValorHipotecario() {
+        return valorHipotecario;
+    }
+
+    /**
+     * @param valorHipotecario the valorHipotecario to set
+     */
+    public void setValorHipotecario(Integer valorHipotecario) {
+        this.valorHipotecario = valorHipotecario;
+    }
     
 }
