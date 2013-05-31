@@ -66,4 +66,13 @@ public class Jugador {
         this.juego = juego;
     }
     
+    /**
+     * devuelve true si el jugador es de la ficha especificada
+     * @param c
+     * @return
+     */
+    public boolean equals(Jugador j) {
+        return this.getFicha().equals(j.getFicha());
+    }
+    
 }

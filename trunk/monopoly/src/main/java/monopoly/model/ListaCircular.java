@@ -23,11 +23,21 @@ public class ListaCircular<E> implements List<E> {
     {
         primero=null;
     }
-
-    public Nodo getPrimero() {
+    
+    /**
+     * Devuelve el primer elemento de la lista
+     * @param c
+     * @return
+     */
+    private Nodo getPrimero() {
         return primero;
     }
-
+    
+    /**
+     * Setea el primer elemento de la lista
+     * @param c
+     * @return
+     */
     private void setPrimero(Nodo primero) {
         this.primero = primero;
     }
@@ -36,6 +46,11 @@ public class ListaCircular<E> implements List<E> {
 
 
 
+    /**
+     * Devuelve el tamaño de la lista
+     * @param c
+     * @return
+     */
     @Override
     public int size()
     {
@@ -53,11 +68,21 @@ public class ListaCircular<E> implements List<E> {
        return contador;
     }
 
+    /**
+     * Devuelve true si la lista esta vacia
+     * @param c
+     * @return
+     */
     @Override
     public boolean isEmpty() {
         return primero==null;
     }
 
+    /**
+     * Busca el objeto pasado por parametros y devuelve un boolean
+     * @param c
+     * @return true si lo encuentra, false si no lo encuentra
+     */
     @Override
     public boolean contains(Object o) {
 
@@ -76,21 +101,41 @@ public class ListaCircular<E> implements List<E> {
     }
     
 
+    /**
+     * Metodo no implementado
+     * @param c
+     * @return
+     */
     @Override
     public Iterator<E> iterator() {
        return new Iterador<E>();
     }
 
+    /**
+     * Metodo no implementado
+     * @param c
+     * @return
+     */
     @Override
     public Object[] toArray() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * Metodo no implementado
+     * @param c
+     * @return
+     */
     @Override
     public <T> T[] toArray(T[] a) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * Agrega el objeto pasado por parametro a la lista
+     * @param c
+     * @return
+     */
     @Override
     public boolean add(E dato) {
             Nodo n=new Nodo();
@@ -118,6 +163,11 @@ public class ListaCircular<E> implements List<E> {
             return true;
     }
 
+    /**
+     * Elimina el objeto pasado por parametro
+     * @param c
+     * @return
+     */
     @Override
     public boolean remove(Object dato) {
  
@@ -216,11 +266,21 @@ public class ListaCircular<E> implements List<E> {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * borra todos los elementos de la lista
+     * @param c
+     * @return
+     */
     @Override
     public void clear() {
         primero=null;
     }
 
+    /**
+     * Devuelve el objeto del indice especificado
+     * @param c
+     * @return
+     */
     @Override
     public E get(int index) {
 
@@ -239,6 +299,11 @@ public class ListaCircular<E> implements List<E> {
 
     }
 
+    /**
+     * Metodo no implementado
+     * @param c
+     * @return
+     */
     @Override
     public E set(int index, E element) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -315,6 +380,11 @@ public class ListaCircular<E> implements List<E> {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * Devuelve un string con la lista
+     * @param c
+     * @return
+     */
     @Override
     public String toString()
     {
