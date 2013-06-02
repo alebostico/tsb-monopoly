@@ -67,12 +67,27 @@ public class Jugador {
     }
     
     /**
-     * devuelve true si el jugador es de la ficha especificada
+     * Devuelve true si el jugador  pasada por parametro es igual al que ejecuta el metodo
+     * compara en funcion del nombre (string) de la ficha
      * @param c
      * @return
      */
-    public boolean equals(Jugador j) {
+    @Override
+    public boolean equals(Object o) {
+	if ( o==null)
+	    return false;
+	if (o.getClass()!=this.getClass())
+	    return false;
+	Jugador j=(Jugador)o;
         return this.getFicha().equals(j.getFicha());
     }
+
+
+    @Override
+    public String toString() {
+	return "Jugador [ficha=" + ficha + "]";
+    }
+    
+      
     
 }

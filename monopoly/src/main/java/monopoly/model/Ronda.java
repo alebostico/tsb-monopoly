@@ -56,7 +56,6 @@ public class Ronda{
      * @param c
      * @return
      */
-
     public Jugador getJugador(Ficha f)
     {
         Jugador j=null;
@@ -77,7 +76,6 @@ public class Ronda{
      * @param c
      * @return
      */
-
     public int tamanio()
     {
         return jugadores.size();
@@ -149,7 +147,6 @@ public class Ronda{
      * @param c
      * @return
      */
-
     public ListaCircular<Jugador> getJugadores() {
         return jugadores;
     }
@@ -172,6 +169,13 @@ public class Ronda{
         else
             return null;
     }
+
+    @Override
+    public String toString() {
+	return jugadores.toString();
+    }
+    
+    
 
 
 }

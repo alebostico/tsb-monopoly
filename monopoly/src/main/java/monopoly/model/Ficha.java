@@ -23,9 +23,19 @@ public class Ficha {
         this.nombre = nombre;
     }
      
-    
-    public boolean equals(Ficha f) {
-        
+    /**
+     * Devuelve true si la ficha pasadapor parametro es igual a la que ejecuta el metodo
+     * compara en funcion del nombre (string) de la ficha
+     * @param c
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+	if ( o==null)
+	    return false;
+	if (o.getClass()!=this.getClass())
+	return false;
+	Ficha f=(Ficha)o;
         return this.getNombre().equals(f.getNombre());
     }
 
