@@ -47,7 +47,7 @@ public class ListaCircular<E> implements List<E> {
 
 
     /**
-     * Devuelve el tamaño de la lista
+     * retorna el tamanio de la lista
      * @param c
      * @return
      */
@@ -408,7 +408,7 @@ public class ListaCircular<E> implements List<E> {
 
 
     /**
-     * mueve el inicio de la lista un lugar
+     * mueve el inicio de la lista un lugar a la derecha
      */
     public void moverUnLugar()
     {
@@ -447,6 +447,11 @@ public class ListaCircular<E> implements List<E> {
         }
 
 
+        /**
+         *devuelve true si quedan al menos un elemento por iterar
+         * @param c
+         * @return
+         */
         @Override
         public boolean hasNext() {
            // return !actual.equals(primero);
@@ -454,6 +459,11 @@ public class ListaCircular<E> implements List<E> {
            // return !actual.getProximo().equals(primero);
         }
 
+        /**
+         * devuelve el proximo elemento
+         * @param c
+         * @return
+         */
         @Override
         public Object next() {
             Object proximo=actual.getDato();

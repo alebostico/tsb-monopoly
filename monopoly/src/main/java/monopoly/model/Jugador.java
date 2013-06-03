@@ -5,6 +5,7 @@ package monopoly.model;
 
 import java.util.List;
 
+import monopoly.model.tarjetas.TarjetaCompania;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 
 /**
@@ -18,6 +19,7 @@ public class Jugador {
     private Ficha ficha;
     private List<TarjetaPropiedad> tarjPropiedadList;
     private Juego juego;
+    private int dinero;
     
     public Jugador(){
 	
@@ -66,6 +68,21 @@ public class Jugador {
         this.juego = juego;
     }
     
+    
+    public int getDinero() {
+        return dinero;
+    }
+
+
+    public void setDinero(int dinero) {
+        this.dinero = dinero;
+    }
+
+    
+    
+    
+
+
     /**
      * Devuelve true si el jugador  pasada por parametro es igual al que ejecuta el metodo
      * compara en funcion del nombre (string) de la ficha

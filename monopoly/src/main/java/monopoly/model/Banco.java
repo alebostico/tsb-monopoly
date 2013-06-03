@@ -11,4 +11,6 @@ package monopoly.model;
  */
 public class Banco {
     
+    //el banco tiene que tener las tarjetas de Escritura Propiedad y de casa y hoteles
+    
 }
