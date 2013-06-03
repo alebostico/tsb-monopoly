@@ -3,9 +3,6 @@
  */
 package monopoly.model;
 
-import java.util.List;
-
-import monopoly.model.tarjetas.TarjetaPropiedad;
 
 /**
  * @author Bostico Alejandro
