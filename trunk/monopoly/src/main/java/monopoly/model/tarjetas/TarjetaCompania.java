@@ -3,11 +3,15 @@
  */
 package monopoly.model.tarjetas;
 
+import java.io.Serializable;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
+import monopoly.model.Jugador;
 
 /**
  * @author Bostico Alejandro
@@ -22,10 +26,14 @@ import javax.persistence.Table;
     @AttributeOverride(name="nombre", column=@Column(name="nombre")),
     @AttributeOverride(name="valorHipoticario", column=@Column(name="valorHipoticario"))
 })
-public class TarjetaCompania extends TarjetaPropiedad {
+public class TarjetaCompania extends TarjetaPropiedad implements Serializable{
 
+    private static final long serialVersionUID = 1L;
+
+    @Column(name = "vecesPorUnaCarta")
     private Integer vecesPorUnaCarta;
     
+    @Column(name = "vecesPorDosCartas")
     private Integer vecesPorDosCartas;
 
     /**
@@ -33,6 +41,20 @@ public class TarjetaCompania extends TarjetaPropiedad {
      */
     public TarjetaCompania() {
 	super();
+    }
+
+    /**
+     * @param jugador
+     * @param nombre
+     * @param valorHipotecario
+     * @param vecesPorUnaCarta
+     * @param vecesPorDosCartas
+     */
+    public TarjetaCompania(Jugador jugador, String nombre, Integer valorHipotecario, Integer vecesPorUnaCarta,
+	    Integer vecesPorDosCartas) {
+	super(jugador, nombre, valorHipotecario);
+	this.vecesPorUnaCarta = vecesPorUnaCarta;
+	this.vecesPorDosCartas = vecesPorDosCartas;
     }
 
     /**

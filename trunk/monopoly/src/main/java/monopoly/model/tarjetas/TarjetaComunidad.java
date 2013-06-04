@@ -9,6 +9,7 @@ package monopoly.model.tarjetas;
  * @author Oliva Pablo
  *
  */
+
 public class TarjetaComunidad {
 
 }

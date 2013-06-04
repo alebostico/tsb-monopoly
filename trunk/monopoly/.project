@@ -27,4 +27,14 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
 	</natures>
+	<filteredResources>
+		<filter>
+			<id>1370304036281</id>
+			<name>src/main</name>
+			<type>6</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+			</matcher>
+		</filter>
+	</filteredResources>
 </projectDescription>
