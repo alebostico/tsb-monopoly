@@ -3,11 +3,17 @@
  */
 package monopoly.model.tarjetas;
 
+import java.io.Serializable;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
+import monopoly.model.Jugador;
+
+
 
 /**
  * @author Bostico Alejandro
@@ -22,8 +28,10 @@ import javax.persistence.Table;
     @AttributeOverride(name="nombre", column=@Column(name="nombre")),
     @AttributeOverride(name="valorHipoticario", column=@Column(name="valorHipoticario"))
 })
-public class TarjetaCalle extends TarjetaPropiedad {
-
+public class TarjetaCalle extends TarjetaPropiedad implements Serializable{
+    
+    private static final long serialVersionUID = 1L;
+    
     @Column(name = "precioAlquiler")
     private Integer precioAlquiler;
     
@@ -48,12 +56,31 @@ public class TarjetaCalle extends TarjetaPropiedad {
     @Column(name = "precioCadaHotel")
     private Integer precioCadaHotel;
 
-    
-    /**
-     * 
-     */
     public TarjetaCalle() {
 	super();
+    }
+
+    /**
+     * @param precioAlquiler
+     * @param valorUnaCasa
+     * @param valorDosCasas
+     * @param valorTresCasas
+     * @param valorCuatroCasas
+     * @param valorHotel
+     * @param precioCadaCasa
+     * @param precioCadaHotel
+     */
+    public TarjetaCalle(Jugador jugador, String nombre, Integer valorHipotecario, Integer precioAlquiler, Integer valorUnaCasa, Integer valorDosCasas, Integer valorTresCasas,
+	    Integer valorCuatroCasas, Integer valorHotel, Integer precioCadaCasa, Integer precioCadaHotel) {
+	super(jugador,nombre,valorHipotecario);
+	this.precioAlquiler = precioAlquiler;
+	this.valorUnaCasa = valorUnaCasa;
+	this.valorDosCasas = valorDosCasas;
+	this.valorTresCasas = valorTresCasas;
+	this.valorCuatroCasas = valorCuatroCasas;
+	this.valorHotel = valorHotel;
+	this.precioCadaCasa = precioCadaCasa;
+	this.precioCadaHotel = precioCadaHotel;
     }
 
     /**
