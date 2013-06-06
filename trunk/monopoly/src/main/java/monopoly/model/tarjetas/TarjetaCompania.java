@@ -5,10 +5,9 @@ package monopoly.model.tarjetas;
 
 import java.io.Serializable;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import monopoly.model.Jugador;
@@ -21,11 +20,12 @@ import monopoly.model.Jugador;
  */
 @Entity
 @Table(name="tarjeta_compania", catalog = "monopoly_db")
-@AttributeOverrides({
-    @AttributeOverride(name="jugador", column=@Column(name="jugadorID")),
-    @AttributeOverride(name="nombre", column=@Column(name="nombre")),
-    @AttributeOverride(name="valorHipoticario", column=@Column(name="valorHipoticario"))
-})
+//@AttributeOverrides({
+//    @AttributeOverride(name="jugador", column=@Column(name="jugadorID")),
+//    @AttributeOverride(name="nombre", column=@Column(name="nombre")),
+//    @AttributeOverride(name="valorHipoticario", column=@Column(name="valorHipoticario"))
+//})
+@PrimaryKeyJoinColumn(name="tarjetaPropiedadID")
 public class TarjetaCompania extends TarjetaPropiedad implements Serializable{
 
     private static final long serialVersionUID = 1L;
@@ -51,8 +51,8 @@ public class TarjetaCompania extends TarjetaPropiedad implements Serializable{
      * @param vecesPorDosCartas
      */
     public TarjetaCompania(Jugador jugador, String nombre, Integer valorHipotecario, Integer vecesPorUnaCarta,
-	    Integer vecesPorDosCartas) {
-	super(jugador, nombre, valorHipotecario);
+	    Integer vecesPorDosCartas, String nombreImagen) {
+	super(jugador, nombre, valorHipotecario, nombreImagen);
 	this.vecesPorUnaCarta = vecesPorUnaCarta;
 	this.vecesPorDosCartas = vecesPorDosCartas;
     }
