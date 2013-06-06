@@ -3,7 +3,11 @@
  */
 package monopoly.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import monopoly.dao.ITarjetaCalleDao;
+import monopoly.model.tarjetas.TarjetaCalle;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -22,19 +26,14 @@ public class Main {
 	ApplicationContext appContext = new ClassPathXmlApplicationContext("spring/config/BeanLocations.xml");
 	
 	ITarjetaCalleDao tarjetaCalleDao= (ITarjetaCalleDao) appContext.getBean("tarjetaCalleDao");
-	/*
-	TarjetaCalle tc = new TarjetaCalle();
-	tc.setIdTarjeta(1);
-	tc.setNombre("Suerte");
-	tc.setPrecioAlquiler(100);
-	tc.setPrecioCadaCasa(100);
-	tc.setPrecioCadaHotel(200);
-	tc.setValorTresCasas(300);
-	tc.setValorDosCasas(200);
-	tc.setValorUnaCasa(100);
 	
-	tarjetaCalleDao.save(tc);
-	*/
+	List<TarjetaCalle> tarjetasCallesList = new ArrayList<TarjetaCalle>();
+	
+	tarjetasCallesList = tarjetaCalleDao.getAll();
+	
+	for (TarjetaCalle tarjetaCalle : tarjetasCallesList) {
+	    System.out.println(tarjetaCalle.toString());
+	}
 	
     }
 

@@ -5,10 +5,9 @@ package monopoly.model.tarjetas;
 
 import java.io.Serializable;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import monopoly.model.Jugador;
@@ -23,11 +22,12 @@ import monopoly.model.Jugador;
  */
 @Entity
 @Table(name="tarjeta_calle", catalog = "monopoly_db")
-@AttributeOverrides({
-    @AttributeOverride(name="jugador", column=@Column(name="jugadorID")),
-    @AttributeOverride(name="nombre", column=@Column(name="nombre")),
-    @AttributeOverride(name="valorHipoticario", column=@Column(name="valorHipoticario"))
-})
+//@AttributeOverrides({
+//    @AttributeOverride(name="jugador", column=@Column(name="jugadorID")),
+//    @AttributeOverride(name="nombre", column=@Column(name="nombre")),
+//    @AttributeOverride(name="valorHipoticario", column=@Column(name="valorHipoticario"))
+//})
+@PrimaryKeyJoinColumn(name="tarjetaPropiedadID")
 public class TarjetaCalle extends TarjetaPropiedad implements Serializable{
     
     private static final long serialVersionUID = 1L;
@@ -71,8 +71,8 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable{
      * @param precioCadaHotel
      */
     public TarjetaCalle(Jugador jugador, String nombre, Integer valorHipotecario, Integer precioAlquiler, Integer valorUnaCasa, Integer valorDosCasas, Integer valorTresCasas,
-	    Integer valorCuatroCasas, Integer valorHotel, Integer precioCadaCasa, Integer precioCadaHotel) {
-	super(jugador,nombre,valorHipotecario);
+	    Integer valorCuatroCasas, Integer valorHotel, Integer precioCadaCasa, Integer precioCadaHotel, String nombreImagen) {
+	super(jugador,nombre,valorHipotecario, nombreImagen);
 	this.precioAlquiler = precioAlquiler;
 	this.valorUnaCasa = valorUnaCasa;
 	this.valorDosCasas = valorDosCasas;
@@ -208,6 +208,17 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable{
      */
     public void setPrecioCadaHotel(Integer precioCadaHotel) {
         this.precioCadaHotel = precioCadaHotel;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+	return "TarjetaCalle [precioAlquiler=" + precioAlquiler + ", valorUnaCasa=" + valorUnaCasa + ", valorDosCasas="
+		+ valorDosCasas + ", valorTresCasas=" + valorTresCasas + ", valorCuatroCasas=" + valorCuatroCasas
+		+ ", valorHotel=" + valorHotel + ", precioCadaCasa=" + precioCadaCasa + ", precioCadaHotel="
+		+ precioCadaHotel + "]";
     }
     
 }
