@@ -31,10 +31,11 @@ public abstract class TarjetaPropiedad implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue//(strategy = GenerationType.TABLE)
+    @GeneratedValue
+    // (strategy = GenerationType.TABLE)
     @Column(name = "tarjetaPropiedadID")
     private Integer idTarjeta;
-    
+
     @OneToOne
     @JoinColumn(name = "jugadorID")
     private Jugador jugador;
@@ -44,7 +45,7 @@ public abstract class TarjetaPropiedad implements Serializable {
 
     @Column(name = "valorHipotecario")
     private Integer valorHipotecario;
-    
+
     @Column(name = "nombreImagen")
     private String nombreImagen;
 
@@ -129,14 +130,25 @@ public abstract class TarjetaPropiedad implements Serializable {
      * @return the nombreImagen
      */
     public String getNombreImagen() {
-        return nombreImagen;
+	return nombreImagen;
     }
 
     /**
-     * @param nombreImagen the nombreImagen to set
+     * @param nombreImagen
+     *            the nombreImagen to set
      */
     public void setNombreImagen(String nombreImagen) {
-        this.nombreImagen = nombreImagen;
+	this.nombreImagen = nombreImagen;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+	return "Propiedad [ nombre=" + nombre + ", valorHipotecario=" + valorHipotecario + " ]";
     }
 
 }

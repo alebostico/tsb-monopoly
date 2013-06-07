@@ -10,8 +10,8 @@
                 <mapping class="monopoly.model.tarjetas.TarjetaCalle" />
                 <mapping class="monopoly.model.tarjetas.TarjetaEstacion" />
                 <mapping class="monopoly.model.tarjetas.TarjetaCompania" />
-<!--                 <mapping class="monopoly.model.tarjetas.TarjetaSuerte" /> -->
-<!--                 <mapping class="monopoly.model.tarjetas.TarjetaComunidad" /> -->
+                <mapping class="monopoly.model.tarjetas.TarjetaSuerte" />
+                <mapping class="monopoly.model.tarjetas.TarjetaComunidad" />
 
 		
         </session-factory>

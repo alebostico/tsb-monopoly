@@ -121,5 +121,15 @@ public class TarjetaEstacion extends TarjetaPropiedad implements Serializable{
     public void setValorCuatroEstacion(Integer valorCuatroEstacion) {
         this.valorCuatroEstacion = valorCuatroEstacion;
     }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+	return super.toString()
+		+ "\n\tEstacion [precioAlquiler=" + precioAlquiler + ", valorDosEstacion=" + valorDosEstacion
+		+ ", valorTresEstacion=" + valorTresEstacion + ", valorCuatroEstacion=" + valorCuatroEstacion + "]";
+    }
     
 }
