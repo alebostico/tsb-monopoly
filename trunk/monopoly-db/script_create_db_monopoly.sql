@@ -98,6 +98,30 @@ INSERT INTO `tarjeta_compania` VALUES (27,4,10),(28,4,10);
 UNLOCK TABLES;
 
 --
+-- Table structure for table `tarjeta_comunidad`
+--
+
+DROP TABLE IF EXISTS `tarjeta_comunidad`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tarjeta_comunidad` (
+  `tarjetaComunidadID` int(11) NOT NULL AUTO_INCREMENT,
+  `objetivo` varchar(250) NOT NULL,
+  PRIMARY KEY (`tarjetaComunidadID`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tarjeta_comunidad`
+--
+
+LOCK TABLES `tarjeta_comunidad` WRITE;
+/*!40000 ALTER TABLE `tarjeta_comunidad` DISABLE KEYS */;
+INSERT INTO `tarjeta_comunidad` VALUES (1,'PAGA POR TU PÓLIZA DE SEGURO 50 €.'),(2,'EN TU  CUMPLEAÑOS RECIBES\\nDE CADA JUGADOR 10 €.'),(3,'COLÓCATE EN LA CASILLA DE SALIDA.'),(4,'PAGA LA FACTURA DEL MÉDICO 50 €.'),(5,'HAS GANADO EL SEGUNDO\\nPREMIO DE BELLEZA.\\nRECIBE 10 €.'),(6,'ERROR EN LA BANCA A TU FAVOR.\\nRECIBE 200 €.'),(7,'VE A LA CÁRCEL.\\nVE DIRECTAMENTE SIN\\nPASAR POR LA\\nCASILLA DE SALIDA\\nY SIN COBRAR LOS 200 €.'),(8,'HACIENDA TE DEVUELVE 20 €.'),(9,'COBRAS UNA HERENCIA DE 100 €.'),(10,'RECIBE 100 € POR LOS INTERESES\\nDE TU PLAZO FIJO.'),(11,'PAGA AL HOSPITAL 100 €.'),(12,'RETROCEDE HASTA RONDA DE VALENCIA.'),(13,'QUEDAS LIBRE DE LA CÁRCEL.\\n\\nEsta carta puede venderse o conservarse\\nhasta que sea utilizada.'),(14,'LA VENTA DE TUS ACCIONES TE PRODUCE 50 €.');
+/*!40000 ALTER TABLE `tarjeta_comunidad` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `tarjeta_estacion`
 --
 
@@ -142,7 +166,7 @@ CREATE TABLE `tarjeta_propiedad` (
   PRIMARY KEY (`tarjetaPropiedadID`),
   KEY `fk_tarjeta_propiedad_jugador` (`jugadorID`),
   CONSTRAINT `fk_tarjeta_propiedad_jugador` FOREIGN KEY (`jugadorID`) REFERENCES `Jugador` (`jugadorID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -154,6 +178,30 @@ LOCK TABLES `tarjeta_propiedad` WRITE;
 INSERT INTO `tarjeta_propiedad` VALUES (1,NULL,'RONDA DE VALENCIA',30,'image_1554.png'),(2,NULL,'PLAZA DE LAVAPIÉS',30,'image_1561.png'),(3,NULL,'GLORIETA CUATRO CAMINOS',50,'image_1565.png'),(4,NULL,'AVENIDA REINA VICTORIA',50,'image_1569.png'),(5,NULL,'CALLE BRAVO MURILLO',50,'image_1573.png'),(6,NULL,'GLORIETA DE BILBAO',70,'image_1577.png'),(7,NULL,'CALLE ALBERTO AGUILERA',70,'image_1581.png'),(8,NULL,'CALLE FUENCARRAL',80,'image_1585.png'),(9,NULL,'AVENIDA FELIPE II',90,'image_1589.png'),(10,NULL,'CALLE VELÁZQUEZ',100,'image_1593.png'),(11,NULL,'CALLE SERRANO',100,'image_1597.png'),(12,NULL,'AVENIDA AMÉRICA',110,'image_1601.png'),(13,NULL,'CALLE MARÍA DE MOLINA',110,'image_1605.png'),(14,NULL,'CALLE CEA BERMÚDEZ',120,'image_1609.png'),(15,NULL,'AVENIDA DE LOS REYES CATÓLICOS',130,'image_1613.png'),(16,NULL,'CALLE BAILÉN',130,'image_1617.png'),(17,NULL,'PLAZA ESPAÑA',140,'image_1621.png'),(18,NULL,'PUERTA DEL SOL',150,'image_1625.png'),(19,NULL,'CALLE ALCALÁ',150,'image_1629.png'),(20,NULL,'GRAN VÍA',160,'image_1633.png'),(21,NULL,'PASEO DE LA CASTELLANA',175,'image_1637.png'),(22,NULL,'PASEO DEL PRADO',200,'image_1641.png'),(23,NULL,'ESTACIÓN DE GOYA',100,'image_1534.png'),(24,NULL,'ESTACIÓN DE LAS DELICIAS',100,'image_1529.png'),(25,NULL,'ESTACIÓN DEL MEDIODÍA',100,'image_1542.png'),(26,NULL,'ESTACIÓN DEL NORTE',100,'image_1538.png'),(27,NULL,'COMPAÑIA DE AGUAS',75,'image_1546.png'),(28,NULL,'COMPAÑIA DE ELECTRICIDAD',75,'image_1550.png');
 /*!40000 ALTER TABLE `tarjeta_propiedad` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `tarjeta_suerte`
+--
+
+DROP TABLE IF EXISTS `tarjeta_suerte`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tarjeta_suerte` (
+  `tarjetaSuerteID` int(11) NOT NULL AUTO_INCREMENT,
+  `objetivo` varchar(250) NOT NULL,
+  PRIMARY KEY (`tarjetaSuerteID`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tarjeta_suerte`
+--
+
+LOCK TABLES `tarjeta_suerte` WRITE;
+/*!40000 ALTER TABLE `tarjeta_suerte` DISABLE KEYS */;
+INSERT INTO `tarjeta_suerte` VALUES (1,'VE AL PASEO DEL PRADO.'),(2,'VE A LA GLORIETA DE BILBAO.\\nSI PASAS POR LA CASILLA DE SALIDA\\nCOBRA 200 €.'),(3,'LA BANCA TE PAGA 50 € DE INTERESES.'),(4,'COLÓCATE EN LA CASILLA DE SALIDA.'),(5,'ADELANTATE HASTA LA CALLE CEA BERMÚDEZ.\\nSI PASAS POR LA CASILLA DE SALIDA,\\nCOBRA 200 €.'),(6,'RECIBES EL RESCATE POR EL SEGURO\\nDE TUS EDIFICIOS.\\nCOBRA 150 €.'),(7,'VE A LA CÁRCEL.\\nVE DIRECTAMENTE SIN\\nPASAR POR LA\\nCASILLA DE SALIDA\\nY SIN COBRAR LOS 200 €.'),(8,'MULTA POR EMBRIAGUEZ 20 €.'),(9,'RETROCEDE TRES CASILLAS.'),(10,'HAZ REPARACIONES EN TODOS TUS EDIFICIOS.\\nPAGA POR CADA CASA 25 €.\\nPAGA POR CADA HOTEL 100 €.'),(11,'LA INSPECCIÓN DE LA CALLE TE OBLIGA\\nA REPARACIONES.\\nPAGA 40 € POR CADA CASA.\\nPAGA 115 € POR HOTEL.'),(12,'QUEDAS LIBRE DE LA CÁRCEL.\\n\\nEsta carta puede venderse o conservarse\\nhasta que sea utilizada.'),(13,'PAGA POR GASTOS ESCOLARES 150 €.'),(14,'VE A LA ESTACIÓN DE LAS DELICIAS.\\nSI PASAS POR LA CASILLA DE SALIDA,\\nCOBRA 200 €.');
+/*!40000 ALTER TABLE `tarjeta_suerte` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -164,4 +212,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-06-06  0:22:44
+-- Dump completed on 2013-06-06 21:55:31
