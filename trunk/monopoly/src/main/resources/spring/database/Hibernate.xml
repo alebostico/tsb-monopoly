@@ -30,8 +30,8 @@
 				<value>monopoly.model.tarjetas.TarjetaCalle</value>
 				<value>monopoly.model.tarjetas.TarjetaEstacion</value>
 				<value>monopoly.model.tarjetas.TarjetaCompania</value>
-<!-- 				<value>monopoly.model.tarjetas.TarjetaSuerte</value> -->
-<!-- 				<value>monopoly.model.tarjetas.TarjetaComunidad</value> -->
+				<value>monopoly.model.tarjetas.TarjetaSuerte</value>
+				<value>monopoly.model.tarjetas.TarjetaComunidad</value>
 			</list>
 		</property>
 

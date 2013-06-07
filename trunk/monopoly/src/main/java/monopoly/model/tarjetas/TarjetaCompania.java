@@ -84,5 +84,15 @@ public class TarjetaCompania extends TarjetaPropiedad implements Serializable{
     public void setVecesPorDosCartas(Integer vecesPorDosCartas) {
         this.vecesPorDosCartas = vecesPorDosCartas;
     }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+	return super.toString()
+		+ "\n\tCompania [vecesPorUnaCarta=" + vecesPorUnaCarta + ", vecesPorDosCartas=" + vecesPorDosCartas
+		+ "]";
+    }
     
 }

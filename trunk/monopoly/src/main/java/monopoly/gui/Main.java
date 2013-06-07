@@ -32,7 +32,7 @@ public class Main {
 	tarjetasCallesList = tarjetaCalleDao.getAll();
 	
 	for (TarjetaCalle tarjetaCalle : tarjetasCallesList) {
-	    System.out.println(tarjetaCalle.toString());
+	    System.out.println(tarjetaCalle.toString() + "\n");
 	}
 	
     }
