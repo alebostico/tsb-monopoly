@@ -58,7 +58,7 @@ public class Ronda{
     public Jugador getJugador(Ficha f)
     {
         Jugador j=null;
-        Iterator i=jugadores.iterator();
+        Iterator<Jugador> i=jugadores.iterator();
         while(i.hasNext())
         {
             j=(Jugador)i.next();
