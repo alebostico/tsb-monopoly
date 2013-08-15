@@ -1,7 +1,11 @@
-package monopoly.model;
+package monopoly.gui;
 
 import java.awt.List;
 import java.util.ArrayList;
+
+import monopoly.model.Ficha;
+import monopoly.model.Jugador;
+import monopoly.model.Ronda;
 
 public class main {
 
