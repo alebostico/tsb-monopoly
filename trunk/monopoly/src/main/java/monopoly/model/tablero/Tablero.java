@@ -3,6 +3,10 @@
  */
 package monopoly.model.tablero;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import monopoly.model.Jugador;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaCompania;
 import monopoly.model.tarjetas.TarjetaEstacion;
@@ -17,14 +21,19 @@ import monopoly.model.tarjetas.TarjetaEstacion;
  * 
  */
 public class Tablero {
-    
 
+	//CONSTANTES
+	private int cantCasilleros = 40;
+	
 	private Casillero[] casillerosList;
 
 	/**
 	 * Constructor por defecto.
 	 */
 	public Tablero() {
+		// Cargar los casilleros.
+		casillerosList = new Casillero[40];
+
 		this.loadCasilleros();
 	}
 
@@ -34,8 +43,6 @@ public class Tablero {
 	 * datos. Pero para pruebas sirve.
 	 */
 	private void loadCasilleros() {
-		// Cargar los casilleros.
-		casillerosList = new Casillero[40];
 
 		this.casillerosList[0] = new Casillero(1, Casillero.CASILLERO_SALIDA);
 		this.casillerosList[1] = new CasilleroCalle(2, "Ronda de Valencia",
@@ -113,6 +120,7 @@ public class Tablero {
 				Casillero.CASILLERO_IMPUESTO);
 		this.casillerosList[39] = new CasilleroCalle(40, "Paseo del Prado",
 				new TarjetaCalle());
+		
 	}
 
 	/**
@@ -125,4 +133,32 @@ public class Tablero {
 	public Casillero getCasillero(int nroCasillero) {
 		return this.casillerosList[nroCasillero + 1];
 	}
+
+	
+	public Casillero moverAdelante(Jugador jugador, int nroCasillero) {
+		
+		
+		return this.casillerosList[0];
+	}
+	
+	public Casillero moverAtras(Jugador jugador, int nroCasillero) {
+		
+		
+		return this.casillerosList[0];
+	}
+	
+	public Casillero moverACasillero(Jugador jugador, int nroCasillero){
+		
+		return this.casillerosList[0];
+	}
+	
+	public Casillero moverACasillero(Jugador jugador, String nombreCalle){
+		
+		return this.casillerosList[0];
+	}
+	
+	public Casillero irACarcel(Jugador jugador){
+		return this.moverACasillero(jugador, 11);
+	}
+	
 }
