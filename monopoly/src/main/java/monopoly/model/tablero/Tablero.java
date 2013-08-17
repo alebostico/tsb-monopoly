@@ -141,6 +141,7 @@ public class Tablero {
 		return this.casillerosList[0];
 	}
 	
+	//TODO: int numero de casillas que se mueve atras?
 	public Casillero moverAtras(Jugador jugador, int nroCasillero) {
 		
 		
@@ -161,4 +162,8 @@ public class Tablero {
 		return this.moverACasillero(jugador, 11);
 	}
 	
+	//TODO: retrocede a... supongo que no cobra los 200
+	public Casillero retrocederA(Jugador jugador, int nroCasillero){
+		return this.casillerosList[0];
+	}
 }

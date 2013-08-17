@@ -15,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import monopoly.model.tarjetas.Tarjeta;
+import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 
 /**
@@ -43,6 +45,8 @@ public class Jugador implements Serializable {
     private Juego juego;
     @Transient
     private int dinero;
+    
+    private Tarjeta tarjeta;
     
     public Jugador(){
 	
@@ -114,6 +118,16 @@ public class Jugador implements Serializable {
      */
     public void setIdJugador(Integer idJugador) {
         this.idJugador = idJugador;
+    }
+    
+
+    public Tarjeta getTarjeta() {
+        return tarjeta;
+    }
+
+
+    public void setTarjeta(Tarjeta tarjeta) {
+        this.tarjeta = tarjeta;
     }
 
 
