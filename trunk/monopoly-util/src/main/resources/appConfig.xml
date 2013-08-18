@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<path_folders>
+		<folder id="fichas">
+			<path>images/fichas/</path>
+		</folder>
+		
+		<folder id="tablero">
+			<path>/images/tablero/</path>
+		</folder>
+		
+		<folder id="tarjetas">
+			<path>/images/tarjetas/</path>
+		</folder>
+	</path_folders>
+	
+	
+</configuration>
