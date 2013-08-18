@@ -1,7 +1,6 @@
 package monopoly.model.cartas;
-import java.util.Iterator;
-
-import monopoly.model.*;
+import monopoly.model.Juego;
+import monopoly.model.Jugador;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 
 /**

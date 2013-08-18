@@ -6,6 +6,7 @@ package monopoly.model;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -16,7 +17,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import monopoly.model.tarjetas.Tarjeta;
-import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 
 /**
@@ -46,12 +46,18 @@ public class Jugador implements Serializable {
     @Transient
     private int dinero;
     
-    private Tarjeta tarjeta;
+    @Transient
+    private List<Tarjeta> tarjetaCarcelList;
     
+    /**
+     * Constructor por defecto.
+     * inicializa el arraylist tarjetaCarcelList,
+     * que será utilizado para almacenar las tarjetas
+     * de comunidad y suerte que permiten salir de la cárcel.
+     */
     public Jugador(){
-	
+	tarjetaCarcelList  = new ArrayList<>();
     }
-
 
     /**
      * @return the ficha
@@ -119,17 +125,20 @@ public class Jugador implements Serializable {
     public void setIdJugador(Integer idJugador) {
         this.idJugador = idJugador;
     }
-    
 
-    public Tarjeta getTarjeta() {
-        return tarjeta;
+    /**
+     * @return the tarjetaCarcelList
+     */
+    public List<Tarjeta> getTarjetaCarcelList() {
+        return tarjetaCarcelList;
     }
 
-
-    public void setTarjeta(Tarjeta tarjeta) {
-        this.tarjeta = tarjeta;
+    /**
+     * @param tarjetaCarcelList the tarjetaCarcelList to set
+     */
+    public void setTarjetaCarcelList(List<Tarjeta> tarjetaCarcelList) {
+        this.tarjetaCarcelList = tarjetaCarcelList;
     }
-
 
     /**
      * Devuelve true si el jugador  pasada por parametro es igual al que ejecuta el metodo
