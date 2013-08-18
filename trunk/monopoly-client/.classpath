@@ -15,5 +15,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="/monopoly-util"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
