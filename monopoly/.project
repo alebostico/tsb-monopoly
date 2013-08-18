@@ -3,6 +3,8 @@
 	<name>monopoly</name>
 	<comment></comment>
 	<projects>
+		<project>monopoly-client</project>
+		<project>monopoly-util</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
