@@ -18,24 +18,24 @@ public class Banco {
     
     
     
-    public boolean cobrar(Jugador j, int c)
+    public boolean cobrar(Jugador jugador, int monto)
     {
 	return false;
     }
     
     //TODO: Implementar metodos
     
-    public boolean pagar(Jugador j, int c)
+    public boolean pagar(Jugador jugador, int monto)
     {
 	return false;
     }
     
-    public boolean cobrarATodosPagarAUno(List<Jugador>jugadores, Jugador jugador, int c)
+    public boolean cobrarATodosPagarAUno(List<Jugador>jugadores, Jugador jugador, int monto)
     {
 	return false;	
     }
     
-    public boolean cobrarPorEdificioYhotel(Jugador j, int porEdificio, int porHotel)
+    public boolean cobrarPorEdificioYHotel(Jugador jugador, int montoPorEdificio, int montoPorHotel)
     {
 	return false;
     }

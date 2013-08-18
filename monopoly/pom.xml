@@ -10,11 +10,11 @@
 			<url>http://repository.jboss.com/maven2/</url>
 		</repository>
 	</repositories>
-	
+
 	<properties>
-                <spring.version>3.1.1.RELEASE</spring.version>
-        </properties>
-	
+		<spring.version>3.1.1.RELEASE</spring.version>
+		<install-dir>${build.directory}</install-dir>
+	</properties>
 
 	<dependencies>
 
@@ -154,10 +154,18 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.0</version>
 				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>monopoly.gui.Main</mainClass>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib</classpathPrefix>
+						</manifest>
+					</archive>
 					<source>1.7</source>
 					<target>1.7</target>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+
 </project>
