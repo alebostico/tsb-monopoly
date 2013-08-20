@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import monopoly.model.tablero.Casillero;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 
@@ -38,6 +39,9 @@ public class Jugador implements Serializable {
     
     @Transient
     private Ficha ficha;
+    
+    @Transient
+    private Casillero casilleroActual;
     
     @Transient
     private List<TarjetaPropiedad> tarjPropiedadList;
@@ -74,6 +78,22 @@ public class Jugador implements Serializable {
     }
 
     /**
+	 * @return the casilleroActual
+	 */
+	public Casillero getCasilleroActual() {
+		return casilleroActual;
+	}
+
+
+	/**
+	 * @param casilleroActual the casilleroActual to set
+	 */
+	public void setCasilleroActual(Casillero casilleroActual) {
+		this.casilleroActual = casilleroActual;
+	}
+
+
+	/**
      * @return the tarjPropiedadList
      */
     public List<TarjetaPropiedad> getTarjPropiedadList() {
