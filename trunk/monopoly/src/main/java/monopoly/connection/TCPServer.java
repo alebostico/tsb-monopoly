@@ -19,40 +19,85 @@ import monopoly.util.LectorXML;
  */
 public class TCPServer {
 
-    public static final int PORT = LectorXML.getPuertoDeConexion();
+	public static final int PORT = LectorXML.getPuertoDeConexion();
+	static ServerSocket serverSocket;
 
-    @SuppressWarnings("resource")
-    public static void main(String argv[]) throws Exception {
-	ServerSocket serverSocket = new ServerSocket(PORT);
-	
-	while (true) {
-	    Socket connectionSocket = serverSocket.accept();
-	    new TCPServerThread(connectionSocket).start();
-	    System.out.println("Servidor levantado..");
+	public static void main(String argv[]) throws Exception {
+		runServer();
 	}
-    }
-    
-    public static class TCPServerThread extends Thread{
-	Socket socket;
-	
-	public TCPServerThread(Socket socket) {
-	    // TODO Auto-generated constructor stub
-	    this.socket = socket;
-	}
-	
-	public void run(){
-	    String mensaje = null;
-	    try{
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream())); 
-		while((mensaje = bufferedReader.readLine()) != null){
-		    System.out.println("recibiendo mensajes del cliente: " + mensaje);
+
+	public static void runServer() {
+		try {
+			serverSocket = new ServerSocket(PORT);
+		} catch (IOException e) {
+			System.out
+					.println("El Servidor no se pudo iniciar correctamente...");
 		}
-		socket.close();
-	    }
-	    catch(IOException e){
-		e.printStackTrace();
-	    }
+		System.out.println("El Servidor ha sido levantado correctamente...");
+		Thread checkServerAlive = new Thread(new Runnable() {
+			public void run() {
+				try {
+					while (serverSocket.isBound()) {
+						Thread.sleep(3000);
+						System.out
+								.println("Servidor Conectado. Esperando mensajes de clientes...");
+					}
+				} catch (InterruptedException e) {
+					System.out
+							.println("No se puede comprobar el estado del Servidor...");
+				}
+			}
+		});
+		checkServerAlive.start();
+
+		// World world = new World();
+		// world.start();
+		while (serverSocket.isBound()) {
+			try {
+				Socket connectionSocket = serverSocket.accept();
+				TCPServerThread serverThread = new TCPServerThread(
+						connectionSocket);
+				serverThread.start();
+			} catch (IOException e) {
+				System.out
+						.println("El servidor no puede aceptar nuevas conexiones...");
+			}
+		}
+		try {
+			serverSocket.close();
+		} catch (IOException e) {
+			System.out
+					.println("El Servidor no se pudo cerrar correctamente...");
+		}
 	}
-    }
+
+	public static class TCPServerThread extends Thread {
+		private static Socket socket;
+		static String socketip;
+		static int socketport;
+
+		public TCPServerThread(Socket s) {
+			// TODO Auto-generated constructor stub
+			socket = s;
+			socketip = s.getInetAddress().getHostAddress();
+			socketport = s.getPort();
+		}
+
+		public void run() {
+			String mensaje = null;
+			try {
+
+				BufferedReader bufferedReader = new BufferedReader(
+						new InputStreamReader(socket.getInputStream()));
+				while ((mensaje = bufferedReader.readLine()) != null) {
+					System.out.println("recibiendo mensajes del cliente: "
+							+ mensaje);
+				}
+				socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 }
