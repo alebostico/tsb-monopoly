@@ -3,6 +3,7 @@
  */
 package monopoly.model.tablero;
 
+import monopoly.model.Banco;
 import monopoly.model.Jugador;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaCompania;
@@ -24,12 +25,17 @@ public class Tablero {
 
 	private Casillero[] casillerosList;
 
+	// para cuando el jugador tiene que cobrar los $200 de la salida
+	private Banco banco;
+
 	/**
 	 * Constructor por defecto.
 	 */
-	public Tablero() {
+	public Tablero(Banco banco) {
 		// Cargar los casilleros.
 		casillerosList = new Casillero[40];
+
+		this.banco = banco;
 
 		this.loadCasilleros();
 	}
@@ -193,7 +199,8 @@ public class Tablero {
 	/**
 	 * Mueve a un Jugador 'cantCasilleros' casilleros hacia adelante (o hacia
 	 * atrás si 'cantCasilleros' es negativo) y devuelve el Casillero en el que
-	 * cayo.
+	 * cayo. Si el movimiento es hacia adelante, el jugador pasa por la salida y
+	 * el parametro 'cobraSalida' es true, cobra los $200
 	 * 
 	 * @param jugador
 	 *            El jugador que se quiere mover.
@@ -201,17 +208,41 @@ public class Tablero {
 	 *            La cantidad de casilleros a mover el jugador. Si es positivo
 	 *            mueve hacia adelante. Si es negativo hacia atras (es lo mismo
 	 *            que llamar al método 'moverAtras').
+	 * @param cobraSalida
+	 *            true en el caso que el jugador deba cobrar los $200 si pasa
+	 *            por la salida. false si no los cobra.
 	 * @return El casillero al cual se movió el jugador.
 	 */
-	public Casillero moverAdelante(Jugador jugador, int cantCasilleros) {
+	public Casillero moverAdelante(Jugador jugador, int cantCasilleros,
+			boolean cobraSalida) {
 
-		// TODO: capaz que acá hay que agregar un parámetro que determine si
-		// cobra o
-		// no si pasa por la salida
-		// TODO: falta verificar si pasa por la salida!!!
+		// busco el casillero actual en el que esta el jugador
 		Casillero casilleroActual = jugador.getCasilleroActual();
+
+		// calculo el nro de casillero al que tiene que ir
 		int nroCasilleroSiguiente = casilleroActual.getNumeroCasillero()
 				+ cantCasilleros;
+
+		// si el casillero es mayor a la cantidad de casilleros total...
+		// (es decir, si pasa por la salida...)
+		if (nroCasilleroSiguiente > this.cantCasilleros) {
+			// ... recalculo el valor del casillero siguiente
+			nroCasilleroSiguiente -= this.cantCasilleros;
+
+			// si el jugador tiene que cobrar los $200 en caso de pasar por la
+			// salida...
+			if (cobraSalida)
+				// ... los cobra
+				this.banco.cobrar(jugador, 200);
+
+		}
+
+		// si esta moviendo para atras y pasa por la salida...
+		if (nroCasilleroSiguiente < 1) {
+			// ... recalculo el casillero en el que queda
+			nroCasilleroSiguiente += this.cantCasilleros;
+		}
+
 		Casillero casilleroSiguiente = this.getCasillero(nroCasilleroSiguiente);
 
 		casilleroActual.removeJugador(jugador);
@@ -224,7 +255,8 @@ public class Tablero {
 
 	/**
 	 * Mueve a un Jugador 'cantCasilleros' casilleros hacia atras y devuelve el
-	 * Casillero en el que cayo.
+	 * Casillero en el que cayo. Cuando mueve para atras NUNCA cobra si pasa por
+	 * la salida.
 	 * 
 	 * @param jugador
 	 *            El jugador que se quiere mover.
@@ -235,7 +267,7 @@ public class Tablero {
 	 * @return El casillero al cual se movió el jugador.
 	 */
 	public Casillero moverAtras(Jugador jugador, int cantCasilleros) {
-		return this.moverAdelante(jugador, (cantCasilleros * (-1)));
+		return this.moverAdelante(jugador, (cantCasilleros * (-1)), false);
 	}
 
 	/**
@@ -246,16 +278,14 @@ public class Tablero {
 	 *            El jugador que se quiere mover.
 	 * @param nroCasillero
 	 *            El número de casillero al cual se quiere mover el jugador.
+	 * @param cobraSalida
+	 *            true en el caso que el jugador deba cobrar los $200 si pasa
+	 *            por la salida. false si no los cobra.
 	 * @return El casillero al cual se movió el jugador si 'nroCasillero' es
 	 *         válido (menor a 1 o mayor a 40). null en caso contrario.
 	 */
-	public Casillero moverACasillero(Jugador jugador, int nroCasillero) {
-
-		/*
-		 * TODO: capaz que acá hay que agregar un parámetro que determine si
-		 * cobra o no si pasa por la salida
-		 */
-
+	public Casillero moverACasillero(Jugador jugador, int nroCasillero,
+			boolean cobraSalida) {
 		/*
 		 * TODO: estaría bueno que si el casillero no existe porque pasa un
 		 * nroCasillero incorrecto, en vez de retornar null tire una excepción
@@ -268,6 +298,16 @@ public class Tablero {
 		// null...
 		if (casilleroSiguiente == null)
 			return null;
+
+		// si pasa por la salida para ir de un casillero a otro...
+		if (casilleroSiguiente.getNumeroCasillero() < casilleroActual
+				.getNumeroCasillero()) {
+			// y si el jugador tiene que cobrar los $200 en caso de pasar por la
+			// salida...
+			if (cobraSalida)
+				// ... los cobra
+				this.banco.cobrar(jugador, 200);
+		}
 
 		casilleroActual.removeJugador(jugador);
 		casilleroSiguiente.addJugador(jugador);
@@ -285,36 +325,36 @@ public class Tablero {
 	 *            El jugador que se quiere mover.
 	 * @param nombreCasillero
 	 *            El nombre de la calle.
+	 * @param cobraSalida
+	 *            true en el caso que el jugador deba cobrar los $200 si pasa
+	 *            por la salida. false si no los cobra.
 	 * @return El casillero al cual se movió el jugador si 'nombreCasillero'
 	 *         existe. null en caso contrario.
 	 */
-	public Casillero moverACasillero(Jugador jugador, String nombreCasillero) {
-
-		/*
-		 * TODO: estaría bueno que si el casillero no existe porque el nombre de
-		 * la calle no existe, en vez de retornar null tire una excepción
-		 * CalleInvalidaException por ejemplo
-		 */
+	public Casillero moverACasillero(Jugador jugador, String nombreCasillero,
+			boolean cobraSalida) {
 
 		Casillero casilleroAMover = this.getCasillero(nombreCasillero);
 
 		if (casilleroAMover != null) {
 			return this.moverACasillero(jugador,
-					casilleroAMover.getNumeroCasillero());
+					casilleroAMover.getNumeroCasillero(), cobraSalida);
 		}
 
 		return null;
 	}
 
 	/**
-	 * Mueve al jugador al casillero de la carcel.
+	 * Mueve al jugador al casillero de la carcel. No cobra si pasa por la
+	 * salida.
 	 * 
 	 * @param jugador
 	 *            El jugador que se manda a la carcel.
 	 * @return El casillero de la carcel.
 	 */
 	public Casillero irACarcel(Jugador jugador) {
-		return this.moverACasillero(jugador, 11);
+		// mando al casillero de la carcel y si pasa por la salida no cobra
+		return this.moverACasillero(jugador, 11, false);
 	}
 
 	/**
@@ -329,11 +369,6 @@ public class Tablero {
 	 * @return El casillero en el que queda el jugador.
 	 */
 	public Casillero retrocederA(Jugador jugador, int nroCasillero) {
-		/*
-		 * TODO: acá habría que mandar al casillero moverACasillero con el
-		 * parámetro de "Cobrar si pasa por la salida" en false
-		 */
-
-		return this.moverACasillero(jugador, nroCasillero);
+		return this.moverACasillero(jugador, nroCasillero, false);
 	}
 }

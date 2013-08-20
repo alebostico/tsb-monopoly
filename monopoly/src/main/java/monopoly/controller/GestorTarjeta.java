@@ -44,7 +44,7 @@ public class GestorTarjeta {
 	switch (((TarjetaComunidad) tarjetaComunidad).getIdTarjeta()) {
 	    case  1: return juego.getBanco().pagar(jugador, 50);
 	    case  2: return juego.getBanco().cobrarATodosPagarAUno(juego.getJugadoresList(), jugador, 10);
-	    case  3: return (juego.getTablero().moverACasillero(jugador, 1)!=null);//salida
+	    case  3: return (juego.getTablero().moverACasillero(jugador, 1, true)!=null);//salida
 	    case  4: return juego.getBanco().pagar(jugador, 50);
 	    case  5: return juego.getBanco().cobrar(jugador, 10);
 	    case  6: return juego.getBanco().cobrar(jugador, 200);
@@ -83,11 +83,11 @@ public class GestorTarjeta {
     public boolean jugarTarjetaSuerte(Juego juego, Jugador jugador, Tarjeta tarjetaSuerte)
     {
 	switch (((TarjetaComunidad) tarjetaSuerte).getIdTarjeta()) {
-	    case  1: return (juego.getTablero().moverACasillero(jugador, 40)!=null);//del prado
-	    case  2: return (juego.getTablero().moverACasillero(jugador, 12)!=null);//glorieta de bilbao
+	    case  1: return (juego.getTablero().moverACasillero(jugador, 40, false)!=null);//del prado
+	    case  2: return (juego.getTablero().moverACasillero(jugador, 12, true)!=null);//glorieta de bilbao
 	    case  3: return juego.getBanco().pagar(jugador, 50);
-	    case  4: return (juego.getTablero().moverACasillero(jugador, 1)!=null);//salida
-	    case  5: return (juego.getTablero().moverACasillero(jugador, 25)!=null);//calle bermudez
+	    case  4: return (juego.getTablero().moverACasillero(jugador, 1, true)!=null);//salida
+	    case  5: return (juego.getTablero().moverACasillero(jugador, 25, true)!=null);//calle bermudez
 	    case  6: return juego.getBanco().pagar(jugador, 150);
 	    case  7: return (juego.getTablero().irACarcel(jugador)!=null);
 	    case  8: return juego.getBanco().cobrar(jugador, 20);
@@ -97,7 +97,7 @@ public class GestorTarjeta {
 	    //TODO: como hago aca?
 	    case 12: jugador.getTarjetaCarcelList().add(tarjetaSuerte); return true;
 	    case 13: return juego.getBanco().cobrar(jugador, 150);
-	    case 14: return (juego.getTablero().moverACasillero(jugador, 16)!=null);//las delicias
+	    case 14: return (juego.getTablero().moverACasillero(jugador, 16, true)!=null);//las delicias
 	    default:
 		return false;
 	}
@@ -135,13 +135,13 @@ public class GestorTarjeta {
      * Mueve el jugador a la casilla indicada, si pasa por la salida, paga 200
      */
     protected Casillero moverA(Tablero tablero, int idCasillero, Jugador jugador) {
-	return tablero.moverACasillero(jugador, idCasillero);
+	return tablero.moverACasillero(jugador, idCasillero, true);
     }
 
     /**
      * Mueve al jugador a la casilla indicada, retrocediendo, no cobra 200
      */
-    protected Casillero retrosederA(Tablero tablero, int idCasillero, Jugador jugador) {
+    protected Casillero retrocederA(Tablero tablero, int idCasillero, Jugador jugador) {
 	return tablero.retrocederA(jugador, idCasillero);
     }
     
