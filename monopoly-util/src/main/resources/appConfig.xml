@@ -14,5 +14,9 @@
 		</folder>
 	</path_folders>
 	
+	<socket>
+		<server_address>localhost</server_address>
+		<port>8888</port>
+	</socket>
 	
 </configuration>
