@@ -3,9 +3,6 @@
  */
 package monopoly.model.tablero;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import monopoly.model.Jugador;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaCompania;
@@ -22,9 +19,9 @@ import monopoly.model.tarjetas.TarjetaEstacion;
  */
 public class Tablero {
 
-	//CONSTANTES
+	// CONSTANTES
 	private int cantCasilleros = 40;
-	
+
 	private Casillero[] casillerosList;
 
 	/**
@@ -120,50 +117,223 @@ public class Tablero {
 				Casillero.CASILLERO_IMPUESTO);
 		this.casillerosList[39] = new CasilleroCalle(40, "Paseo del Prado",
 				new TarjetaCalle());
-		
+
 	}
 
 	/**
 	 * Devuelve el casillero pasado por parámetro. El parámetro es el Número de
-	 * casillero [1-40], NO el indice del vector.
+	 * casillero [1-40], NO el indice del vector. Si el 'nroCasillero' es
+	 * inválido (menor a 1 o mayor a 40) devuelve null.
 	 * 
 	 * @param nroCasillero
 	 *            El número del casillero a devolver.
+	 * @return El casillero correspondiente al número pasado por parámetro o
+	 *         null si no existe.
 	 */
 	public Casillero getCasillero(int nroCasillero) {
+		/*
+		 * TODO: estaría bueno que si el casillero no existe porque pasa un
+		 * nroCasillero incorrecto, en vez de retornar null tire una excepción
+		 * CasilleroInvalidoException por ejemplo
+		 */
+
+		if (nroCasillero > this.cantCasilleros || nroCasillero < 1)
+			return null;
 		return this.casillerosList[nroCasillero + 1];
 	}
 
-	
-	public Casillero moverAdelante(Jugador jugador, int nroCasillero) {
-		
-		
-		return this.casillerosList[0];
+	/**
+	 * Devuelve el Casillero de la calle/Estación/Compañía que tiene el nombre
+	 * 'nombreCasillero' o null si el nombre no existe.
+	 * 
+	 * @param nombreCasillero
+	 *            El nombre de la calle.
+	 * @return El Casillero con el nombre pasado por parámetro o null si la
+	 *         calle no existe.
+	 */
+	public Casillero getCasillero(String nombreCasillero) {
+
+		/*
+		 * TODO: estaría bueno que si el casillero no existe porque el nombre de
+		 * la calle no existe, en vez de retornar null tire una excepción
+		 * NombreInvalidoException por ejemplo
+		 */
+
+		Casillero casilleroActual;
+
+		for (int i = 1; i <= this.cantCasilleros; i++) {
+			casilleroActual = this.getCasillero(i);
+
+			if (casilleroActual.getTipoCasillero() == Casillero.CASILLERO_CALLE) {
+				if (((CasilleroCalle) casilleroActual).getNombreCalle()
+						.compareTo(nombreCasillero) == 0) {
+					return casilleroActual;
+				}
+			}
+
+			if (casilleroActual.getTipoCasillero() == Casillero.CASILLERO_COMPANIA) {
+				if (((CasilleroCompania) casilleroActual).getNombreEstacion()
+						.compareTo(nombreCasillero) == 0) {
+					return casilleroActual;
+				}
+			}
+
+			if (casilleroActual.getTipoCasillero() == Casillero.CASILLERO_ESTACION) {
+				if (((CasilleroEstacion) casilleroActual).getNombreEstacion()
+						.compareTo(nombreCasillero) == 0) {
+					return casilleroActual;
+				}
+			}
+		}
+
+		return null;
+
 	}
-	
-	//TODO: int numero de casillas que se mueve atras?
-	public Casillero moverAtras(Jugador jugador, int nroCasillero) {
-		
-		
-		return this.casillerosList[0];
+
+	/**
+	 * Mueve a un Jugador 'cantCasilleros' casilleros hacia adelante (o hacia
+	 * atrás si 'cantCasilleros' es negativo) y devuelve el Casillero en el que
+	 * cayo.
+	 * 
+	 * @param jugador
+	 *            El jugador que se quiere mover.
+	 * @param cantCasilleros
+	 *            La cantidad de casilleros a mover el jugador. Si es positivo
+	 *            mueve hacia adelante. Si es negativo hacia atras (es lo mismo
+	 *            que llamar al método 'moverAtras').
+	 * @return El casillero al cual se movió el jugador.
+	 */
+	public Casillero moverAdelante(Jugador jugador, int cantCasilleros) {
+
+		// TODO: capaz que acá hay que agregar un parámetro que determine si
+		// cobra o
+		// no si pasa por la salida
+		// TODO: falta verificar si pasa por la salida!!!
+		Casillero casilleroActual = jugador.getCasilleroActual();
+		int nroCasilleroSiguiente = casilleroActual.getNumeroCasillero()
+				+ cantCasilleros;
+		Casillero casilleroSiguiente = this.getCasillero(nroCasilleroSiguiente);
+
+		casilleroActual.removeJugador(jugador);
+		casilleroSiguiente.addJugador(jugador);
+
+		jugador.setCasilleroActual(casilleroSiguiente);
+
+		return casilleroSiguiente;
 	}
-	
-	public Casillero moverACasillero(Jugador jugador, int nroCasillero){
-		
-		return this.casillerosList[0];
+
+	/**
+	 * Mueve a un Jugador 'cantCasilleros' casilleros hacia atras y devuelve el
+	 * Casillero en el que cayo.
+	 * 
+	 * @param jugador
+	 *            El jugador que se quiere mover.
+	 * @param cantCasilleros
+	 *            La cantidad de casilleros a mover el jugador (Es lo mismo que
+	 *            llamar al método 'moverAdelante' con 'cantCasilleros'
+	 *            negativa).
+	 * @return El casillero al cual se movió el jugador.
+	 */
+	public Casillero moverAtras(Jugador jugador, int cantCasilleros) {
+		return this.moverAdelante(jugador, (cantCasilleros * (-1)));
 	}
-	
-	public Casillero moverACasillero(Jugador jugador, String nombreCalle){
-		
-		return this.casillerosList[0];
+
+	/**
+	 * Mueve el jugador 'jugador' al casillero con el número 'nroCasillero'.
+	 * Retorna el Casillero al cual se movio al jugador o null si no existe.
+	 * 
+	 * @param jugador
+	 *            El jugador que se quiere mover.
+	 * @param nroCasillero
+	 *            El número de casillero al cual se quiere mover el jugador.
+	 * @return El casillero al cual se movió el jugador si 'nroCasillero' es
+	 *         válido (menor a 1 o mayor a 40). null en caso contrario.
+	 */
+	public Casillero moverACasillero(Jugador jugador, int nroCasillero) {
+
+		/*
+		 * TODO: capaz que acá hay que agregar un parámetro que determine si
+		 * cobra o no si pasa por la salida
+		 */
+
+		/*
+		 * TODO: estaría bueno que si el casillero no existe porque pasa un
+		 * nroCasillero incorrecto, en vez de retornar null tire una excepción
+		 * CasilleroInvalidoException por ejemplo
+		 */
+		Casillero casilleroActual = jugador.getCasilleroActual();
+		Casillero casilleroSiguiente = this.getCasillero(nroCasillero);
+
+		// si el nroCasillero es inválido (menor a 1 o mayor a 40) retorna
+		// null...
+		if (casilleroSiguiente == null)
+			return null;
+
+		casilleroActual.removeJugador(jugador);
+		casilleroSiguiente.addJugador(jugador);
+
+		jugador.setCasilleroActual(casilleroSiguiente);
+
+		return casilleroSiguiente;
 	}
-	
-	public Casillero irACarcel(Jugador jugador){
+
+	/**
+	 * Mueve el jugador 'jugador' al CasilleroCalle con el nombre 'nombreCalle'.
+	 * Retorna el Casillero al cual se movio al jugador o null si no existe.
+	 * 
+	 * @param jugador
+	 *            El jugador que se quiere mover.
+	 * @param nombreCasillero
+	 *            El nombre de la calle.
+	 * @return El casillero al cual se movió el jugador si 'nombreCasillero'
+	 *         existe. null en caso contrario.
+	 */
+	public Casillero moverACasillero(Jugador jugador, String nombreCasillero) {
+
+		/*
+		 * TODO: estaría bueno que si el casillero no existe porque el nombre de
+		 * la calle no existe, en vez de retornar null tire una excepción
+		 * CalleInvalidaException por ejemplo
+		 */
+
+		Casillero casilleroAMover = this.getCasillero(nombreCasillero);
+
+		if (casilleroAMover != null) {
+			return this.moverACasillero(jugador,
+					casilleroAMover.getNumeroCasillero());
+		}
+
+		return null;
+	}
+
+	/**
+	 * Mueve al jugador al casillero de la carcel.
+	 * 
+	 * @param jugador
+	 *            El jugador que se manda a la carcel.
+	 * @return El casillero de la carcel.
+	 */
+	public Casillero irACarcel(Jugador jugador) {
 		return this.moverACasillero(jugador, 11);
 	}
-	
-	//TODO: retrocede a... supongo que no cobra los 200
-	public Casillero retrocederA(Jugador jugador, int nroCasillero){
-		return this.casillerosList[0];
+
+	/**
+	 * Hace retroceder al jugador hasta el casillero especificado. Es lo mismo
+	 * que llamar a 'moverACasillero' con 'cobraSalida' false. Devuelve el
+	 * casillero al cual se mueve el jugador.
+	 * 
+	 * @param jugador
+	 *            El jugador que se mueve.
+	 * @param nroCasillero
+	 *            El número de casillero al cual se mueve.
+	 * @return El casillero en el que queda el jugador.
+	 */
+	public Casillero retrocederA(Jugador jugador, int nroCasillero) {
+		/*
+		 * TODO: acá habría que mandar al casillero moverACasillero con el
+		 * parámetro de "Cobrar si pasa por la salida" en false
+		 */
+
+		return this.moverACasillero(jugador, nroCasillero);
 	}
 }
