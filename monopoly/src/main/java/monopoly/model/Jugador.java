@@ -50,6 +50,9 @@ public class Jugador implements Serializable {
     @Transient
     private int dinero;
     
+    private int nroCasas;
+    private int nroHoteles;
+    
     @Transient
     private List<Tarjeta> tarjetaCarcelList;
     
@@ -61,6 +64,8 @@ public class Jugador implements Serializable {
      */
     public Jugador(){
 	tarjetaCarcelList  = new ArrayList<>();
+	nroCasas=0;
+	nroHoteles=0;
     }
 
     /**
@@ -161,6 +166,55 @@ public class Jugador implements Serializable {
     }
 
     /**
+     * devuelve true si el jugador puede pagar el monto indicado
+     * @param monto
+     * 			el monto que se quiere consultar
+     * @return true si el jugador puede pagar ese monto
+     */
+    public boolean puedePagar(int monto)
+    {
+    	return (this.getDinero()>=monto);
+    }
+
+    /**
+     * resta del dinero del jugador el monto indicado
+     * @param monto
+     * 			el monto a pagar por el jugador
+     */
+    public void pagar(int monto)
+    {
+    	this.setDinero(this.getDinero()-monto);
+    }
+    
+
+    /**
+     * suma al dinero del jugador el monto indicado
+     * @param monto
+     * 			el monto a cobrar por el jugador
+     */
+    public void cobrar(int monto)
+    {
+    	this.setDinero(this.getDinero()+monto);
+    }
+      
+
+    public int getNroCasas() {
+		return nroCasas;
+	}
+
+	public void setNroCasas(int nroCasas) {
+		this.nroCasas = nroCasas;
+	}
+
+	public int getNroHoteles() {
+		return nroHoteles;
+	}
+
+	public void setNroHoteles(int nroHoteles) {
+		this.nroHoteles = nroHoteles;
+	}
+
+	/**
      * Devuelve true si el jugador  pasada por parametro es igual al que ejecuta el metodo
      * compara en funcion del nombre (string) de la ficha
      * @param c

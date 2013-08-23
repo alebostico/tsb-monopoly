@@ -8,8 +8,6 @@ import java.util.List;
 
 import monopoly.dao.ITarjetaCalleDao;
 import monopoly.model.Ficha;
-import monopoly.model.Jugador;
-import monopoly.model.Ronda;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.util.GestorLogs;
 
@@ -47,6 +45,7 @@ public class Main {
 	
 	GestorLogs.registrarLog("Mostrar lista de tarjetas de propiedad");
 	
+	/*
 	fichas=crearFichas();
 	Ronda ronda= new Ronda();
 	System.out.print("Fichas");
@@ -57,7 +56,7 @@ public class Main {
 	    j.setFicha(fichas.get(i));
 	    ronda.agregarJugador(j);
 	}
-	
+	*/
     }
     
     public static ArrayList<Ficha> crearFichas()

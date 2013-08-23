@@ -14,6 +14,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import monopoly.model.Jugador;
 
@@ -48,8 +49,19 @@ public abstract class TarjetaPropiedad implements Serializable {
 
     @Column(name = "nombreImagen")
     private String nombreImagen;
+    
+    @Transient
+    private boolean hipotecada;
 
-    public TarjetaPropiedad() {
+    public boolean isHipotecada() {
+		return hipotecada;
+	}
+
+	public void setHipotecada(boolean hipotecada) {
+		this.hipotecada = hipotecada;
+	}
+
+	public TarjetaPropiedad() {
 
     }
 
@@ -64,6 +76,7 @@ public abstract class TarjetaPropiedad implements Serializable {
 	this.nombre = nombre;
 	this.valorHipotecario = valorHipotecario;
 	this.nombreImagen = nombreImagen;
+	this.hipotecada= false;
     }
 
     /**

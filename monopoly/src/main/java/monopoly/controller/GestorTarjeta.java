@@ -22,8 +22,9 @@ import monopoly.model.tarjetas.TarjetaComunidad;
 public class GestorTarjeta {
 
     /**
+     * Ejecuta la accion indicada en la tarjeta comunidad
      * 1,PAGA POR TU POLIZA DE SEGUROS 50
-     * 2,EN TU CUMPLEA�OS RECIBES DE CADA JUGADOR 10
+     * 2,EN TU CUMPLEANIOOS RECIBES DE CADA JUGADOR 10
      * 3,COLOCATE EN LA CASILLA DE SALIDA
      * 4,PAGA LA FACTURA DEL MEDICO 50
      * 5,HAS GANADO EL SEGUNDO PREMIO DE BELLEZA, RECIBE 10
@@ -36,6 +37,13 @@ public class GestorTarjeta {
      * 12,RETROCEDE HASTA LA RONDA DE VALENCIA
      * 13,QUEDAS LIBRE DE LA CARCEL, ESTA TARJETA PUEDE VENDERSE O CONSERVARSE HASTA UTILIZARSE
      * 14,LA VENTA DE TUS ACCIONES TE PRODUCE 50
+     * @param juego 
+     * 			el juego actual
+     * @param jugador
+     * 			el jugador que tiene la tarjeta
+     * @param tarjetaComunidad
+     * 			la tarjeta que tiene el jugador
+     * @return true si se pudo ejecutar la accion
      *
      */
     
@@ -63,6 +71,7 @@ public class GestorTarjeta {
     }
     
     /**
+     * Ejecuta la accion indicada en la tarjeta suerte
      * 1,VE AL PASEO DEL PRADO
      * 2,VE A LA GLORIETA DE BILBAO. SI PASAS POR LA CASILLA DE SALIDA COBRA 200
      * 3,LA BANCA TE PAGA 50 DE INTERESES
@@ -77,72 +86,37 @@ public class GestorTarjeta {
      * 12,QUEDAS LIBRE DE LA CARCEL. Esta carta puede venderse o conservarse hasta que sea utilizada
      * 13,PAGA POR GASTOS ESCOLARES 150
      * 14,VE A LA ESTACIoN DE LAS DELICIAS. SI PASAS POR LA CASILLA DE SALIDA,COBRA 200
-     * 
+     * @param juego 
+     * 			el juego actual
+     * @param jugador
+     * 			el jugador que tiene la tarjeta
+     * @param tarjetaComunidad
+     * 			la tarjeta que tiene el jugador
+     * @return true si se pudo ejecutar la accion
      */
     
     public boolean jugarTarjetaSuerte(Juego juego, Jugador jugador, Tarjeta tarjetaSuerte)
     {
-	switch (((TarjetaComunidad) tarjetaSuerte).getIdTarjeta()) {
-	    case  1: return (juego.getTablero().moverACasillero(jugador, 40, false)!=null);//del prado
-	    case  2: return (juego.getTablero().moverACasillero(jugador, 12, true)!=null);//glorieta de bilbao
-	    case  3: return juego.getBanco().pagar(jugador, 50);
-	    case  4: return (juego.getTablero().moverACasillero(jugador, 1, true)!=null);//salida
-	    case  5: return (juego.getTablero().moverACasillero(jugador, 25, true)!=null);//calle bermudez
-	    case  6: return juego.getBanco().pagar(jugador, 150);
-	    case  7: return (juego.getTablero().irACarcel(jugador)!=null);
-	    case  8: return juego.getBanco().cobrar(jugador, 20);
-	    case  9: return (juego.getTablero().moverAtras(jugador, 3)!=null);
-	    case 10: return juego.getBanco().cobrarPorEdificioYHotel(jugador, 25, 100);
-	    case 11: return juego.getBanco().cobrarPorEdificioYHotel(jugador, 40, 115);
-	    //TODO: como hago aca?
-	    case 12: jugador.getTarjetaCarcelList().add(tarjetaSuerte); return true;
-	    case 13: return juego.getBanco().cobrar(jugador, 150);
-	    case 14: return (juego.getTablero().moverACasillero(jugador, 16, true)!=null);//las delicias
-	    default:
-		return false;
-	}
+		switch (((TarjetaComunidad) tarjetaSuerte).getIdTarjeta()) {
+		    case  1: return (juego.getTablero().moverACasillero(jugador, 40, false)!=null);//del prado
+		    case  2: return (juego.getTablero().moverACasillero(jugador, 12, true)!=null);//glorieta de bilbao
+		    case  3: return juego.getBanco().pagar(jugador, 50);
+		    case  4: return (juego.getTablero().moverACasillero(jugador, 1, true)!=null);//salida
+		    case  5: return (juego.getTablero().moverACasillero(jugador, 25, true)!=null);//calle bermudez
+		    case  6: return juego.getBanco().pagar(jugador, 150);
+		    case  7: return (juego.getTablero().irACarcel(jugador)!=null);
+		    case  8: return juego.getBanco().cobrar(jugador, 20);
+		    case  9: return (juego.getTablero().moverAtras(jugador, 3)!=null);
+		    case 10: return juego.getBanco().cobrarPorCasaYHotel(jugador, 25, 100);
+		    case 11: return juego.getBanco().cobrarPorCasaYHotel(jugador, 40, 115);
+		    //TODO: como hago aca?
+		    case 12: jugador.getTarjetaCarcelList().add(tarjetaSuerte); return true;
+		    case 13: return juego.getBanco().cobrar(jugador, 150);
+		    case 14: return (juego.getTablero().moverACasillero(jugador, 16, true)!=null);//las delicias
+		    default:
+			return false;
+		}
     }
     
-    /**
-     * Paga al jugador la cantidad indicada
-     */
-    protected boolean pagar(Banco banco, Jugador jugador, int monto) {
-	return banco.pagar(jugador, monto);
-    }
-
-    /**
-     * Cobra al jugador la cantidad indicada
-     */
-    protected boolean cobrar(Banco banco, Jugador jugador, int monto) {
-	return banco.cobrar(jugador, monto);
-    }
-
-    /**
-     * Cobra a todos los jugadores, menos al indicado Paga al jugador indicado la cantidad
-     */
-    protected boolean cobrarAtodosPagarAuno(Banco banco, List<Jugador> jugadores, Jugador jugador, int monto) {
-	return banco.cobrarATodosPagarAUno(jugadores, jugador, monto);
-    }
-
-    /**
-     * Mueve el jugador a la carcel, sin cobrar los 200
-     */
-    protected Casillero moverAcarcel(Tablero tablero, Jugador jugador) {
-	return tablero.irACarcel(jugador);
-    }
-
-    /**
-     * Mueve el jugador a la casilla indicada, si pasa por la salida, paga 200
-     */
-    protected Casillero moverA(Tablero tablero, int idCasillero, Jugador jugador) {
-	return tablero.moverACasillero(jugador, idCasillero, true);
-    }
-
-    /**
-     * Mueve al jugador a la casilla indicada, retrocediendo, no cobra 200
-     */
-    protected Casillero retrocederA(Tablero tablero, int idCasillero, Jugador jugador) {
-	return tablero.retrocederA(jugador, idCasillero);
-    }
     
 }
