@@ -38,6 +38,32 @@ LOCK TABLES `Jugador` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `ficha`
+--
+
+DROP TABLE IF EXISTS `ficha`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ficha` (
+  `fichaID` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(50) DEFAULT NULL,
+  `pathImageSmall` varchar(250) DEFAULT NULL,
+  `pathImageBig` varchar(250) DEFAULT NULL,
+  PRIMARY KEY (`fichaID`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ficha`
+--
+
+LOCK TABLES `ficha` WRITE;
+/*!40000 ALTER TABLE `ficha` DISABLE KEYS */;
+INSERT INTO `ficha` VALUES (1,'auto','FichaS01.png','Ficha01.png'),(2,'sombrero','FichaS02.png','Ficha02.png'),(3,'bota','FichaS03.png','Ficha03.png'),(4,'plancha','FichaS04.png','Ficha04.png'),(5,'carretilla','FichaS05.png','Ficha05.png'),(6,'dedal','FichaS06.png','Ficha06.png'),(7,'barco','FichaS07.png','Ficha07.png'),(8,'perro','FichaS08.png','Ficha08.png'),(9,'bolsa de dinero','FichaS09.png','Ficha09.png'),(10,'caballo','FichaS10.png','Ficha10.png'),(11,'cañón','FichaS11.png','Ficha11.png');
+/*!40000 ALTER TABLE `ficha` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `tarjeta_calle`
 --
 
@@ -54,6 +80,7 @@ CREATE TABLE `tarjeta_calle` (
   `valorHotel` int(11) NOT NULL,
   `precioCadaCasa` int(11) NOT NULL,
   `precioCadaHotel` int(11) NOT NULL,
+  `color` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`tarjetaPropiedadID`),
   KEY `fk_tarjeta_calle_1` (`tarjetaPropiedadID`),
   CONSTRAINT `fk_tarjeta_calle_propiedad` FOREIGN KEY (`tarjetaPropiedadID`) REFERENCES `tarjeta_propiedad` (`tarjetaPropiedadID`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -66,7 +93,7 @@ CREATE TABLE `tarjeta_calle` (
 
 LOCK TABLES `tarjeta_calle` WRITE;
 /*!40000 ALTER TABLE `tarjeta_calle` DISABLE KEYS */;
-INSERT INTO `tarjeta_calle` VALUES (1,2,10,30,90,160,250,50,50),(2,4,20,60,180,320,450,50,50),(3,6,30,90,270,400,550,50,50),(4,6,30,90,270,400,550,50,50),(5,8,40,100,300,450,600,50,50),(6,10,50,150,450,625,750,70,100),(7,10,50,150,450,625,750,70,100),(8,12,60,180,500,700,900,80,100),(9,14,70,200,550,750,950,90,100),(10,14,70,200,550,750,950,90,100),(11,16,80,220,600,800,1000,100,100),(12,18,90,250,700,875,1050,110,150),(13,18,90,250,700,875,1050,110,150),(14,20,100,300,750,925,1100,120,150),(15,22,110,330,800,975,1150,130,150),(16,22,110,330,800,975,1150,130,150),(17,24,120,360,850,1025,1200,140,150),(18,26,130,390,900,1100,1275,150,200),(19,26,130,390,900,1100,1275,150,200),(20,28,150,450,1000,1200,1400,160,200),(21,35,175,500,1100,1300,1500,175,200),(22,50,200,600,1400,1700,2000,200,200);
+INSERT INTO `tarjeta_calle` VALUES (1,2,10,30,90,160,250,50,50,'MARRON'),(2,4,20,60,180,320,450,50,50,'MARRON'),(3,6,30,90,270,400,550,50,50,'CELESTE'),(4,6,30,90,270,400,550,50,50,'CELESTE'),(5,8,40,100,300,450,600,50,50,'CELESTE'),(6,10,50,150,450,625,750,70,100,'FUCSIA'),(7,10,50,150,450,625,750,70,100,'FUCSIA'),(8,12,60,180,500,700,900,80,100,'FUCSIA'),(9,14,70,200,550,750,950,90,100,'NARANJA'),(10,14,70,200,550,750,950,90,100,'NARANJA'),(11,16,80,220,600,800,1000,100,100,'NARANJA'),(12,18,90,250,700,875,1050,110,150,'ROJO'),(13,18,90,250,700,875,1050,110,150,'ROJO'),(14,20,100,300,750,925,1100,120,150,'ROJO'),(15,22,110,330,800,975,1150,130,150,'AMARILLO'),(16,22,110,330,800,975,1150,130,150,'AMARILLO'),(17,24,120,360,850,1025,1200,140,150,'AMARILLO'),(18,26,130,390,900,1100,1275,150,200,'VERDE'),(19,26,130,390,900,1100,1275,150,200,'VERDE'),(20,28,150,450,1000,1200,1400,160,200,'VERDE'),(21,35,175,500,1100,1300,1500,175,200,'AZUL'),(22,50,200,600,1400,1700,2000,200,200,'AZUL');
 /*!40000 ALTER TABLE `tarjeta_calle` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -163,6 +190,7 @@ CREATE TABLE `tarjeta_propiedad` (
   `nombre` varchar(100) NOT NULL,
   `valorHipotecario` int(11) NOT NULL,
   `nombreImagen` varchar(45) DEFAULT NULL,
+  `isHipotecada` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`tarjetaPropiedadID`),
   KEY `fk_tarjeta_propiedad_jugador` (`jugadorID`),
   CONSTRAINT `fk_tarjeta_propiedad_jugador` FOREIGN KEY (`jugadorID`) REFERENCES `Jugador` (`jugadorID`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -175,7 +203,7 @@ CREATE TABLE `tarjeta_propiedad` (
 
 LOCK TABLES `tarjeta_propiedad` WRITE;
 /*!40000 ALTER TABLE `tarjeta_propiedad` DISABLE KEYS */;
-INSERT INTO `tarjeta_propiedad` VALUES (1,NULL,'RONDA DE VALENCIA',30,'image_1554.png'),(2,NULL,'PLAZA DE LAVAPIÉS',30,'image_1561.png'),(3,NULL,'GLORIETA CUATRO CAMINOS',50,'image_1565.png'),(4,NULL,'AVENIDA REINA VICTORIA',50,'image_1569.png'),(5,NULL,'CALLE BRAVO MURILLO',50,'image_1573.png'),(6,NULL,'GLORIETA DE BILBAO',70,'image_1577.png'),(7,NULL,'CALLE ALBERTO AGUILERA',70,'image_1581.png'),(8,NULL,'CALLE FUENCARRAL',80,'image_1585.png'),(9,NULL,'AVENIDA FELIPE II',90,'image_1589.png'),(10,NULL,'CALLE VELÁZQUEZ',100,'image_1593.png'),(11,NULL,'CALLE SERRANO',100,'image_1597.png'),(12,NULL,'AVENIDA AMÉRICA',110,'image_1601.png'),(13,NULL,'CALLE MARÍA DE MOLINA',110,'image_1605.png'),(14,NULL,'CALLE CEA BERMÚDEZ',120,'image_1609.png'),(15,NULL,'AVENIDA DE LOS REYES CATÓLICOS',130,'image_1613.png'),(16,NULL,'CALLE BAILÉN',130,'image_1617.png'),(17,NULL,'PLAZA ESPAÑA',140,'image_1621.png'),(18,NULL,'PUERTA DEL SOL',150,'image_1625.png'),(19,NULL,'CALLE ALCALÁ',150,'image_1629.png'),(20,NULL,'GRAN VÍA',160,'image_1633.png'),(21,NULL,'PASEO DE LA CASTELLANA',175,'image_1637.png'),(22,NULL,'PASEO DEL PRADO',200,'image_1641.png'),(23,NULL,'ESTACIÓN DE GOYA',100,'image_1534.png'),(24,NULL,'ESTACIÓN DE LAS DELICIAS',100,'image_1529.png'),(25,NULL,'ESTACIÓN DEL MEDIODÍA',100,'image_1542.png'),(26,NULL,'ESTACIÓN DEL NORTE',100,'image_1538.png'),(27,NULL,'COMPAÑIA DE AGUAS',75,'image_1546.png'),(28,NULL,'COMPAÑIA DE ELECTRICIDAD',75,'image_1550.png');
+INSERT INTO `tarjeta_propiedad` VALUES (1,NULL,'RONDA DE VALENCIA',30,'Tarjeta02.jpg',0),(2,NULL,'PLAZA DE LAVAPIÉS',30,'Tarjeta04.jpg',0),(3,NULL,'GLORIETA CUATRO CAMINOS',50,'Tarjeta07.jpg',0),(4,NULL,'AVENIDA REINA VICTORIA',50,'Tarjeta09.jpg',0),(5,NULL,'CALLE BRAVO MURILLO',50,'Tarjeta10.jpg',0),(6,NULL,'GLORIETA DE BILBAO',70,'Tarjeta12.jpg',0),(7,NULL,'CALLE ALBERTO AGUILERA',70,'Tarjeta14.jpg',0),(8,NULL,'CALLE FUENCARRAL',80,'Tarjeta15.jpg',0),(9,NULL,'AVENIDA FELIPE II',90,'Tarjeta17.jpg',0),(10,NULL,'CALLE VELÁZQUEZ',100,'Tarjeta19.jpg',0),(11,NULL,'CALLE SERRANO',100,'Tarjeta20.jpg',0),(12,NULL,'AVENIDA AMÉRICA',110,'Tarjeta22.jpg',0),(13,NULL,'CALLE MARÍA DE MOLINA',110,'Tarjeta24.jpg',0),(14,NULL,'CALLE CEA BERMÚDEZ',120,'Tarjeta25.jpg',0),(15,NULL,'AVENIDA DE LOS REYES CATÓLICOS',130,'Tarjeta27.jpg',0),(16,NULL,'CALLE BAILÉN',130,'Tarjeta28.jpg',0),(17,NULL,'PLAZA ESPAÑA',140,'Tarjeta30.jpg',0),(18,NULL,'PUERTA DEL SOL',150,'Tarjeta32.jpg',0),(19,NULL,'CALLE ALCALÁ',150,'Tarjeta33.jpg',0),(20,NULL,'GRAN VÍA',160,'Tarjeta35.jpg',0),(21,NULL,'PASEO DE LA CASTELLANA',175,'Tarjeta38.jpg',0),(22,NULL,'PASEO DEL PRADO',200,'Tarjeta40.jpg',0),(23,NULL,'ESTACIÓN DE GOYA',100,'Tarjeta06.jpg',0),(24,NULL,'ESTACIÓN DE LAS DELICIAS',100,'Tarjeta16.jpg',0),(25,NULL,'ESTACIÓN DEL MEDIODÍA',100,'Tarjeta26.jpg',0),(26,NULL,'ESTACIÓN DEL NORTE',100,'Tarjeta36.jpg',0),(27,NULL,'COMPAÑIA DE AGUAS',75,'Tarjeta29.jpg',0),(28,NULL,'COMPAÑIA DE ELECTRICIDAD',75,'Tarjeta13.jpg',0);
 /*!40000 ALTER TABLE `tarjeta_propiedad` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -212,4 +240,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-08-15 19:01:33
+-- Dump completed on 2013-08-26 20:01:50
