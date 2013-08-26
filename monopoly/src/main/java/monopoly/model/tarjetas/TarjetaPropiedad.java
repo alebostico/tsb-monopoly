@@ -14,9 +14,10 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import monopoly.model.Jugador;
+
+import org.hibernate.annotations.Type;
 
 /**
  * @author Bostico Alejandro
@@ -33,7 +34,6 @@ public abstract class TarjetaPropiedad implements Serializable {
 
     @Id
     @GeneratedValue
-    // (strategy = GenerationType.TABLE)
     @Column(name = "tarjetaPropiedadID")
     private Integer idTarjeta;
 
@@ -50,7 +50,8 @@ public abstract class TarjetaPropiedad implements Serializable {
     @Column(name = "nombreImagen")
     private String nombreImagen;
     
-    @Transient
+    @Column(name = "isHipotecada", columnDefinition = "TINYINT")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean hipotecada;
 
     public boolean isHipotecada() {
