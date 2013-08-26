@@ -45,12 +45,17 @@ public class Jugador implements Serializable {
     
     @Transient
     private List<TarjetaPropiedad> tarjPropiedadList;
+    
     @Transient
     private Juego juego;
+    
     @Transient
     private int dinero;
     
+    @Transient
     private int nroCasas;
+    
+    @Transient
     private int nroHoteles;
     
     @Transient

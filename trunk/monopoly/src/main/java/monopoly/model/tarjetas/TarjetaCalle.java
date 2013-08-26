@@ -55,6 +55,9 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable{
     
     @Column(name = "precioCadaHotel")
     private Integer precioCadaHotel;
+    
+    @Column(name ="color")
+    private String colorTarjeta;
 
     public TarjetaCalle() {
 	super();
@@ -210,7 +213,21 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable{
         this.precioCadaHotel = precioCadaHotel;
     }
 
-    /* (non-Javadoc)
+    /**
+	 * @return the colorTarjeta
+	 */
+	public String getColorTarjeta() {
+		return colorTarjeta;
+	}
+
+	/**
+	 * @param colorTarjeta the colorTarjeta to set
+	 */
+	public void setColorTarjeta(String colorTarjeta) {
+		this.colorTarjeta = colorTarjeta;
+	}
+
+	/* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
