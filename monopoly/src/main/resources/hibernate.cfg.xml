@@ -5,6 +5,7 @@
 <hibernate-configuration>
         <session-factory>
                 <!-- aca van todas las calses que tienen fk o mapped by -->
+                <mapping class="monopoly.model.Ficha" />
                 <mapping class="monopoly.model.Jugador" />
                 <mapping class="monopoly.model.tarjetas.TarjetaPropiedad" />
                 <mapping class="monopoly.model.tarjetas.TarjetaCalle" />
