@@ -233,7 +233,7 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable{
     @Override
     public String toString() {
 	return super.toString() 
-		+ "\n\tCalle [precioAlquiler=" + precioAlquiler + ", valorUnaCasa=" + valorUnaCasa + ", valorDosCasas="
+		+ "\n\tTarjetaCalle [precioAlquiler=" + precioAlquiler + ", valorUnaCasa=" + valorUnaCasa + ", valorDosCasas="
 		+ valorDosCasas + ", valorTresCasas=" + valorTresCasas + ", valorCuatroCasas=" + valorCuatroCasas
 		+ ", valorHotel=" + valorHotel + ", precioCadaCasa=" + precioCadaCasa + ", precioCadaHotel="
 		+ precioCadaHotel + "]";

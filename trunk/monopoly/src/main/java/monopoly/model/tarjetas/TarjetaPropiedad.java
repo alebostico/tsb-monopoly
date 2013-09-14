@@ -30,31 +30,31 @@ import org.hibernate.annotations.Type;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class TarjetaPropiedad implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue
-    @Column(name = "tarjetaPropiedadID")
-    private Integer idTarjeta;
+	@Id
+	@GeneratedValue
+	@Column(name = "tarjetaPropiedadID")
+	private Integer idTarjeta;
 
-    @OneToOne
-    @JoinColumn(name = "jugadorID")
-    private Jugador jugador;
+	@OneToOne
+	@JoinColumn(name = "jugadorID")
+	private Jugador jugador;
 
-    @Column(name = "nombre")
-    private String nombre;
+	@Column(name = "nombre")
+	private String nombre;
 
-    @Column(name = "valorHipotecario")
-    private Integer valorHipotecario;
+	@Column(name = "valorHipotecario")
+	private Integer valorHipotecario;
 
-    @Column(name = "nombreImagen")
-    private String nombreImagen;
-    
-    @Column(name = "isHipotecada", columnDefinition = "TINYINT")
-    @Type(type = "org.hibernate.type.NumericBooleanType")
-    private boolean hipotecada;
+	@Column(name = "nombreImagen")
+	private String nombreImagen;
 
-    public boolean isHipotecada() {
+	@Column(name = "isHipotecada", columnDefinition = "TINYINT")
+	@Type(type = "org.hibernate.type.NumericBooleanType")
+	private boolean hipotecada;
+
+	public boolean isHipotecada() {
 		return hipotecada;
 	}
 
@@ -64,105 +64,107 @@ public abstract class TarjetaPropiedad implements Serializable {
 
 	public TarjetaPropiedad() {
 
-    }
+	}
 
-    /**
-     * @param jugador
-     * @param nombre
-     * @param valorHipotecario
-     */
-    public TarjetaPropiedad(Jugador jugador, String nombre, Integer valorHipotecario, String nombreImagen) {
-	super();
-	this.jugador = jugador;
-	this.nombre = nombre;
-	this.valorHipotecario = valorHipotecario;
-	this.nombreImagen = nombreImagen;
-	this.hipotecada= false;
-    }
+	/**
+	 * @param jugador
+	 * @param nombre
+	 * @param valorHipotecario
+	 */
+	public TarjetaPropiedad(Jugador jugador, String nombre,
+			Integer valorHipotecario, String nombreImagen) {
+		super();
+		this.jugador = jugador;
+		this.nombre = nombre;
+		this.valorHipotecario = valorHipotecario;
+		this.nombreImagen = nombreImagen;
+		this.hipotecada = false;
+	}
 
-    /**
-     * @return the jugador
-     */
-    public Jugador getJugador() {
-	return jugador;
-    }
+	/**
+	 * @return the jugador
+	 */
+	public Jugador getJugador() {
+		return jugador;
+	}
 
-    /**
-     * @param jugador
-     *            the jugador to set
-     */
-    public void setJugador(Jugador jugador) {
-	this.jugador = jugador;
-    }
+	/**
+	 * @param jugador
+	 *            the jugador to set
+	 */
+	public void setJugador(Jugador jugador) {
+		this.jugador = jugador;
+	}
 
-    /**
-     * @return the idTarjeta
-     */
-    public Integer getIdTarjeta() {
-	return idTarjeta;
-    }
+	/**
+	 * @return the idTarjeta
+	 */
+	public Integer getIdTarjeta() {
+		return idTarjeta;
+	}
 
-    /**
-     * @param idTarjeta
-     *            the idTarjeta to set
-     */
-    public void setIdTarjeta(Integer idTarjeta) {
-	this.idTarjeta = idTarjeta;
-    }
+	/**
+	 * @param idTarjeta
+	 *            the idTarjeta to set
+	 */
+	public void setIdTarjeta(Integer idTarjeta) {
+		this.idTarjeta = idTarjeta;
+	}
 
-    /**
-     * @return the nombre
-     */
-    public String getNombre() {
-	return nombre;
-    }
+	/**
+	 * @return the nombre
+	 */
+	public String getNombre() {
+		return nombre;
+	}
 
-    /**
-     * @param nombre
-     *            the nombre to set
-     */
-    public void setNombre(String nombre) {
-	this.nombre = nombre;
-    }
+	/**
+	 * @param nombre
+	 *            the nombre to set
+	 */
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
 
-    /**
-     * @return the valorHipotecario
-     */
-    public Integer getValorHipotecario() {
-	return valorHipotecario;
-    }
+	/**
+	 * @return the valorHipotecario
+	 */
+	public Integer getValorHipotecario() {
+		return valorHipotecario;
+	}
 
-    /**
-     * @param valorHipotecario
-     *            the valorHipotecario to set
-     */
-    public void setValorHipotecario(Integer valorHipotecario) {
-	this.valorHipotecario = valorHipotecario;
-    }
+	/**
+	 * @param valorHipotecario
+	 *            the valorHipotecario to set
+	 */
+	public void setValorHipotecario(Integer valorHipotecario) {
+		this.valorHipotecario = valorHipotecario;
+	}
 
-    /**
-     * @return the nombreImagen
-     */
-    public String getNombreImagen() {
-	return nombreImagen;
-    }
+	/**
+	 * @return the nombreImagen
+	 */
+	public String getNombreImagen() {
+		return nombreImagen;
+	}
 
-    /**
-     * @param nombreImagen
-     *            the nombreImagen to set
-     */
-    public void setNombreImagen(String nombreImagen) {
-	this.nombreImagen = nombreImagen;
-    }
+	/**
+	 * @param nombreImagen
+	 *            the nombreImagen to set
+	 */
+	public void setNombreImagen(String nombreImagen) {
+		this.nombreImagen = nombreImagen;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-	return "Propiedad [ nombre=" + nombre + ", valorHipotecario=" + valorHipotecario + " ]";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "TarjetaPropiedad [ nombre=" + nombre + ", valorHipotecario="
+				+ valorHipotecario + " ]";
+	}
 
 }

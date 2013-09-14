@@ -5,6 +5,7 @@ package monopoly.dao;
 
 import java.util.List;
 
+import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaComunidad;
 
 /**
@@ -22,5 +23,5 @@ public interface ITarjetaComunidadDao {
     void delete(TarjetaComunidad tarjeta);
     
     List<TarjetaComunidad> getAll();
-    
+   
 }

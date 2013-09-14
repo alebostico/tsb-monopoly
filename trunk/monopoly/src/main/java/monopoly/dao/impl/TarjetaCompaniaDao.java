@@ -10,6 +10,8 @@ import monopoly.dao.ITarjetaCompaniaDao;
 import monopoly.model.tarjetas.TarjetaCompania;
 import monopoly.util.CustomHibernateDaoSupport;
 
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -26,7 +28,6 @@ public class TarjetaCompaniaDao extends CustomHibernateDaoSupport implements ITa
      */
     @Override
     public void save(TarjetaCompania tarjeta) {
-	// TODO Auto-generated method stub
 	getHibernateTemplate().save(tarjeta);
     }
 
@@ -35,7 +36,6 @@ public class TarjetaCompaniaDao extends CustomHibernateDaoSupport implements ITa
      */
     @Override
     public void update(TarjetaCompania tarjeta) {
-	// TODO Auto-generated method stub
 	getHibernateTemplate().update(tarjeta);
     }
 
@@ -44,7 +44,6 @@ public class TarjetaCompaniaDao extends CustomHibernateDaoSupport implements ITa
      */
     @Override
     public void delete(TarjetaCompania tarjeta) {
-	// TODO Auto-generated method stub
 	getHibernateTemplate().delete(tarjeta);
     }
 
@@ -53,7 +52,6 @@ public class TarjetaCompaniaDao extends CustomHibernateDaoSupport implements ITa
      */
     @Override
     public List<TarjetaCompania> getAll() {
-	// TODO Auto-generated method stub
 	List<TarjetaCompania> tarjetasList = new ArrayList<TarjetaCompania>();
         List<?> list = getHibernateTemplate().find("from TarjetaCompania");
         if (!list.isEmpty()) {
@@ -63,5 +61,18 @@ public class TarjetaCompaniaDao extends CustomHibernateDaoSupport implements ITa
         }
         return tarjetasList;
     }
+
+	@Override
+	public TarjetaCompania findByNombre(String nombreCompania) {
+		Session session = this.getSession();
+
+		List<?> list = session.createCriteria(TarjetaCompania.class)
+				.add(Restrictions.eq("nombre", nombreCompania)).list();
+		if (!list.isEmpty()) {
+			return (TarjetaCompania) list.get(0);
+		}
+
+		return null;
+	}
 
 }
