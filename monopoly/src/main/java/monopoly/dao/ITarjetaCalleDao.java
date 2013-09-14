@@ -22,5 +22,7 @@ public interface ITarjetaCalleDao {
     void delete(TarjetaCalle tarjeta);
     
     List<TarjetaCalle> getAll();
+    
+    public TarjetaCalle findByNombre(String nombreCalle);
 
 }

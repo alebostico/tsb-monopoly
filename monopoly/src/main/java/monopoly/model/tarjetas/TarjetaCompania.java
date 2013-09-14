@@ -91,7 +91,7 @@ public class TarjetaCompania extends TarjetaPropiedad implements Serializable{
     @Override
     public String toString() {
 	return super.toString()
-		+ "\n\tCompania [vecesPorUnaCarta=" + vecesPorUnaCarta + ", vecesPorDosCartas=" + vecesPorDosCartas
+		+ "\n\tTarjetaCompania [vecesPorUnaCarta=" + vecesPorUnaCarta + ", vecesPorDosCartas=" + vecesPorDosCartas
 		+ "]";
     }
     

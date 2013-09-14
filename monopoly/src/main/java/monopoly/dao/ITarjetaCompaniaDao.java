@@ -23,4 +23,6 @@ public interface ITarjetaCompaniaDao {
     
     List<TarjetaCompania> getAll();
     
+    public TarjetaCompania findByNombre(String nombreCompania);
+    
 }

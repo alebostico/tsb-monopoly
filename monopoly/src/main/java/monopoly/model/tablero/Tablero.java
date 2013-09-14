@@ -3,11 +3,19 @@
  */
 package monopoly.model.tablero;
 
+import monopoly.dao.ITarjetaCalleDao;
+import monopoly.dao.ITarjetaCompaniaDao;
+import monopoly.dao.ITarjetaEstacionDao;
 import monopoly.model.Banco;
 import monopoly.model.Jugador;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaCompania;
 import monopoly.model.tarjetas.TarjetaEstacion;
+import monopoly.model.tarjetas.TarjetaPropiedad;
+import monopoly.util.GestorLogs;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Clase que representa al tablero del juego. Mantiene una inastancia de cada
@@ -38,6 +46,8 @@ public class Tablero {
 		this.banco = banco;
 
 		this.loadCasilleros();
+
+		GestorLogs.registrarLog("Tablero cargado");
 	}
 
 	/**
@@ -47,82 +57,104 @@ public class Tablero {
 	 */
 	private void loadCasilleros() {
 
+		ApplicationContext appContext = new ClassPathXmlApplicationContext(
+				"spring/config/BeanLocations.xml");
+		ITarjetaCalleDao tarjetaCalleDao = (ITarjetaCalleDao) appContext
+				.getBean("tarjetaCalleDao");
+		ITarjetaCompaniaDao tarjetaCompaniaDao = (ITarjetaCompaniaDao) appContext
+				.getBean("tarjetaCompaniaDao");
+		ITarjetaEstacionDao tarjetaEstacionDao = (ITarjetaEstacionDao) appContext
+				.getBean("tarjetaEstacionDao");
+
 		this.casillerosList[0] = new Casillero(1, Casillero.CASILLERO_SALIDA);
 		this.casillerosList[1] = new CasilleroCalle(2, "Ronda de Valencia",
-				new TarjetaCalle());
+				tarjetaCalleDao.findByNombre("RONDA DE VALENCIA"));
 		this.casillerosList[2] = new Casillero(3, Casillero.CASILLERO_COMUNIDAD);
 		this.casillerosList[3] = new CasilleroCalle(4, "Plaza Lavapiés",
-				new TarjetaCalle());
+				tarjetaCalleDao.findByNombre("PLAZA DE LAVAPIÉS"));
 		this.casillerosList[4] = new Casillero(5, Casillero.CASILLERO_IMPUESTO);
 		this.casillerosList[5] = new CasilleroEstacion(6, "Estación de Goya",
-				new TarjetaEstacion());
+				tarjetaEstacionDao.findByNombre("ESTACIÓN DE GOYA"));
 		this.casillerosList[6] = new CasilleroCalle(7,
-				"Glorieta Cuatro Caminos", new TarjetaCalle());
+				"Glorieta Cuatro Caminos",
+				tarjetaCalleDao.findByNombre("GLORIETA CUATRO CAMINOS"));
 		this.casillerosList[7] = new Casillero(8, Casillero.CASILLERO_SUERTE);
 		this.casillerosList[8] = new CasilleroCalle(9,
-				"Avenida Reina Victoria", new TarjetaCalle());
+				"Avenida Reina Victoria",
+				tarjetaCalleDao.findByNombre("AVENIDA REINA VICTORIA"));
 		this.casillerosList[9] = new CasilleroCalle(10, "Calle Bravo Murillo",
-				new TarjetaCalle());
+				tarjetaCalleDao.findByNombre("CALLE BRAVO MURILLO"));
 
 		this.casillerosList[10] = new Casillero(11, Casillero.CASILLERO_CARCEL);
 		this.casillerosList[11] = new CasilleroCalle(12, "Glorieta de Biblbao",
-				new TarjetaCalle());
+				tarjetaCalleDao.findByNombre("GLORIETA DE BILBAO"));
 		this.casillerosList[12] = new CasilleroCompania(13,
-				"Compañía de Electricidad", new TarjetaCompania());
+				"Compañía de Electricidad",
+				tarjetaCompaniaDao.findByNombre("COMPAÑIA DE ELECTRICIDAD"));
 		this.casillerosList[13] = new CasilleroCalle(14,
-				"Calle Alberto Aguilera", new TarjetaCalle());
+				"Calle Alberto Aguilera",
+				tarjetaCalleDao.findByNombre("CALLE ALBERTO AGUILERA"));
 		this.casillerosList[14] = new CasilleroCalle(15, "Calle Fuencarral",
-				new TarjetaCalle());
+				tarjetaCalleDao.findByNombre("CALLE FUENCARRAL"));
 		this.casillerosList[15] = new CasilleroEstacion(16,
-				"Estación de las Delicias", new TarjetaEstacion());
+				"Estación de las Delicias",
+				tarjetaEstacionDao.findByNombre("ESTACIÓN DE LAS DELICIAS"));
 		this.casillerosList[16] = new CasilleroCalle(17, "Avenida Felipe II",
-				new TarjetaCalle());
+				tarjetaCalleDao.findByNombre("AVENIDA FELIPE II"));
 		this.casillerosList[17] = new Casillero(18,
 				Casillero.CASILLERO_COMUNIDAD);
 		this.casillerosList[18] = new CasilleroCalle(19, "Calle Velázquez",
-				new TarjetaCalle());
+				tarjetaCalleDao.findByNombre("CALLE VELÁZQUEZ"));
 		this.casillerosList[19] = new CasilleroCalle(20, "Calle Serrano",
-				new TarjetaCalle());
+				tarjetaCalleDao.findByNombre("CALLE SERRANO"));
 
 		this.casillerosList[20] = new Casillero(21,
 				Casillero.CASILLERO_DESCANSO);
 		this.casillerosList[21] = new CasilleroCalle(22, "Avenida de América",
-				new TarjetaCalle());
+				tarjetaCalleDao.findByNombre("AVENIDA AMÉRICA"));
 		this.casillerosList[22] = new Casillero(23, Casillero.CASILLERO_SUERTE);
 		this.casillerosList[23] = new CasilleroCalle(24,
-				"Calle María de Molina", new TarjetaCalle());
+				"Calle María de Molina",
+				tarjetaCalleDao.findByNombre("CALLE MARÍA DE MOLINA"));
 		this.casillerosList[24] = new CasilleroCalle(25, "Calle Cea Bermúdez",
-				new TarjetaCalle());
+				tarjetaCalleDao.findByNombre("CALLE CEA BERMÚDEZ"));
 		this.casillerosList[25] = new CasilleroEstacion(26,
-				"Estación del Mediodía", new TarjetaEstacion());
+				"Estación del Mediodía",
+				tarjetaEstacionDao.findByNombre("ESTACIÓN DEL MEDIODÍA"));
 		this.casillerosList[26] = new CasilleroCalle(27,
-				"Avenida de los Reyes Católicos", new TarjetaCalle());
+				"Avenida de los Reyes Católicos",
+				tarjetaCalleDao.findByNombre("AVENIDA DE LOS REYES CATÓLICOS"));
 		this.casillerosList[27] = new CasilleroCalle(28, "Calle Bailén",
-				new TarjetaCalle());
+				tarjetaCalleDao.findByNombre("CALLE BAILÉN"));
 		this.casillerosList[28] = new CasilleroCompania(29,
-				"Compañía de Aguas", new TarjetaCompania());
+				"Compañía de Aguas",
+				tarjetaCompaniaDao.findByNombre("COMPAÑIA DE AGUAS"));
 		this.casillerosList[29] = new CasilleroCalle(30, "Plaza de España",
-				new TarjetaCalle());
+				tarjetaCalleDao.findByNombre("PLAZA ESPAÑA"));
 
 		this.casillerosList[30] = new Casillero(31,
 				Casillero.CASILLERO_IRACARCEL);
 		this.casillerosList[31] = new CasilleroCalle(32, "Puerta del Sol",
-				new TarjetaCalle());
+				tarjetaCalleDao.findByNombre("PUERTA DEL SOL"));
 		this.casillerosList[32] = new CasilleroCalle(33, "Calle Alcalá",
-				new TarjetaCalle());
+				tarjetaCalleDao.findByNombre("CALLE ALCALÁ"));
 		this.casillerosList[33] = new Casillero(34,
 				Casillero.CASILLERO_COMUNIDAD);
 		this.casillerosList[34] = new CasilleroCalle(35, "Gran Vía",
-				new TarjetaCalle());
+				tarjetaCalleDao.findByNombre("GRAN VÍA"));
 		this.casillerosList[35] = new CasilleroEstacion(36,
-				"Estación del Norte", new TarjetaEstacion());
+				"Estación del Norte",
+				tarjetaEstacionDao.findByNombre("ESTACIÓN DEL NORTE"));
 		this.casillerosList[36] = new Casillero(37, Casillero.CASILLERO_SUERTE);
 		this.casillerosList[37] = new CasilleroCalle(38,
-				"Paseo de la Castellana", new TarjetaCalle());
+				"Paseo de la Castellana",
+				tarjetaCalleDao.findByNombre("PASEO DE LA CASTELLANA"));
 		this.casillerosList[38] = new Casillero(39,
 				Casillero.CASILLERO_IMPUESTO);
 		this.casillerosList[39] = new CasilleroCalle(40, "Paseo del Prado",
-				new TarjetaCalle());
+				tarjetaCalleDao.findByNombre("PASEO DEL PRADO"));
+
+		GestorLogs.registrarLog("Casilleros cargados");
 
 	}
 
@@ -178,7 +210,7 @@ public class Tablero {
 			}
 
 			if (casilleroActual.getTipoCasillero() == Casillero.CASILLERO_COMPANIA) {
-				if (((CasilleroCompania) casilleroActual).getNombreEstacion()
+				if (((CasilleroCompania) casilleroActual).getNombreCompania()
 						.compareTo(nombreCasillero) == 0) {
 					return casilleroActual;
 				}
@@ -370,5 +402,128 @@ public class Tablero {
 	 */
 	public Casillero retrocederA(Jugador jugador, int nroCasillero) {
 		return this.moverACasillero(jugador, nroCasillero, false);
+	}
+
+	public String toString() {
+
+		StringBuffer toReturn = new StringBuffer();
+		toReturn.append("===============================================================================================\n");
+		toReturn.append("|                                         TABLERO                                             |\n");
+		toReturn.append("===============================================================================================\n");
+		toReturn.append("| Nro |   Tipo Casillero    |        Nombre Casillero        |         Nombre Tarjeta         |\n");
+		toReturn.append("|-----|---------------------|--------------------------------|--------------------------------|\n");
+
+		for (int i = 0; i < this.cantCasilleros; i++) {
+			// Nro =================================================
+			toReturn.append("| ");
+			toReturn.append(String.format("%02d",
+					this.casillerosList[i].getNumeroCasillero()));
+			toReturn.append("  ");
+
+			// Tipo Casillero ======================================
+			toReturn.append("| ");
+			toReturn.append(String.format("%1$19s",
+					this.casillerosList[i].getTipoCasilleroString()));
+			toReturn.append(" ");
+
+			// Nombre Casillero ====================================
+			switch (this.casillerosList[i].getTipoCasillero()) {
+			case Casillero.CASILLERO_CALLE:
+				toReturn.append("| ");
+				toReturn.append(String.format("%1$30s",
+						((CasilleroCalle) this.casillerosList[i])
+								.getNombreCalle()));
+				toReturn.append(" ");
+				break;
+
+			case Casillero.CASILLERO_ESTACION:
+				toReturn.append("| ");
+				toReturn.append(String.format("%1$30s",
+						((CasilleroEstacion) this.casillerosList[i])
+								.getNombreEstacion()));
+				toReturn.append(" ");
+				break;
+
+			case Casillero.CASILLERO_COMPANIA:
+				toReturn.append("| ");
+				toReturn.append(String.format("%1$30s",
+						((CasilleroCompania) this.casillerosList[i])
+								.getNombreCompania()));
+				toReturn.append(" ");
+				break;
+
+			default:
+				toReturn.append("| ");
+				toReturn.append(String.format("%1$30s", ""));
+				toReturn.append(" ");
+				break;
+			}
+
+			// Nombre Tarjeta ======================================
+			TarjetaPropiedad tarjeta;
+
+			switch (this.casillerosList[i].getTipoCasillero()) {
+			case Casillero.CASILLERO_CALLE:
+				tarjeta = ((CasilleroCalle) this.casillerosList[i])
+						.getTarjetaCalle();
+
+				if (tarjeta != null) {
+					toReturn.append("| ");
+					toReturn.append(String.format("%1$30s",
+							((TarjetaCalle) tarjeta).getNombre()));
+					toReturn.append(" ");
+				} else {
+					toReturn.append("| ");
+					toReturn.append(String.format("%1$30s",
+							"<ERROR: TARJETA NOT FOUND>"));
+					toReturn.append(" ");
+				}
+				break;
+			case Casillero.CASILLERO_ESTACION:
+				tarjeta = ((CasilleroEstacion) this.casillerosList[i])
+						.getTarjetaEstacion();
+
+				if (tarjeta != null) {
+					toReturn.append("| ");
+					toReturn.append(String.format("%1$30s",
+							((TarjetaEstacion) tarjeta).getNombre()));
+					toReturn.append(" ");
+				} else {
+					toReturn.append("| ");
+					toReturn.append(String.format("%1$30s",
+							"<ERROR: TARJETA NOT FOUND>"));
+					toReturn.append(" ");
+				}
+				break;
+			case Casillero.CASILLERO_COMPANIA:
+				tarjeta = ((CasilleroCompania) this.casillerosList[i])
+						.getTarjetaCompania();
+
+				if (tarjeta != null) {
+					toReturn.append("| ");
+					toReturn.append(String.format("%1$30s",
+							((TarjetaCompania) tarjeta).getNombre()));
+					toReturn.append(" ");
+				} else {
+					toReturn.append("| ");
+					toReturn.append(String.format("%1$30s",
+							"<ERROR: TARJETA NOT FOUND>"));
+					toReturn.append(" ");
+				}
+				break;
+
+			default:
+				toReturn.append("| ");
+				toReturn.append(String.format("%1$30s", ""));
+				toReturn.append(" ");
+				break;
+			}
+
+			toReturn.append("|\n");
+		}
+
+		toReturn.append("===============================================================================================");
+
+		return toReturn.toString();
 	}
 }

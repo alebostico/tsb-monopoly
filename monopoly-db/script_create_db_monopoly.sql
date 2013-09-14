@@ -16,25 +16,25 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `Jugador`
+-- Table structure for table `jugador`
 --
 
-DROP TABLE IF EXISTS `Jugador`;
+DROP TABLE IF EXISTS `jugador`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Jugador` (
+CREATE TABLE `jugador` (
   `jugadorID` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`jugadorID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `Jugador`
+-- Dumping data for table `jugador`
 --
 
-LOCK TABLES `Jugador` WRITE;
-/*!40000 ALTER TABLE `Jugador` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Jugador` ENABLE KEYS */;
+LOCK TABLES `jugador` WRITE;
+/*!40000 ALTER TABLE `jugador` DISABLE KEYS */;
+/*!40000 ALTER TABLE `jugador` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -193,7 +193,7 @@ CREATE TABLE `tarjeta_propiedad` (
   `isHipotecada` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`tarjetaPropiedadID`),
   KEY `fk_tarjeta_propiedad_jugador` (`jugadorID`),
-  CONSTRAINT `fk_tarjeta_propiedad_jugador` FOREIGN KEY (`jugadorID`) REFERENCES `Jugador` (`jugadorID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_tarjeta_propiedad_jugador` FOREIGN KEY (`jugadorID`) REFERENCES `jugador` (`jugadorID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

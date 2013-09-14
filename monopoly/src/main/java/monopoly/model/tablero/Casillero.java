@@ -121,4 +121,56 @@ public class Casillero {
 		return tipoCasillero;
 	}
 
+	/**
+	 * Devuelve el tipo de casillero en formato String
+	 * 
+	 * @return El tipo de casillero en String
+	 */
+	public String getTipoCasilleroString() {
+		return this.tipoCasilleroToString(this.tipoCasillero);
+	}
+
+	public String toString() {
+		return "Casillero [ numeroCasillero=" + this.numeroCasillero
+				+ ", tipoCasillero="
+				+ this.tipoCasilleroToString(this.tipoCasillero) + " ]";
+	}
+
+	private String tipoCasilleroToString(int tipoCasillero) {
+		// CASILLERO_CALLE = 1; // 22 casilleros
+		// CASILLERO_ESTACION = 2; // 4 casilleros
+		// CASILLERO_COMPANIA = 3; // 2 casilleros
+		// CASILLERO_SUERTE = 4; // 3 casilleros
+		// CASILLERO_COMUNIDAD = 5; // 3 casilleros
+		// CASILLERO_CARCEL = 6; // 1 casilleros
+		// CASILLERO_IRACARCEL = 7; // 1 casilleros
+		// CASILLERO_SALIDA = 8; // 1 casilleros
+		// CASILLERO_DESCANSO = 9; // 1 casilleros
+		// CASILLERO_IMPUESTO = 10; // 2 casilleros
+
+		switch (tipoCasillero) {
+		case 1:
+			return "CASILLERO_CALLE";
+		case 2:
+			return "CASILLERO_ESTACION";
+		case 3:
+			return "CASILLERO_COMPANIA";
+		case 4:
+			return "CASILLERO_SUERTE";
+		case 5:
+			return "CASILLERO_COMUNIDAD";
+		case 6:
+			return "CASILLERO_CARCEL";
+		case 7:
+			return "CASILLERO_IRACARCEL";
+		case 8:
+			return "CASILLERO_SALIDA";
+		case 9:
+			return "CASILLERO_DESCANSO";
+		case 10:
+			return "CASILLERO_IMPUESTO";
+		default:
+			return "<_TIPO_CASILLERO_INCORRECTO_>";
+		}
+	}
 }

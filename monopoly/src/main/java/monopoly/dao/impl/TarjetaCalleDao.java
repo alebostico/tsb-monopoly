@@ -10,6 +10,8 @@ import monopoly.dao.ITarjetaCalleDao;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.util.CustomHibernateDaoSupport;
 
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -19,57 +21,71 @@ import org.springframework.stereotype.Repository;
  * 
  */
 @Repository("tarjetaCalleDao")
-public class TarjetaCalleDao extends CustomHibernateDaoSupport implements ITarjetaCalleDao {
+public class TarjetaCalleDao extends CustomHibernateDaoSupport implements
+		ITarjetaCalleDao {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see monopoly.dao.ITarjetaCalleDao#save(monopoly.model.tarjetas.TarjetaCalle)
-     */
-    @Override
-    public void save(TarjetaCalle tarjeta) {
-	// TODO Auto-generated method stub
-	getHibernateTemplate().save(tarjeta);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * monopoly.dao.ITarjetaCalleDao#save(monopoly.model.tarjetas.TarjetaCalle)
+	 */
+	@Override
+	public void save(TarjetaCalle tarjeta) {
+		getHibernateTemplate().save(tarjeta);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see monopoly.dao.ITarjetaCalleDao#update(monopoly.model.tarjetas.TarjetaCalle)
-     */
-    @Override
-    public void update(TarjetaCalle tarjeta) {
-	// TODO Auto-generated method stub
-	getHibernateTemplate().update(tarjeta);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * monopoly.dao.ITarjetaCalleDao#update(monopoly.model.tarjetas.TarjetaCalle
+	 * )
+	 */
+	@Override
+	public void update(TarjetaCalle tarjeta) {
+		getHibernateTemplate().update(tarjeta);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see monopoly.dao.ITarjetaCalleDao#delete(monopoly.model.tarjetas.TarjetaCalle)
-     */
-    @Override
-    public void delete(TarjetaCalle tarjeta) {
-	// TODO Auto-generated method stub
-	getHibernateTemplate().delete(tarjeta);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * monopoly.dao.ITarjetaCalleDao#delete(monopoly.model.tarjetas.TarjetaCalle
+	 * )
+	 */
+	@Override
+	public void delete(TarjetaCalle tarjeta) {
+		getHibernateTemplate().delete(tarjeta);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see monopoly.dao.ITarjetaCalleDao#getAll()
-     */
-    @Override
-    public List<TarjetaCalle> getAll() {
-	// TODO Auto-generated method stub
-	List<TarjetaCalle> tarjetasList = new ArrayList<TarjetaCalle>();
-        List<?> list = getHibernateTemplate().find("from TarjetaCalle");
-        if (!list.isEmpty()) {
-            for (Object obj : list) {
-                tarjetasList.add((TarjetaCalle) obj);
-            }
-        }
-        return tarjetasList;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see monopoly.dao.ITarjetaCalleDao#getAll()
+	 */
+	@Override
+	public List<TarjetaCalle> getAll() {
+		List<TarjetaCalle> tarjetasList = new ArrayList<TarjetaCalle>();
+		List<?> list = getHibernateTemplate().find("from TarjetaCalle");
+		if (!list.isEmpty()) {
+			for (Object obj : list) {
+				tarjetasList.add((TarjetaCalle) obj);
+			}
+		}
+		return tarjetasList;
+	}
 
+	public TarjetaCalle findByNombre(String nombreCalle) {
+		// List<TarjetaCalle> tarjetasList = new ArrayList<TarjetaCalle>();
+		Session session = this.getSession();
+
+		List<?> list = session.createCriteria(TarjetaCalle.class)
+				.add(Restrictions.eq("nombre", nombreCalle)).list();
+		if (!list.isEmpty()) {
+			return (TarjetaCalle) list.get(0);
+		}
+
+		return null;
+	}
 }

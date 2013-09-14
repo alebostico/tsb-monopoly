@@ -16,8 +16,8 @@ public class CasilleroCalle extends Casillero {
 	String nombreCalle;
 	TarjetaPropiedad tarjetaCalle;
 
-	public CasilleroCalle(int numeroCasillero,
-			String nombreCalle, TarjetaPropiedad tarjetaCalle) {
+	public CasilleroCalle(int numeroCasillero, String nombreCalle,
+			TarjetaPropiedad tarjetaCalle) {
 		super(numeroCasillero, Casillero.CASILLERO_CALLE);
 		this.nombreCalle = nombreCalle;
 		this.tarjetaCalle = tarjetaCalle;
@@ -34,6 +34,12 @@ public class CasilleroCalle extends Casillero {
 	public TarjetaCalle comprarCalle(Jugador jugador) {
 		// TODO: implementar el metodo que realiza la compra de la calle.
 		return (TarjetaCalle) tarjetaCalle;
+	}
+
+	public String toString() {
+		return super.toString() + "\n\tCasilleroCalle [nombreCalle="
+				+ this.nombreCalle + ", TarjetaCalle {\n"
+				+ this.tarjetaCalle.toString() + "\n}]";
 	}
 
 }
