@@ -10,7 +10,12 @@
 		</folder>
 		
 		<folder id="tarjetas">
-			<path>/images/tarjetas/</path>
+			<frente>
+				<path>/images/tarjetas/frente/</path>
+			</frente>
+			<dorso>
+				<path>/images/tarjetas/dorso/</path>
+			</dorso>
 		</folder>
 	</path_folders>
 	
