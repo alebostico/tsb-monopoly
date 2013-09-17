@@ -9,6 +9,7 @@ import java.util.List;
 import monopoly.dao.ITarjetaCalleDao;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.util.CustomHibernateDaoSupport;
+import monopoly.util.GestorLogs;
 
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -84,8 +85,11 @@ public class TarjetaCalleDao extends CustomHibernateDaoSupport implements
 				.add(Restrictions.eq("nombre", nombreCalle)).list();
 		if (!list.isEmpty()) {
 			return (TarjetaCalle) list.get(0);
+		} else {
+			GestorLogs
+					.registrarError("No se encontró la TarjetaCalle con nombre "
+							+ nombreCalle);
 		}
-
 		return null;
 	}
 }

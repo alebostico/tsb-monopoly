@@ -37,9 +37,12 @@ public class CasilleroCalle extends Casillero {
 	}
 
 	public String toString() {
-		return super.toString() + "\n\tCasilleroCalle [nombreCalle="
-				+ this.nombreCalle + ", TarjetaCalle {\n"
-				+ this.tarjetaCalle.toString() + "\n}]";
+		return super.toString()
+				+ "\n\tCasilleroCalle [nombreCalle="
+				+ this.nombreCalle
+				+ ", TarjetaCalle {\n"
+				+ ((this.tarjetaCalle != null) ? this.tarjetaCalle.toString()
+						: "<NO EXISTE LA TARJETA>") + "\n}]";
 	}
 
 }

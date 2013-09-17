@@ -156,6 +156,33 @@ public class Tablero {
 
 		GestorLogs.registrarLog("Casilleros cargados");
 
+		if (GestorLogs.getLoggingDetailLevel() == GestorLogs.MSG_DEBUG_DETAIL) {
+			// loguea info de los casilleros en forma detallada
+			StringBuilder mensaje = new StringBuilder("Tablero:\n");
+
+			for (Casillero casillero : this.casillerosList) {
+				switch (casillero.getTipoCasillero()) {
+				case Casillero.CASILLERO_CALLE:
+					mensaje.append(((CasilleroCalle) casillero).toString());
+					break;
+				case Casillero.CASILLERO_COMPANIA:
+					mensaje.append(((CasilleroCompania) casillero).toString());
+					break;
+				case Casillero.CASILLERO_ESTACION:
+					mensaje.append(((CasilleroEstacion) casillero).toString());
+					break;
+				default:
+					mensaje.append(casillero.toString());
+					break;
+				}
+				mensaje.append("\n");
+			}
+			GestorLogs.registrarDebugDetail(mensaje.toString());
+		} else if (GestorLogs.getLoggingDetailLevel() == GestorLogs.MSG_DEBUG) {
+			// Loguea info de los casilleros en forma resumida
+			GestorLogs.registrarDebug(this.toString());
+		}
+
 	}
 
 	/**
@@ -177,7 +204,21 @@ public class Tablero {
 
 		if (nroCasillero > this.cantCasilleros || nroCasillero < 1)
 			return null;
-		return this.casillerosList[nroCasillero + 1];
+
+		// Creo que este casteo no es necesario porque afuera hay que volver a
+		// preguntar y castear
+		// switch (this.casillerosList[nroCasillero + 1].getTipoCasillero()) {
+		// case Casillero.CASILLERO_CALLE:
+		// return (CasilleroCalle) this.casillerosList[nroCasillero + 1];
+		// case Casillero.CASILLERO_COMPANIA:
+		// return (CasilleroCompania) this.casillerosList[nroCasillero + 1];
+		// case Casillero.CASILLERO_ESTACION:
+		// return (CasilleroEstacion) this.casillerosList[nroCasillero + 1];
+		// default:
+		// return this.casillerosList[nroCasillero + 1];
+		// }
+
+		 return this.casillerosList[nroCasillero + 1];
 	}
 
 	/**
@@ -185,7 +226,7 @@ public class Tablero {
 	 * 'nombreCasillero' o null si el nombre no existe.
 	 * 
 	 * @param nombreCasillero
-	 *            El nombre de la calle.
+	 *            El nombre del casillero.
 	 * @return El Casillero con el nombre pasado por parámetro o null si la
 	 *         calle no existe.
 	 */
@@ -248,6 +289,7 @@ public class Tablero {
 	public Casillero moverAdelante(Jugador jugador, int cantCasilleros,
 			boolean cobraSalida) {
 
+		boolean cobroSalida = false;
 		// busco el casillero actual en el que esta el jugador
 		Casillero casilleroActual = jugador.getCasilleroActual();
 
@@ -263,9 +305,11 @@ public class Tablero {
 
 			// si el jugador tiene que cobrar los $200 en caso de pasar por la
 			// salida...
-			if (cobraSalida)
+			if (cobraSalida) {
 				// ... los cobra
 				this.banco.cobrar(jugador, 200);
+				cobroSalida = true;
+			}
 
 		}
 
@@ -281,6 +325,8 @@ public class Tablero {
 		casilleroSiguiente.addJugador(jugador);
 
 		jugador.setCasilleroActual(casilleroSiguiente);
+
+		this.registrarInfo(jugador, casilleroSiguiente, cobroSalida);
 
 		return casilleroSiguiente;
 	}
@@ -326,6 +372,8 @@ public class Tablero {
 		Casillero casilleroActual = jugador.getCasilleroActual();
 		Casillero casilleroSiguiente = this.getCasillero(nroCasillero);
 
+		boolean cobroSalida = false;
+
 		// si el nroCasillero es inválido (menor a 1 o mayor a 40) retorna
 		// null...
 		if (casilleroSiguiente == null)
@@ -336,15 +384,19 @@ public class Tablero {
 				.getNumeroCasillero()) {
 			// y si el jugador tiene que cobrar los $200 en caso de pasar por la
 			// salida...
-			if (cobraSalida)
+			if (cobraSalida) {
 				// ... los cobra
 				this.banco.cobrar(jugador, 200);
+				cobroSalida = true;
+			}
 		}
 
 		casilleroActual.removeJugador(jugador);
 		casilleroSiguiente.addJugador(jugador);
 
 		jugador.setCasilleroActual(casilleroSiguiente);
+
+		this.registrarInfo(jugador, casilleroSiguiente, cobroSalida);
 
 		return casilleroSiguiente;
 	}
@@ -407,7 +459,7 @@ public class Tablero {
 	public String toString() {
 
 		StringBuffer toReturn = new StringBuffer();
-		toReturn.append("===============================================================================================\n");
+		toReturn.append("\n===============================================================================================\n");
 		toReturn.append("|                                         TABLERO                                             |\n");
 		toReturn.append("===============================================================================================\n");
 		toReturn.append("| Nro |   Tipo Casillero    |        Nombre Casillero        |         Nombre Tarjeta         |\n");
@@ -525,5 +577,16 @@ public class Tablero {
 		toReturn.append("===============================================================================================");
 
 		return toReturn.toString();
+	}
+
+	private void registrarInfo(Jugador jugador, Casillero casillero,
+			boolean cobroSalida) {
+		GestorLogs.registrarLog("El Jugador '"
+				+ jugador.getFicha().getNombre()
+				+ "' se movio al casillero #"
+				+ casillero.getNumeroCasillero()
+				+ ((cobroSalida) ? " y cobro $200 en la salida"
+						: " y NO cobro $200 en la salida"));
+
 	}
 }
