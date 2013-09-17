@@ -15,13 +15,13 @@ public class CasilleroCompania extends Casillero {
 	String nombreCompania;
 	TarjetaCompania tarjetaCompania;
 
-	public CasilleroCompania(int numeroCasillero,
-			String nombreCompania, TarjetaCompania tarjetaCompania) {
+	public CasilleroCompania(int numeroCasillero, String nombreCompania,
+			TarjetaCompania tarjetaCompania) {
 		super(numeroCasillero, Casillero.CASILLERO_COMPANIA);
 		this.nombreCompania = nombreCompania;
 		this.tarjetaCompania = tarjetaCompania;
 	}
-	
+
 	public String getNombreCompania() {
 		return nombreCompania;
 	}
@@ -35,4 +35,12 @@ public class CasilleroCompania extends Casillero {
 		return (TarjetaCompania) tarjetaCompania;
 	}
 
+	public String toString() {
+		return super.toString()
+				+ "\n\tCasilleroCompania [nombreCompania="
+				+ this.nombreCompania
+				+ ", TarjetaCompania {\n"
+				+ ((this.tarjetaCompania != null) ? this.tarjetaCompania
+						.toString() : "<NO EXISTE LA TARJETA>") + "\n}]";
+	}
 }

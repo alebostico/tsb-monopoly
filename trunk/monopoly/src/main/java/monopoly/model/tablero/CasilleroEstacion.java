@@ -15,13 +15,13 @@ public class CasilleroEstacion extends Casillero {
 	String nombreEstacion;
 	TarjetaEstacion tarjetaEstacion;
 
-	public CasilleroEstacion(int numeroCasillero,
-			String nombreEstacion, TarjetaEstacion tarjetaEstacion) {
+	public CasilleroEstacion(int numeroCasillero, String nombreEstacion,
+			TarjetaEstacion tarjetaEstacion) {
 		super(numeroCasillero, Casillero.CASILLERO_ESTACION);
 		this.nombreEstacion = nombreEstacion;
 		this.tarjetaEstacion = tarjetaEstacion;
 	}
-	
+
 	public String getNombreEstacion() {
 		return nombreEstacion;
 	}
@@ -35,4 +35,12 @@ public class CasilleroEstacion extends Casillero {
 		return (TarjetaEstacion) tarjetaEstacion;
 	}
 
+	public String toString() {
+		return super.toString()
+				+ "\n\tCasilleroEstacion [nombreEstacion="
+				+ this.nombreEstacion
+				+ ", TarjetaEstacion {\n"
+				+ ((this.tarjetaEstacion != null) ? this.tarjetaEstacion
+						.toString() : "<NO EXISTE LA TARJETA>") + "\n}]";
+	}
 }

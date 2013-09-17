@@ -82,6 +82,10 @@ public class LectorXML {
 		}
 		return path;
 	}
+	
+	public static String getPathTarjetas(){
+		return LectorXML.getPathTarjetasFrente();
+	}
 
 	/**
 	 * 

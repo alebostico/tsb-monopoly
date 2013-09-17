@@ -43,19 +43,19 @@ public class Main {
 		GestorLogs.registrarLog("Realizando algunas pruebas...");
 		testLoadGame();
 	}
-	
-	private static void testLoadGame(){
+
+	private static void testLoadGame() {
 		GestorLogs.registrarLog("Cargando el juego completo...");
-		
+
 		ApplicationContext appContext = new ClassPathXmlApplicationContext(
 				"spring/config/BeanLocations.xml");
-		
+
 		// Cargar el Banco
-		Banco banco = new Banco();		
-		
+		Banco banco = new Banco();
+
 		// Cargar el tablero
 		Tablero tablero = new Tablero(banco);
-		
+
 		// Cargar las tarjetas de Comunidad
 		ITarjetaComunidadDao tarjetaComunidadDao = (ITarjetaComunidadDao) appContext
 				.getBean("tarjetaComunidadDao");
@@ -67,21 +67,21 @@ public class Main {
 				.getBean("tarjetaSuerteDao");
 		List<TarjetaSuerte> tarjetasSuerteList = new ArrayList<TarjetaSuerte>();
 		tarjetasSuerteList = tarjetaSuerteDao.getAll();
-		
+
 		// Imprimir info para ver si está todo bien
-		GestorLogs.registrarLog("Mostrar tablero con todos los casilleros");
+		// GestorLogs.registrarLog("Mostrar tablero con todos los casilleros");
 		System.out.println(tablero.toString());
 
-		GestorLogs.registrarLog("Mostrar lista de tarjetas de Comunidad");
+		// GestorLogs.registrarLog("Mostrar lista de tarjetas de Comunidad");
 		for (TarjetaComunidad tarjetaComunidad : tarjetasComunidadList) {
-			System.out.println(tarjetaComunidad.toString());
+			GestorLogs.registrarDebug(tarjetaComunidad.toString());
 		}
 
-		GestorLogs.registrarLog("Mostrar lista de tarjetas de Suerte");
+		// GestorLogs.registrarLog("Mostrar lista de tarjetas de Suerte");
 		for (TarjetaSuerte tarjetaSuerte : tarjetasSuerteList) {
-			System.out.println(tarjetaSuerte.toString());
+			GestorLogs.registrarDebug(tarjetaSuerte.toString());
 		}
-		
+
 	}
 
 	private static void testLoadOneCasillero() {
@@ -98,7 +98,7 @@ public class Main {
 		GestorLogs.registrarLog("Cargando tarjeta 'RONDA DE VALENCIA'");
 		TarjetaCalle tarjetaCalleTemp = tarjetaCalleDao
 				.findByNombre("RONDA DE VALENCIA");
-		
+
 		GestorLogs.registrarLog("Cargando casillero 'Ronda de Valencia'");
 		CasilleroCalle casillerosTest = new CasilleroCalle(2,
 				"Ronda de Valencia", tarjetaCalleTemp);

@@ -3,15 +3,11 @@
  */
 package monopoly.controller;
 
-import java.util.List;
-
-import monopoly.model.Banco;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
-import monopoly.model.tablero.Casillero;
-import monopoly.model.tablero.Tablero;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaComunidad;
+import monopoly.util.GestorLogs;
 
 /**
  * @author Bostico Alejandro
@@ -21,7 +17,15 @@ import monopoly.model.tarjetas.TarjetaComunidad;
  */
 public class GestorTarjeta {
 
-    /**
+	public Juego juego;
+		
+    public GestorTarjeta(Juego juego) {
+		super();
+		this.juego = juego;
+		GestorLogs.registrarLog("Creado el gestor del juego");
+	}
+
+	/**
      * Ejecuta la accion indicada en la tarjeta comunidad
      * 1,PAGA POR TU POLIZA DE SEGUROS 50
      * 2,EN TU CUMPLEANIOOS RECIBES DE CADA JUGADOR 10
@@ -47,7 +51,7 @@ public class GestorTarjeta {
      *
      */
     
-    public boolean jugarTarjetaComunidad(Juego juego, Jugador jugador, Tarjeta tarjetaComunidad)
+    public boolean jugarTarjetaComunidad(Jugador jugador, Tarjeta tarjetaComunidad)
     {
 	switch (((TarjetaComunidad) tarjetaComunidad).getIdTarjeta()) {
 	    case  1: return juego.getBanco().pagar(jugador, 50);
@@ -95,7 +99,7 @@ public class GestorTarjeta {
      * @return true si se pudo ejecutar la accion
      */
     
-    public boolean jugarTarjetaSuerte(Juego juego, Jugador jugador, Tarjeta tarjetaSuerte)
+    public boolean jugarTarjetaSuerte(Jugador jugador, Tarjeta tarjetaSuerte)
     {
 		switch (((TarjetaComunidad) tarjetaSuerte).getIdTarjeta()) {
 		    case  1: return (juego.getTablero().moverACasillero(jugador, 40, false)!=null);//del prado
