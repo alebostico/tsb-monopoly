@@ -3,9 +3,7 @@
  */
 package monopoly.connection;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -17,10 +15,10 @@ import monopoly.util.LectorXML;
  * @author Oliva Pablo
  * 
  */
-public class TCPServer {
+public class TCPServer extends Thread{
 
 	public static final int PORT = LectorXML.getPuertoDeConexion();
-	static ServerSocket serverSocket;
+	private static ServerSocket serverSocket;
 
 	public static void main(String argv[]) throws Exception {
 		runServer();
@@ -70,34 +68,4 @@ public class TCPServer {
 					.println("El Servidor no se pudo cerrar correctamente...");
 		}
 	}
-
-	public static class TCPServerThread extends Thread {
-		private static Socket socket;
-		static String socketip;
-		static int socketport;
-
-		public TCPServerThread(Socket s) {
-			// TODO Auto-generated constructor stub
-			socket = s;
-			socketip = s.getInetAddress().getHostAddress();
-			socketport = s.getPort();
-		}
-
-		public void run() {
-			String mensaje = null;
-			try {
-
-				BufferedReader bufferedReader = new BufferedReader(
-						new InputStreamReader(socket.getInputStream()));
-				while ((mensaje = bufferedReader.readLine()) != null) {
-					System.out.println("recibiendo mensajes del cliente: "
-							+ mensaje);
-				}
-				socket.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 }
