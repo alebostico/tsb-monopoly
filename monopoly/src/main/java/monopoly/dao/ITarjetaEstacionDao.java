@@ -5,7 +5,6 @@ package monopoly.dao;
 
 import java.util.List;
 
-import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaEstacion;
 
 /**
