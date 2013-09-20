@@ -24,4 +24,9 @@
 		<port>8888</port>
 	</socket>
 	
+	<socketMessenger>
+		<server_address>localhost</server_address>
+		<port>8889</port>
+	</socketMessenger>
+	
 </configuration>
