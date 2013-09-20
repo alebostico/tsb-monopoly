@@ -10,7 +10,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import monopoly.client.gui.FXMLVentanaJuego;
-import monopoly.client.model.Jugador;
 import monopoly.util.LectorXML;
 
 /**
@@ -28,7 +27,7 @@ public class TCPClient extends Thread {
 	private DataInputStream entrada;
 	private DataOutputStream salida;
 	
-	private Jugador jugador;
+	//private Jugador jugador;
 	private FXMLVentanaJuego juego;
 
 	public static void main(String args[]) throws Exception {
@@ -50,9 +49,9 @@ public class TCPClient extends Thread {
 	/**
 	 * @param jugador
 	 */
-	public TCPClient(FXMLVentanaJuego juego , Jugador jugador) {
+	public TCPClient(FXMLVentanaJuego juego) {
 		super();
-		this.jugador = jugador;
+		//this.jugador = jugador;
 		this.juego = juego;
 	}
 
@@ -72,20 +71,6 @@ public class TCPClient extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * @return the jugador
-	 */
-	public Jugador getJugador() {
-		return jugador;
-	}
-
-	/**
-	 * @param jugador the jugador to set
-	 */
-	public void setJugador(Jugador jugador) {
-		this.jugador = jugador;
 	}
 
 }
