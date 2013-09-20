@@ -1,6 +1,3 @@
-/**                                                     
- * 
- */
 package monopoly.util;
 
 import java.io.File;
@@ -27,7 +24,7 @@ public class GestorLogs {
 	/**
 	 * Determina si el logger imprime también en la consola
 	 */
-	private static final boolean PRINT_TO_CONSOLE = true;
+	private static boolean printToConsole = true;
 
 	/**
 	 * Determina el nivel de mensajes que se va a loguear. Loguea el tipo
@@ -37,9 +34,9 @@ public class GestorLogs {
 	 * GestorLogs.MSG_ERROR.
 	 */
 	// En este caso loguea MSG_INFO, MSG_WARNING y MSG_ERROR.
-	private static final int LOGGING_DETAIL_LEVEL = GestorLogs.MSG_INFO;
-	//private static final int LOGGING_DETAIL_LEVEL = GestorLogs.MSG_DEBUG;
-	//private static final int LOGGING_DETAIL_LEVEL = GestorLogs.MSG_DEBUG_DETAIL;
+	private static int loggingDetailLevel = GestorLogs.MSG_INFO;
+	//private static int loggingDetailLevel = GestorLogs.MSG_DEBUG;
+	//private static int loggingDetailLevel = GestorLogs.MSG_DEBUG_DETAIL;
 
 	private static final String pathFolderLog = System.getProperty("user.home")
 			+ File.separator + "monopoly_logs";;
@@ -64,7 +61,7 @@ public class GestorLogs {
 
 			// Imprime al terminal información sobre el logger...
 			System.out.print("Logging to file '" + fileLog + "'");
-			if (GestorLogs.PRINT_TO_CONSOLE) {
+			if (GestorLogs.printToConsole) {
 				System.out.print(" and to terminal");
 			}
 			System.out.print("\n");
@@ -156,7 +153,7 @@ public class GestorLogs {
 
 		// Si el mensaje que se quiere registrar es de un tipo
 		// mayor al configurado, no se loguea y se sale.
-		if (tipoMensaje > GestorLogs.LOGGING_DETAIL_LEVEL) {
+		if (tipoMensaje > GestorLogs.loggingDetailLevel) {
 			return false;
 		}
 
@@ -199,7 +196,7 @@ public class GestorLogs {
 
 			escritor.append(mensajeFile.toString());
 
-			if (GestorLogs.PRINT_TO_CONSOLE) {
+			if (GestorLogs.printToConsole) {
 				//formateador = new SimpleDateFormat("HH:mm:ss");
 
 				// Si es ERROR o WARNING imprimo en rojo en la cosola
@@ -231,7 +228,28 @@ public class GestorLogs {
 	 * @return the loggingDetailLevel
 	 */
 	public static int getLoggingDetailLevel() {
-		return LOGGING_DETAIL_LEVEL;
+		return loggingDetailLevel;
+	}
+
+	/**
+	 * @return the printToConsole
+	 */
+	public static boolean isPrintToConsole() {
+		return printToConsole;
+	}
+
+	/**
+	 * @param printToConsole the printToConsole to set
+	 */
+	public static void setPrintToConsole(boolean printToConsole) {
+		GestorLogs.printToConsole = printToConsole;
+	}
+
+	/**
+	 * @param loggingDetailLevel the loggingDetailLevel to set
+	 */
+	public static void setLoggingDetailLevel(int loggingDetailLevel) {
+		GestorLogs.loggingDetailLevel = loggingDetailLevel;
 	}
 
 }
