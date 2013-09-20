@@ -82,10 +82,6 @@ public class LectorXML {
 		}
 		return path;
 	}
-	
-	public static String getPathTarjetas(){
-		return LectorXML.getPathTarjetasFrente();
-	}
 
 	/**
 	 * 
@@ -144,6 +140,32 @@ public class LectorXML {
 		}
 		return "";
 	}
+	
+	/**
+	 * Método para obtener la ip del servidor para establecer un chat entre los jugadores.
+	 * 
+	 * @return Devuelve la ip con el cual se conectará la aplicación cliente.
+	 */
+	public static String getIpServidorMessenger() {
+		Element raiz = getRaizXML();
+		// obtenemos las configuraciones en una lista y las pasamos a un
+		// iterator
+		// para recorrerlas
+		List<Element> configuraciones = raiz.getChildren();
+		Iterator<Element> itConfiguraciones = configuraciones.iterator();
+
+		while (itConfiguraciones.hasNext()) {
+
+			Element elemento = (Element) itConfiguraciones.next();
+
+			if (elemento.getName().equals("socketMessenger")) {
+				// Extraemos todos los path de las carpetas de resources
+				// del XML.
+				return elemento.getChild("server_address").getValue();
+			}
+		}
+		return "";
+	}
 
 	/**
 	 * Método para obtener el puerto de conexión entre la aplicación cliente y
@@ -166,6 +188,36 @@ public class LectorXML {
 			Element elemento = (Element) itConfiguraciones.next();
 
 			if (elemento.getName().equals("socket")) {
+				// Extraemos todos los path de las carpetas de resources del
+				// XML.
+				return Integer.parseInt(elemento.getChild("port").getValue());
+			}
+		}
+
+		return 0;
+	}
+	
+	/**
+	 * Método para obtener el puerto de conexión entre la aplicación cliente y
+	 * el servidor.
+	 * 
+	 * @return Devuelve el puerto de conexión
+	 */
+	public static int getPuertoDeConexionMessenger() {
+
+		Element raiz = getRaizXML();
+
+		// obtenemos las configuraciones en una lista y las pasamos a un
+		// iterator
+		// para recorrerlas
+		List<Element> configuraciones = raiz.getChildren();
+		Iterator<Element> itConfiguraciones = configuraciones.iterator();
+
+		while (itConfiguraciones.hasNext()) {
+
+			Element elemento = (Element) itConfiguraciones.next();
+
+			if (elemento.getName().equals("socketMessenger")) {
 				// Extraemos todos los path de las carpetas de resources del
 				// XML.
 				return Integer.parseInt(elemento.getChild("port").getValue());
