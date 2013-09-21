@@ -16,28 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `jugador`
---
-
-DROP TABLE IF EXISTS `jugador`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `jugador` (
-  `jugadorID` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`jugadorID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `jugador`
---
-
-LOCK TABLES `jugador` WRITE;
-/*!40000 ALTER TABLE `jugador` DISABLE KEYS */;
-/*!40000 ALTER TABLE `jugador` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `ficha`
 --
 
@@ -61,6 +39,28 @@ LOCK TABLES `ficha` WRITE;
 /*!40000 ALTER TABLE `ficha` DISABLE KEYS */;
 INSERT INTO `ficha` VALUES (1,'auto','FichaS01.png','Ficha01.png'),(2,'sombrero','FichaS02.png','Ficha02.png'),(3,'bota','FichaS03.png','Ficha03.png'),(4,'plancha','FichaS04.png','Ficha04.png'),(5,'carretilla','FichaS05.png','Ficha05.png'),(6,'dedal','FichaS06.png','Ficha06.png'),(7,'barco','FichaS07.png','Ficha07.png'),(8,'perro','FichaS08.png','Ficha08.png'),(9,'bolsa de dinero','FichaS09.png','Ficha09.png'),(10,'caballo','FichaS10.png','Ficha10.png'),(11,'cañón','FichaS11.png','Ficha11.png');
 /*!40000 ALTER TABLE `ficha` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `jugador`
+--
+
+DROP TABLE IF EXISTS `jugador`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `jugador` (
+  `jugadorID` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`jugadorID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `jugador`
+--
+
+LOCK TABLES `jugador` WRITE;
+/*!40000 ALTER TABLE `jugador` DISABLE KEYS */;
+/*!40000 ALTER TABLE `jugador` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -230,6 +230,32 @@ LOCK TABLES `tarjeta_suerte` WRITE;
 INSERT INTO `tarjeta_suerte` VALUES (1,'VE AL PASEO DEL PRADO.'),(2,'VE A LA GLORIETA DE BILBAO.\\nSI PASAS POR LA CASILLA DE SALIDA\\nCOBRA 200 €.'),(3,'LA BANCA TE PAGA 50 € DE INTERESES.'),(4,'COLÓCATE EN LA CASILLA DE SALIDA.'),(5,'ADELANTATE HASTA LA CALLE CEA BERMÚDEZ.\\nSI PASAS POR LA CASILLA DE SALIDA,\\nCOBRA 200 €.'),(6,'RECIBES EL RESCATE POR EL SEGURO\\nDE TUS EDIFICIOS.\\nCOBRA 150 €.'),(7,'VE A LA CÁRCEL.\\nVE DIRECTAMENTE SIN\\nPASAR POR LA\\nCASILLA DE SALIDA\\nY SIN COBRAR LOS 200 €.'),(8,'MULTA POR EMBRIAGUEZ 20 €.'),(9,'RETROCEDE TRES CASILLAS.'),(10,'HAZ REPARACIONES EN TODOS TUS EDIFICIOS.\\nPAGA POR CADA CASA 25 €.\\nPAGA POR CADA HOTEL 100 €.'),(11,'LA INSPECCIÓN DE LA CALLE TE OBLIGA\\nA REPARACIONES.\\nPAGA 40 € POR CADA CASA.\\nPAGA 115 € POR HOTEL.'),(12,'QUEDAS LIBRE DE LA CÁRCEL.\\n\\nEsta carta puede venderse o conservarse\\nhasta que sea utilizada.'),(13,'PAGA POR GASTOS ESCOLARES 150 €.'),(14,'VE A LA ESTACIÓN DE LAS DELICIAS.\\nSI PASAS POR LA CASILLA DE SALIDA,\\nCOBRA 200 €.');
 /*!40000 ALTER TABLE `tarjeta_suerte` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `usuario`
+--
+
+DROP TABLE IF EXISTS `usuario`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `usuario` (
+  `usuarioID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `userName` varchar(250) DEFAULT NULL,
+  `password` blob,
+  `nombre` varchar(150) DEFAULT NULL,
+  `email` varchar(150) DEFAULT NULL,
+  PRIMARY KEY (`usuarioID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `usuario`
+--
+
+LOCK TABLES `usuario` WRITE;
+/*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
+/*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -240,4 +266,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-08-26 20:01:50
+-- Dump completed on 2013-09-21 16:02:28
