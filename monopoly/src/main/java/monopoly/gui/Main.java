@@ -58,7 +58,7 @@ public class Main {
 		 */
 		GestorLogs.setLoggingDetailLevel(GestorLogs.MSG_DEBUG);
 
-		GestorJuego gj = new GestorJuego();
+		GestorJuego gj = GestorJuego.getInstance();
 
 		Usuario usuario1 = new Usuario("testuser1");
 		Juego juego = gj.crearJuego(usuario1, "Test Juego");

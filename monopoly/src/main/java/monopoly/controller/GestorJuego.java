@@ -18,11 +18,20 @@ import monopoly.util.GestorLogs;
  */
 public class GestorJuego {
 
+	private static GestorJuego INSTANCE;
+
 	private List<Juego> juegosList;
 
-	public GestorJuego() {
+	private GestorJuego() {
 		super();
 		GestorLogs.registrarLog("Creado el gestor de juegos");
+	}
+
+	public static GestorJuego getInstance() {
+		if (INSTANCE == null)
+			INSTANCE = new GestorJuego();
+
+		return INSTANCE;
 	}
 
 	/**
@@ -94,6 +103,7 @@ public class GestorJuego {
 
 	/**
 	 * Devuelve un juego a partir de su uniqueID
+	 * 
 	 * @param uniqueID
 	 * @return
 	 */
