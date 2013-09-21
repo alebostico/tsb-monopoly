@@ -14,6 +14,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import monopoly.client.gui.FXMLIniciarSesion;
+import monopoly.model.Usuario;
 
 /**
  * @author pablo
@@ -36,12 +38,23 @@ public class LoginController extends AnchorPane implements Initializable {
     @FXML
     Label errorMessage;
     
-//	private Main application;
-//
-//	public void setApp(Main application) {
-//		this.application = application;
-//	}
-//
+	private FXMLIniciarSesion application;
+
+	/**
+	 * @return the application
+	 */
+	public FXMLIniciarSesion getApplication() {
+		return application;
+	}
+
+	/**
+	 * @param application the application to set
+	 */
+	public void setApp(FXMLIniciarSesion application) {
+		this.application = application;
+	}
+
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -55,15 +68,42 @@ public class LoginController extends AnchorPane implements Initializable {
 	}
 	
 	public void processLogin(ActionEvent event) {
-//        if (application == null){
-//            // We are running in isolated FXML, possibly in Scene Builder.
-//            // NO-OP.
-//            errorMessage.setText("Hello " + username.getText());
-//        } else {
-//            if (!application.validarUsuario(username.getText(), password.getText())){
-//                errorMessage.setText("Usuario / Contraseña inválida");
-//            }
-//        }
+        if (application == null){
+            // We are running in isolated FXML, possibly in Scene Builder.
+            // NO-OP.
+            errorMessage.setText("Se produjo un error al iniciar sesión");
+        } else {
+        	if(validarDatosIngresados())
+        	{
+        		application.validarUsuario(userId.getText(), password.getText());
+        		
+        	}
+        	else{
+        		errorMessage.setText("¡Existen campos vacios! Complete por favor.");
+        		userId.setFocusTraversable(true);
+        	}
+        }
     }
+	
+	public void usuarioIncorrecto()
+	{
+		errorMessage.setText("Usuario / Contraseña inválida");
+	}
+	
+	public void UsuarioCorrecto()
+	{
+		errorMessage.setText("Usuario Logueado");
+	}
+	
+	
+	private boolean validarDatosIngresados()
+	{
+		if(userId.getText().equals("")){
+			return false;
+		}
+		if(password.getText().equals(""))
+			return false;
+		return true;
+	}
 
 }
