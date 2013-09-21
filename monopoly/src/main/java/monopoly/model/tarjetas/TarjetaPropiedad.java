@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import monopoly.model.Jugador;
@@ -37,7 +37,7 @@ public abstract class TarjetaPropiedad implements Serializable {
 	@Column(name = "tarjetaPropiedadID")
 	private Integer idTarjeta;
 
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "jugadorID")
 	private Jugador jugador;
 

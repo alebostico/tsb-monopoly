@@ -3,6 +3,7 @@
  */
 package monopoly.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class GestorJuego {
 
 	private GestorJuego() {
 		super();
+		juegosList = new ArrayList<Juego>();
 		GestorLogs.registrarLog("Creado el gestor de juegos");
 	}
 
@@ -111,7 +113,7 @@ public class GestorJuego {
 		// TODO: implementar metodo
 		return null;
 	}
-
+	
 	/**
 	 * Verifica si un juego existe en la lista de juegos
 	 * 

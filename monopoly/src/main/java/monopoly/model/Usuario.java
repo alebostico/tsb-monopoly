@@ -57,6 +57,8 @@ public class Usuario implements Serializable{
 		super();
 		this.userName = userName;
 		this.password = password;
+		GestorLogs.registrarLog("Nuevo usuario '" + this.getUserName() + "'");
+		GestorLogs.registrarDebug(this.toStringAll());
 	}
 
 

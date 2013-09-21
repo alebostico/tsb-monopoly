@@ -207,18 +207,18 @@ public class Tablero {
 
 		// Creo que este casteo no es necesario porque afuera hay que volver a
 		// preguntar y castear
-		// switch (this.casillerosList[nroCasillero + 1].getTipoCasillero()) {
+		// switch (this.casillerosList[nroCasillero - 1].getTipoCasillero()) {
 		// case Casillero.CASILLERO_CALLE:
-		// return (CasilleroCalle) this.casillerosList[nroCasillero + 1];
+		// return (CasilleroCalle) this.casillerosList[nroCasillero - 1];
 		// case Casillero.CASILLERO_COMPANIA:
-		// return (CasilleroCompania) this.casillerosList[nroCasillero + 1];
+		// return (CasilleroCompania) this.casillerosList[nroCasillero - 1];
 		// case Casillero.CASILLERO_ESTACION:
-		// return (CasilleroEstacion) this.casillerosList[nroCasillero + 1];
+		// return (CasilleroEstacion) this.casillerosList[nroCasillero - 1];
 		// default:
 		// return this.casillerosList[nroCasillero + 1];
 		// }
 
-		 return this.casillerosList[nroCasillero + 1];
+		return this.casillerosList[nroCasillero - 1];
 	}
 
 	/**
@@ -289,7 +289,7 @@ public class Tablero {
 	public Casillero moverAdelante(Jugador jugador, int cantCasilleros,
 			boolean cobraSalida) {
 
-		boolean cobroSalida = false;
+		int cobroSalida = 0;
 		// busco el casillero actual en el que esta el jugador
 		Casillero casilleroActual = jugador.getCasilleroActual();
 
@@ -305,10 +305,11 @@ public class Tablero {
 
 			// si el jugador tiene que cobrar los $200 en caso de pasar por la
 			// salida...
+			cobroSalida = -1;
 			if (cobraSalida) {
 				// ... los cobra
 				this.banco.cobrar(jugador, 200);
-				cobroSalida = true;
+				cobroSalida = 1;
 			}
 
 		}
@@ -326,7 +327,8 @@ public class Tablero {
 
 		jugador.setCasilleroActual(casilleroSiguiente);
 
-		this.registrarInfo(jugador, casilleroSiguiente, cobroSalida);
+		this.registrarInfo(jugador, casilleroActual, casilleroSiguiente,
+				cobroSalida);
 
 		return casilleroSiguiente;
 	}
@@ -359,8 +361,13 @@ public class Tablero {
 	 * @param cobraSalida
 	 *            true en el caso que el jugador deba cobrar los $200 si pasa
 	 *            por la salida. false si no los cobra.
+<<<<<<< .mine
+	 * @return El casillero al cual se movió el jugador si 'nroCasillero' es
+	 *         válido (entre 1 y 40). null en caso contrario.
+=======
 	 * @return El casillero al cual se moviÃ³ el jugador si 'nroCasillero' es
 	 *         vÃ¡lido (menor a 1 o mayor a 40). null en caso contrario.
+>>>>>>> .r73
 	 */
 	public Casillero moverACasillero(Jugador jugador, int nroCasillero,
 			boolean cobraSalida) {
@@ -372,7 +379,7 @@ public class Tablero {
 		Casillero casilleroActual = jugador.getCasilleroActual();
 		Casillero casilleroSiguiente = this.getCasillero(nroCasillero);
 
-		boolean cobroSalida = false;
+		int cobroSalida = 0;
 
 		// si el nroCasillero es invÃ¡lido (menor a 1 o mayor a 40) retorna
 		// null...
@@ -384,10 +391,11 @@ public class Tablero {
 				.getNumeroCasillero()) {
 			// y si el jugador tiene que cobrar los $200 en caso de pasar por la
 			// salida...
+			cobroSalida = -1;
 			if (cobraSalida) {
 				// ... los cobra
 				this.banco.cobrar(jugador, 200);
-				cobroSalida = true;
+				cobroSalida = 1;
 			}
 		}
 
@@ -396,7 +404,8 @@ public class Tablero {
 
 		jugador.setCasilleroActual(casilleroSiguiente);
 
-		this.registrarInfo(jugador, casilleroSiguiente, cobroSalida);
+		this.registrarInfo(jugador, casilleroActual, casilleroSiguiente,
+				cobroSalida);
 
 		return casilleroSiguiente;
 	}
@@ -579,14 +588,48 @@ public class Tablero {
 		return toReturn.toString();
 	}
 
-	private void registrarInfo(Jugador jugador, Casillero casillero,
-			boolean cobroSalida) {
-		GestorLogs.registrarLog("El Jugador '"
-				+ jugador.getFicha().getNombre()
-				+ "' se movio al casillero #"
-				+ casillero.getNumeroCasillero()
-				+ ((cobroSalida) ? " y cobro $200 en la salida"
-						: " y NO cobro $200 en la salida"));
+	/**
+	 * Registra la información de los movimientos el el logger
+	 * 
+	 * @param jugador
+	 *            El jugador que se movio
+	 * @param casAnterior
+	 *            El casillero en el que estaba el jugador
+	 * @param casActual
+	 *            El casillero al cual se movió el jugador
+	 * @param cobroSalida
+	 *            Un entero que representa si el jugador paso por la salida o no
+	 *            y si cobró los $200.
+	 *            <ul>
+	 *            <li><b>-1</b> = Paso por la salida y NO cobró los $200</li>
+	 *            <li><b>0</b> = NO paso por la salida (y no cobró los $200)</li>
+	 *            <li><b>1</b> = Paso por la salida y cobró los $200</li>
+	 *            </ul>
+	 */
+	private void registrarInfo(Jugador jugador, Casillero casAnterior,
+			Casillero casActual, int cobroSalida) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("El Jugador '");
+		sb.append(jugador.getFicha().getNombre());
+		sb.append("' se movio #");
+		sb.append(casAnterior.getNumeroCasillero());
+		sb.append(" --> #");
+		sb.append(casActual.getNumeroCasillero());
+
+		switch (cobroSalida) {
+		case -1:
+			sb.append(", paso por la salida y NO cobró los $200");
+			break;
+		case 0:
+			sb.append(", NO paso por la salida (y no cobró los $200)");
+			break;
+		case 1:
+			sb.append(", paso por la salida y cobró los $200");
+			break;
+		}
+
+		GestorLogs.registrarLog(sb.toString());
 
 	}
 

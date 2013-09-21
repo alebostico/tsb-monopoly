@@ -3,10 +3,10 @@
  */
 package monopoly.model.tablero;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import monopoly.model.Jugador;
-import monopoly.model.tarjetas.TarjetaCalle;
 
 /**
  * La clase casillero implementa un casillero del tablero genérico, sin
@@ -62,7 +62,8 @@ public class Casillero {
 		super();
 		this.numeroCasillero = numeroCasillero;
 		this.tipoCasillero = tipoCasillero;
-		this.tablero= tablero;
+		this.jugadores = new LinkedList<Jugador>();
+		this.tablero = tablero;
 	}
 
 	/**
@@ -132,8 +133,6 @@ public class Casillero {
 	public String getTipoCasilleroString() {
 		return this.tipoCasilleroToString(this.tipoCasillero);
 	}
-	
-		
 
 	public Tablero getTablero() {
 		return tablero;
@@ -186,5 +185,4 @@ public class Casillero {
 			return "<_TIPO_CASILLERO_INCORRECTO_>";
 		}
 	}
-	
 }
