@@ -33,6 +33,7 @@
 				<value>monopoly.model.tarjetas.TarjetaCompania</value>
 				<value>monopoly.model.tarjetas.TarjetaSuerte</value>
 				<value>monopoly.model.tarjetas.TarjetaComunidad</value>
+				<value>monopoly.model.Usuario</value>
 			</list>
 		</property>
 

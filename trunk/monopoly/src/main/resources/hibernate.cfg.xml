@@ -13,7 +13,7 @@
                 <mapping class="monopoly.model.tarjetas.TarjetaCompania" />
                 <mapping class="monopoly.model.tarjetas.TarjetaSuerte" />
                 <mapping class="monopoly.model.tarjetas.TarjetaComunidad" />
-
+				<mapping class="monopoly.model.Usuario" />
 		
         </session-factory>
 </hibernate-configuration>

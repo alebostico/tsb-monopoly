@@ -6,7 +6,11 @@ package monopoly.connection;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
+import monopoly.model.Usuario;
+import monopoly.util.GestorLogs;
 import monopoly.util.LectorXML;
 
 /**
@@ -15,34 +19,36 @@ import monopoly.util.LectorXML;
  * @author Oliva Pablo
  * 
  */
-public class TCPServer extends Thread{
+public class TCPServer extends Thread {
 
 	public static final int PORT = LectorXML.getPuertoDeConexion();
+	public List<TCPServerThread> listaServidores = new ArrayList<TCPServerThread>();
 	private static ServerSocket serverSocket;
+	
+	private String delimitador = "&-&-&";
 
-	public static void main(String argv[]) throws Exception {
-		runServer();
-	}
+	public TCPServer(){};
 
-	public static void runServer() {
+	public void run() {
 		try {
 			serverSocket = new ServerSocket(PORT);
+			GestorLogs
+					.registrarLog("El Servidor ha sido levantado en el puerto: "
+							+ PORT);
 		} catch (IOException e) {
-			System.out
-					.println("El Servidor no se pudo iniciar correctamente...");
+			GestorLogs.registrarError("El Servidor no se pudo iniciar correctamente...");
 		}
-		System.out.println("El Servidor ha sido levantado correctamente...");
+
 		Thread checkServerAlive = new Thread(new Runnable() {
 			public void run() {
 				try {
 					while (serverSocket.isBound()) {
 						Thread.sleep(3000);
-						System.out
-								.println("Servidor Conectado. Esperando mensajes de clientes...");
+						GestorLogs
+						.registrarLog("Servidor Conectado. Esperando mensajes de clientes...");
 					}
 				} catch (InterruptedException e) {
-					System.out
-							.println("No se puede comprobar el estado del Servidor...");
+					GestorLogs.registrarError("No se puede comprobar el estado del Servidor...");
 				}
 			}
 		});
@@ -54,18 +60,38 @@ public class TCPServer extends Thread{
 			try {
 				Socket connectionSocket = serverSocket.accept();
 				TCPServerThread serverThread = new TCPServerThread(
-						connectionSocket);
+						connectionSocket, this, listaServidores.size());
 				serverThread.start();
+				GestorLogs
+				.registrarLog("Se conectó un cliente..." + " id: " + listaServidores.size());
+				listaServidores.add(serverThread);
 			} catch (IOException e) {
-				System.out
-						.println("El servidor no puede aceptar nuevas conexiones...");
+				GestorLogs.registrarError("El servidor no puede aceptar nuevas conexiones...");
 			}
 		}
 		try {
 			serverSocket.close();
 		} catch (IOException e) {
-			System.out
-					.println("El Servidor no se pudo cerrar correctamente...");
+			GestorLogs.registrarError("El Servidor no se pudo cerrar correctamente...");
 		}
+	}
+	
+	public void avisarResultadoLogueo(Usuario usuario, int idThreadServer)
+	{
+		String contenidoLineaEntrada = "";
+		if(usuario == null){
+			contenidoLineaEntrada = "false";
+		}
+		else
+		{
+			contenidoLineaEntrada = "false" + delimitador + usuario.getIdUsuario() + delimitador
+					+ usuario.getUserName() + delimitador + usuario.getPassword() + delimitador
+					+ usuario.getNombre() + delimitador + usuario.getEmail();
+		}
+		for (int i = 0; i < this.listaServidores.size(); i++) {
+            if (i == idThreadServer) {
+            	listaServidores.get(i).avisarResultadoLogueo(contenidoLineaEntrada);
+            }
+        }
 	}
 }

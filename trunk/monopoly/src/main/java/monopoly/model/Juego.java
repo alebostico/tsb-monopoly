@@ -100,7 +100,7 @@ public class Juego {
 		StringBuilder sb = new StringBuilder();
 		SimpleDateFormat formatter = new SimpleDateFormat("yyMMddHHmmss");
 
-		sb.append(owner.getUsuario());
+		sb.append(owner.getUserName());
 		sb.append(formatter.format(this.getFechaCreacion()));
 
 		this.uniqueID = sb.toString();
@@ -243,7 +243,7 @@ public class Juego {
 		return "Juego [ nombreJuego=" + this.getNombreJuego()
 				+ ", fechaCreacion=" + this.getFechaCreacionString()
 				+ ", uniqueID=" + this.getUniqueID() + ", owner="
-				+ this.getOwner().getUsuario() + ", cantJugadores="
+				+ this.getOwner().getUserName() + ", cantJugadores="
 				+ this.cantJugadores() + " ]";
 
 	}
@@ -257,7 +257,7 @@ public class Juego {
 		sb.append("JuegoCompleto { nombreJuego=" + this.getNombreJuego());
 		sb.append(", fechaCreacion=" + this.getFechaCreacionString());
 		sb.append(", uniqueID=" + this.getUniqueID());
-		sb.append(", owner=" + this.getOwner().getUsuario());
+		sb.append(", owner=" + this.getOwner().getUserName());
 		sb.append(", cantJugadores=" + this.cantJugadores());
 		sb.append(", tablero=" + this.getTablero().toString());
 		sb.append(", jugadores="
