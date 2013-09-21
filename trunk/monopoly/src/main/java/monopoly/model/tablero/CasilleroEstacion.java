@@ -15,9 +15,9 @@ public class CasilleroEstacion extends Casillero {
 	String nombreEstacion;
 	TarjetaEstacion tarjetaEstacion;
 
-	public CasilleroEstacion(int numeroCasillero, String nombreEstacion,
+	public CasilleroEstacion(int numeroCasillero, String nombreEstacion, Tablero tablero,
 			TarjetaEstacion tarjetaEstacion) {
-		super(numeroCasillero, Casillero.CASILLERO_ESTACION);
+		super(numeroCasillero, Casillero.CASILLERO_ESTACION, tablero);
 		this.nombreEstacion = nombreEstacion;
 		this.tarjetaEstacion = tarjetaEstacion;
 	}
@@ -32,7 +32,9 @@ public class CasilleroEstacion extends Casillero {
 
 	public TarjetaEstacion comprarEstacion(Jugador jugador) {
 		// TODO: implementar el metodo que realiza la compra de la estacion.
-		return (TarjetaEstacion) tarjetaEstacion;
+		if(this.getTablero().getBanco().venderPropiedad(jugador, this.getTarjetaEstacion()))
+			return (TarjetaEstacion) tarjetaEstacion;
+		return null;
 	}
 
 	public String toString() {

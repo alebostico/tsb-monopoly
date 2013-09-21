@@ -57,12 +57,6 @@ public class Jugador implements Serializable {
 	private int dinero;
 
 	@Transient
-	private int nroCasas;
-
-	@Transient
-	private int nroHoteles;
-
-	@Transient
 	private List<Tarjeta> tarjetaCarcelList;
 
 	/**
@@ -73,8 +67,6 @@ public class Jugador implements Serializable {
 	public Jugador() {
 		tarjetaCarcelList = new ArrayList<>();
 		this.dinero = 200;
-		nroCasas = 0;
-		nroHoteles = 0;
 		GestorLogs.registrarLog("Nuevo jugador");
 		GestorLogs.registrarDebug(this.toString());
 	}
@@ -220,20 +212,15 @@ public class Jugador implements Serializable {
 	}
 
 	public int getNroCasas() {
-		return nroCasas;
+		return juego.getTablero().casasPorJugador(this);
 	}
 
-	public void setNroCasas(int nroCasas) {
-		this.nroCasas = nroCasas;
-	}
 
 	public int getNroHoteles() {
-		return nroHoteles;
+		return juego.getTablero().hotelesPorJugador(this);
 	}
 
-	public void setNroHoteles(int nroHoteles) {
-		this.nroHoteles = nroHoteles;
-	}
+
 
 	/**
 	 * @return the usuario

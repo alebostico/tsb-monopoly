@@ -17,8 +17,16 @@ import monopoly.util.GestorLogs;
  * 
  */
 public class Banco {
+	
+	List <TarjetaPropiedad> tarjPropiedadList;
+	int nroCasas;
+	int nroHoteles;
 
 	public Banco() {
+		
+		//TODO cargar todas las propiedades
+		//cargar las casas
+		//cargar los hoteles
 		GestorLogs.registrarLog("Banco Cargado");
 	}
 
@@ -104,7 +112,7 @@ public class Banco {
 	}
 
 	/**
-	 * toma una propiedad en hipotega y paga al jugador el valor indicado para
+	 * toma una propiedad en hipoteca y paga al jugador el valor indicado para
 	 * la hipoteca de esta propiedad
 	 * 
 	 * @param jugador
@@ -122,16 +130,45 @@ public class Banco {
 			return false;
 	}
 
+	/**
+	 * deshipoteca una propiedad indicada y cobra al jugador
+	 * la hipoteca de esta propiedad mas el 10 %
+	 * 
+	 * @param jugador
+	 *            el jugador que deshipoteca la propiedad
+	 * @param tarjetaPropiedad
+	 *            la propiedad que deshipoteca el jugador
+	 * @return true 
+	 * 			  si el jugador puede pagar la hipoteca y lo hace. false si el jugador no puede pagar la hipoteca
+	 */
 	public boolean deshipotecarPropiedad(Jugador jugador,
 			TarjetaPropiedad tarjetaPropiedad) {
-		return false;
+		if(this.cobrar(jugador, (int)(tarjetaPropiedad.getValorHipotecario()*1.10)))
+		{			
+			tarjetaPropiedad.setHipotecada(false);
+			return true;
+		}
+		else
+			return false;
 	}
 
-	public boolean comprarEdificio(Jugador jugador, TarjetaCalle tarjetaCalle) {
-		return false;
-	}
-
-	public boolean venderEdificio(Jugador jugador, TarjetaCalle tarjetaCalle) {
+	/**
+	 * vende una propiedad al jugador 
+	 * @param jugador
+	 *            el jugador que compra la propiedad
+	 * @param tarjetaPropiedad
+	 *            la propiedad compra el jugador
+	 * @return true 
+	 * 			  si el jugador puede pagar la propiedad y la compra. false si el jugador no puede pagar la propiedad
+	 */
+	public boolean venderPropiedad(Jugador jugador, TarjetaPropiedad tarjetaPropiedad)
+	{
+		if(this.cobrar(jugador, tarjetaPropiedad.getValorPropiedad()))
+		{
+			tarjPropiedadList.remove(tarjetaPropiedad);
+			jugador.getTarjPropiedadList().add(tarjetaPropiedad);
+			return true;
+		}
 		return false;
 	}
 
