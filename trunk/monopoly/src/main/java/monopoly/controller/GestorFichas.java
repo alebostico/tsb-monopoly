@@ -11,17 +11,17 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class GestorFichas {
 
-	public static final String F_AUTO = "auto";
-	public static final String F_SOMBRERO = "sombrero";
-	public static final String F_BOTA = "bota";
-	public static final String F_PLANCHA = "plancha";
-	public static final String F_CARRETILLA = "carretilla";
-	public static final String F_DEDAL = "dedal";
-	public static final String F_BARCO = "barco";
-	public static final String F_PERRO = "perro";
-	public static final String F_BOLSA_DINERO = "bolsa de dinero";
-	public static final String F_CABALLO = "caballo";
-	public static final String F_CANON = "cañón";
+	// public static final String F_AUTO = "auto";
+	// public static final String F_SOMBRERO = "sombrero";
+	// public static final String F_BOTA = "bota";
+	// public static final String F_PLANCHA = "plancha";
+	// public static final String F_CARRETILLA = "carretilla";
+	// public static final String F_DEDAL = "dedal";
+	// public static final String F_BARCO = "barco";
+	// public static final String F_PERRO = "perro";
+	// public static final String F_BOLSA_DINERO = "bolsa de dinero";
+	// public static final String F_CABALLO = "caballo";
+	// public static final String F_CANON = "cañón";
 
 	public List<Ficha> fichas;
 
@@ -52,20 +52,20 @@ public class GestorFichas {
 
 	/**
 	 * Devuelve la ficha que tiene el nombre pasado por parámetro. El nombre
-	 * debe ser alguna de las constantes estáticas de la clase GestorFichas:
+	 * debe ser alguna de las constantes estáticas de la clase Ficha:
 	 * <ul>
-	 * <li>GestorFichas.F_CARRETILLA</li>
-	 * <li>GestorFichas.F_AUTO</li>
-	 * <li>GestorFichas.F_SOMBRERO</li>
-	 * <li>GestorFichas.F_BOTA</li>
-	 * <li>GestorFichas.F_PLANCHA</li>
-	 * <li>GestorFichas.F_CARRETILLA</li>
-	 * <li>GestorFichas.F_DEDAL</li>
-	 * <li>GestorFichas.F_BARCO</li>
-	 * <li>GestorFichas.F_PERRO</li>
-	 * <li>GestorFichas.F_BOLSA_DINERO</li>
-	 * <li>GestorFichas.F_CABALLO</li>
-	 * <li>GestorFichas.F_CANON</li>
+	 * <li>Ficha.TIPO_CARRETILLA</li>
+	 * <li>Ficha.TIPO_AUTO</li>
+	 * <li>Ficha.TIPO_SOMBRERO</li>
+	 * <li>Ficha.TIPO_BOTA</li>
+	 * <li>Ficha.TIPO_PLANCHA</li>
+	 * <li>Ficha.TIPO_CARRETILLA</li>
+	 * <li>Ficha.TIPO_DEDAL</li>
+	 * <li>Ficha.TIPO_BARCO</li>
+	 * <li>Ficha.TIPO_PERRO</li>
+	 * <li>Ficha.TIPO_BOLSA_DINERO</li>
+	 * <li>Ficha.TIPO_CABALLO</li>
+	 * <li>Ficha.TIPO_CANON</li>
 	 * </ul>
 	 * 
 	 * @param nombreFicha
@@ -80,5 +80,21 @@ public class GestorFichas {
 			}
 		}
 		return null;
+	}
+	
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder("GestorFichas [ ");
+
+		sb.append("fichas=");
+		for (Ficha ficha : this.fichas) {
+			sb.append("'");
+			sb.append(ficha.getNombre());
+			sb.append("' ");
+
+		}
+
+		sb.append("]");
+		return sb.toString();
 	}
 }

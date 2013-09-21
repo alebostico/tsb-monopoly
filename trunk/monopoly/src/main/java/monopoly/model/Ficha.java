@@ -27,6 +27,18 @@ public class Ficha implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	public static final String TIPO_AUTO = "auto";
+	public static final String TIPO_SOMBRERO = "sombrero";
+	public static final String TIPO_BOTA = "bota";
+	public static final String TIPO_PLANCHA = "plancha";
+	public static final String TIPO_CARRETILLA = "carretilla";
+	public static final String TIPO_DEDAL = "dedal";
+	public static final String TIPO_BARCO = "barco";
+	public static final String TIPO_PERRO = "perro";
+	public static final String TIPO_BOLSA_DINERO = "bolsa de dinero";
+	public static final String TIPO_CABALLO = "caballo";
+	public static final String TIPO_CANON = "cañón";
+	
 	public enum TipoFicha {
 		F_AUTO("auto"),
 		F_SOMBRERO("sombrero"),
@@ -90,6 +102,7 @@ public class Ficha implements Serializable {
 	 */
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
+		GestorLogs.registrarDebug("Asignado nombre a ficha '" + this.getNombre() + "'");
 	}
 
 	/**

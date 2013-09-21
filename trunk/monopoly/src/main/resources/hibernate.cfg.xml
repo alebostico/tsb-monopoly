@@ -3,17 +3,17 @@
     "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 
 <hibernate-configuration>
-        <session-factory>
-                <!-- aca van todas las calses que tienen fk o mapped by -->
-                <mapping class="monopoly.model.Ficha" />
-                <mapping class="monopoly.model.Jugador" />
-                <mapping class="monopoly.model.tarjetas.TarjetaPropiedad" />
-                <mapping class="monopoly.model.tarjetas.TarjetaCalle" />
-                <mapping class="monopoly.model.tarjetas.TarjetaEstacion" />
-                <mapping class="monopoly.model.tarjetas.TarjetaCompania" />
-                <mapping class="monopoly.model.tarjetas.TarjetaSuerte" />
-                <mapping class="monopoly.model.tarjetas.TarjetaComunidad" />
-				<mapping class="monopoly.model.Usuario" />
-		
-        </session-factory>
+	<session-factory>
+		<!-- aca van todas las calses que tienen fk o mapped by -->
+		<mapping class="monopoly.model.Ficha" />
+		<mapping class="monopoly.model.Jugador" />
+		<mapping class="monopoly.model.tarjetas.TarjetaPropiedad" />
+		<mapping class="monopoly.model.tarjetas.TarjetaCalle" />
+		<mapping class="monopoly.model.tarjetas.TarjetaEstacion" />
+		<mapping class="monopoly.model.tarjetas.TarjetaCompania" />
+		<mapping class="monopoly.model.tarjetas.TarjetaSuerte" />
+		<mapping class="monopoly.model.tarjetas.TarjetaComunidad" />
+		<mapping class="monopoly.model.Usuario" />
+
+	</session-factory>
 </hibernate-configuration>

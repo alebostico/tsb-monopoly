@@ -256,8 +256,10 @@ public class Jugador implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Jugador [ficha=" + this.ficha.toString() + "usuario="
-				+ this.usuario.toString() + "]";
+		return "Jugador [ficha="
+				+ ((this.ficha != null) ? this.ficha.toString() : "<SIN FICHA>")
+				+ ", usuario="
+				+ ((this.usuario != null) ? this.usuario.toString()
+						: "<SIN USUARIO>") + "]";
 	}
-
 }

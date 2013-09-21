@@ -1,5 +1,7 @@
 package monopoly.model;
 
+import monopoly.util.GestorLogs;
+
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
@@ -29,7 +31,10 @@ public class Dado {
 		dados[0] = this.tirarDado();
 		dados[1] = this.tirarDado();
 
-		return dados[0] + dados[0];
+		GestorLogs.registrarDebug("Dados tirados: " + getValorDado(1) + " + "
+				+ getValorDado(2) + " = " + getSuma());
+
+		return dados[0] + dados[1];
 	}
 
 	/**
@@ -41,7 +46,7 @@ public class Dado {
 	 *            última tirada.
 	 * @return El valor de la última tirada de dados del dado 'nroDado'.
 	 */
-	public int getDado(int nroDado) {
+	public int getValorDado(int nroDado) {
 		switch (nroDado) {
 		case 1:
 			return dados[0];
@@ -54,9 +59,10 @@ public class Dado {
 
 	/**
 	 * Devuelve la suma de los dos dados de la última tirada.
+	 * 
 	 * @return
 	 */
 	public int getSuma() {
-		return dados[0] + dados[0];
+		return dados[0] + dados[1];
 	}
 }

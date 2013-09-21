@@ -4,6 +4,7 @@
 package monopoly.model;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -51,6 +52,8 @@ public class Juego {
 
 	private Tablero tablero;
 
+	private Dado dado;
+
 	private List<TarjetaPropiedad> tarjetasPropiedadList;
 
 	/**
@@ -65,11 +68,12 @@ public class Juego {
 		this.nombreJuego = nombreJuego;
 		this.owner = creador;
 		this.fechaCreacion = new Date();
+		this.jugadoresList = new ArrayList<Jugador>();
 		this.generateUniqueID();
 		GestorLogs.registrarLog("Creado nuevo juego '" + this.getUniqueID()
 				+ "'");
 		this.initJuego();
-		GestorLogs.registrarDebug(this.toString());
+		// GestorLogs.registrarDebug(this.toString());
 	}
 
 	/**
@@ -83,8 +87,10 @@ public class Juego {
 		// Cargar el tablero
 		this.tablero = new Tablero(banco);
 
+		this.dado = new Dado();
+
 		this.gestorTarjetas = new GestorTarjeta(this);
-		
+
 		this.gestorFichas = new GestorFichas();
 
 		GestorLogs.registrarLog("Iniciado juego '" + this.getUniqueID() + "'");
@@ -121,42 +127,50 @@ public class Juego {
 			if (j.equals(jugador))
 				return false;
 		}
+		// ubica al jugador en el casillero 1
+		this.getTablero().moverACasillero(jugador, 1, false);
+		// y lo agrega a la lista de jugadores.
+		boolean returnValue = this.jugadoresList.add(jugador);
+
 		GestorLogs.registrarLog("Agregado jugador '"
 				+ jugador.getFicha().getNombre() + "' al juego '"
-				+ this.getUniqueID() + "'");
-		return this.jugadoresList.add(jugador);
+				+ this.getUniqueID() + "' en el casillero #"
+				+ jugador.getCasilleroActual().getNumeroCasillero());
+
+		return returnValue;
 	}
 
 	/**
 	 * Agrega un nuevo jugador. El nombre debe ser alguna de las constantes
-	 * estáticas de la clase GestorFichas:
+	 * estáticas de la clase Ficha:
 	 * <ul>
-	 * <li>GestorFichas.F_CARRETILLA</li>
-	 * <li>GestorFichas.F_AUTO</li>
-	 * <li>GestorFichas.F_SOMBRERO</li>
-	 * <li>GestorFichas.F_BOTA</li>
-	 * <li>GestorFichas.F_PLANCHA</li>
-	 * <li>GestorFichas.F_CARRETILLA</li>
-	 * <li>GestorFichas.F_DEDAL</li>
-	 * <li>GestorFichas.F_BARCO</li>
-	 * <li>GestorFichas.F_PERRO</li>
-	 * <li>GestorFichas.F_BOLSA_DINERO</li>
-	 * <li>GestorFichas.F_CABALLO</li>
-	 * <li>GestorFichas.F_CANON</li>
+	 * <li>Ficha.TIPO_CARRETILLA</li>
+	 * <li>Ficha.TIPO_AUTO</li>
+	 * <li>Ficha.TIPO_SOMBRERO</li>
+	 * <li>Ficha.TIPO_BOTA</li>
+	 * <li>Ficha.TIPO_PLANCHA</li>
+	 * <li>Ficha.TIPO_CARRETILLA</li>
+	 * <li>Ficha.TIPO_DEDAL</li>
+	 * <li>Ficha.TIPO_BARCO</li>
+	 * <li>Ficha.TIPO_PERRO</li>
+	 * <li>Ficha.TIPO_BOLSA_DINERO</li>
+	 * <li>Ficha.TIPO_CABALLO</li>
+	 * <li>Ficha.TIPO_CANON</li>
 	 * </ul>
 	 * 
 	 * @param nombreFicha
 	 *            El nombre de la ficha
 	 * @param usuario
 	 *            El usuario que esta por jugar
-	 * @return true si se creo y agrego el jugador.
+	 * @return El jugador que se crea.
 	 */
-	public boolean addJugador(String nombreFicha, Usuario usuario) {
+	public Jugador addJugador(String nombreFicha, Usuario usuario) {
 		Ficha ficha = this.gestorFichas.getFicha(nombreFicha);
 		if (ficha == null)
-			return false;
+			return null;
 		Jugador jugador = new Jugador(ficha, usuario, this);
-		return this.addJugador(jugador);
+		this.addJugador(jugador);
+		return jugador;
 	}
 
 	/**
@@ -234,6 +248,51 @@ public class Juego {
 	 */
 	public String getUniqueID() {
 		return uniqueID;
+	}
+
+	/**
+	 * Devuelve la ficha que tiene el nombre pasado por parámetro. El nombre
+	 * debe ser alguna de las constantes estáticas de la clase GestorFichas:
+	 * <ul>
+	 * <li>GestorFichas.F_CARRETILLA</li>
+	 * <li>GestorFichas.F_AUTO</li>
+	 * <li>GestorFichas.F_SOMBRERO</li>
+	 * <li>GestorFichas.F_BOTA</li>
+	 * <li>GestorFichas.F_PLANCHA</li>
+	 * <li>GestorFichas.F_CARRETILLA</li>
+	 * <li>GestorFichas.F_DEDAL</li>
+	 * <li>GestorFichas.F_BARCO</li>
+	 * <li>GestorFichas.F_PERRO</li>
+	 * <li>GestorFichas.F_BOLSA_DINERO</li>
+	 * <li>GestorFichas.F_CABALLO</li>
+	 * <li>GestorFichas.F_CANON</li>
+	 * </ul>
+	 * 
+	 * @param nombreFicha
+	 *            El nombre de la ficha
+	 * @return La instancia de la clase Ficha o null si no se encuentra una
+	 *         ficha con ese nombre.
+	 */
+	public Ficha getFicha(String nombreFicha) {
+		return this.gestorFichas.getFicha(nombreFicha);
+	}
+
+	/**
+	 * Tira los dados y devuelve la suma de los dos.
+	 * 
+	 * @return La suma de los valores que salieron en los dados.
+	 */
+	public int tirarDados() {
+		return this.getDado().tirarDados();
+	}
+
+	/**
+	 * Devuelve el dado
+	 * 
+	 * @return the dado
+	 */
+	public Dado getDado() {
+		return dado;
 	}
 
 	/**
