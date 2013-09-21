@@ -51,8 +51,8 @@ public class Tablero {
 	}
 
 	/**
-	 * Método que genera los casilleros del tablero. Probablemente al pedo
-	 * porque lo más seguro es que los carguemos directamente desde la base de
+	 * MÃ©todo que genera los casilleros del tablero. Probablemente al pedo
+	 * porque lo mÃ¡s seguro es que los carguemos directamente desde la base de
 	 * datos. Pero para pruebas sirve.
 	 */
 	private void loadCasilleros() {
@@ -66,92 +66,92 @@ public class Tablero {
 		ITarjetaEstacionDao tarjetaEstacionDao = (ITarjetaEstacionDao) appContext
 				.getBean("tarjetaEstacionDao");
 
-		this.casillerosList[0] = new Casillero(1, Casillero.CASILLERO_SALIDA);
-		this.casillerosList[1] = new CasilleroCalle(2, "Ronda de Valencia",
+		this.casillerosList[0] = new Casillero(1, Casillero.CASILLERO_SALIDA,this);
+		this.casillerosList[1] = new CasilleroCalle(2, "Ronda de Valencia",this,
 				tarjetaCalleDao.findByNombre("RONDA DE VALENCIA"));
-		this.casillerosList[2] = new Casillero(3, Casillero.CASILLERO_COMUNIDAD);
-		this.casillerosList[3] = new CasilleroCalle(4, "Plaza Lavapiés",
-				tarjetaCalleDao.findByNombre("PLAZA DE LAVAPIÉS"));
-		this.casillerosList[4] = new Casillero(5, Casillero.CASILLERO_IMPUESTO);
-		this.casillerosList[5] = new CasilleroEstacion(6, "Estación de Goya",
-				tarjetaEstacionDao.findByNombre("ESTACIÓN DE GOYA"));
+		this.casillerosList[2] = new Casillero(3, Casillero.CASILLERO_COMUNIDAD,this);
+		this.casillerosList[3] = new CasilleroCalle(4, "Plaza LavapiÃ©s",this,
+				tarjetaCalleDao.findByNombre("PLAZA DE LAVAPIÃ‰S"));
+		this.casillerosList[4] = new Casillero(5, Casillero.CASILLERO_IMPUESTO,this);
+		this.casillerosList[5] = new CasilleroEstacion(6, "EstaciÃ³n de Goya",this,
+				tarjetaEstacionDao.findByNombre("ESTACIÃ“N DE GOYA"));
 		this.casillerosList[6] = new CasilleroCalle(7,
-				"Glorieta Cuatro Caminos",
+				"Glorieta Cuatro Caminos",this,
 				tarjetaCalleDao.findByNombre("GLORIETA CUATRO CAMINOS"));
-		this.casillerosList[7] = new Casillero(8, Casillero.CASILLERO_SUERTE);
+		this.casillerosList[7] = new Casillero(8, Casillero.CASILLERO_SUERTE,this);
 		this.casillerosList[8] = new CasilleroCalle(9,
-				"Avenida Reina Victoria",
+				"Avenida Reina Victoria",this,
 				tarjetaCalleDao.findByNombre("AVENIDA REINA VICTORIA"));
-		this.casillerosList[9] = new CasilleroCalle(10, "Calle Bravo Murillo",
+		this.casillerosList[9] = new CasilleroCalle(10, "Calle Bravo Murillo",this,
 				tarjetaCalleDao.findByNombre("CALLE BRAVO MURILLO"));
 
-		this.casillerosList[10] = new Casillero(11, Casillero.CASILLERO_CARCEL);
-		this.casillerosList[11] = new CasilleroCalle(12, "Glorieta de Biblbao",
+		this.casillerosList[10] = new Casillero(11, Casillero.CASILLERO_CARCEL,this);
+		this.casillerosList[11] = new CasilleroCalle(12, "Glorieta de Biblbao",this,
 				tarjetaCalleDao.findByNombre("GLORIETA DE BILBAO"));
 		this.casillerosList[12] = new CasilleroCompania(13,
-				"Compañía de Electricidad",
-				tarjetaCompaniaDao.findByNombre("COMPAÑIA DE ELECTRICIDAD"));
+				"CompaÃ±Ã­a de Electricidad",this,
+				tarjetaCompaniaDao.findByNombre("COMPAÃ‘IA DE ELECTRICIDAD"));
 		this.casillerosList[13] = new CasilleroCalle(14,
-				"Calle Alberto Aguilera",
+				"Calle Alberto Aguilera",this,
 				tarjetaCalleDao.findByNombre("CALLE ALBERTO AGUILERA"));
-		this.casillerosList[14] = new CasilleroCalle(15, "Calle Fuencarral",
+		this.casillerosList[14] = new CasilleroCalle(15, "Calle Fuencarral",this,
 				tarjetaCalleDao.findByNombre("CALLE FUENCARRAL"));
 		this.casillerosList[15] = new CasilleroEstacion(16,
-				"Estación de las Delicias",
-				tarjetaEstacionDao.findByNombre("ESTACIÓN DE LAS DELICIAS"));
-		this.casillerosList[16] = new CasilleroCalle(17, "Avenida Felipe II",
+				"EstaciÃ³n de las Delicias",this,
+				tarjetaEstacionDao.findByNombre("ESTACIÃ“N DE LAS DELICIAS"));
+		this.casillerosList[16] = new CasilleroCalle(17, "Avenida Felipe II",this,
 				tarjetaCalleDao.findByNombre("AVENIDA FELIPE II"));
 		this.casillerosList[17] = new Casillero(18,
-				Casillero.CASILLERO_COMUNIDAD);
-		this.casillerosList[18] = new CasilleroCalle(19, "Calle Velázquez",
-				tarjetaCalleDao.findByNombre("CALLE VELÁZQUEZ"));
-		this.casillerosList[19] = new CasilleroCalle(20, "Calle Serrano",
+				Casillero.CASILLERO_COMUNIDAD,this);
+		this.casillerosList[18] = new CasilleroCalle(19, "Calle VelÃ¡zquez",this,
+				tarjetaCalleDao.findByNombre("CALLE VELÃ�ZQUEZ"));
+		this.casillerosList[19] = new CasilleroCalle(20, "Calle Serrano",this,
 				tarjetaCalleDao.findByNombre("CALLE SERRANO"));
 
 		this.casillerosList[20] = new Casillero(21,
-				Casillero.CASILLERO_DESCANSO);
-		this.casillerosList[21] = new CasilleroCalle(22, "Avenida de América",
-				tarjetaCalleDao.findByNombre("AVENIDA AMÉRICA"));
-		this.casillerosList[22] = new Casillero(23, Casillero.CASILLERO_SUERTE);
+				Casillero.CASILLERO_DESCANSO,this);
+		this.casillerosList[21] = new CasilleroCalle(22, "Avenida de AmÃ©rica",this,
+				tarjetaCalleDao.findByNombre("AVENIDA AMÃ‰RICA"));
+		this.casillerosList[22] = new Casillero(23, Casillero.CASILLERO_SUERTE,this);
 		this.casillerosList[23] = new CasilleroCalle(24,
-				"Calle María de Molina",
-				tarjetaCalleDao.findByNombre("CALLE MARÍA DE MOLINA"));
-		this.casillerosList[24] = new CasilleroCalle(25, "Calle Cea Bermúdez",
-				tarjetaCalleDao.findByNombre("CALLE CEA BERMÚDEZ"));
+				"Calle MarÃ­a de Molina",this,
+				tarjetaCalleDao.findByNombre("CALLE MARÃ�A DE MOLINA"));
+		this.casillerosList[24] = new CasilleroCalle(25, "Calle Cea BermÃºdez",this,
+				tarjetaCalleDao.findByNombre("CALLE CEA BERMÃšDEZ"));
 		this.casillerosList[25] = new CasilleroEstacion(26,
-				"Estación del Mediodía",
-				tarjetaEstacionDao.findByNombre("ESTACIÓN DEL MEDIODÍA"));
+				"EstaciÃ³n del MediodÃ­a",this,
+				tarjetaEstacionDao.findByNombre("ESTACIÃ“N DEL MEDIODÃ�A"));
 		this.casillerosList[26] = new CasilleroCalle(27,
-				"Avenida de los Reyes Católicos",
-				tarjetaCalleDao.findByNombre("AVENIDA DE LOS REYES CATÓLICOS"));
-		this.casillerosList[27] = new CasilleroCalle(28, "Calle Bailén",
-				tarjetaCalleDao.findByNombre("CALLE BAILÉN"));
+				"Avenida de los Reyes CatÃ³licos",this,
+				tarjetaCalleDao.findByNombre("AVENIDA DE LOS REYES CATÃ“LICOS"));
+		this.casillerosList[27] = new CasilleroCalle(28, "Calle BailÃ©n",this,
+				tarjetaCalleDao.findByNombre("CALLE BAILÃ‰N"));
 		this.casillerosList[28] = new CasilleroCompania(29,
-				"Compañía de Aguas",
-				tarjetaCompaniaDao.findByNombre("COMPAÑIA DE AGUAS"));
-		this.casillerosList[29] = new CasilleroCalle(30, "Plaza de España",
-				tarjetaCalleDao.findByNombre("PLAZA ESPAÑA"));
+				"CompaÃ±Ã­a de Aguas",this,
+				tarjetaCompaniaDao.findByNombre("COMPAÃ‘IA DE AGUAS"));
+		this.casillerosList[29] = new CasilleroCalle(30, "Plaza de EspaÃ±a",this,
+				tarjetaCalleDao.findByNombre("PLAZA ESPAÃ‘A"));
 
 		this.casillerosList[30] = new Casillero(31,
-				Casillero.CASILLERO_IRACARCEL);
-		this.casillerosList[31] = new CasilleroCalle(32, "Puerta del Sol",
+				Casillero.CASILLERO_IRACARCEL,this);
+		this.casillerosList[31] = new CasilleroCalle(32, "Puerta del Sol",this,
 				tarjetaCalleDao.findByNombre("PUERTA DEL SOL"));
-		this.casillerosList[32] = new CasilleroCalle(33, "Calle Alcalá",
-				tarjetaCalleDao.findByNombre("CALLE ALCALÁ"));
+		this.casillerosList[32] = new CasilleroCalle(33, "Calle AlcalÃ¡",this,
+				tarjetaCalleDao.findByNombre("CALLE ALCALÃ�"));
 		this.casillerosList[33] = new Casillero(34,
-				Casillero.CASILLERO_COMUNIDAD);
-		this.casillerosList[34] = new CasilleroCalle(35, "Gran Vía",
-				tarjetaCalleDao.findByNombre("GRAN VÍA"));
+				Casillero.CASILLERO_COMUNIDAD,this);
+		this.casillerosList[34] = new CasilleroCalle(35, "Gran VÃ­a",this,
+				tarjetaCalleDao.findByNombre("GRAN VÃ�A"));
 		this.casillerosList[35] = new CasilleroEstacion(36,
-				"Estación del Norte",
-				tarjetaEstacionDao.findByNombre("ESTACIÓN DEL NORTE"));
-		this.casillerosList[36] = new Casillero(37, Casillero.CASILLERO_SUERTE);
+				"EstaciÃ³n del Norte",this,
+				tarjetaEstacionDao.findByNombre("ESTACIÃ“N DEL NORTE"));
+		this.casillerosList[36] = new Casillero(37, Casillero.CASILLERO_SUERTE,this);
 		this.casillerosList[37] = new CasilleroCalle(38,
-				"Paseo de la Castellana",
+				"Paseo de la Castellana",this,
 				tarjetaCalleDao.findByNombre("PASEO DE LA CASTELLANA"));
 		this.casillerosList[38] = new Casillero(39,
-				Casillero.CASILLERO_IMPUESTO);
-		this.casillerosList[39] = new CasilleroCalle(40, "Paseo del Prado",
+				Casillero.CASILLERO_IMPUESTO,this);
+		this.casillerosList[39] = new CasilleroCalle(40, "Paseo del Prado",this,
 				tarjetaCalleDao.findByNombre("PASEO DEL PRADO"));
 
 		GestorLogs.registrarLog("Casilleros cargados");
@@ -186,19 +186,19 @@ public class Tablero {
 	}
 
 	/**
-	 * Devuelve el casillero pasado por parámetro. El parámetro es el Número de
+	 * Devuelve el casillero pasado por parÃ¡metro. El parÃ¡metro es el NÃºmero de
 	 * casillero [1-40], NO el indice del vector. Si el 'nroCasillero' es
-	 * inválido (menor a 1 o mayor a 40) devuelve null.
+	 * invÃ¡lido (menor a 1 o mayor a 40) devuelve null.
 	 * 
 	 * @param nroCasillero
-	 *            El número del casillero a devolver.
-	 * @return El casillero correspondiente al número pasado por parámetro o
+	 *            El nÃºmero del casillero a devolver.
+	 * @return El casillero correspondiente al nÃºmero pasado por parÃ¡metro o
 	 *         null si no existe.
 	 */
 	public Casillero getCasillero(int nroCasillero) {
 		/*
-		 * TODO: estaría bueno que si el casillero no existe porque pasa un
-		 * nroCasillero incorrecto, en vez de retornar null tire una excepción
+		 * TODO: estarÃ­a bueno que si el casillero no existe porque pasa un
+		 * nroCasillero incorrecto, en vez de retornar null tire una excepciÃ³n
 		 * CasilleroInvalidoException por ejemplo
 		 */
 
@@ -222,19 +222,19 @@ public class Tablero {
 	}
 
 	/**
-	 * Devuelve el Casillero de la calle/Estación/Compañía que tiene el nombre
+	 * Devuelve el Casillero de la calle/EstaciÃ³n/CompaÃ±Ã­a que tiene el nombre
 	 * 'nombreCasillero' o null si el nombre no existe.
 	 * 
 	 * @param nombreCasillero
 	 *            El nombre del casillero.
-	 * @return El Casillero con el nombre pasado por parámetro o null si la
+	 * @return El Casillero con el nombre pasado por parÃ¡metro o null si la
 	 *         calle no existe.
 	 */
 	public Casillero getCasillero(String nombreCasillero) {
 
 		/*
-		 * TODO: estaría bueno que si el casillero no existe porque el nombre de
-		 * la calle no existe, en vez de retornar null tire una excepción
+		 * TODO: estarÃ­a bueno que si el casillero no existe porque el nombre de
+		 * la calle no existe, en vez de retornar null tire una excepciÃ³n
 		 * NombreInvalidoException por ejemplo
 		 */
 
@@ -271,7 +271,7 @@ public class Tablero {
 
 	/**
 	 * Mueve a un Jugador 'cantCasilleros' casilleros hacia adelante (o hacia
-	 * atrás si 'cantCasilleros' es negativo) y devuelve el Casillero en el que
+	 * atrÃ¡s si 'cantCasilleros' es negativo) y devuelve el Casillero en el que
 	 * cayo. Si el movimiento es hacia adelante, el jugador pasa por la salida y
 	 * el parametro 'cobraSalida' es true, cobra los $200
 	 * 
@@ -280,11 +280,11 @@ public class Tablero {
 	 * @param cantCasilleros
 	 *            La cantidad de casilleros a mover el jugador. Si es positivo
 	 *            mueve hacia adelante. Si es negativo hacia atras (es lo mismo
-	 *            que llamar al método 'moverAtras').
+	 *            que llamar al mÃ©todo 'moverAtras').
 	 * @param cobraSalida
 	 *            true en el caso que el jugador deba cobrar los $200 si pasa
 	 *            por la salida. false si no los cobra.
-	 * @return El casillero al cual se movió el jugador.
+	 * @return El casillero al cual se moviÃ³ el jugador.
 	 */
 	public Casillero moverAdelante(Jugador jugador, int cantCasilleros,
 			boolean cobraSalida) {
@@ -340,33 +340,33 @@ public class Tablero {
 	 *            El jugador que se quiere mover.
 	 * @param cantCasilleros
 	 *            La cantidad de casilleros a mover el jugador (Es lo mismo que
-	 *            llamar al método 'moverAdelante' con 'cantCasilleros'
+	 *            llamar al mÃ©todo 'moverAdelante' con 'cantCasilleros'
 	 *            negativa).
-	 * @return El casillero al cual se movió el jugador.
+	 * @return El casillero al cual se moviÃ³ el jugador.
 	 */
 	public Casillero moverAtras(Jugador jugador, int cantCasilleros) {
 		return this.moverAdelante(jugador, (cantCasilleros * (-1)), false);
 	}
 
 	/**
-	 * Mueve el jugador 'jugador' al casillero con el número 'nroCasillero'.
+	 * Mueve el jugador 'jugador' al casillero con el nÃºmero 'nroCasillero'.
 	 * Retorna el Casillero al cual se movio al jugador o null si no existe.
 	 * 
 	 * @param jugador
 	 *            El jugador que se quiere mover.
 	 * @param nroCasillero
-	 *            El número de casillero al cual se quiere mover el jugador.
+	 *            El nÃºmero de casillero al cual se quiere mover el jugador.
 	 * @param cobraSalida
 	 *            true en el caso que el jugador deba cobrar los $200 si pasa
 	 *            por la salida. false si no los cobra.
-	 * @return El casillero al cual se movió el jugador si 'nroCasillero' es
-	 *         válido (menor a 1 o mayor a 40). null en caso contrario.
+	 * @return El casillero al cual se moviÃ³ el jugador si 'nroCasillero' es
+	 *         vÃ¡lido (menor a 1 o mayor a 40). null en caso contrario.
 	 */
 	public Casillero moverACasillero(Jugador jugador, int nroCasillero,
 			boolean cobraSalida) {
 		/*
-		 * TODO: estaría bueno que si el casillero no existe porque pasa un
-		 * nroCasillero incorrecto, en vez de retornar null tire una excepción
+		 * TODO: estarÃ­a bueno que si el casillero no existe porque pasa un
+		 * nroCasillero incorrecto, en vez de retornar null tire una excepciÃ³n
 		 * CasilleroInvalidoException por ejemplo
 		 */
 		Casillero casilleroActual = jugador.getCasilleroActual();
@@ -374,7 +374,7 @@ public class Tablero {
 
 		boolean cobroSalida = false;
 
-		// si el nroCasillero es inválido (menor a 1 o mayor a 40) retorna
+		// si el nroCasillero es invÃ¡lido (menor a 1 o mayor a 40) retorna
 		// null...
 		if (casilleroSiguiente == null)
 			return null;
@@ -412,7 +412,7 @@ public class Tablero {
 	 * @param cobraSalida
 	 *            true en el caso que el jugador deba cobrar los $200 si pasa
 	 *            por la salida. false si no los cobra.
-	 * @return El casillero al cual se movió el jugador si 'nombreCasillero'
+	 * @return El casillero al cual se moviÃ³ el jugador si 'nombreCasillero'
 	 *         existe. null en caso contrario.
 	 */
 	public Casillero moverACasillero(Jugador jugador, String nombreCasillero,
@@ -449,7 +449,7 @@ public class Tablero {
 	 * @param jugador
 	 *            El jugador que se mueve.
 	 * @param nroCasillero
-	 *            El número de casillero al cual se mueve.
+	 *            El nÃºmero de casillero al cual se mueve.
 	 * @return El casillero en el que queda el jugador.
 	 */
 	public Casillero retrocederA(Jugador jugador, int nroCasillero) {
@@ -589,4 +589,46 @@ public class Tablero {
 						: " y NO cobro $200 en la salida"));
 
 	}
+
+	public Banco getBanco() {
+		return banco;
+	}
+	
+	public int casasPorJugador(Jugador jugador)
+	{
+		int casas=0;
+		CasilleroCalle casilleroCalle=null;
+		for( Casillero casillero: casillerosList)
+		{
+			if(casillero instanceof CasilleroCalle && casillero.getJugadores().contains(jugador))
+			{
+				casilleroCalle=(CasilleroCalle)casillero;
+				if(casilleroCalle.getNroCasas()<5)
+					casas=casas+casilleroCalle.getNroCasas();
+			}
+		}
+		return casas;
+	}
+	
+	public int hotelesPorJugador(Jugador jugador)
+	{
+		int casas=0;
+		CasilleroCalle casilleroCalle=null;
+		for( Casillero casillero: casillerosList)
+		{
+			if(casillero instanceof CasilleroCalle && casillero.getJugadores().contains(jugador))
+			{
+				casilleroCalle=(CasilleroCalle)casillero;
+				if(casilleroCalle.getNroCasas()==5)
+					casas=casas+casilleroCalle.getNroCasas();
+			}
+		}
+		return casas;
+	}
+	
+	
+	
+
+	
+	
 }

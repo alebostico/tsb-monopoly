@@ -25,6 +25,8 @@ import monopoly.model.Jugador;
 // @AttributeOverride(name="nombre", column=@Column(name="nombre")),
 // @AttributeOverride(name="valorHipoticario",
 // column=@Column(name="valorHipoticario"))
+// @AttributeOverride(name="valorPropiedad",
+// column=@Column(name="valorPropiedad"))
 // })
 @PrimaryKeyJoinColumn(name = "tarjetaPropiedadID")
 public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
@@ -77,8 +79,9 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 			Integer valorUnaCasa, Integer valorDosCasas,
 			Integer valorTresCasas, Integer valorCuatroCasas,
 			Integer valorHotel, Integer precioCadaCasa,
-			Integer precioCadaHotel, String nombreImagen) {
-		super(jugador, nombre, valorHipotecario, nombreImagen);
+			Integer precioCadaHotel, String nombreImagen,
+			Integer valorPropiedad) {
+		super(jugador, nombre, valorHipotecario, nombreImagen, valorPropiedad);
 		this.precioAlquiler = precioAlquiler;
 		this.valorUnaCasa = valorUnaCasa;
 		this.valorDosCasas = valorDosCasas;

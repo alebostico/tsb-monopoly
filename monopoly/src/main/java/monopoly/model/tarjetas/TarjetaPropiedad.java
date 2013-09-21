@@ -53,6 +53,9 @@ public abstract class TarjetaPropiedad implements Serializable {
 	@Column(name = "isHipotecada", columnDefinition = "TINYINT")
 	@Type(type = "org.hibernate.type.NumericBooleanType")
 	private boolean hipotecada;
+	
+	@Column(name = "valorPropiedad")
+	private int valorPropiedad;
 
 	public boolean isHipotecada() {
 		return hipotecada;
@@ -70,15 +73,17 @@ public abstract class TarjetaPropiedad implements Serializable {
 	 * @param jugador
 	 * @param nombre
 	 * @param valorHipotecario
+	 * @param valorPropiedad
 	 */
 	public TarjetaPropiedad(Jugador jugador, String nombre,
-			Integer valorHipotecario, String nombreImagen) {
+			Integer valorHipotecario, String nombreImagen,Integer valorPropiedad) {
 		super();
 		this.jugador = jugador;
 		this.nombre = nombre;
 		this.valorHipotecario = valorHipotecario;
 		this.nombreImagen = nombreImagen;
 		this.hipotecada = false;
+		this.valorPropiedad=valorPropiedad;
 	}
 
 	/**
@@ -155,6 +160,22 @@ public abstract class TarjetaPropiedad implements Serializable {
 	public void setNombreImagen(String nombreImagen) {
 		this.nombreImagen = nombreImagen;
 	}
+	
+	
+	/**
+	 * @return the valorPropiedad
+	 */
+	public int getValorPropiedad() {
+		return valorPropiedad;
+	}
+
+	/**
+	 * @param valorPropiedad
+	 *            the valor to set
+	 */
+	public void setValorPropiedad(int valorPropiedad) {
+		this.valorPropiedad = valorPropiedad;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -164,7 +185,18 @@ public abstract class TarjetaPropiedad implements Serializable {
 	@Override
 	public String toString() {
 		return "TarjetaPropiedad [ nombre=" + nombre + ", valorHipotecario="
-				+ valorHipotecario + " ]";
+				+ valorHipotecario + ",valoPropiedadr="+valorPropiedad+ " ]";
 	}
+	
+	public boolean hipotecarPropiedad()
+	{
+		return this.getJugador().getJuego().getBanco().hipotecarPropiedad(jugador, this);
+	}
+	
+	public boolean deshipotecarPropiedad()
+	{
+		return this.getJugador().getJuego().getBanco().deshipotecarPropiedad(this.getJugador(), this);
+	}
+	
 
 }
