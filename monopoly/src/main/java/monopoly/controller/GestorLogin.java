@@ -3,8 +3,6 @@
  */
 package monopoly.controller;
 
-import java.util.ArrayList;
-
 import monopoly.dao.IUsuarioDao;
 import monopoly.model.Usuario;
 
@@ -23,10 +21,10 @@ public class GestorLogin {
 			"spring/config/BeanLocations.xml");
 
 	
-	public static Usuario validarUsuario(ArrayList<String> arrayContenidoMensaje)
+	public static Usuario validarUsuario(String userName, String password)
 	{
 		IUsuarioDao usuarioDao = (IUsuarioDao) appContext.getBean("usuarioDao");
-		Usuario usuario = usuarioDao.validarUsuario(arrayContenidoMensaje.get(0), arrayContenidoMensaje.get(1));
+		Usuario usuario = usuarioDao.validarUsuario(userName, password);
 		return usuario;
 	}
 
