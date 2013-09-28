@@ -6,6 +6,7 @@ package monopoly.client.controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -28,22 +29,22 @@ import monopoly.util.encriptacion.VernamEncrypter;
 public class LoginController extends AnchorPane implements Initializable {
 
 	@FXML
-    TextField userId;
-	
-    @FXML
-    PasswordField password;
-    
-    @FXML
-    Button login;
-    
-    @FXML
-    Button registrarme;
-    
-    @FXML
-    Label errorMessage;
-    
+	TextField userId;
+
+	@FXML
+	PasswordField password;
+
+	@FXML
+	Button login;
+
+	@FXML
+	Button registrarme;
+
+	@FXML
+	Label errorMessage;
+
 	private FXMLIniciarSesion application;
-	
+
 	private TCPClient cliente;
 	private Usuario usuarioLogeado;
 
@@ -55,12 +56,12 @@ public class LoginController extends AnchorPane implements Initializable {
 	}
 
 	/**
-	 * @param application the application to set
+	 * @param application
+	 *            the application to set
 	 */
 	public void setApp(FXMLIniciarSesion application) {
 		this.application = application;
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -74,54 +75,52 @@ public class LoginController extends AnchorPane implements Initializable {
 		errorMessage.setText("");
 		crearCliente();
 	}
-	
-	private void crearCliente()
-	{
+
+	private void crearCliente() {
 		cliente = new TCPClient(this);
 		cliente.start();
 	}
-	
+
 	public void processLogin(ActionEvent event) {
-        if (application == null){
-            // We are running in isolated FXML, possibly in Scene Builder.
-            // NO-OP.
-            errorMessage.setText("Se produjo un error al iniciar sesión");
-        } else {
-        	if(validarDatosIngresados())
-        	{
-        		validarUsuario(userId.getText(), password.getText());
-        	}
-        	else{
-        		errorMessage.setText("¡Existen campos vacios! Complete por favor.");
-        		userId.setFocusTraversable(true);
-        	}
-        }
-    }
-	
-	private boolean validarDatosIngresados()
-	{
-		if(userId.getText().equals("")){
+		if (application == null) {
+			// We are running in isolated FXML, possibly in Scene Builder.
+			// NO-OP.
+			errorMessage.setText("Se produjo un error al iniciar sesión");
+		} else {
+			if (validarDatosIngresados()) {
+
+				validarUsuario(userId.getText(), password.getText());
+			} else {
+				errorMessage
+						.setText("¡Existen campos vacios! Complete por favor.");
+				userId.setFocusTraversable(true);
+			}
+		}
+	}
+
+	private boolean validarDatosIngresados() {
+		if (userId.getText().equals("")) {
 			return false;
 		}
-		if(password.getText().equals(""))
+		if (password.getText().equals(""))
 			return false;
 		return true;
 	}
-	
-	public void validarUsuario(String userName, String password){
+
+	public void validarUsuario(String userName, String password) {
 		String passwordEnc = new String(password);
-        Encrypter enc = new VernamEncrypter(passwordEnc);
-        enc.code();
-        passwordEnc = enc.getEncrypted();
-        
-        GestorLogs.registrarLog("Validando usuario: " + userName);
-        usuarioLogeado = new Usuario(userName, passwordEnc);
-        cliente.iniciarSesion(usuarioLogeado);
-    }
-	
-	public void resultadoLogueo(boolean existe, Usuario usuario)
-	{
-		if(existe)
+		Encrypter enc = new VernamEncrypter(passwordEnc);
+		enc.code();
+		passwordEnc = enc.getEncrypted();
+
+		GestorLogs.registrarLog("Validando usuario: " + userName);
+		usuarioLogeado = new Usuario(userName, passwordEnc);
+
+		cliente.iniciarSesion(usuarioLogeado);
+	}
+
+	public void resultadoLogueo(boolean existe, Usuario usuario) {
+		if (existe)
 			errorMessage.setText("Usuario Logueado");
 		else
 			errorMessage.setText("Usuario / Contraseña inválida");
