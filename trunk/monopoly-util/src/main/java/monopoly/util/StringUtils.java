@@ -2,6 +2,8 @@ package monopoly.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +22,7 @@ public class StringUtils {
 	public static String SHA256 = "SHA-256";
 	public static String SHA384 = "SHA-384";
 	public static String SHA512 = "SHA-512";
+	private static String delimitador = "&-&-&";
 
 	private static final String USERNAME_PATTERN = "^[a-z0-9_-]{3,15}$";
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
@@ -117,4 +120,21 @@ public class StringUtils {
 		return matcher.matches();
 
 	}
+	
+	/**
+	 * 
+	 * @param mensajeContenido
+	 * @return
+	 */
+	@SuppressWarnings("resource")
+	public static ArrayList<String> analizarCadena(String mensajeContenido) {
+		ArrayList<String> tokens = new ArrayList<String>();
+		Scanner tokenize = new Scanner(mensajeContenido);
+		tokenize.useDelimiter(delimitador);
+		while (tokenize.hasNext()) {
+			tokens.add(tokenize.next());
+		}
+		return tokens;
+	}
+	
 }
