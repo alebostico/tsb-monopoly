@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import monopoly.client.controller.LoginController;
+import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
 
 /**
@@ -21,7 +22,7 @@ import monopoly.util.GestorLogs;
  */
 public class FXMLIniciarSesion extends Application {
 
-	private LoginController login;
+	private LoginController loginController;
 	
 	private Stage stage;
 
@@ -44,8 +45,8 @@ public class FXMLIniciarSesion extends Application {
 
 	private void gotoLogin() {
 		try {
-			login = (LoginController) replaceSceneContent("IniciarSesion.fxml");
-			login.setApp(this);
+			loginController = (LoginController) replaceSceneContent("IniciarSesion.fxml");
+			loginController.setApp(this);
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex.getMessage());
 		}
@@ -73,14 +74,19 @@ public class FXMLIniciarSesion extends Application {
 	 * @return the login
 	 */
 	public LoginController getLogin() {
-		return login;
+		return loginController;
 	}
 
 	/**
 	 * @param login the login to set
 	 */
 	public void setLogin(LoginController login) {
-		this.login = login;
+		this.loginController = login;
+	}
+	
+	public void resultadoLogueo(boolean existe, Usuario usuario)
+	{
+		loginController.resultadoLogueo(existe, usuario);
 	}
 
 }

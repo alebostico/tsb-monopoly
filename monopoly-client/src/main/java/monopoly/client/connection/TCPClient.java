@@ -35,7 +35,7 @@ public class TCPClient extends Thread {
 	private PrintWriter salida;
 	private BufferedReader entrada;
 
-	private LoginController loginController;
+	private LoginController vIniciarSesion;
 
 	private boolean listening = true;
 	private String delimitador = "&-&-&";
@@ -45,11 +45,12 @@ public class TCPClient extends Thread {
 	 */
 	public TCPClient(LoginController ventIniciarSesion) {
 		super();
-		loginController = ventIniciarSesion;
+		vIniciarSesion = ventIniciarSesion;	
 	}
 
+	@Override
 	public void run() {
-		if (loginController != null) {
+		if (vIniciarSesion != null) {
 
 			try {
 				clientSocket = new Socket(IPSERVIDOR, PUERTO);
@@ -77,7 +78,7 @@ public class TCPClient extends Thread {
 							 **/
 							if (!Boolean.parseBoolean(contenidoLineaEntrada
 									.get(1)))
-								loginController.resultadoLogueo(false, null);
+								vIniciarSesion.resultadoLogueo(false, null);
 							else {
 								usuarioLogueado = new Usuario(
 										contenidoLineaEntrada.get(3));
@@ -92,7 +93,7 @@ public class TCPClient extends Thread {
 										.get(5));
 								usuarioLogueado.setEmail(contenidoLineaEntrada
 										.get(6));
-								loginController.resultadoLogueo(true,
+								vIniciarSesion.resultadoLogueo(true,
 										usuarioLogueado);
 							}
 							break;
