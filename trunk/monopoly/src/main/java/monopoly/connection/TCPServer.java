@@ -48,7 +48,7 @@ public class TCPServer extends Thread {
 				try {
 					while (serverSocket.isBound()) {
 						Thread.sleep(3000);
-						System.out.println("Servidor Conectado. Esperando mensajes de clientes...");
+						//System.out.println("Servidor Conectado. Esperando mensajes de clientes...");
 					}
 				} catch (InterruptedException e) {
 					GestorLogs.registrarError("No se puede comprobar el estado del Servidor...");

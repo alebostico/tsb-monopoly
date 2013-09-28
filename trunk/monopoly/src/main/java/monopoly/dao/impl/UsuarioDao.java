@@ -93,10 +93,10 @@ public class UsuarioDao extends CustomHibernateDaoSupport implements
 	public Usuario validarUsuario(String userName, String password) {
 		// TODO Auto-generated method stub
 		Session session = this.getSession();
-		Usuario usuario = (Usuario)session.createCriteria(Usuario.class)
-				.add(Restrictions.like("userName", userName))
-				.add(Restrictions.like("password", password)).setMaxResults(1);
-		if(usuario == null)
+		List<?> list = session.createCriteria(Usuario.class)
+				.add(Restrictions.eq("userName", userName))
+				.add(Restrictions.eq("password", password)).list();
+		if(list.isEmpty())
 		{
 			String log = "No existe un usuario en la base de datos para los parámetros: userName:" 
 						+ userName + ", password: " + password + ".";
@@ -104,7 +104,7 @@ public class UsuarioDao extends CustomHibernateDaoSupport implements
 					.registrarWarning(log);
 			return null;
 		}
-		return usuario;
+		return (Usuario)list.get(0);
 	}
 
 }

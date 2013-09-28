@@ -42,6 +42,13 @@ public class Usuario implements Serializable{
 	@Column(name = "email")
 	private String email;
 
+	/**
+	 * 
+	 */
+	public Usuario() {
+		super();
+	}
+
 	public Usuario(String userName) {
 		super();
 		this.userName = userName;
