@@ -12,12 +12,8 @@ import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import monopoly.client.connection.TCPClient;
 import monopoly.client.controller.LoginController;
-import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
-import monopoly.util.encriptacion.Encrypter;
-import monopoly.util.encriptacion.VernamEncrypter;
 
 /**
  * @author pablo
@@ -26,9 +22,6 @@ import monopoly.util.encriptacion.VernamEncrypter;
 public class FXMLIniciarSesion extends Application {
 
 	private LoginController login;
-	
-	private TCPClient cliente;
-	private Usuario usuarioLogeado;
 	
 	private Stage stage;
 
@@ -44,8 +37,6 @@ public class FXMLIniciarSesion extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// TODO Auto-generated method stub
-		cliente = null;
-		usuarioLogeado = null;
 		stage = primaryStage;
 		gotoLogin();
 		primaryStage.show();
@@ -78,31 +69,18 @@ public class FXMLIniciarSesion extends Application {
 		return (Initializable) loader.getController();
 	}
 
-	public void validarUsuario(String userName, String password){
-		String passwordEnc = new String(password);
-        Encrypter enc = new VernamEncrypter(passwordEnc);
-        enc.code();
-        passwordEnc = enc.getEncrypted();
-        
-        GestorLogs.registrarLog("Validando usuario: " + userName);
-        Usuario usuario = new Usuario(userName, password);
-        crearCliente(usuario);
-        cliente.iniciarSesion(usuario);
-        
-    }
-	
-	private void crearCliente(Usuario usuario)
-	{
-		cliente = new TCPClient(usuario, this);
-		cliente.start();
+	/**
+	 * @return the login
+	 */
+	public LoginController getLogin() {
+		return login;
 	}
-	
-	public void resultadoLogueo(boolean existe, Usuario usuario)
-	{
-		if(existe)
-			login.UsuarioCorrecto();
-		else
-			login.usuarioIncorrecto();
-			
+
+	/**
+	 * @param login the login to set
+	 */
+	public void setLogin(LoginController login) {
+		this.login = login;
 	}
+
 }
