@@ -18,6 +18,7 @@ public class Main {
 		// TODO Auto-generated method stub
 		TCPServer threadServer = new TCPServer();
 		threadServer.start();
+		System.out.println("Se inicio el servidor");
 	}
 
 }

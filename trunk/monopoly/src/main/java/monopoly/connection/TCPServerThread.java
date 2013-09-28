@@ -3,9 +3,10 @@
  */
 package monopoly.connection;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -13,7 +14,9 @@ import java.util.Scanner;
 import monopoly.controller.GestorJuego;
 import monopoly.controller.GestorLogin;
 import monopoly.model.Usuario;
-import monopoly.util.EnumMensaje;
+import monopoly.util.ConstantesMensaje;
+import monopoly.util.GestorLogs;
+import monopoly.util.StringUtils;
 
 /**
  * @author Bostico Alejandro
@@ -26,21 +29,22 @@ public class TCPServerThread extends Thread {
 	/*
 	 * Datos del socket cliente.
 	 */
-	private static Socket socket;
+	private Socket socketCliente;
 	static String socketip;
 	static int socketport;
-	
+	private boolean corre = true;
+
 	/*
 	 * Datos del servidor padre.
 	 */
 	private TCPServer servidorPadre;
 	private int idThreadServer = 0;
-	
+
 	/*
 	 * Stream para enviar y recibir datos.
 	 */
-	private DataInputStream entrada = null;
-	private DataOutputStream salida = null;
+	private PrintWriter salida;
+	private BufferedReader entrada;
 
 	/*
 	 * Atributos para la lógica del juego.
@@ -48,78 +52,75 @@ public class TCPServerThread extends Thread {
 	private GestorJuego gestorJuegos = GestorJuego.getInstance();
 	private Usuario usuarioLogueado = null;
 
-	/*
-	 * Atributos para la codificación de los mensajes.
-	 */
-	private final static EnumMensaje[] mensaje = EnumMensaje.values();
-	private String delimitador = "&-&-&";
-
-	public TCPServerThread(Socket s, TCPServer server, int idThreadServidor) {
+	public TCPServerThread(Socket socketClient, TCPServer server,
+			int idThreadServidor) {
 		// TODO Auto-generated constructor stub
-		socket = s;
-		socketip = s.getInetAddress().getHostAddress();
-		socketport = s.getPort();
+		socketCliente = socketClient;
+		socketip = socketClient.getInetAddress().getHostAddress();
+		socketport = socketClient.getPort();
 		this.servidorPadre = server;
 		this.idThreadServer = idThreadServidor;
 	}
 
 	public void run() {
 		try {
-			entrada = new DataInputStream(socket.getInputStream());
-			salida = new DataOutputStream(socket.getOutputStream());
+			salida = new PrintWriter(socketCliente.getOutputStream(), true);
+			entrada = new BufferedReader(new InputStreamReader(
+					socketCliente.getInputStream()));
 		} catch (IOException e) {
+			GestorLogs.registrarError(e.getMessage());
 			e.printStackTrace();
 		}
+		String lineaEntrada;
+		ArrayList<String> contenidoLineaEntrada = null;
 
-		String mensajeCliente = "";
-		// int numeroCliente = 0;
-
-		while (true) {
+		while (corre) {
 			try {
-				switch (entrada.readInt()) {
-				case 1:// envio de mensage a todos
-					mensajeCliente = entrada.readUTF();
-					usuarioLogueado = GestorLogin
-							.validarUsuario(analizarCadena(mensajeCliente));
-
-					servidorPadre.avisarResultadoLogueo(usuarioLogueado, idThreadServer);
-					break;
-				case 2:// envio de lista de activos
-					// numUsers = clientesActivos.size();
-					// salida.writeInt(numUsers);
-					// for (int i = 0; i < numUsers; i++)
-					// salida.writeUTF(clientesActivos.get(i).nameUser);
-					break;
-				default: // envia mensage a uno solo
-					// amigo = entrada.readUTF();// captura nombre de amigo
-					// mencli = entrada.readUTF();// mensage enviado
-					// enviaMsg(amigo, mencli);
-					break;
+				lineaEntrada = entrada.readLine();
+				if (lineaEntrada != null) {
+					contenidoLineaEntrada = StringUtils
+							.analizarCadena(lineaEntrada);
+					switch (contenidoLineaEntrada.get(0)) {
+					
+					case ConstantesMensaje.LOGIN:
+						System.out
+								.println("Se recibió un mensaje para loguearse en el juego");
+						
+						usuarioLogueado = GestorLogin
+								.validarUsuario(contenidoLineaEntrada.get(1), contenidoLineaEntrada.get(2));
+						servidorPadre.avisarResultadoLogueo(usuarioLogueado,
+								idThreadServer);
+						break;
+					case ConstantesMensaje.INICIAR_PARTIDA:
+						System.out
+								.println("Se recibió un mensaje para iniciar partida en el juego");
+						// numUsers = clientesActivos.size();
+						// salida.writeInt(numUsers);
+						// for (int i = 0; i < numUsers; i++)
+						// salida.writeUTF(clientesActivos.get(i).nameUser);
+						break;
+					default:
+						System.out.println("valor por defecto");
+						// amigo = entrada.readUTF();// captura nombre de amigo
+						// mencli = entrada.readUTF();// mensage enviado
+						// enviaMsg(amigo, mencli);
+						break;
+					}
 				}
 			} catch (IOException e) {
-				System.out.println("El cliente termino la conexion");
+				System.out.println("El cliente termino la conexión..\n" + e.getMessage());
 				break;
 			}
 		}
 		try {
-			// ventana.actualizarChat("Se desconecto un usuario");
-			socket.close();
+			socketCliente.close();
 		} catch (Exception et) {
-			// ventana.actualizarChat("no se puede cerrar el socket");
+			System.out.println("El cliente termino la conexión..\n" + et.getMessage());
 		}
 	}
-	
-	void avisarResultadoLogueo(String contenidoLineaEntrada)
-	{
-		try {
-			salida.writeInt(EnumMensaje.LOGIN.getIdMensaje());
-			salida.writeUTF(contenidoLineaEntrada);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} // Resultado de login
-		
-		
+
+	void avisarResultadoLogueo(String contenidoLineaEntrada) {
+		salida.println(contenidoLineaEntrada);
 	}
 
 	private void enviarMensaje(String mensaje) {
@@ -133,22 +134,6 @@ public class TCPServerThread extends Thread {
 		// }catch (IOException e)
 		// {e.printStackTrace();}
 		// }
-	}
-
-	/**
-	 * 
-	 * @param mensajeContenido
-	 * @return
-	 */
-	@SuppressWarnings("resource")
-	private ArrayList<String> analizarCadena(String mensajeContenido) {
-		ArrayList<String> tokens = new ArrayList<String>();
-		Scanner tokenize = new Scanner(mensajeContenido);
-		tokenize.useDelimiter(delimitador);
-		while (tokenize.hasNext()) {
-			tokens.add(tokenize.next());
-		}
-		return tokens;
 	}
 
 }
