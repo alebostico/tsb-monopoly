@@ -3,15 +3,12 @@
  */
 package monopoly.client.connection;
 
-import java.io.DataInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.io.PrintWriter;
 
-import monopoly.client.gui.FXMLIniciarSesion;
+import monopoly.client.controller.LoginController;
 import monopoly.model.Usuario;
-import monopoly.util.EnumMensaje;
-import monopoly.util.GestorLogs;
 
 /**
  * @author pablo
@@ -19,70 +16,40 @@ import monopoly.util.GestorLogs;
  */
 public class TCPClientThread extends Thread {
 
-	private DataInputStream entrada;
+	private PrintWriter salida;
+	private BufferedReader entrada;
 	private TCPClient cliente;
-	private FXMLIniciarSesion ventanaInicioSesion;
+	private LoginController loginController;
 
-	/*
-	 * Atributos para la codificación de mensajes.
-	 */
-	private String delimitador = "&-&-&";
-	private final static EnumMensaje[] mensaje = EnumMensaje.values();
-
-	public TCPClientThread() {
-	}
+	
 
 	public TCPClientThread(TCPClient cliente,
-			FXMLIniciarSesion ventIniciarSesion) throws IOException {
+			LoginController ventIniciarSesion, BufferedReader entrada,
+			PrintWriter salida) throws IOException {
 		this.cliente = cliente;
-		this.ventanaInicioSesion = ventIniciarSesion;
+		this.loginController = ventIniciarSesion;
+		this.entrada = entrada;
+		this.salida = salida;
 	}
 
 	public void run() {
-		String mensajeServidor = "";
 
-		while (true) {
-			try {
-				switch (mensaje[entrada.readInt()]) {
-				case LOGIN:
-					mensajeServidor = entrada.readUTF();
-					ArrayList<String> contenido = analizarCadena(mensajeServidor);
-					if (contenido.size() == 1)
-						ventanaInicioSesion.resultadoLogueo(false, null);
-					else {
-						Usuario usuarioLogueado = new Usuario(contenido.get(2));
-						usuarioLogueado.setIdUsuario(Integer.parseInt(contenido.get(1)));
-						usuarioLogueado.setPassword(contenido.get(3)) ;
-						usuarioLogueado.setNombre(contenido.get(4)) ;
-						usuarioLogueado.setEmail(contenido.get(5)) ;
-						ventanaInicioSesion.resultadoLogueo(true, usuarioLogueado);
-					}
-					break;
-
-				default:
-					break;
-				}
-
-			} catch (IOException ex) {
-				GestorLogs.registrarError(ex.getMessage());
-			}
-		}
+//		try {
+//
+//			
+//
+//		} catch (UnknownHostException ex) {
+//			GestorLogs.registrarError(ex.getMessage());
+//			ex.printStackTrace();
+//
+//		} catch (IOException ex) {
+//			GestorLogs.registrarError(ex.getMessage());
+//			ex.printStackTrace();
+//		}
 	}
 
-	/**
-	 * 
-	 * @param mensajeContenido
-	 * @return
-	 */
-	@SuppressWarnings("resource")
-	private ArrayList<String> analizarCadena(String mensajeContenido) {
-		ArrayList<String> tokens = new ArrayList<String>();
-		Scanner tokenize = new Scanner(mensajeContenido);
-		tokenize.useDelimiter(delimitador);
-		while (tokenize.hasNext()) {
-			tokens.add(tokenize.next());
-		}
-		return tokens;
+	public void iniciarSesion(Usuario usuario) {
+		
 	}
 
 }
