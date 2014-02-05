@@ -6,7 +6,6 @@ package monopoly.client.controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import jfx.messagebox.MessageBox;
 import monopoly.client.connection.TCPClient;
 import monopoly.client.gui.FXMLIniciarSesion;
 import monopoly.model.Usuario;
@@ -29,19 +29,19 @@ import monopoly.util.encriptacion.VernamEncrypter;
 public class LoginController extends AnchorPane implements Initializable {
 
 	@FXML
-	TextField userId;
+	private TextField userId;
 
 	@FXML
-	PasswordField password;
+	private PasswordField password;
 
 	@FXML
-	Button login;
+	private Button login;
 
 	@FXML
-	Button registrarme;
+	private Button registrarme;
 
 	@FXML
-	Label errorMessage;
+	private Label errorMessage;
 
 	private FXMLIniciarSesion application;
 
@@ -117,13 +117,31 @@ public class LoginController extends AnchorPane implements Initializable {
 		usuarioLogeado = new Usuario(userName, passwordEnc);
 
 		cliente.iniciarSesion(usuarioLogeado);
+
 	}
 
 	public void resultadoLogueo(boolean existe, Usuario usuario) {
-		if (existe)
-			errorMessage.setText("Usuario Logueado");
-		else
-			errorMessage.setText("Usuario / Contraseña inválida");
+		application.resultadoLogueo(existe, usuario);
+//		if (existe) {
+//			errorMessage.setText("Usuario Logueado");
+//
+//		} else {
+//			errorMessage.setText("Usuario / Contraseña inválida");
+//		}
+	}
+
+	/**
+	 * @return the errorMessage
+	 */
+	public Label getErrorMessage() {
+		return errorMessage;
+	}
+
+	/**
+	 * @param errorMessage the errorMessage to set
+	 */
+	public void setErrorMessage(Label errorMessage) {
+		this.errorMessage = errorMessage;
 	}
 
 }
