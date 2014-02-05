@@ -6,12 +6,14 @@ package monopoly.client.gui;
 import java.io.InputStream;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import jfx.messagebox.MessageBox;
 import monopoly.client.controller.LoginController;
 import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
@@ -23,7 +25,7 @@ import monopoly.util.GestorLogs;
 public class FXMLIniciarSesion extends Application {
 
 	private LoginController loginController;
-	
+
 	private Stage stage;
 
 	public static void main(String[] args) {
@@ -36,17 +38,23 @@ public class FXMLIniciarSesion extends Application {
 	 * @see javafx.application.Application#start(javafx.stage.Stage)
 	 */
 	@Override
-	public void start(Stage primaryStage) throws Exception {
+	public void start(final Stage primaryStage) throws Exception {
 		// TODO Auto-generated method stub
-		stage = primaryStage;
-		gotoLogin();
-		primaryStage.show();
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				stage = primaryStage;
+				gotoLogin();
+				primaryStage.show();
+			}
+		});
 	}
 
 	private void gotoLogin() {
 		try {
 			loginController = (LoginController) replaceSceneContent("IniciarSesion.fxml");
 			loginController.setApp(this);
+
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex.getMessage());
 		}
@@ -66,7 +74,7 @@ public class FXMLIniciarSesion extends Application {
 
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
-		
+
 		return (Initializable) loader.getController();
 	}
 
@@ -78,15 +86,21 @@ public class FXMLIniciarSesion extends Application {
 	}
 
 	/**
-	 * @param login the login to set
+	 * @param login
+	 *            the login to set
 	 */
 	public void setLogin(LoginController login) {
 		this.loginController = login;
 	}
-	
-	public void resultadoLogueo(boolean existe, Usuario usuario)
-	{
-		loginController.resultadoLogueo(existe, usuario);
+
+	public void resultadoLogueo(boolean existe, Usuario usuario) {
+		if (existe) {
+			loginController.getErrorMessage().setText("Usuario Logueado");
+
+		} else {
+			loginController.getErrorMessage().setText(
+					"Usuario / Contraseña inválida");
+		}
 	}
 
 }
