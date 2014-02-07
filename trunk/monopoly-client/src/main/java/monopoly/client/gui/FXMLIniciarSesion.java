@@ -13,7 +13,6 @@ import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import jfx.messagebox.MessageBox;
 import monopoly.client.controller.LoginController;
 import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
