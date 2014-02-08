@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import monopoly.controller.GestorJuego;
+import monopoly.controller.GestorUsuario;
 import monopoly.dao.ITarjetaCalleDao;
 import monopoly.dao.ITarjetaCompaniaDao;
 import monopoly.dao.ITarjetaComunidadDao;
@@ -43,6 +44,7 @@ public class Main {
 	public static void main(String[] args) {
 
 		GestorLogs.registrarLog("Realizando algunas pruebas...");
+		// crearUsuarios();
 		testLoadGame();
 		// testRandomizeList();
 		// testShuffleList();
@@ -92,13 +94,15 @@ public class Main {
 		// Ahora movemos de acuerdo a los dados
 		juego.getTablero().moverAdelante(jugador1, juego.tirarDados(), true);
 		System.out.println("Jugador auto " + juego.getDado().getSuma() + " ("
-				+ juego.getDado().getValorDado(1) + "+" + juego.getDado().getValorDado(2)
+				+ juego.getDado().getValorDado(1) + "+"
+				+ juego.getDado().getValorDado(2)
 				+ ") lugares hacia adelante y cobra: "
 				+ jugador1.getCasilleroActual());
-		
+
 		juego.getTablero().moverAdelante(jugador2, juego.tirarDados(), true);
 		System.out.println("Jugador bota " + juego.getDado().getSuma() + " ("
-				+ juego.getDado().getValorDado(1) + "+" + juego.getDado().getValorDado(2)
+				+ juego.getDado().getValorDado(1) + "+"
+				+ juego.getDado().getValorDado(2)
 				+ ") lugares hacia adelante y cobra: "
 				+ jugador1.getCasilleroActual());
 
@@ -339,6 +343,24 @@ public class Main {
 				+ StringUtils.validateUsername("user@name"));
 		System.out.println("username123456789_- - "
 				+ StringUtils.validateUsername("username123456789_-"));
+
+	}
+
+	private static void crearUsuarios() {
+		Usuario uAlejandro = new Usuario("alejandro", "123456");
+		uAlejandro.setNombre("Alejandro");
+		uAlejandro.setEmail("alejandro@monopoly.com");
+		GestorUsuario.saveUsuario(uAlejandro);
+
+		Usuario uPabloM = new Usuario("pablom", "123456");
+		uPabloM.setNombre("Pablo M.");
+		uPabloM.setEmail("pablom@monopoly.com");
+		GestorUsuario.saveUsuario(uPabloM);
+
+		Usuario uPabloO = new Usuario("pabloo", "123456");
+		uPabloO.setNombre("Pablo O.");
+		uPabloO.setEmail("pabloo@monopoly.com");
+		GestorUsuario.saveUsuario(uPabloO);
 
 	}
 

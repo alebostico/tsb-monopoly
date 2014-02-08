@@ -57,6 +57,9 @@ public class GestorJuego {
 	/**
 	 * Crea un juego nuevo, lo agrega a la lista de juegos y lo retorna.
 	 * 
+	 * @param creador El usuario creador (due&ntilde;o) del juego
+	 * @param nombre El nombre del juego
+	 * 
 	 * @return El juego creado
 	 */
 	public Juego crearJuego(Usuario creador, String nombre) {

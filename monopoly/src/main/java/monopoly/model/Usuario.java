@@ -15,15 +15,15 @@ import monopoly.util.StringUtils;
 
 @Entity
 @Table(name = "usuario", catalog = "monopoly_db")
-public class Usuario implements Serializable{
+public class Usuario implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "usuarioID")
 	private long idUsuario;
-	
+
 	/**
 	 * Nombre de usuario para el login
 	 */
@@ -55,19 +55,17 @@ public class Usuario implements Serializable{
 		GestorLogs.registrarLog("Nuevo usuario '" + this.getUserName() + "'");
 		GestorLogs.registrarDebug(this.toStringAll());
 	}
-	
+
 	/**
 	 * @param userName
+	 *            El nombre de usuario
 	 * @param password
+	 *            El password SIN ENCRIPTAR del usuario
 	 */
 	public Usuario(String userName, String password) {
-		super();
-		this.userName = userName;
-		this.password = password;
-		GestorLogs.registrarLog("Nuevo usuario '" + this.getUserName() + "'");
-		GestorLogs.registrarDebug(this.toStringAll());
+		this(userName);
+		this.cambiarPassword(password);
 	}
-
 
 	/**
 	 * @return the idUsuario
@@ -77,43 +75,56 @@ public class Usuario implements Serializable{
 	}
 
 	/**
-	 * @param idUsuario the idUsuario to set
+	 * @param idUsuario
+	 *            the idUsuario to set
 	 */
 	public void setIdUsuario(long idUsuario) {
 		this.idUsuario = idUsuario;
 	}
 
 	/**
-	 * @param userName the userName to set
+	 * Setea un nuevo nombre de usuario
+	 * 
+	 * @param userName
+	 *            the userName to set
 	 */
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
 
 	/**
-	 * @return the nombre
+	 * Devuelve el nombre completo del usuario
+	 * 
+	 * @return the nombre completo del usuario
 	 */
 	public String getNombre() {
 		return nombre;
 	}
 
 	/**
+	 * Setea un nuevo nombre completo de usuario
+	 * 
 	 * @param nombre
-	 *            the nombre to set
+	 *            the Nombre Completo to set
 	 */
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
 
 	/**
-	 * @return the password
+	 * Devuelve el password ENCRIPTADO del usuario
+	 * 
+	 * @return the password ENCRIPTADO del usario
 	 */
 	public String getPassword() {
 		return password;
 	}
 
 	/**
-	 * @param password the password to set
+	 * Setea un nuevo password YA ENCRIPTADO
+	 * 
+	 * @param password
+	 *            El password YA ENCRIPTADO
 	 */
 	public void setPassword(String password) {
 		this.password = password;
@@ -152,14 +163,16 @@ public class Usuario implements Serializable{
 	}
 
 	/**
-	 * @return the email
+	 * Devuelve el email del usuario
+	 * 
+	 * @return the email del usuario
 	 */
 	public String getEmail() {
 		return email;
 	}
 
 	/**
-	 * Setea un nuevo email. Verifica si el mail tiene un formato vválido.
+	 * Setea un nuevo email. Verifica si el mail tiene un formato v&aacute;lido.
 	 * 
 	 * @param email
 	 *            the email to set
@@ -172,11 +185,13 @@ public class Usuario implements Serializable{
 		this.email = email;
 		GestorLogs.registrarDebug("El email del usuario '" + this.getUserName()
 				+ "' se modifico, ahora es '" + this.getEmail() + "'");
-		return false;
+		return true;
 	}
 
 	/**
-	 * @return the usuario
+	 * Devuelve el nombre completo del usuario
+	 * 
+	 * @return the userName del usuario
 	 */
 	public String getUserName() {
 		return userName;

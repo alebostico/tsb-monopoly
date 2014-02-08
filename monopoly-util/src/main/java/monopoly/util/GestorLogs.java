@@ -22,7 +22,7 @@ public class GestorLogs {
 	public static final int MSG_DEBUG_DETAIL = 4;
 
 	/**
-	 * Determina si el logger imprime también en la consola
+	 * Determina si el logger imprime tambi&eacute;n en la consola
 	 */
 	private static boolean printToConsole = true;
 
@@ -59,7 +59,7 @@ public class GestorLogs {
 			fileLog = new File(pathFolderLog + File.separator + "log_"
 					+ formateador.format(fechaActual) + ".txt");
 
-			// Imprime al terminal información sobre el logger...
+			// Imprime al terminal informaci&oacute;n sobre el logger...
 			System.out.print("Logging to file '" + fileLog + "'");
 			if (GestorLogs.printToConsole) {
 				System.out.print(" and to terminal");
@@ -79,9 +79,9 @@ public class GestorLogs {
 	}
 
 	/**
-	 * Método para registrar errores de las diferentes funcionalidades del
-	 * sistemas en un archivo de texto. éste método genera una carpeta en donde
-	 * se guardan los logs del día.
+	 * M&eacute;todo para registrar errores de las diferentes funcionalidades del
+	 * sistemas en un archivo de texto. &Eacute;ste m&eacute;todo genera una carpeta en donde
+	 * se guardan los logs del d&iacute;a.
 	 * 
 	 * @param error
 	 *            Mensaje que se va a escribir en el txt
@@ -91,9 +91,9 @@ public class GestorLogs {
 	}
 
 	/**
-	 * Método para registrar warnings de las diferentes funcionalidades del
-	 * sistemas en un archivo de texto. éste método genera una carpeta en donde
-	 * se guardan los logs del día.
+	 * M&eacute;todo para registrar warnings de las diferentes funcionalidades del
+	 * sistemas en un archivo de texto. &eacute;ste m&eacute;todo genera una carpeta en donde
+	 * se guardan los logs del d&iacute;a.
 	 * 
 	 * @param log
 	 *            Mensaje que se va a escribir en el txt
@@ -103,9 +103,9 @@ public class GestorLogs {
 	}
 
 	/**
-	 * Método para registrar logs de las diferentes funcionalidades del sistemas
-	 * en un archivo de texto. éste método genera una carpeta en donde se
-	 * guardan los logs del día.
+	 * M&eacute;todo para registrar logs de las diferentes funcionalidades del sistemas
+	 * en un archivo de texto. &Eacute;ste m&eacute;todo genera una carpeta en donde se
+	 * guardan los logs del d&iacute;a.
 	 * 
 	 * @param log
 	 *            Mensaje que se va a escribir en el txt
@@ -115,9 +115,9 @@ public class GestorLogs {
 	}
 
 	/**
-	 * Método para registrar información de debug de las diferentes
-	 * funcionalidades del sistemas en un archivo de texto. éste método genera
-	 * una carpeta en donde se guardan los logs del día.
+	 * M&eacute;todo para registrar informaci&oacute;n de debug de las diferentes
+	 * funcionalidades del sistemas en un archivo de texto. &eacute;ste m&eacute;todo genera
+	 * una carpeta en donde se guardan los logs del d&iacute;a.
 	 * 
 	 * @param log
 	 *            Mensaje que se va a escribir en el txt
@@ -127,9 +127,9 @@ public class GestorLogs {
 	}
 
 	/**
-	 * Método para registrar información de debug más detallada de las
-	 * diferentes funcionalidades del sistemas en un archivo de texto. éste
-	 * método genera una carpeta en donde se guardan los logs del día.
+	 * M&eacute;todo para registrar informaci&oacute;n de debug m&aacute;s detallada de las
+	 * diferentes funcionalidades del sistemas en un archivo de texto. &eacute;ste
+	 * m&eacute;todo genera una carpeta en donde se guardan los logs del d&iacute;a.
 	 * 
 	 * @param log
 	 *            Mensaje que se va a escribir en el txt
