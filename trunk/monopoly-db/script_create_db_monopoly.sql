@@ -40,8 +40,15 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
+INSERT INTO `monopoly_db`.`usuario` (`userName`,`password`,`nombre`,`email`)
+VALUES ('pablo','IKIppp','Pablo','pablo_la31@hotmail.com');
+
+-- IKIppp --> Encriptada = 123456
+INSERT INTO `monopoly_db`.`usuario` (`userName`,`password`,`nombre`,`email`)
+VALUES ('ale','IKIppp','Ale','alebostico@gmail.com');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
+
 
 --
 -- Table structure for table `tarjeta_comunidad`
