@@ -9,7 +9,7 @@ import monopoly.util.GestorLogs;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class GestorFichas {
+public class FichasController {
 
 	// public static final String F_AUTO = "auto";
 	// public static final String F_SOMBRERO = "sombrero";
@@ -28,7 +28,7 @@ public class GestorFichas {
 	/**
 	 * Constructor por defecto. Crea las fichas.
 	 */
-	public GestorFichas() {
+	public FichasController() {
 		super();
 		this.cargarFichas();
 

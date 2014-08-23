@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import monopoly.controller.GestorJuego;
-import monopoly.controller.GestorUsuario;
+import monopoly.controller.JuegoController;
+import monopoly.controller.UsuarioController;
 import monopoly.dao.ITarjetaCalleDao;
 import monopoly.dao.ITarjetaCompaniaDao;
 import monopoly.dao.ITarjetaComunidadDao;
@@ -60,7 +60,7 @@ public class Main {
 		 */
 		GestorLogs.setLoggingDetailLevel(GestorLogs.MSG_INFO);
 
-		GestorJuego gj = GestorJuego.getInstance();
+		JuegoController gj = JuegoController.getInstance();
 
 		// El usuario1 además de ser jugador es el creador
 		Usuario usuario1 = new Usuario("testuser1");
@@ -350,17 +350,17 @@ public class Main {
 		Usuario uAlejandro = new Usuario("alejandro", "123456");
 		uAlejandro.setNombre("Alejandro");
 		uAlejandro.setEmail("alejandro@monopoly.com");
-		GestorUsuario.saveUsuario(uAlejandro);
+		UsuarioController.saveUsuario(uAlejandro);
 
 		Usuario uPabloM = new Usuario("pablom", "123456");
 		uPabloM.setNombre("Pablo M.");
 		uPabloM.setEmail("pablom@monopoly.com");
-		GestorUsuario.saveUsuario(uPabloM);
+		UsuarioController.saveUsuario(uPabloM);
 
 		Usuario uPabloO = new Usuario("pabloo", "123456");
 		uPabloO.setNombre("Pablo O.");
 		uPabloO.setEmail("pabloo@monopoly.com");
-		GestorUsuario.saveUsuario(uPabloO);
+		UsuarioController.saveUsuario(uPabloO);
 
 	}
 

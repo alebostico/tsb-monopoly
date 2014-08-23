@@ -13,7 +13,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Oliva Pablo
  *
  */
-public class GestorUsuario {
+public class UsuarioController {
 
 	
 	static ApplicationContext appContext = new ClassPathXmlApplicationContext(
