@@ -4,6 +4,7 @@
 package monopoly.client.controller;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
@@ -17,6 +18,7 @@ import javafx.scene.layout.AnchorPane;
 import monopoly.client.connection.TCPClient;
 import monopoly.client.gui.FXMLIniciarSesion;
 import monopoly.model.Usuario;
+import monopoly.util.ConstantesMensaje;
 import monopoly.util.GestorLogs;
 import monopoly.util.encriptacion.Encrypter;
 import monopoly.util.encriptacion.VernamEncrypter;
@@ -40,27 +42,15 @@ public class LoginController extends AnchorPane implements Initializable {
 	private Button registrarme;
 
 	@FXML
+	private Button salir;
+
+	@FXML
 	private Label errorMessage;
 
-	private FXMLIniciarSesion application;
+	public static FXMLIniciarSesion APPLICATION;
 
 	private TCPClient cliente;
-	private Usuario usuarioLogeado;
-
-	/**
-	 * @return the application
-	 */
-	public FXMLIniciarSesion getApplication() {
-		return application;
-	}
-
-	/**
-	 * @param application
-	 *            the application to set
-	 */
-	public void setApp(FXMLIniciarSesion application) {
-		this.application = application;
-	}
+	private Process p;
 
 	/*
 	 * (non-Javadoc)
@@ -75,13 +65,19 @@ public class LoginController extends AnchorPane implements Initializable {
 		crearCliente();
 	}
 
+	public void destroy() {
+		if (p != null) {
+			p.destroy();
+		}
+	}
+
 	private void crearCliente() {
 		cliente = new TCPClient(this);
 		cliente.start();
 	}
 
 	public void processLogin(ActionEvent event) {
-		if (application == null) {
+		if (APPLICATION == null) {
 			// We are running in isolated FXML, possibly in Scene Builder.
 			// NO-OP.
 			errorMessage.setText("Se produjo un error al iniciar sesión");
@@ -113,20 +109,36 @@ public class LoginController extends AnchorPane implements Initializable {
 		passwordEnc = enc.getEncrypted();
 
 		GestorLogs.registrarLog("Validando usuario: " + userName);
-		usuarioLogeado = new Usuario(userName, passwordEnc);
-
-		cliente.iniciarSesion(usuarioLogeado);
+		cliente.enviarMensaje(MensajesController.codificarMensaje(new String[] {
+				ConstantesMensaje.LOGIN, userName, passwordEnc }));
 
 	}
 
-	public void resultadoLogueo(boolean existe, Usuario usuario) {
-		application.resultadoLogueo(existe, usuario);
-//		if (existe) {
-//			errorMessage.setText("Usuario Logueado");
-//
-//		} else {
-//			errorMessage.setText("Usuario / Contraseña inválida");
-//		}
+	public static void validarUsuario(ArrayList<String> cadena) {
+		boolean existe = false;
+
+		/**
+		 * [posicion - parametro] 0 - TipoMensaje ; 1 - existe ; 2 - idUsuario ;
+		 * 3 - userName 4 - pass ; 5 - nombre ; 6 - email
+		 **/
+		existe = Boolean.parseBoolean(cadena.get(1));
+		Usuario user = new Usuario(cadena.get(3));
+		user.setIdUsuario(Integer.parseInt(cadena.get(2)));
+		user.setPassword(cadena.get(4));
+		user.setNombre(cadena.get(5));
+		user.setEmail(cadena.get(6));
+		APPLICATION.validarUsuario(existe, user);
+	}
+
+	public void processExit(ActionEvent event) {
+		if (APPLICATION == null) {
+			// We are running in isolated FXML, possibly in Scene Builder.
+			// NO-OP.
+			errorMessage.setText("Se produjo un error al iniciar sesión");
+		} else {
+			cliente.detenerHilo();
+			System.exit(0);
+		}
 	}
 
 	/**
@@ -137,7 +149,8 @@ public class LoginController extends AnchorPane implements Initializable {
 	}
 
 	/**
-	 * @param errorMessage the errorMessage to set
+	 * @param errorMessage
+	 *            the errorMessage to set
 	 */
 	public void setErrorMessage(Label errorMessage) {
 		this.errorMessage = errorMessage;

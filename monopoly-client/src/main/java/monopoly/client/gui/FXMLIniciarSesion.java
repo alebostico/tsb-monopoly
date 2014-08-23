@@ -3,6 +3,7 @@
  */
 package monopoly.client.gui;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import javafx.application.Application;
@@ -18,8 +19,9 @@ import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
 
 /**
- * @author pablo
  * 
+ * @author pablo
+ *
  */
 public class FXMLIniciarSesion extends Application {
 
@@ -37,22 +39,33 @@ public class FXMLIniciarSesion extends Application {
 	 * @see javafx.application.Application#start(javafx.stage.Stage)
 	 */
 	@Override
-	public void start(final Stage primaryStage) throws Exception {
+	public void start(final Stage primaryStage) throws IOException {
 		// TODO Auto-generated method stub
-		Platform.runLater(new Runnable() {
+		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				stage = primaryStage;
-				gotoLogin();
-				primaryStage.show();
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						stage = primaryStage;
+						gotoLogin();
+						primaryStage.show();
+					}
+				});
 			}
-		});
+		}).start();
+	}
+
+	@Override
+	public void stop() throws Exception {
+		super.stop();
+		loginController.destroy();
 	}
 
 	private void gotoLogin() {
 		try {
-			loginController = (LoginController) replaceSceneContent("IniciarSesion.fxml");
-			loginController.setApp(this);
+			loginController = (LoginController) replaceSceneContent("fxml/IniciarSesion.fxml");
+			LoginController.APPLICATION = this;
 
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex.getMessage());
@@ -92,14 +105,19 @@ public class FXMLIniciarSesion extends Application {
 		this.loginController = login;
 	}
 
-	public void resultadoLogueo(boolean existe, Usuario usuario) {
-		if (existe) {
-			loginController.getErrorMessage().setText("Usuario Logueado");
-
-		} else {
-			loginController.getErrorMessage().setText(
-					"Usuario / Contraseña inválida");
-		}
+	public void validarUsuario(final boolean existe, Usuario usuario) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				if (existe) {
+					loginController.getErrorMessage().setText(
+							"Usuario Logueado");
+				} else {
+					loginController.getErrorMessage().setText(
+							"Usuario / Contraseña inválida");
+				}
+			}
+		});
 	}
-
 }
