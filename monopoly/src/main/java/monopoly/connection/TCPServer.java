@@ -9,8 +9,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import monopoly.model.Usuario;
-import monopoly.util.ConstantesMensaje;
 import monopoly.util.GestorLogs;
 import monopoly.util.LectorXML;
 
@@ -26,7 +24,6 @@ public class TCPServer extends Thread {
 	public List<TCPServerThread> listaServidores = new ArrayList<TCPServerThread>();
 	private static ServerSocket serverSocket;
 	
-	private String delimitador = "&-&-&";
 
 	public TCPServer() {
 	};
@@ -80,24 +77,20 @@ public class TCPServer extends Thread {
 
 	}
 
-	public void avisarResultadoLogueo(Usuario usuario, int idThreadServer) {
-		String contenidoLineaSalida = "";
-		if (usuario == null) {
-			contenidoLineaSalida = ConstantesMensaje.LOGIN
-					+ delimitador + "false";
-		} else {
-			contenidoLineaSalida = ConstantesMensaje.LOGIN
-					+ delimitador + "true"
-					+ delimitador + usuario.getIdUsuario()
-					+ delimitador + usuario.getUserName()
-					+ delimitador + usuario.getPassword()
-					+ delimitador + usuario.getNombre()
-					+ delimitador + usuario.getEmail();
-		}
+	public void enviarMensaje (String cadenaSalida, int idThreadServer)
+	{
 		for (int i = 0; i < this.listaServidores.size(); i++) {
 			if (i == idThreadServer) {
-				listaServidores.get(i).avisarResultadoLogueo(
-						contenidoLineaSalida);
+				listaServidores.get(i).enviarMensaje(cadenaSalida);
+			}
+		}
+	}
+	
+	public void recibirMensaje(String cadenaEntrada, int idThreadServer)
+	{
+		for (int i = 0; i < this.listaServidores.size(); i++) {
+			if (i == idThreadServer) {
+				listaServidores.get(i).recibirMensaje(cadenaEntrada);
 			}
 		}
 	}

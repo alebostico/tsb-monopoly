@@ -24,7 +24,7 @@ import monopoly.util.ListUtils;
  * @author Oliva Pablo
  * 
  */
-public class GestorTarjeta {
+public class TarjetaController {
 
 	public Juego juego;
 
@@ -36,7 +36,7 @@ public class GestorTarjeta {
 
 	private int proximaTarjetaComunidad;
 
-	public GestorTarjeta(Juego juego) {
+	public TarjetaController(Juego juego) {
 		super();
 		this.juego = juego;
 		this.cargarTarjetas();

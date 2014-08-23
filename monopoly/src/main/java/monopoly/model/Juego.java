@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import monopoly.controller.GestorFichas;
-import monopoly.controller.GestorTarjeta;
+import monopoly.controller.FichasController;
+import monopoly.controller.TarjetaController;
 import monopoly.model.tablero.Tablero;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
@@ -46,9 +46,9 @@ public class Juego {
 
 	private List<Jugador> jugadoresList; // cambiar por lista circular
 
-	private GestorTarjeta gestorTarjetas;
+	private TarjetaController gestorTarjetas;
 
-	private GestorFichas gestorFichas;
+	private FichasController gestorFichas;
 
 	private Tablero tablero;
 
@@ -89,9 +89,9 @@ public class Juego {
 
 		this.dado = new Dado();
 
-		this.gestorTarjetas = new GestorTarjeta(this);
+		this.gestorTarjetas = new TarjetaController(this);
 
-		this.gestorFichas = new GestorFichas();
+		this.gestorFichas = new FichasController();
 
 		GestorLogs.registrarLog("Iniciado juego '" + this.getUniqueID() + "'");
 	}

@@ -5,8 +5,6 @@ package monopoly.model;
 
 import java.util.List;
 
-import monopoly.model.Jugador;
-import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 
