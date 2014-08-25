@@ -64,7 +64,7 @@ public class FXMLIniciarSesion extends Application {
 
 	private void gotoLogin() {
 		try {
-			loginController = (LoginController) replaceSceneContent("fxml/IniciarSesion.fxml");
+			loginController = (LoginController) replaceSceneContent("/fxml/IniciarSesion.fxml");
 			LoginController.APPLICATION = this;
 
 		} catch (Exception ex) {
@@ -73,13 +73,12 @@ public class FXMLIniciarSesion extends Application {
 	}
 
 	private Initializable replaceSceneContent(String fxml) throws Exception {
-		FXMLLoader loader = new FXMLLoader();
-		InputStream in = FXMLIniciarSesion.class.getResourceAsStream(fxml);
-		loader.setBuilderFactory(new JavaFXBuilderFactory());
-		loader.setLocation(FXMLIniciarSesion.class.getResource(fxml));
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxml), null, new JavaFXBuilderFactory());
+		InputStream in = getClass().getResourceAsStream(fxml); //FXMLIniciarSesion.class.getResourceAsStream(fxml);
+		
 		Parent root;
 		try {
-			root = (Parent) loader.load(in);
+			root = (Parent) fxmlLoader.load(in);
 		} finally {
 			in.close();
 		}
@@ -87,7 +86,7 @@ public class FXMLIniciarSesion extends Application {
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
 
-		return (Initializable) loader.getController();
+		return (Initializable) fxmlLoader.getController();
 	}
 
 	/**

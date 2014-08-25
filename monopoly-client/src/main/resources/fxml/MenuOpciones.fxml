@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="861.999977929685" prefWidth="1058.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <children>
+    <ImageView fitHeight="862.0" fitWidth="1058.0" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="false" smooth="true">
+      <image>
+        <Image url="@../images/logos/OptionFont.jpg" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="196.5547247661177" fitWidth="699.4285278320312" layoutX="179.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/logos/LoginLogo_big.png" />
+      </image>
+    </ImageView>
+    <Button fx:id="btnNuevoJuego" defaultButton="true" layoutX="319.0" layoutY="350.0" onAction="#processNewGame" prefHeight="70.0" prefWidth="419.9998779296875" text="Nuevo Juego" />
+    <Button fx:id="btnReanudarJuego" defaultButton="true" layoutX="319.0" layoutY="465.0" onAction="#processLoadGame" prefHeight="70.0" prefWidth="420.0" text="Reanudar Juego" />
+    <Button fx:id="btnOpciones" defaultButton="true" layoutX="29.0" layoutY="749.0" onAction="#processOptions" prefHeight="70.0" prefWidth="220.0" text="Opciones" />
+    <Button fx:id="btnAyuda" defaultButton="true" layoutX="288.0" layoutY="749.0" onAction="#processHelp" prefHeight="70.0" prefWidth="220.0" text="Ayuda" />
+    <Button fx:id="btnSalir" defaultButton="true" layoutX="807.0" layoutY="749.0" onAction="#processExit" prefHeight="70.0" prefWidth="220.0" text="Salir" />
+    <Button fx:id="btnAcercaDe" defaultButton="true" layoutX="547.0" layoutY="749.0" onAction="#processAbout" prefHeight="70.0" prefWidth="220.0" text="Acerca de" />
+  </children>
+  <stylesheets>
+    <URL value="@../css/Sheet.css" />
+  </stylesheets>
+</AnchorPane>
