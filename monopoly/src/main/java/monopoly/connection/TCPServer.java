@@ -86,12 +86,12 @@ public class TCPServer extends Thread {
 		}
 	}
 	
-	public void recibirMensaje(String cadenaEntrada, int idThreadServer)
-	{
-		for (int i = 0; i < this.listaServidores.size(); i++) {
-			if (i == idThreadServer) {
-				listaServidores.get(i).recibirMensaje(cadenaEntrada);
-			}
-		}
-	}
+//	public void recibirMensaje(String cadenaEntrada, int idThreadServer)
+//	{
+//		for (int i = 0; i < this.listaServidores.size(); i++) {
+//			if (i == idThreadServer) {
+//				listaServidores.get(i).recibirMensaje(cadenaEntrada);
+//			}
+//		}
+//	}
 }
