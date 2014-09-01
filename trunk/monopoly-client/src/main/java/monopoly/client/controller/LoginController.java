@@ -4,7 +4,6 @@
 package monopoly.client.controller;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
@@ -17,11 +16,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import monopoly.client.connection.TCPClient;
 import monopoly.client.gui.FXMLIniciarSesion;
-import monopoly.model.Usuario;
-import monopoly.util.ConstantesMensaje;
+import monopoly.message.impl.LoginMensaje;
 import monopoly.util.GestorLogs;
 import monopoly.util.encriptacion.Encrypter;
 import monopoly.util.encriptacion.VernamEncrypter;
+import monopoly.util.message.IMensaje;
 
 /**
  * @author pablo
@@ -109,25 +108,11 @@ public class LoginController extends AnchorPane implements Initializable {
 		passwordEnc = enc.getEncrypted();
 
 		GestorLogs.registrarLog("Validando usuario: " + userName);
-		cliente.enviarMensaje(MensajesController.codificarMensaje(new String[] {
-				ConstantesMensaje.LOGIN, userName, passwordEnc }));
+		
+		IMensaje mensaje = (IMensaje) new LoginMensaje();
+		
+		cliente.enviarMensaje(mensaje.codificarMensaje(new String[] {userName, passwordEnc}));
 
-	}
-
-	public static void validarUsuario(ArrayList<String> cadena) {
-		boolean existe = false;
-
-		/**
-		 * [posicion - parametro] 0 - TipoMensaje ; 1 - existe ; 2 - idUsuario ;
-		 * 3 - userName 4 - pass ; 5 - nombre ; 6 - email
-		 **/
-		existe = Boolean.parseBoolean(cadena.get(1));
-		Usuario user = new Usuario(cadena.get(3));
-		user.setIdUsuario(Integer.parseInt(cadena.get(2)));
-		user.setPassword(cadena.get(4));
-		user.setNombre(cadena.get(5));
-		user.setEmail(cadena.get(6));
-		APPLICATION.validarUsuario(existe, user);
 	}
 
 	public void processExit(ActionEvent event) {
