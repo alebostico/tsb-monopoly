@@ -9,13 +9,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 
 import monopoly.client.controller.LoginController;
-import monopoly.client.controller.MensajesController;
 import monopoly.util.GestorLogs;
 import monopoly.util.LectorXML;
-import monopoly.util.StringUtils;
+import monopoly.util.message.ConstantesMensaje;
+import monopoly.util.message.IMensaje;
+import monopoly.message.impl.*;
+import monopoly.client.message.impl.*;
 
 /**
  * 
@@ -24,6 +25,7 @@ import monopoly.util.StringUtils;
  * @author Oliva Pablo
  * 
  */
+@SuppressWarnings("unused")
 public class TCPClient extends Thread {
 
 	private static final String IPSERVIDOR = LectorXML.getIpServidor();
@@ -35,8 +37,6 @@ public class TCPClient extends Thread {
 
 	private LoginController loginController;
 
-	private boolean listening = true;
-	
 
 	/**
 	 * @param jugador
@@ -49,6 +49,10 @@ public class TCPClient extends Thread {
 	@Override
 	public void run() {
 		if (loginController != null) {
+			
+			String readLine;
+			String writeLine;
+			String[] vStrEntrada;
 
 			try {
 				clientSocket = new Socket(IPSERVIDOR, PUERTO);
@@ -56,17 +60,16 @@ public class TCPClient extends Thread {
 				entrada = new BufferedReader(new InputStreamReader(
 						clientSocket.getInputStream()));
 				GestorLogs.registrarLog("Cliente en linea...");
-
-				String strEntrada = "";
-				ArrayList<String> vCadena = null;
-
-				while (listening) {
-					strEntrada = entrada.readLine();
-					if (strEntrada != null) {
-						vCadena = StringUtils
-								.analizarCadena(strEntrada);
-						MensajesController.decodificarMensaje(vCadena);
-					}
+				
+				while ((readLine = entrada.readLine()) != null) {
+					vStrEntrada = readLine.split(ConstantesMensaje.DELIMITADOR);
+					Class<?> claseMsj = Class.forName(vStrEntrada[0]);
+					IMensaje mensaje = (IMensaje) claseMsj.newInstance();
+					writeLine = mensaje.decodificarMensaje(vStrEntrada);
+					if(writeLine != null)
+						enviarMensaje(writeLine);
+					else
+						break;
 				}
 
 			} catch (UnknownHostException ex) {
