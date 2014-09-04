@@ -1,31 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
+<?import javafx.scene.effect.*?>
 <?import java.lang.*?>
 <?import java.net.*?>
 <?import java.util.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="718.999977929685" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="monopoly.client.controller.OptionMenuController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="718.999977929685" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.OptionMenuController">
   <children>
-    <ImageView fitHeight="719.0" fitWidth="900.0" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="false" smooth="true">
-      <image>
-        <Image url="@../images/logos/OptionFont.jpg" />
-      </image>
-    </ImageView>
-    <ImageView fitHeight="207.05108642578125" fitWidth="872.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="false">
-      <image>
-        <Image url="@../images/logos/LoginLogo_big.png" />
-      </image>
-    </ImageView>
-    <Button fx:id="btnNuevoJuego" defaultButton="true" layoutX="240.0" layoutY="290.0" onAction="#processNewGame" prefHeight="70.0" prefWidth="419.9998779296875" text="Nuevo Juego" />
-    <Button fx:id="btnReanudarJuego" defaultButton="true" layoutX="240.0" layoutY="418.0" onAction="#processLoadGame" prefHeight="70.0" prefWidth="420.0" text="Reanudar Juego" />
-    <Button fx:id="btnOpciones" defaultButton="true" layoutX="18.0" layoutY="623.0" onAction="#processOptions" prefHeight="70.0" prefWidth="200.0" text="Opciones" />
-    <Button fx:id="btnAyuda" defaultButton="true" layoutX="240.0" layoutY="623.0" onAction="#processHelp" prefHeight="70.0" prefWidth="200.0" text="Ayuda" />
-    <Button fx:id="btnSalir" defaultButton="true" layoutX="680.0" layoutY="623.0" onAction="#processExit" prefHeight="70.0" prefWidth="200.0" text="Salir" />
-    <Button fx:id="btnAcercaDe" defaultButton="true" layoutX="460.0" layoutY="622.0" onAction="#processAbout" prefHeight="70.0" prefWidth="200.0" text="Acerca de" />
+    <StackPane maxHeight="0.0" maxWidth="0.0" minHeight="0.0" minWidth="0.0" prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <children>
+        <ImageView pickOnBounds="true" smooth="true" StackPane.alignment="CENTER">
+          <image>
+            <Image url="@../images/logos/OptionFont.jpg" />
+          </image>
+        </ImageView>
+            <GridPane alignment="CENTER" prefHeight="639.0" prefWidth="900.0" StackPane.alignment="BOTTOM_CENTER">
+               <columnConstraints>
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints maxHeight="100.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="100.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="100.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="129.0" minHeight="10.0" prefHeight="117.0" valignment="CENTER" vgrow="ALWAYS" />
+               </rowConstraints>
+               <children>
+            <Button fx:id="btnNuevoJuego" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" focusTraversable="true" onAction="#processNewGame" prefHeight="70.0" prefWidth="419.9998779296875" text="Nuevo Juego" GridPane.columnSpan="4" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+            <Button fx:id="btnOpciones" defaultButton="true" onAction="#processOptions" prefHeight="70.0" prefWidth="200.0" text="Opciones" GridPane.rowIndex="6" />
+            <Button fx:id="btnAyuda" defaultButton="true" onAction="#processHelp" prefHeight="70.0" prefWidth="200.0" text="Ayuda" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Button fx:id="btnAcercaDe" alignment="CENTER" defaultButton="true" onAction="#processAbout" prefHeight="70.0" prefWidth="200.0" text="Acerca de" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+            <Button fx:id="btnSalir" defaultButton="true" onAction="#processExit" prefHeight="70.0" prefWidth="200.0" text="Salir" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+            <Button fx:id="btnReanudarJuego" defaultButton="true" onAction="#processLoadGame" prefHeight="70.0" prefWidth="420.0" text="Reanudar Juego" GridPane.columnSpan="4" GridPane.rowIndex="4" />
+            <Button fx:id="btnUnirmeJuego" defaultButton="true" onAction="#processJoinGame" prefHeight="70.0" prefWidth="420.0" text="Unirme a Juego" GridPane.columnSpan="4" GridPane.rowIndex="5" />
+                  <ImageView fitHeight="223.0" fitWidth="699.0" pickOnBounds="true" GridPane.columnSpan="4" GridPane.halignment="CENTER" GridPane.rowSpan="2" GridPane.valignment="TOP">
+                     <image>
+                        <Image url="@../images/logos/LoginLogo_big.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </GridPane>
+      </children>
+      <padding>
+        <Insets />
+      </padding>
+    </StackPane>
   </children>
   <stylesheets>
     <URL value="@../css/Sheet.css" />
