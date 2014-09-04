@@ -7,7 +7,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -17,6 +19,27 @@ import javafx.stage.Stage;
  */
 public class OptionMenuController extends AnchorPane implements Initializable {
 
+	@FXML
+    private Button btnSalir;
+
+    @FXML
+    private Button btnAcercaDe;
+
+    @FXML
+    private Button btnUnirmeJuego;
+
+    @FXML
+    private Button btnReanudarJuego;
+
+    @FXML
+    private Button btnAyuda;
+
+    @FXML
+    private Button btnNuevoJuego;
+
+    @FXML
+    private Button btnOpciones;
+    
 	private Stage prevStage;
 
 	/*
@@ -31,29 +54,40 @@ public class OptionMenuController extends AnchorPane implements Initializable {
 
 	}
 
-	public void processNewGame(ActionEvent event) {
+	@FXML
+    void processNewGame(ActionEvent event) {
 
-	}
+    }
 
-	public void processLoadGame(ActionEvent event) {
+    @FXML
+    void processLoadGame(ActionEvent event) {
 
-	}
+    }
 
-	public void processOptions(ActionEvent event) {
+    @FXML
+    void processOptions(ActionEvent event) {
 
-	}
+    }
 
-	public void processHelp(ActionEvent event) {
+    @FXML
+    void processHelp(ActionEvent event) {
 
-	}
-	
-	public void processExit(ActionEvent event) {
+    }
 
-	}
-	
-	public void processAbout(ActionEvent event) {
+    @FXML
+    void processExit(ActionEvent event) {
 
-	}
+    }
+
+    @FXML
+    void processAbout(ActionEvent event) {
+
+    }
+
+    @FXML
+    void processJoinGame(ActionEvent event) {
+
+    }
 
 	/**
 	 * @return the prevStage
