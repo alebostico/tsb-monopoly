@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
@@ -16,6 +17,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import monopoly.client.connection.TCPClient;
 import monopoly.client.gui.FXMLIniciarSesion;
@@ -64,6 +67,19 @@ public class LoginController extends AnchorPane implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
+		password.setOnKeyPressed(new EventHandler<KeyEvent>()
+			    {
+	        @Override
+	        public void handle(KeyEvent ke)
+	        {
+	            if (ke.getCode().equals(KeyCode.ENTER))
+	            {
+	            	processLogin(null);
+	            }
+	        }
+	    });
+		userId.setOnKeyPressed(password.getOnKeyPressed());
+		
 		errorMessage.setText("");
 		crearCliente();
 	}
@@ -119,6 +135,7 @@ public class LoginController extends AnchorPane implements Initializable {
 
 	}
 
+	@FXML
 	public void processExit(ActionEvent event) {
 		if (APPLICATION == null) {
 			// We are running in isolated FXML, possibly in Scene Builder.
@@ -130,10 +147,10 @@ public class LoginController extends AnchorPane implements Initializable {
 		}
 	}
 	
+	@FXML
 	public void processRegister(ActionEvent event)
 	{
 		Parent root;
-		RegistrarmeController controller;
 		String fxml = "/fxml/Registrarme.fxml";
 		
 		if (APPLICATION == null) {
@@ -143,9 +160,6 @@ public class LoginController extends AnchorPane implements Initializable {
 		} else {
 			try {
 				root = ScreensFramework.getParent(fxml);
-				
-				controller = (RegistrarmeController) ScreensFramework
-						.getController(fxml);
 				
 				APPLICATION.getPrimaryStage().setScene(new Scene(root));
 				APPLICATION.getPrimaryStage().centerOnScreen();
@@ -162,6 +176,12 @@ public class LoginController extends AnchorPane implements Initializable {
 		}
 	}
 
+	@FXML
+    public void processOnEnter(ActionEvent event) {
+		
+		processLogin(event);
+	}
+	
 	/**
 	 * @return the errorMessage
 	 */
