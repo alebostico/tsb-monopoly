@@ -51,11 +51,32 @@ public class ScreensFramework {
     	return fxmlLoader.load(url.openStream());
     }
     
-    public static Object getController(String fxml) throws IOException
+    public static Parent getParent(String fxml) throws IOException
     {
         URL url = FXMLIniciarSesion.class.getResource(fxml);
     	FXMLLoader fxmlLoader = new FXMLLoader(url, null, new JavaFXBuilderFactory());
-    	return fxmlLoader.getController();
+    	InputStream in = FXMLIniciarSesion.class.getResourceAsStream(fxml);
+    	
+    	Parent root;
+		try {
+			root = (Parent) fxmlLoader.load(in);
+		} finally {
+			in.close();
+		}
+		
+    	return root;
+    }
+    
+    public static Initializable getController(String fxml) throws IOException
+    {
+    	FXMLLoader fxmlLoader = new FXMLLoader(FXMLIniciarSesion.class.getResource(fxml), null, new JavaFXBuilderFactory());
+    	InputStream in = FXMLIniciarSesion.class.getResourceAsStream(fxml);
+    	try {
+			fxmlLoader.load(in);
+		} finally {
+			in.close();
+		}
+    	return (Initializable) fxmlLoader.getController();
     }
 
 }

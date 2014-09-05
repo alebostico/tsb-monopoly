@@ -29,7 +29,7 @@
       </children>
     </AnchorPane>
     <Button id="btnIngresar" fx:id="login" defaultButton="true" onAction="#processLogin" prefHeight="70.0" prefWidth="400.0" text="Ingresar" AnchorPane.bottomAnchor="189.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
-    <Button id="btnRegistrarme" fx:id="registrarme" defaultButton="true" onAction="#processLogin" prefHeight="70.0" prefWidth="400.0" text="Registrarme" AnchorPane.bottomAnchor="103.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
+    <Button id="btnRegistrarme" fx:id="registrarme" defaultButton="true" onAction="#processRegister" prefHeight="70.0" prefWidth="400.0" text="Registrarme" AnchorPane.bottomAnchor="103.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
     <Button id="btnSalir" fx:id="salir" defaultButton="true" onAction="#processExit" prefHeight="70.0" prefWidth="400.0" text="Salir" AnchorPane.bottomAnchor="18.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" />
   </children>
   <stylesheets>
