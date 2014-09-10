@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
@@ -17,16 +17,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import monopoly.client.connection.TCPClient;
-import monopoly.client.gui.FXMLIniciarSesion;
+import javafx.stage.Stage;
+import jfx.messagebox.MessageBox;
+import monopoly.client.connection.ConexionController;
 import monopoly.client.util.ScreensFramework;
 import monopoly.message.impl.LoginMensaje;
+import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
 import monopoly.util.encriptacion.Encrypter;
 import monopoly.util.encriptacion.VernamEncrypter;
+import monopoly.util.exception.CampoVacioException;
 import monopoly.util.message.IMensaje;
 
 /**
@@ -36,10 +37,10 @@ import monopoly.util.message.IMensaje;
 public class LoginController extends AnchorPane implements Initializable {
 
 	@FXML
-	private TextField userId;
+	private TextField txtUserName;
 
 	@FXML
-	private PasswordField password;
+	private PasswordField txtPassword;
 
 	@FXML
 	private Button login;
@@ -51,12 +52,11 @@ public class LoginController extends AnchorPane implements Initializable {
 	private Button salir;
 
 	@FXML
-	private Label errorMessage;
+	private Label lblMsgError;
 
-	public static FXMLIniciarSesion APPLICATION;
+	private Stage primaryStage;
 
-	private TCPClient cliente;
-	private Process p;
+	private IMensaje mensaje;
 
 	/*
 	 * (non-Javadoc)
@@ -67,134 +67,157 @@ public class LoginController extends AnchorPane implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
-		password.setOnKeyPressed(new EventHandler<KeyEvent>()
-			    {
-	        @Override
-	        public void handle(KeyEvent ke)
-	        {
-	            if (ke.getCode().equals(KeyCode.ENTER))
-	            {
-	            	processLogin(null);
-	            }
-	        }
-	    });
-		userId.setOnKeyPressed(password.getOnKeyPressed());
-		
-		errorMessage.setText("");
-		crearCliente();
-	}
-
-	public void destroy() {
-		if (p != null) {
-			p.destroy();
-		}
-	}
-
-	private void crearCliente() {
-		cliente = new TCPClient(this);
-		cliente.start();
+//		Parent root = (Parent) primaryStage.getScene().getRoot();
+//		root.setOnKeyPressed(new EventHandler<KeyEvent>() {
+//	        @Override
+//	        public void handle(KeyEvent e) {
+//	            if (e.getCode().equals(KeyCode.ENTER)) {
+//	            	processLogin(null);
+//	            }
+//	        }
+//	    });
+		lblMsgError.setText("");
 	}
 
 	public void processLogin(ActionEvent event) {
-		if (APPLICATION == null) {
-			// We are running in isolated FXML, possibly in Scene Builder.
-			// NO-OP.
-			errorMessage.setText("Se produjo un error al iniciar sesión");
-		} else {
-			if (validarDatosIngresados()) {
+		String userName = "";
+		String password = "";
+		if (validarCampos()) {
+			userName = txtUserName.getText();
+			password = txtPassword.getText();
+			validarUsuarioEnServidor(userName, password);
+		}
+	}
 
-				validarUsuario(userId.getText(), password.getText());
-			} else {
-				errorMessage
-						.setText("¡Existen campos vacios! Complete por favor.");
-				userId.setFocusTraversable(true);
+	/**
+	 * Devuelve true si todos los campos contienen caracteres, false en caso de
+	 * que existan campos vacios, arrojando una excepcion
+	 * 
+	 * @return
+	 */
+	private boolean validarCampos() {
+		try {
+			if (txtUserName.getText().equals("")) {
+				txtUserName.setFocusTraversable(true);
+				throw new CampoVacioException(
+						"¡El Campo Usuario no puede estar vacio!");
 			}
+			if (txtPassword.getText().equals("")) {
+				txtPassword.setFocusTraversable(true);
+				throw new CampoVacioException(
+						"¡El Campo Contraseña no puede estar vacio!");
+			}
+			return true;
+		} catch (CampoVacioException cve) {
+			MessageBox.show(primaryStage, cve.getMessage(),
+					"Campos Obligatorios", MessageBox.ICON_WARNING
+							| MessageBox.OK);
+			return false;
 		}
 	}
 
-	private boolean validarDatosIngresados() {
-		if (userId.getText().equals("")) {
-			return false;
-		}
-		if (password.getText().equals(""))
-			return false;
-		return true;
-	}
-
-	public void validarUsuario(String userName, String password) {
+	public void validarUsuarioEnServidor(String userName, String password) {
 		String passwordEnc = new String(password);
 		Encrypter enc = new VernamEncrypter(passwordEnc);
+
 		enc.code();
 		passwordEnc = enc.getEncrypted();
 
-		GestorLogs.registrarLog("Validando usuario: " + userName);
-		
-		IMensaje mensaje = (IMensaje) new LoginMensaje();
-		
-		cliente.enviarMensaje(mensaje.codificarMensaje(new String[] {userName, passwordEnc}));
+		GestorLogs
+				.registrarLog("Enviando mensaje al servidor para validar el usuario: "
+						+ userName);
 
+		mensaje = (IMensaje) new LoginMensaje();
+
+		ConexionController.THREAD_CLIENTE.enviarMensaje(mensaje
+				.codificarMensaje(new String[] { userName, passwordEnc }));
+
+	}
+
+	public void evaluarResultadoLogueo(final boolean existe, final Usuario user) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				if (existe)
+					showOptionMenu(user);
+				else {
+					lblMsgError.setText("Usuario / Contraseña inválida");
+				}
+			}
+		});
 	}
 
 	@FXML
 	public void processExit(ActionEvent event) {
-		if (APPLICATION == null) {
-			// We are running in isolated FXML, possibly in Scene Builder.
-			// NO-OP.
-			errorMessage.setText("Se produjo un error al iniciar sesión");
-		} else {
-			cliente.detenerHilo();
-			System.exit(0);
-		}
+		ConexionController.THREAD_CLIENTE.detenerHilo();
+		System.exit(0);
 	}
-	
+
 	@FXML
-	public void processRegister(ActionEvent event)
-	{
+	public void processRegister(ActionEvent event) {
 		Parent root;
 		String fxml = "/fxml/Registrarme.fxml";
-		
-		if (APPLICATION == null) {
-			// We are running in isolated FXML, possibly in Scene Builder.
-			// NO-OP.
-			errorMessage.setText("Se produjo un error al iniciar sesión");
-		} else {
-			try {
-				root = ScreensFramework.getParent(fxml);
-				
-				APPLICATION.getPrimaryStage().setScene(new Scene(root));
-				APPLICATION.getPrimaryStage().centerOnScreen();
-				APPLICATION.getPrimaryStage().setTitle("Monopoly - Registrar Usuario");
-				APPLICATION.getPrimaryStage().show();
 
-			} catch (IOException ex) {
-				// TODO Auto-generated catch block
-				GestorLogs.registrarError(ex.getMessage());
-			} catch (Exception ex) {
-				// TODO Auto-generated catch block
-				GestorLogs.registrarError(ex.getMessage());
-			}
+		try {
+			root = ScreensFramework.getParent(fxml);
+			RegistrarmeController controller = (RegistrarmeController) ScreensFramework
+					.getController(fxml);
+			controller.setPrevStage(primaryStage);
+			primaryStage.setScene(new Scene(root));
+			primaryStage.centerOnScreen();
+			primaryStage.setTitle(
+					"Monopoly - Registrar Usuario");
+			primaryStage.show();
+
+		} catch (IOException ex) {
+			// TODO Auto-generated catch block
+			GestorLogs.registrarError(ex.getMessage());
+		} catch (Exception ex) {
+			// TODO Auto-generated catch block
+			GestorLogs.registrarError(ex.getMessage());
 		}
 	}
 
-	@FXML
-    public void processOnEnter(ActionEvent event) {
-		
-		processLogin(event);
+	public void showOptionMenu(Usuario usuario) {
+		Parent root;
+		MenuOpcionesController controller;
+		String fxml = "/fxml/MenuOpciones.fxml";
+
+		try {
+			root = ScreensFramework.getParent(fxml);
+
+			controller = (MenuOpcionesController) ScreensFramework
+					.getController(fxml);
+			controller.setPrevStage(primaryStage);
+
+			primaryStage.setScene(new Scene(root));
+			primaryStage.centerOnScreen();
+			primaryStage.setTitle("Monopoly - Menú de Opciones");
+			primaryStage.show();
+
+		} catch (IOException ex) {
+			// TODO Auto-generated catch block
+			GestorLogs.registrarError(ex.getMessage());
+		} catch (Exception ex) {
+			// TODO Auto-generated catch block
+			GestorLogs.registrarError(ex.getMessage());
+		}
 	}
 	
 	/**
-	 * @return the errorMessage
+	 * @return the stage
 	 */
-	public Label getErrorMessage() {
-		return errorMessage;
+	public Stage getPrimaryStage() {
+		return primaryStage;
 	}
 
 	/**
-	 * @param errorMessage
-	 *            the errorMessage to set
+	 * @param stage
+	 *            the stage to set
 	 */
-	public void setErrorMessage(Label errorMessage) {
-		this.errorMessage = errorMessage;
+	public void setPrimaryStage(Stage stage) {
+		this.primaryStage = stage;
 	}
 
 }

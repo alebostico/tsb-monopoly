@@ -34,68 +34,60 @@ public class TCPClient extends Thread {
 
 	private PrintWriter salida;
 	private BufferedReader entrada;
-
-	private LoginController loginController;
-
+	private boolean continuar = true;
 
 	/**
 	 * @param jugador
 	 */
-	public TCPClient(LoginController ventIniciarSesion) {
+	public TCPClient() {
 		super();
-		loginController = ventIniciarSesion;
 	}
 
 	@Override
 	public void run() {
-		if (loginController != null) {
-			
-			String readLine;
-			String writeLine;
-			String[] vStrEntrada;
 
-			try {
-				clientSocket = new Socket(IPSERVIDOR, PUERTO);
-				salida = new PrintWriter(clientSocket.getOutputStream(), true);
-				entrada = new BufferedReader(new InputStreamReader(
-						clientSocket.getInputStream()));
-				GestorLogs.registrarLog("Cliente en linea...");
-				
-				while ((readLine = entrada.readLine()) != null) {
+		String readLine;
+		String writeLine;
+		String[] vStrEntrada;
+
+		try {
+			clientSocket = new Socket(IPSERVIDOR, PUERTO);
+			salida = new PrintWriter(clientSocket.getOutputStream(), true);
+			entrada = new BufferedReader(new InputStreamReader(
+					clientSocket.getInputStream()));
+			GestorLogs.registrarLog("Cliente en linea...");
+
+			while (continuar) {
+				if ((readLine = entrada.readLine()) != null) {
 					vStrEntrada = readLine.split(ConstantesMensaje.DELIMITADOR);
 					Class<?> claseMsj = Class.forName(vStrEntrada[0]);
 					IMensaje mensaje = (IMensaje) claseMsj.newInstance();
 					writeLine = mensaje.decodificarMensaje(vStrEntrada);
-					if(writeLine != null)
+					if (writeLine != null)
 						enviarMensaje(writeLine);
-					else
-						break;
 				}
+			}
 
-			} catch (UnknownHostException ex) {
-				// TODO Auto-generated catch block
-				GestorLogs.registrarError(ex.getMessage());
-				ex.printStackTrace();
-			} catch (IOException ex) {
-				// TODO Auto-generated catch block
-				GestorLogs.registrarError(ex.getMessage());
-				ex.printStackTrace();
-			}
-			catch(Exception ex)
-			{
-				// TODO Auto-generated catch block
-				GestorLogs.registrarError(ex.getMessage());
-				ex.printStackTrace();
-			}
+		} catch (UnknownHostException ex) {
+			// TODO Auto-generated catch block
+			GestorLogs.registrarError(ex.getMessage());
+			ex.printStackTrace();
+		} catch (IOException ex) {
+			// TODO Auto-generated catch block
+			GestorLogs.registrarError(ex.getMessage());
+			ex.printStackTrace();
+		} catch (Exception ex) {
+			// TODO Auto-generated catch block
+			GestorLogs.registrarError(ex.getMessage());
+			ex.printStackTrace();
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public void detenerHilo() {
-		
+		continuar = false;
 		try {
-			this.stop();
-			
+			clientSocket.shutdownInput();
+			clientSocket.shutdownOutput();
 			clientSocket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -104,9 +96,8 @@ public class TCPClient extends Thread {
 		}
 		GestorLogs.registrarLog("Saliendo del Juego...");
 	}
-	
-	public void enviarMensaje(String cadena)
-	{
+
+	public void enviarMensaje(String cadena) {
 		salida.println(cadena);
 	}
 
