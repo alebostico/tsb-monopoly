@@ -34,6 +34,9 @@ CREATE TABLE `usuario` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+ALTER TABLE `monopoly_db`.`usuario` 
+ADD UNIQUE INDEX `userName_UNIQUE` (`userName` ASC);
+
 --
 -- Dumping data for table `usuario`
 --
