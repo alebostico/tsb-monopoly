@@ -3,7 +3,7 @@
  */
 package monopoly.client.message.impl;
 
-import monopoly.client.controller.LoginController;
+import monopoly.client.connection.ConexionController;
 import monopoly.model.Usuario;
 import monopoly.util.message.ConstantesMensaje;
 import monopoly.util.message.IMensaje;
@@ -21,36 +21,45 @@ public class LoginResultMensaje implements IMensaje {
 		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
-	 * @see monopoly.util.mensajes.IMensaje#decodificarMensaje(java.lang.String[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * monopoly.util.mensajes.IMensaje#decodificarMensaje(java.lang.String[])
 	 */
 	@Override
 	public String decodificarMensaje(String[] vCadena) {
 		// TODO Auto-generated method stub
-		boolean existe = false;		
+		boolean existe = false;
+		Usuario user = null;
 		existe = Boolean.parseBoolean(vCadena[1]);
-		
-		Usuario user = new Usuario();
-		user.setIdUsuario(Integer.parseInt(vCadena[2]));
-		user.setPassword(vCadena[4]);
-		user.setNombre(vCadena[2]);
-		user.setEmail(vCadena[5]);
-		LoginController.APPLICATION.validarUsuario(existe, user);
-		
+		if (existe) {
+			user = new Usuario();
+			user.setIdUsuario(Integer.parseInt(vCadena[2]));
+			user.setPassword(vCadena[4]);
+			user.setNombre(vCadena[2]);
+			user.setEmail(vCadena[5]);
+		}
+		ConexionController.APPLICATION.getLoginController()
+				.evaluarResultadoLogueo(existe, user);
+
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see monopoly.util.mensajes.IMensaje#codificarMensaje(java.lang.String[])
 	 */
 	@Override
 	public String codificarMensaje(String[] vCadena) {
-		// TODO Auto-generated method stub				
+		// TODO Auto-generated method stub
 		return null;
 	}
-	
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see monopoly.util.mensajes.IMensaje#getTipoMensaje()
 	 */
 	@Override

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import monopoly.client.gui.FXMLIniciarSesion;
+import monopoly.client.gui.IniciarAplicacion;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.fxml.JavaFXBuilderFactory;
@@ -28,8 +28,8 @@ public class ScreensFramework {
                                          "poker.fxml";
     
     public static Initializable replaceSceneContent(String fxml, Stage stage) throws Exception {
-		FXMLLoader fxmlLoader = new FXMLLoader(FXMLIniciarSesion.class.getResource(fxml), null, new JavaFXBuilderFactory());
-		InputStream in = FXMLIniciarSesion.class.getResourceAsStream(fxml);
+		FXMLLoader fxmlLoader = new FXMLLoader(IniciarAplicacion.class.getResource(fxml), null, new JavaFXBuilderFactory());
+		InputStream in = IniciarAplicacion.class.getResourceAsStream(fxml);
 		
 		Parent root;
 		try {
@@ -46,16 +46,16 @@ public class ScreensFramework {
     
     public static Object getFXMLLoader(String fxml) throws IOException
     {
-        URL url = FXMLIniciarSesion.class.getResource(fxml);
+        URL url = IniciarAplicacion.class.getResource(fxml);
     	FXMLLoader fxmlLoader = new FXMLLoader(url, null, new JavaFXBuilderFactory());
     	return fxmlLoader.load(url.openStream());
     }
     
     public static Parent getParent(String fxml) throws IOException
     {
-        URL url = FXMLIniciarSesion.class.getResource(fxml);
+        URL url = IniciarAplicacion.class.getResource(fxml);
     	FXMLLoader fxmlLoader = new FXMLLoader(url, null, new JavaFXBuilderFactory());
-    	InputStream in = FXMLIniciarSesion.class.getResourceAsStream(fxml);
+    	InputStream in = IniciarAplicacion.class.getResourceAsStream(fxml);
     	
     	Parent root;
 		try {
@@ -69,8 +69,8 @@ public class ScreensFramework {
     
     public static Initializable getController(String fxml) throws IOException
     {
-    	FXMLLoader fxmlLoader = new FXMLLoader(FXMLIniciarSesion.class.getResource(fxml), null, new JavaFXBuilderFactory());
-    	InputStream in = FXMLIniciarSesion.class.getResourceAsStream(fxml);
+    	FXMLLoader fxmlLoader = new FXMLLoader(IniciarAplicacion.class.getResource(fxml), null, new JavaFXBuilderFactory());
+    	InputStream in = IniciarAplicacion.class.getResourceAsStream(fxml);
     	try {
 			fxmlLoader.load(in);
 		} finally {

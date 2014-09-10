@@ -17,7 +17,7 @@ import javafx.stage.Stage;
  * @author pablo
  *
  */
-public class OptionMenuController extends AnchorPane implements Initializable {
+public class MenuOpcionesController extends AnchorPane implements Initializable {
 
 	@FXML
     private Button btnSalir;
