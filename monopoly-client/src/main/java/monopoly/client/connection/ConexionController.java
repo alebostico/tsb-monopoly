@@ -3,7 +3,6 @@
  */
 package monopoly.client.connection;
 
-import monopoly.client.gui.IniciarAplicacion;
 
 
 /**
@@ -14,12 +13,10 @@ import monopoly.client.gui.IniciarAplicacion;
 public class ConexionController {
 
 	public static TCPClient THREAD_CLIENTE;
-	public static IniciarAplicacion APPLICATION; 
 
-	public static void iniciarConexion(IniciarAplicacion app) {
+	public static void iniciarConexion() {
 		THREAD_CLIENTE = new TCPClient();
 		THREAD_CLIENTE.start();
-		APPLICATION = app;
 	}
 
 	public static void cerrarConexion() {

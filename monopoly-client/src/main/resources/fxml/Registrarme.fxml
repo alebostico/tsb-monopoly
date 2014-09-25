@@ -63,7 +63,7 @@
                </image>
             </ImageView>
             <TextField id="txtNombre" fx:id="txtNombre" prefHeight="30.0" prefWidth="200.0" promptText="Nombre y apellido" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-            <TextField id="txtEmail" fx:id="txtNombre" prefHeight="30.0" prefWidth="200.0" promptText="E-mail" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+            <TextField id="txtEmail" fx:id="txtEmail" prefHeight="30.0" prefWidth="200.0" promptText="E-mail" GridPane.columnIndex="2" GridPane.rowIndex="5" />
             <TextField id="txtUserName" fx:id="txtUserName" prefHeight="30.0" prefWidth="200.0" promptText="Nombre de usuario" GridPane.columnIndex="2" GridPane.rowIndex="6" />
             <PasswordField id="txtPassword" fx:id="txtPassword" prefHeight="30.0" prefWidth="200.0" promptText="Contraseña" GridPane.columnIndex="2" GridPane.rowIndex="7" />
             <PasswordField id="txtRepeatPassword" fx:id="txtRepeatPassword" prefHeight="30.0" prefWidth="200.0" promptText="Confirme contraseña" GridPane.columnIndex="2" GridPane.rowIndex="8" />
@@ -76,7 +76,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button id="btnSalir" fx:id="btnSalir" mnemonicParsing="false" onAction="#processExit" prefHeight="51.0" prefWidth="200.0" text="Salir">
+                  <Button id="btnCancelar" fx:id="btnCancelar" mnemonicParsing="false" onAction="#processCancel" prefHeight="51.0" prefWidth="200.0" text="Cancelar">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin>
@@ -93,7 +93,6 @@
       </GridPane>
    </children>
    <stylesheets>
-      <URL value="@../css/Login.css" />
       <URL value="@../css/Sheet.css" />
    </stylesheets>
 </AnchorPane>

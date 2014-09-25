@@ -44,7 +44,7 @@ public class IniciarAplicacion extends Application {
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
-						ConexionController.iniciarConexion(IniciarAplicacion.this);
+						ConexionController.iniciarConexion();
 						gotoLogin();
 					}
 				});
