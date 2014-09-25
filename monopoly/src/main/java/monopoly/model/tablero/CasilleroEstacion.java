@@ -12,12 +12,12 @@ import monopoly.model.tarjetas.TarjetaEstacion;
  */
 public class CasilleroEstacion extends Casillero {
 
-	String nombreEstacion;
-	TarjetaEstacion tarjetaEstacion;
+	private String nombreEstacion;
+	private TarjetaEstacion tarjetaEstacion;
 
 	public CasilleroEstacion(int numeroCasillero, String nombreEstacion, Tablero tablero,
 			TarjetaEstacion tarjetaEstacion) {
-		super(numeroCasillero, Casillero.CASILLERO_ESTACION, tablero);
+		super(numeroCasillero, TipoCasillero.C_ESTACION, tablero);
 		this.nombreEstacion = nombreEstacion;
 		this.tarjetaEstacion = tarjetaEstacion;
 	}
@@ -36,13 +36,15 @@ public class CasilleroEstacion extends Casillero {
 			return (TarjetaEstacion) tarjetaEstacion;
 		return null;
 	}
-
+	
+	@Override
 	public String toString() {
-		return super.toString()
-				+ "\n\tCasilleroEstacion [nombreEstacion="
-				+ this.nombreEstacion
-				+ ", TarjetaEstacion {\n"
-				+ ((this.tarjetaEstacion != null) ? this.tarjetaEstacion
-						.toString() : "<NO EXISTE LA TARJETA>") + "\n}]";
+		StringBuilder sb = new StringBuilder();
+		sb.append("{ Casillero Estación [nombre estación: " + this.nombreEstacion + ", ");
+		sb.append((this.tarjetaEstacion != null) ? this.tarjetaEstacion.toString()
+				: "<NO EXISTE LA TARJETA>");
+		sb.append("] }");
+		
+		return sb.toString();
 	}
 }

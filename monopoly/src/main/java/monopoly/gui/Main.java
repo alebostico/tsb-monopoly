@@ -41,75 +41,75 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class Main {
 
-	public static void main(String[] args) {
+//	public static void main(String[] args) {
+//
+//		GestorLogs.registrarLog("Realizando algunas pruebas...");
+//		// crearUsuarios();
+//		testLoadGame();
+//		// testRandomizeList();
+//		// testShuffleList();
+//		// Main.testStringUtils();
+//		GestorLogs.registrarLog("END!!!");
+//	}
 
-		GestorLogs.registrarLog("Realizando algunas pruebas...");
-		// crearUsuarios();
-		testLoadGame();
-		// testRandomizeList();
-		// testShuffleList();
-		// Main.testStringUtils();
-		GestorLogs.registrarLog("END!!!");
-	}
-
-	private static void testLoadGame() {
-		GestorLogs.registrarLog("Cargando el juego completo...");
-		/*
-		 * Hacemos algunas preubas. Creamos un juego nuevo, cargamos algunos
-		 * jugadores y los movemos para probar lo que está hecho hasta ahora.
-		 */
-		GestorLogs.setLoggingDetailLevel(GestorLogs.MSG_INFO);
-
-		JuegoController gj = JuegoController.getInstance();
-
-		// El usuario1 además de ser jugador es el creador
-		Usuario usuario1 = new Usuario("testuser1");
-		Juego juego = gj.crearJuego(usuario1, "Test Juego");
-
-		Jugador jugador1 = juego.addJugador(Ficha.TIPO_AUTO, usuario1);
-
-		// creamos un segundo usuario que será solo jugador
-		Usuario usuario2 = new Usuario("testuser2");
-		Jugador jugador2 = juego.addJugador(Ficha.TIPO_BOTA, usuario2);
-
-		GestorLogs.setLoggingDetailLevel(GestorLogs.MSG_DEBUG);
-
-		// Hacemos algunos movimientos de los jugadores.
-		juego.getTablero().moverAdelante(jugador1, 5, true);
-		System.out.println("Jugador auto 5 lugares hacia adelante: "
-				+ jugador1.getCasilleroActual());
-		juego.getTablero().moverAtras(jugador2, 10);
-		System.out.println("Jugador bota 10 lugares hacia atras: "
-				+ jugador2.getCasilleroActual());
-		juego.getTablero().moverACasillero(jugador1, 35, false);
-		System.out.println("Jugador auto al casillero 35: "
-				+ jugador1.getCasilleroActual());
-		juego.getTablero().moverAdelante(jugador1, 10, true);
-		System.out.println("Jugador auto 10 lugares hacia adelante y cobra: "
-				+ jugador1.getCasilleroActual());
-		juego.getTablero().moverACasillero(jugador2, 6, false);
-		System.out.println("Jugador bota 6 lugares hacia adelante y NO cobra: "
-				+ jugador2.getCasilleroActual());
-
-		// Ahora movemos de acuerdo a los dados
-		juego.getTablero().moverAdelante(jugador1, juego.tirarDados(), true);
-		System.out.println("Jugador auto " + juego.getDado().getSuma() + " ("
-				+ juego.getDado().getValorDado(1) + "+"
-				+ juego.getDado().getValorDado(2)
-				+ ") lugares hacia adelante y cobra: "
-				+ jugador1.getCasilleroActual());
-
-		juego.getTablero().moverAdelante(jugador2, juego.tirarDados(), true);
-		System.out.println("Jugador bota " + juego.getDado().getSuma() + " ("
-				+ juego.getDado().getValorDado(1) + "+"
-				+ juego.getDado().getValorDado(2)
-				+ ") lugares hacia adelante y cobra: "
-				+ jugador1.getCasilleroActual());
-
-		// System.out.println(juego.toString());
-		// System.out.println(juego.toStringAll());
-
-	}
+//	private static void testLoadGame() {
+//		GestorLogs.registrarLog("Cargando el juego completo...");
+//		/*
+//		 * Hacemos algunas preubas. Creamos un juego nuevo, cargamos algunos
+//		 * jugadores y los movemos para probar lo que está hecho hasta ahora.
+//		 */
+//		GestorLogs.setLoggingDetailLevel(GestorLogs.MSG_INFO);
+//
+//		JuegoController gj = JuegoController.getInstance();
+//
+//		// El usuario1 además de ser jugador es el creador
+//		Usuario usuario1 = new Usuario("testuser1");
+//		Juego juego = gj.crearJuego(usuario1, "Test Juego");
+//
+//		Jugador jugador1 = juego.addJugador(Ficha.TIPO_AUTO, usuario1);
+//
+//		// creamos un segundo usuario que será solo jugador
+//		Usuario usuario2 = new Usuario("testuser2");
+//		Jugador jugador2 = juego.addJugador(Ficha.TIPO_BOTA, usuario2);
+//
+//		GestorLogs.setLoggingDetailLevel(GestorLogs.MSG_DEBUG);
+//
+//		// Hacemos algunos movimientos de los jugadores.
+//		juego.getTablero().moverAdelante(jugador1, 5, true);
+//		System.out.println("Jugador auto 5 lugares hacia adelante: "
+//				+ jugador1.getCasilleroActual());
+//		juego.getTablero().moverAtras(jugador2, 10);
+//		System.out.println("Jugador bota 10 lugares hacia atras: "
+//				+ jugador2.getCasilleroActual());
+//		juego.getTablero().moverACasillero(jugador1, 35, false);
+//		System.out.println("Jugador auto al casillero 35: "
+//				+ jugador1.getCasilleroActual());
+//		juego.getTablero().moverAdelante(jugador1, 10, true);
+//		System.out.println("Jugador auto 10 lugares hacia adelante y cobra: "
+//				+ jugador1.getCasilleroActual());
+//		juego.getTablero().moverACasillero(jugador2, 6, false);
+//		System.out.println("Jugador bota 6 lugares hacia adelante y NO cobra: "
+//				+ jugador2.getCasilleroActual());
+//
+//		// Ahora movemos de acuerdo a los dados
+//		juego.getTablero().moverAdelante(jugador1, juego.tirarDados(), true);
+//		System.out.println("Jugador auto " + juego.getDado().getSuma() + " ("
+//				+ juego.getDado().getValorDado(1) + "+"
+//				+ juego.getDado().getValorDado(2)
+//				+ ") lugares hacia adelante y cobra: "
+//				+ jugador1.getCasilleroActual());
+//
+//		juego.getTablero().moverAdelante(jugador2, juego.tirarDados(), true);
+//		System.out.println("Jugador bota " + juego.getDado().getSuma() + " ("
+//				+ juego.getDado().getValorDado(1) + "+"
+//				+ juego.getDado().getValorDado(2)
+//				+ ") lugares hacia adelante y cobra: "
+//				+ jugador1.getCasilleroActual());
+//
+//		// System.out.println(juego.toString());
+//		// System.out.println(juego.toStringAll());
+//
+//	}
 
 	private static void testLoadOneCasillero() {
 		ApplicationContext appContext = new ClassPathXmlApplicationContext(
@@ -346,22 +346,22 @@ public class Main {
 
 	}
 
-	private static void crearUsuarios() {
-		Usuario uAlejandro = new Usuario("alejandro", "123456");
-		uAlejandro.setNombre("Alejandro");
-		uAlejandro.setEmail("alejandro@monopoly.com");
-		UsuarioController.saveUsuario(uAlejandro);
-
-		Usuario uPabloM = new Usuario("pablom", "123456");
-		uPabloM.setNombre("Pablo M.");
-		uPabloM.setEmail("pablom@monopoly.com");
-		UsuarioController.saveUsuario(uPabloM);
-
-		Usuario uPabloO = new Usuario("pabloo", "123456");
-		uPabloO.setNombre("Pablo O.");
-		uPabloO.setEmail("pabloo@monopoly.com");
-		UsuarioController.saveUsuario(uPabloO);
-
-	}
+//	private static void crearUsuarios() {
+//		Usuario uAlejandro = new Usuario("alejandro", "123456");
+//		uAlejandro.setNombre("Alejandro");
+//		uAlejandro.setEmail("alejandro@monopoly.com");
+//		UsuarioController.saveUsuario(uAlejandro);
+//
+//		Usuario uPabloM = new Usuario("pablom", "123456");
+//		uPabloM.setNombre("Pablo M.");
+//		uPabloM.setEmail("pablom@monopoly.com");
+//		UsuarioController.saveUsuario(uPabloM);
+//
+//		Usuario uPabloO = new Usuario("pabloo", "123456");
+//		uPabloO.setNombre("Pablo O.");
+//		uPabloO.setEmail("pabloo@monopoly.com");
+//		UsuarioController.saveUsuario(uPabloO);
+//
+//	}
 
 }

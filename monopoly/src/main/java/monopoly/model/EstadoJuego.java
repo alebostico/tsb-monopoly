@@ -3,7 +3,7 @@ package monopoly.model;
 public class EstadoJuego {
 
 	private String nombre;
-	
+
 	private static EstadoJuego instance;
 
 	/**
@@ -20,7 +20,7 @@ public class EstadoJuego {
 	public EstadoJuego() {
 		super();
 	}
-	
+
 	/**
 	 * @return the nombre
 	 */
@@ -29,16 +29,17 @@ public class EstadoJuego {
 	}
 
 	/**
-	 * @param nombre the nombre to set
+	 * @param nombre
+	 *            the nombre to set
 	 */
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
 
 	public static EstadoJuego getInstance() {
-	     if (instance == null) 
-	       instance = new EstadoJuego();
+		if (instance == null)
+			instance = new EstadoJuego();
 
-	     return instance;
-	   }
+		return instance;
+	}
 }

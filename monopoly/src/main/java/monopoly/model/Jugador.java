@@ -13,13 +13,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaPropiedad;
-import monopoly.util.GestorLogs;
 
 /**
  * @author Bostico Alejandro
@@ -29,7 +30,8 @@ import monopoly.util.GestorLogs;
  */
 @Entity
 @Table(name = "jugador", catalog = "monopoly_db")
-public class Jugador implements Serializable {
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Jugador implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -37,9 +39,9 @@ public class Jugador implements Serializable {
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "jugadorID")
 	private Integer idJugador;
-
+	
 	@Transient
-	private Usuario usuario;
+	private String nombre;
 
 	@Transient
 	private Ficha ficha;
@@ -67,19 +69,14 @@ public class Jugador implements Serializable {
 	public Jugador() {
 		tarjetaCarcelList = new ArrayList<>();
 		this.dinero = 200;
-		GestorLogs.registrarLog("Nuevo jugador");
-		GestorLogs.registrarDebug(this.toString());
 	}
 
-	public Jugador(Ficha ficha, Usuario usuario, Juego juego) {
+	public Jugador(String nombre, Ficha ficha, Juego juego) {
 		this();
-		this.setJuego(juego);
-		this.casilleroActual = this.getJuego().getTablero().getCasillero(1);
+		this.nombre = nombre;
 		this.ficha = ficha;
-		this.usuario = usuario;
-		GestorLogs.registrarLog("Nuevo jugador '" + this.getFicha().getNombre()
-				+ "'");
-		GestorLogs.registrarDebug(this.toString());
+		this.juego = juego;
+		this.casilleroActual = this.getJuego().getTablero().getCasillero(1);
 	}
 
 	/**
@@ -166,6 +163,20 @@ public class Jugador implements Serializable {
 	}
 
 	/**
+	 * @return the nombre
+	 */
+	public String getNombre() {
+		return nombre;
+	}
+
+	/**
+	 * @param nombre the nombre to set
+	 */
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	/**
 	 * @return the tarjetaCarcelList
 	 */
 	public List<Tarjeta> getTarjetaCarcelList() {
@@ -220,23 +231,6 @@ public class Jugador implements Serializable {
 		return juego.getTablero().hotelesPorJugador(this);
 	}
 
-
-
-	/**
-	 * @return the usuario
-	 */
-	public Usuario getUsuario() {
-		return usuario;
-	}
-
-	/**
-	 * @param usuario
-	 *            the usuario to set
-	 */
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
-	}
-
 	/**
 	 * Devuelve true si el jugador pasada por parametro es igual al que ejecuta
 	 * el metodo compara en funcion del nombre (string) de la ficha
@@ -256,10 +250,12 @@ public class Jugador implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Jugador [ficha="
-				+ ((this.ficha != null) ? this.ficha.toString() : "<SIN FICHA>")
-				+ ", usuario="
-				+ ((this.usuario != null) ? this.usuario.toString()
-						: "<SIN USUARIO>") + "]";
+		StringBuilder sb = new StringBuilder();
+		sb.append("{ Jugador [nombre: " + nombre);
+		sb.append((this.juego != null) ? ", " + this.juego.toString() : "<SIN JUEGO>");
+		sb.append((this.ficha != null) ? ", " + this.ficha.toString() : "<SIN FICHA>");
+		sb.append("] }");
+		
+		return sb.toString();
 	}
 }

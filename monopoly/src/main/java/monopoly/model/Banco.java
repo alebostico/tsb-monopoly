@@ -16,9 +16,9 @@ import monopoly.util.GestorLogs;
  */
 public class Banco {
 	
-	List <TarjetaPropiedad> tarjPropiedadList;
-	int nroCasas;
-	int nroHoteles;
+	private List <TarjetaPropiedad> tarjPropiedadList;
+	private int nroCasas;
+	private int nroHoteles;
 
 	public Banco() {
 		
@@ -59,6 +59,48 @@ public class Banco {
 	public boolean pagar(Jugador jugador, int monto) {
 		jugador.cobrar(monto);
 		return true;
+	}
+
+	/**
+	 * @return the tarjPropiedadList
+	 */
+	public List<TarjetaPropiedad> getTarjPropiedadList() {
+		return tarjPropiedadList;
+	}
+
+	/**
+	 * @param tarjPropiedadList the tarjPropiedadList to set
+	 */
+	public void setTarjPropiedadList(List<TarjetaPropiedad> tarjPropiedadList) {
+		this.tarjPropiedadList = tarjPropiedadList;
+	}
+
+	/**
+	 * @return the nroCasas
+	 */
+	public int getNroCasas() {
+		return nroCasas;
+	}
+
+	/**
+	 * @param nroCasas the nroCasas to set
+	 */
+	public void setNroCasas(int nroCasas) {
+		this.nroCasas = nroCasas;
+	}
+
+	/**
+	 * @return the nroHoteles
+	 */
+	public int getNroHoteles() {
+		return nroHoteles;
+	}
+
+	/**
+	 * @param nroHoteles the nroHoteles to set
+	 */
+	public void setNroHoteles(int nroHoteles) {
+		this.nroHoteles = nroHoteles;
 	}
 
 	/**

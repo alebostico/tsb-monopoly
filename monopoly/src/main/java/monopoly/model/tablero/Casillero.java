@@ -36,20 +36,49 @@ public class Casillero {
 
 	private List<Jugador> jugadores;
 	private int numeroCasillero;
-	private int tipoCasillero;
+	private TipoCasillero tipoCasillero;
 	private Tablero tablero;
 
-	public final static int CASILLERO_CALLE = 1; // 22 casilleros
-	public final static int CASILLERO_ESTACION = 2; // 4 casilleros
-	public final static int CASILLERO_COMPANIA = 3; // 2 casilleros
-	public final static int CASILLERO_SUERTE = 4; // 3 casilleros
-	public final static int CASILLERO_COMUNIDAD = 5; // 3 casilleros
-	public final static int CASILLERO_CARCEL = 6; // 1 casilleros
-	public final static int CASILLERO_IRACARCEL = 7; // 1 casilleros
-	public final static int CASILLERO_SALIDA = 8; // 1 casilleros
-	public final static int CASILLERO_DESCANSO = 9; // 1 casilleros
-	public final static int CASILLERO_IMPUESTO = 10; // 2 casilleros
+	public final static String CASILLERO_CALLE = "casillero calle"; // 22 casilleros
+	public final static String CASILLERO_ESTACION = "casillero estación"; // 4 casilleros
+	public final static String CASILLERO_COMPANIA = "casillero compañia"; // 2 casilleros
+	public final static String CASILLERO_SUERTE = "casillero suerte"; // 3 casilleros
+	public final static String CASILLERO_COMUNIDAD = "casillero comunidad"; // 3 casilleros
+	public final static String CASILLERO_CARCEL = "casillero carcel"; // 1 casilleros
+	public final static String CASILLERO_IRACARCEL = "casillero ir a cárcel"; // 1 casilleros
+	public final static String CASILLERO_SALIDA = "casillero salida"; // 1 casilleros
+	public final static String CASILLERO_DESCANSO = "casillero descanso"; // 1 casilleros
+	public final static String CASILLERO_IMPUESTO = "casillero impuesto"; // 2 casilleros
 
+	public enum TipoCasillero {
+		C_CALLE("casillero calle"),
+		C_ESTACION("casillero estación"),
+		C_COMPANIA("casillero compañia"), 
+		C_SUERTE("casillero suerte"), 
+		C_COMUNIDAD("casillero comunidad"), 
+		C_CARCEL("casillero carcel"),
+		C_IRACARCEL("casillero ir a cárcel"),
+		C_SALIDA("casillero salida"),
+		C_DESCANSO("casillero descanso"),
+		C_IMPUESTO("casillero impuesto");
+
+		private final String nombreTipoCasillero;
+
+		TipoCasillero(String nombre) {
+			this.nombreTipoCasillero = nombre;
+		}
+		
+		public String getNombreTipoCasillero(){
+			return this.nombreTipoCasillero;
+		}
+		
+		public String toString()
+		{
+			return "{ Tipo Casillero [nombre: " + nombreTipoCasillero + "] }"; 
+		}
+		
+	}
+	
 	/**
 	 * Constructor con parámetros de un casillero.
 	 * 
@@ -58,7 +87,7 @@ public class Casillero {
 	 * @param tipoCasillero
 	 *            El tipo de casillero.
 	 */
-	public Casillero(int numeroCasillero, int tipoCasillero, Tablero tablero) {
+	public Casillero(int numeroCasillero, TipoCasillero tipoCasillero, Tablero tablero) {
 		super();
 		this.numeroCasillero = numeroCasillero;
 		this.tipoCasillero = tipoCasillero;
@@ -121,17 +150,15 @@ public class Casillero {
 	 * 
 	 * @return El tipo de casillero.
 	 */
-	public int getTipoCasillero() {
+	public TipoCasillero getTipoCasillero() {
 		return tipoCasillero;
 	}
 
 	/**
-	 * Devuelve el tipo de casillero en formato String
-	 * 
-	 * @return El tipo de casillero en String
+	 * @param tipoCasillero the tipoCasillero to set
 	 */
-	public String getTipoCasilleroString() {
-		return this.tipoCasilleroToString(this.tipoCasillero);
+	public void setTipoCasillero(TipoCasillero tipoCasillero) {
+		this.tipoCasillero = tipoCasillero;
 	}
 
 	public Tablero getTablero() {
@@ -142,47 +169,20 @@ public class Casillero {
 		this.tablero = tablero;
 	}
 
-	public String toString() {
-		return "Casillero [ numeroCasillero=" + this.numeroCasillero
-				+ ", tipoCasillero="
-				+ this.tipoCasilleroToString(this.tipoCasillero) + " ]";
+	/**
+	 * @param jugadores the jugadores to set
+	 */
+	public void setJugadores(List<Jugador> jugadores) {
+		this.jugadores = jugadores;
 	}
 
-	private String tipoCasilleroToString(int tipoCasillero) {
-		// CASILLERO_CALLE = 1; // 22 casilleros
-		// CASILLERO_ESTACION = 2; // 4 casilleros
-		// CASILLERO_COMPANIA = 3; // 2 casilleros
-		// CASILLERO_SUERTE = 4; // 3 casilleros
-		// CASILLERO_COMUNIDAD = 5; // 3 casilleros
-		// CASILLERO_CARCEL = 6; // 1 casilleros
-		// CASILLERO_IRACARCEL = 7; // 1 casilleros
-		// CASILLERO_SALIDA = 8; // 1 casilleros
-		// CASILLERO_DESCANSO = 9; // 1 casilleros
-		// CASILLERO_IMPUESTO = 10; // 2 casilleros
-
-		switch (tipoCasillero) {
-		case 1:
-			return "CASILLERO_CALLE";
-		case 2:
-			return "CASILLERO_ESTACION";
-		case 3:
-			return "CASILLERO_COMPANIA";
-		case 4:
-			return "CASILLERO_SUERTE";
-		case 5:
-			return "CASILLERO_COMUNIDAD";
-		case 6:
-			return "CASILLERO_CARCEL";
-		case 7:
-			return "CASILLERO_IRACARCEL";
-		case 8:
-			return "CASILLERO_SALIDA";
-		case 9:
-			return "CASILLERO_DESCANSO";
-		case 10:
-			return "CASILLERO_IMPUESTO";
-		default:
-			return "<_TIPO_CASILLERO_INCORRECTO_>";
-		}
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{ Casillero [número casillero:" + this.numeroCasillero);
+		sb.append(", " + this.tipoCasillero != null ? this.tipoCasillero.toString() : "<SIN TIPO CASILLERO>");
+		sb.append("] }");
+		
+		return sb.toString();
 	}
 }

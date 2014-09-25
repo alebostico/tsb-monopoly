@@ -5,6 +5,7 @@ package monopoly.message.impl;
 
 import monopoly.controller.LoginController;
 import monopoly.model.Usuario;
+import monopoly.util.GestorLogs;
 import monopoly.util.message.ConstantesMensaje;
 import monopoly.util.message.IMensaje;
 
@@ -29,9 +30,11 @@ public class LoginMensaje implements IMensaje {
 		String[] vStrSalida;
 		Usuario usuario = LoginController.validarUsuario(vCadena[1], vCadena[2]);
 		if (usuario == null) {
+			GestorLogs.registrarLog("Usuario: " + vCadena[1]+ " inválido..");
 			vStrSalida = new String[] { ConstantesMensaje.LOGIN_RESULTADO, "false",
 					"", "", "", "", "" };
 		} else {
+			GestorLogs.registrarLog("Usuario " + vCadena[1] + " válido..");
 			vStrSalida = new String[] { ConstantesMensaje.LOGIN_RESULTADO, "true",
 					Long.toString(usuario.getIdUsuario()),
 					usuario.getUserName(), usuario.getPassword(),

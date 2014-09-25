@@ -1,7 +1,7 @@
 package monopoly.model.tarjetas;
 
 
-public abstract  class Tarjeta {
+public abstract class Tarjeta {
     
     
 }

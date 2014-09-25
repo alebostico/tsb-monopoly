@@ -82,9 +82,9 @@ public class Ficha implements Serializable {
 		GestorLogs.registrarLog("Nueva ficha '" + this.getNombre() + "'");
 	}
 
-	public Ficha(String nombre) {
+	public Ficha(TipoFicha tipoFicha) {
 		this();
-		this.nombre = nombre;
+		this.nombre = tipoFicha.getNombreTipo();
 		GestorLogs.registrarLog("Nueva ficha '" + this.getNombre() + "'");
 	}
 
@@ -169,7 +169,11 @@ public class Ficha implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Ficha [nombre=" + nombre + "]";
+		StringBuilder sb = new StringBuilder();
+		sb.append("{ Ficha [id: " + this.getIdFicha()
+				+ ", nombre: " + this.getNombre() 
+				+ "] }");
+		return sb.toString();
 	}
 
 }
