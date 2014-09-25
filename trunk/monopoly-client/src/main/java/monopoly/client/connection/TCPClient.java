@@ -10,13 +10,10 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import monopoly.client.controller.LoginController;
 import monopoly.util.GestorLogs;
 import monopoly.util.LectorXML;
 import monopoly.util.message.ConstantesMensaje;
 import monopoly.util.message.IMensaje;
-import monopoly.message.impl.*;
-import monopoly.client.message.impl.*;
 
 /**
  * 
@@ -25,7 +22,6 @@ import monopoly.client.message.impl.*;
  * @author Oliva Pablo
  * 
  */
-@SuppressWarnings("unused")
 public class TCPClient extends Thread {
 
 	private static final String IPSERVIDOR = LectorXML.getIpServidor();

@@ -51,6 +51,13 @@ public class ScreensFramework {
     	return fxmlLoader.load(url.openStream());
     }
     
+    public static FXMLLoader getLoader(String fxml) throws IOException
+    {
+        URL url = IniciarAplicacion.class.getResource(fxml);
+    	FXMLLoader fxmlLoader = new FXMLLoader(url, null, new JavaFXBuilderFactory());
+    	return fxmlLoader;
+    }
+    
     public static Parent getParent(String fxml) throws IOException
     {
         URL url = IniciarAplicacion.class.getResource(fxml);

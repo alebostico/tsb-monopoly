@@ -24,6 +24,7 @@ import monopoly.client.connection.ConexionController;
 import monopoly.client.util.ScreensFramework;
 import monopoly.message.impl.LoginMensaje;
 import monopoly.model.Usuario;
+import monopoly.util.ConstantesFXML;
 import monopoly.util.GestorLogs;
 import monopoly.util.encriptacion.Encrypter;
 import monopoly.util.encriptacion.VernamEncrypter;
@@ -57,6 +58,8 @@ public class LoginController extends AnchorPane implements Initializable {
 	private Stage primaryStage;
 
 	private IMensaje mensaje;
+	
+	private static LoginController instance = null;
 
 	/*
 	 * (non-Javadoc)
@@ -67,15 +70,7 @@ public class LoginController extends AnchorPane implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// TODO Auto-generated method stub
-//		Parent root = (Parent) primaryStage.getScene().getRoot();
-//		root.setOnKeyPressed(new EventHandler<KeyEvent>() {
-//	        @Override
-//	        public void handle(KeyEvent e) {
-//	            if (e.getCode().equals(KeyCode.ENTER)) {
-//	            	processLogin(null);
-//	            }
-//	        }
-//	    });
+		instance = this;
 		lblMsgError.setText("");
 	}
 
@@ -140,7 +135,21 @@ public class LoginController extends AnchorPane implements Initializable {
 			public void run() {
 				// TODO Auto-generated method stub
 				if (existe)
-					showOptionMenu(user);
+				{
+					MenuOpcionesController controller;
+					String fxml = ConstantesFXML.FXML_MENU_OPCIONES;
+					try {
+						controller = (MenuOpcionesController) ScreensFramework
+								.getController(fxml);
+						controller.setPrevStage(primaryStage);
+						controller.showOptionMenu(user);
+						
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						GestorLogs.registrarError(e.getMessage());
+					}
+					
+				}
 				else {
 					lblMsgError.setText("Usuario / Contraseña inválida");
 				}
@@ -150,20 +159,20 @@ public class LoginController extends AnchorPane implements Initializable {
 
 	@FXML
 	public void processExit(ActionEvent event) {
+		GestorLogs.registrarLog("Saliendo del Juego..");
 		ConexionController.THREAD_CLIENTE.detenerHilo();
 		System.exit(0);
 	}
 
 	@FXML
 	public void processRegister(ActionEvent event) {
+		GestorLogs.registrarLog("Registrar Juego...");
 		Parent root;
-		String fxml = "/fxml/Registrarme.fxml";
+		String fxml = ConstantesFXML.FXML_REGISTRARME;
 
 		try {
 			root = ScreensFramework.getParent(fxml);
-			RegistrarmeController controller = (RegistrarmeController) ScreensFramework
-					.getController(fxml);
-			controller.setPrevStage(primaryStage);
+			RegistrarmeController.prevStage = primaryStage;
 			primaryStage.setScene(new Scene(root));
 			primaryStage.centerOnScreen();
 			primaryStage.setTitle(
@@ -179,32 +188,6 @@ public class LoginController extends AnchorPane implements Initializable {
 		}
 	}
 
-	public void showOptionMenu(Usuario usuario) {
-		Parent root;
-		MenuOpcionesController controller;
-		String fxml = "/fxml/MenuOpciones.fxml";
-
-		try {
-			root = ScreensFramework.getParent(fxml);
-
-			controller = (MenuOpcionesController) ScreensFramework
-					.getController(fxml);
-			controller.setPrevStage(primaryStage);
-
-			primaryStage.setScene(new Scene(root));
-			primaryStage.centerOnScreen();
-			primaryStage.setTitle("Monopoly - Menú de Opciones");
-			primaryStage.show();
-
-		} catch (IOException ex) {
-			// TODO Auto-generated catch block
-			GestorLogs.registrarError(ex.getMessage());
-		} catch (Exception ex) {
-			// TODO Auto-generated catch block
-			GestorLogs.registrarError(ex.getMessage());
-		}
-	}
-	
 	/**
 	 * @return the stage
 	 */
@@ -218,6 +201,13 @@ public class LoginController extends AnchorPane implements Initializable {
 	 */
 	public void setPrimaryStage(Stage stage) {
 		this.primaryStage = stage;
+	}
+	
+	public static LoginController getInstance() {
+		// yeah I know, NULL check and synchronize are missing...
+		// the getInstance() method is seldom used - usually only for
+		// message passing between stages
+		return instance;
 	}
 
 }

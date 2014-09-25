@@ -3,8 +3,9 @@
  */
 package monopoly.client.message.impl;
 
-import monopoly.client.connection.ConexionController;
+import monopoly.client.controller.LoginController;
 import monopoly.model.Usuario;
+import monopoly.util.exception.EmailInvalidoException;
 import monopoly.util.message.ConstantesMensaje;
 import monopoly.util.message.IMensaje;
 
@@ -12,12 +13,12 @@ import monopoly.util.message.IMensaje;
  * @author pablo
  *
  */
-public class LoginResultMensaje implements IMensaje {
+public class LoginResultadoMensaje implements IMensaje {
 
 	/**
 	 * 
 	 */
-	public LoginResultMensaje() {
+	public LoginResultadoMensaje() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -34,14 +35,17 @@ public class LoginResultMensaje implements IMensaje {
 		Usuario user = null;
 		existe = Boolean.parseBoolean(vCadena[1]);
 		if (existe) {
-			user = new Usuario();
+			user = new Usuario(vCadena[3], vCadena[4]);
 			user.setIdUsuario(Integer.parseInt(vCadena[2]));
-			user.setPassword(vCadena[4]);
-			user.setNombre(vCadena[2]);
-			user.setEmail(vCadena[5]);
+			user.setNombre(vCadena[5]);
+			try {
+				user.setEmail(vCadena[6]);
+			} catch (EmailInvalidoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		ConexionController.APPLICATION.getLoginController()
-				.evaluarResultadoLogueo(existe, user);
+		LoginController.getInstance().evaluarResultadoLogueo(existe, user);
 
 		return null;
 	}
