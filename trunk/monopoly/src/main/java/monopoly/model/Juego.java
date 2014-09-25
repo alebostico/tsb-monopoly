@@ -75,22 +75,28 @@ public class Juego {
 		this.initJuego();
 		// GestorLogs.registrarDebug(this.toString());
 	}
+	
+	public Juego(Usuario creador) {
+		this.owner = creador;
+		this.fechaCreacion = new Date();
+		this.jugadoresList = new ArrayList<Jugador>();
+		this.generateUniqueID();
+		GestorLogs.registrarLog("Creado nuevo juego '" + this.getUniqueID()
+				+ "'");
+		this.initJuego();
+		// GestorLogs.registrarDebug(this.toString());
+	}
 
 	/**
 	 * Inicia el juego
 	 */
 	private void initJuego() {
 
-		// Cargar el Banco
-		this.banco = new Banco();
-
-		// Cargar el tablero
-		this.tablero = new Tablero(banco);
-
+		
+		this.banco = new Banco(); // Cargar el Banco
+		this.tablero = new Tablero(banco); // Cargar el tablero
 		this.dado = new Dado();
-
 		this.gestorTarjetas = new TarjetaController(this);
-
 		this.gestorFichas = new FichasController();
 
 		GestorLogs.registrarLog("Iniciado juego '" + this.getUniqueID() + "'");
@@ -104,9 +110,10 @@ public class Juego {
 	private String generateUniqueID() {
 
 		StringBuilder sb = new StringBuilder();
-		SimpleDateFormat formatter = new SimpleDateFormat("yyMMddHHmmss");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
 
 		sb.append(owner.getUserName());
+		sb.append("--");
 		sb.append(formatter.format(this.getFechaCreacion()));
 
 		this.uniqueID = sb.toString();
@@ -164,14 +171,14 @@ public class Juego {
 	 *            El usuario que esta por jugar
 	 * @return El jugador que se crea.
 	 */
-	public Jugador addJugador(String nombreFicha, Usuario usuario) {
-		Ficha ficha = this.gestorFichas.getFicha(nombreFicha);
-		if (ficha == null)
-			return null;
-		Jugador jugador = new Jugador(ficha, usuario, this);
-		this.addJugador(jugador);
-		return jugador;
-	}
+	// public Jugador addJugador(String nombreFicha, Usuario usuario) {
+	// Ficha ficha = this.gestorFichas.getFicha(nombreFicha);
+	// if (ficha == null)
+	// return null;
+	// Jugador jugador = new Jugador(ficha, this);
+	// this.addJugador(jugador);
+	// return jugador;
+	// }
 
 	/**
 	 * @return the banco
@@ -298,12 +305,13 @@ public class Juego {
 	/**
 	 * Un toSrting resumido con los atributos de la instancia.
 	 */
+	@Override
 	public String toString() {
-		return "Juego [ nombreJuego=" + this.getNombreJuego()
-				+ ", fechaCreacion=" + this.getFechaCreacionString()
-				+ ", uniqueID=" + this.getUniqueID() + ", owner="
-				+ this.getOwner().getUserName() + ", cantJugadores="
-				+ this.cantJugadores() + " ]";
+		return "{ Juego [uniqueID: " + this.getUniqueID() + ", nombre juego: "
+				+ this.getNombreJuego() + ", fecha creación: "
+				+ this.getFechaCreacionString() + ", owner: "
+				+ this.getOwner().getUserName() + ", cant. jugadores:"
+				+ this.cantJugadores() + "] }";
 
 	}
 

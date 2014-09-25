@@ -13,17 +13,16 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
  */
 public class CasilleroCalle extends Casillero {
 
-	String nombreCalle;
-	TarjetaPropiedad tarjetaCalle;
-	int nroCasas;
-	
+	private String nombreCalle;
+	private int nroCasas;
+	private TarjetaPropiedad tarjetaCalle;
 
-	public CasilleroCalle(int numeroCasillero, String nombreCalle, Tablero tablero,
-			TarjetaPropiedad tarjetaCalle) {
-		super(numeroCasillero, Casillero.CASILLERO_CALLE,tablero);
+	public CasilleroCalle(int numeroCasillero, String nombreCalle,
+			Tablero tablero, TarjetaPropiedad tarjetaCalle) {
+		super(numeroCasillero, TipoCasillero.C_CALLE, tablero);
 		this.nombreCalle = nombreCalle;
 		this.tarjetaCalle = tarjetaCalle;
-		this.nroCasas=0;
+		this.nroCasas = 0;
 	}
 
 	public String getNombreCalle() {
@@ -33,7 +32,6 @@ public class CasilleroCalle extends Casillero {
 	public TarjetaPropiedad getTarjetaCalle() {
 		return tarjetaCalle;
 	}
-	
 
 	public int getNroCasas() {
 		return nroCasas;
@@ -45,21 +43,21 @@ public class CasilleroCalle extends Casillero {
 
 	public TarjetaCalle comprarCalle(Jugador jugador) {
 		// TODO: implementar el metodo que realiza la compra de la calle.
-		if(this.getTablero().getBanco().venderPropiedad(jugador, this.getTarjetaCalle()))
-				return (TarjetaCalle) tarjetaCalle;
+		if (this.getTablero().getBanco()
+				.venderPropiedad(jugador, this.getTarjetaCalle()))
+			return (TarjetaCalle) tarjetaCalle;
 		return null;
 	}
-	
-	
-	
 
+	@Override
 	public String toString() {
-		return super.toString()
-				+ "\n\tCasilleroCalle [nombreCalle="
-				+ this.nombreCalle
-				+ ", TarjetaCalle {\n"
-				+ ((this.tarjetaCalle != null) ? this.tarjetaCalle.toString()
-						: "<NO EXISTE LA TARJETA>") + "\n}]";
+		StringBuilder sb = new StringBuilder();
+		sb.append("{ Casillero Calle [nombre calle: " + this.nombreCalle + ", ");
+		sb.append((this.tarjetaCalle != null) ? this.tarjetaCalle.toString()
+				: "<NO EXISTE LA TARJETA>");
+		sb.append(", número de casas: " + this.nroCasas);
+		sb.append("] }");
+		
+		return sb.toString();
 	}
-
 }

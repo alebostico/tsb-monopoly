@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
+import monopoly.util.exception.EmailInvalidoException;
 
 @Entity
 @Table(name = "usuario", catalog = "monopoly_db")
@@ -53,7 +54,7 @@ public class Usuario implements Serializable {
 		super();
 		this.userName = userName;
 		GestorLogs.registrarLog("Nuevo usuario '" + this.getUserName() + "'");
-		GestorLogs.registrarDebug(this.toStringAll());
+		GestorLogs.registrarDebug(this.toString());
 	}
 
 	/**
@@ -178,9 +179,9 @@ public class Usuario implements Serializable {
 	 *            the email to set
 	 * @return true si el mail tiene un formato valido y se setea.
 	 */
-	public boolean setEmail(String email) {
+	public boolean setEmail(String email) throws EmailInvalidoException {
 		if (!StringUtils.validateEmail(email))
-			return false;
+			throw new EmailInvalidoException("El e-mail ingresado es inválido..");
 
 		this.email = email;
 		GestorLogs.registrarDebug("El email del usuario '" + this.getUserName()
@@ -197,13 +198,12 @@ public class Usuario implements Serializable {
 		return userName;
 	}
 
+	@Override
 	public String toString() {
-		return "Usuario [ usuario=" + this.getUserName() + " ]";
-	}
-
-	public String toStringAll() {
-		return "Usuario [ usuario=" + this.getUserName() + ", nombre="
-				+ this.getNombre() + ", email=" + this.getEmail() + " ]";
+		return "{ Usuario [ id: " + this.getIdUsuario()
+				+ ", usuario: " + this.getUserName() 
+				+ ", nombre: " + this.getNombre()
+				+ ", e-mail: " + this.getEmail() + " ]}";
 	}
 
 }
