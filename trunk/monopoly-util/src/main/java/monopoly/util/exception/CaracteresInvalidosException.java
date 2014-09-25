@@ -14,9 +14,9 @@ public class CaracteresInvalidosException extends Exception {
 	 */
 	private static final long serialVersionUID = -7170257919801788836L;
 	
-	private CaracteresInvalidosException(){}
+	public CaracteresInvalidosException(){}
 	
-	private CaracteresInvalidosException(String message)
+	public CaracteresInvalidosException(String message)
 	{
 		super(message);
 	}
