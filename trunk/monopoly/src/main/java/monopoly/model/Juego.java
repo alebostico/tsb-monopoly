@@ -53,9 +53,13 @@ public class Juego {
 	private Tablero tablero;
 
 	private Dado dado;
+	
+	private int cantJugadores;
 
 	private List<TarjetaPropiedad> tarjetasPropiedadList;
-
+	
+	private List<Ficha> fichasPlayerList;
+	
 	/**
 	 * Constructor con parametros
 	 * 
@@ -66,6 +70,7 @@ public class Juego {
 	 */
 	public Juego(Usuario creador, String nombreJuego) {
 		this.nombreJuego = nombreJuego;
+		this.cantJugadores = 0;
 		this.owner = creador;
 		this.fechaCreacion = new Date();
 		this.jugadoresList = new ArrayList<Jugador>();
@@ -78,6 +83,7 @@ public class Juego {
 	
 	public Juego(Usuario creador) {
 		this.owner = creador;
+		this.cantJugadores = 0;
 		this.fechaCreacion = new Date();
 		this.jugadoresList = new ArrayList<Jugador>();
 		this.generateUniqueID();
@@ -110,10 +116,10 @@ public class Juego {
 	private String generateUniqueID() {
 
 		StringBuilder sb = new StringBuilder();
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm");
 
 		sb.append(owner.getUserName());
-		sb.append("--");
+		sb.append("_");
 		sb.append(formatter.format(this.getFechaCreacion()));
 
 		this.uniqueID = sb.toString();
@@ -137,6 +143,7 @@ public class Juego {
 		// ubica al jugador en el casillero 1
 		this.getTablero().moverACasillero(jugador, 1, false);
 		// y lo agrega a la lista de jugadores.
+		
 		boolean returnValue = this.jugadoresList.add(jugador);
 
 		GestorLogs.registrarLog("Agregado jugador '"
@@ -146,39 +153,6 @@ public class Juego {
 
 		return returnValue;
 	}
-
-	/**
-	 * Agrega un nuevo jugador. El nombre debe ser alguna de las constantes
-	 * estáticas de la clase Ficha:
-	 * <ul>
-	 * <li>Ficha.TIPO_CARRETILLA</li>
-	 * <li>Ficha.TIPO_AUTO</li>
-	 * <li>Ficha.TIPO_SOMBRERO</li>
-	 * <li>Ficha.TIPO_BOTA</li>
-	 * <li>Ficha.TIPO_PLANCHA</li>
-	 * <li>Ficha.TIPO_CARRETILLA</li>
-	 * <li>Ficha.TIPO_DEDAL</li>
-	 * <li>Ficha.TIPO_BARCO</li>
-	 * <li>Ficha.TIPO_PERRO</li>
-	 * <li>Ficha.TIPO_BOLSA_DINERO</li>
-	 * <li>Ficha.TIPO_CABALLO</li>
-	 * <li>Ficha.TIPO_CANON</li>
-	 * </ul>
-	 * 
-	 * @param nombreFicha
-	 *            El nombre de la ficha
-	 * @param usuario
-	 *            El usuario que esta por jugar
-	 * @return El jugador que se crea.
-	 */
-	// public Jugador addJugador(String nombreFicha, Usuario usuario) {
-	// Ficha ficha = this.gestorFichas.getFicha(nombreFicha);
-	// if (ficha == null)
-	// return null;
-	// Jugador jugador = new Jugador(ficha, this);
-	// this.addJugador(jugador);
-	// return jugador;
-	// }
 
 	/**
 	 * @return the banco
@@ -208,8 +182,18 @@ public class Juego {
 		return tarjetasPropiedadList;
 	}
 
-	public int cantJugadores() {
-		return ((this.jugadoresList != null) ? this.jugadoresList.size() : 0);
+	/**
+	 * @return the cantJugadores
+	 */
+	public int getCantJugadores() {
+		return cantJugadores;
+	}
+
+	/**
+	 * @param cantJugadores the cantJugadores to set
+	 */
+	public void setCantJugadores(int cantJugadores) {
+		this.cantJugadores = cantJugadores;
 	}
 
 	/**
@@ -217,6 +201,13 @@ public class Juego {
 	 */
 	public String getNombreJuego() {
 		return nombreJuego;
+	}
+
+	/**
+	 * @param nombreJuego the nombreJuego to set
+	 */
+	public void setNombreJuego(String nombreJuego) {
+		this.nombreJuego = nombreJuego;
 	}
 
 	/**
@@ -283,6 +274,20 @@ public class Juego {
 	public Ficha getFicha(String nombreFicha) {
 		return this.gestorFichas.getFicha(nombreFicha);
 	}
+	
+	/**
+	 * @return the fichasPlayerList
+	 */
+	public List<Ficha> getFichasPlayerList() {
+		return fichasPlayerList;
+	}
+
+	/**
+	 * @param fichasPlayerList the fichasPlayerList to set
+	 */
+	public void setFichasPlayerList(List<Ficha> fichasPlayerList) {
+		this.fichasPlayerList = fichasPlayerList;
+	}
 
 	/**
 	 * Tira los dados y devuelve la suma de los dos.
@@ -311,7 +316,7 @@ public class Juego {
 				+ this.getNombreJuego() + ", fecha creación: "
 				+ this.getFechaCreacionString() + ", owner: "
 				+ this.getOwner().getUserName() + ", cant. jugadores:"
-				+ this.cantJugadores() + "] }";
+				+ this.cantJugadores + "] }";
 
 	}
 
@@ -325,7 +330,7 @@ public class Juego {
 		sb.append(", fechaCreacion=" + this.getFechaCreacionString());
 		sb.append(", uniqueID=" + this.getUniqueID());
 		sb.append(", owner=" + this.getOwner().getUserName());
-		sb.append(", cantJugadores=" + this.cantJugadores());
+		sb.append(", cantJugadores=" + this.cantJugadores);
 		sb.append(", tablero=" + this.getTablero().toString());
 		sb.append(", jugadores="
 				+ ((this.jugadoresList != null) ? this.jugadoresList.toString()

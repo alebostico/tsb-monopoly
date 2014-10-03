@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import monopoly.util.GestorLogs;
 
@@ -72,20 +73,24 @@ public class Ficha implements Serializable {
 	private String nombre;
 
 	@Column(name = "pathImageBig")
-	private String nombreImagenSeleccion;
+	private String pathImgBig;
 
 	@Column(name = "pathImageSmall")
-	private String nombreImagenCasillero;
+	private String pathImgSmall;
+	
+	@Transient
+	private boolean isSelected = false;
 
 	public Ficha() {
 		super();
 		GestorLogs.registrarLog("Nueva ficha '" + this.getNombre() + "'");
+		isSelected = false;
 	}
 
 	public Ficha(TipoFicha tipoFicha) {
-		this();
 		this.nombre = tipoFicha.getNombreTipo();
 		GestorLogs.registrarLog("Nueva ficha '" + this.getNombre() + "'");
+		isSelected = false;
 	}
 
 	/**
@@ -121,33 +126,45 @@ public class Ficha implements Serializable {
 	}
 
 	/**
-	 * @return the nombreImagenSeleccion
+	 * @return the pathImgBig
 	 */
-	public String getNombreImagenSeleccion() {
-		return nombreImagenSeleccion;
+	public String getPathImgBig() {
+		return pathImgBig;
 	}
 
 	/**
-	 * @param nombreImagenSeleccion
-	 *            the nombreImagenSeleccion to set
+	 * @param pathImgBig the pathImgBig to set
 	 */
-	public void setNombreImagenSeleccion(String nombreImagenSeleccion) {
-		this.nombreImagenSeleccion = nombreImagenSeleccion;
+	public void setPathImgBig(String pathImgBig) {
+		this.pathImgBig = pathImgBig;
 	}
 
 	/**
-	 * @return the nombreImagenCasillero
+	 * @return the pathImgSmall
 	 */
-	public String getNombreImagenCasillero() {
-		return nombreImagenCasillero;
+	public String getPathImgSmall() {
+		return pathImgSmall;
 	}
 
 	/**
-	 * @param nombreImagenCasillero
-	 *            the nombreImagenCasillero to set
+	 * @param pathImgSmall the pathImgSmall to set
 	 */
-	public void setNombreImagenCasillero(String nombreImagenCasillero) {
-		this.nombreImagenCasillero = nombreImagenCasillero;
+	public void setPathImgSmall(String pathImgSmall) {
+		this.pathImgSmall = pathImgSmall;
+	}
+
+	/**
+	 * @return the isSelected
+	 */
+	public boolean isSelected() {
+		return isSelected;
+	}
+
+	/**
+	 * @param isSelected the isSelected to set
+	 */
+	public void setSelected(boolean isSelected) {
+		this.isSelected = isSelected;
 	}
 
 	/**

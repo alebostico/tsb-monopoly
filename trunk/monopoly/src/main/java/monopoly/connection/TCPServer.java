@@ -21,7 +21,7 @@ import monopoly.util.LectorXML;
 public class TCPServer extends Thread {
 
 	public static final int PORT = LectorXML.getPuertoDeConexion();
-	public List<TCPServerThread> listaServidores = new ArrayList<TCPServerThread>();
+	private List<TCPServerThread> listaServidores = new ArrayList<TCPServerThread>();
 	private static ServerSocket serverSocket;
 	
 
@@ -77,6 +77,20 @@ public class TCPServer extends Thread {
 
 	}
 
+	/**
+	 * @return the listaServidores
+	 */
+	public List<TCPServerThread> getListaServidores() {
+		return listaServidores;
+	}
+
+	/**
+	 * @param listaServidores the listaServidores to set
+	 */
+	public void setListaServidores(List<TCPServerThread> listaServidores) {
+		this.listaServidores = listaServidores;
+	}
+
 	public void enviarMensaje (String cadenaSalida, int idThreadServer)
 	{
 		for (int i = 0; i < this.listaServidores.size(); i++) {
@@ -85,13 +99,4 @@ public class TCPServer extends Thread {
 			}
 		}
 	}
-	
-//	public void recibirMensaje(String cadenaEntrada, int idThreadServer)
-//	{
-//		for (int i = 0; i < this.listaServidores.size(); i++) {
-//			if (i == idThreadServer) {
-//				listaServidores.get(i).recibirMensaje(cadenaEntrada);
-//			}
-//		}
-//	}
 }
