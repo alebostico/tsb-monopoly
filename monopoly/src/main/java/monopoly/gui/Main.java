@@ -7,18 +7,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import monopoly.controller.JuegoController;
-import monopoly.controller.UsuarioController;
 import monopoly.dao.ITarjetaCalleDao;
 import monopoly.dao.ITarjetaCompaniaDao;
 import monopoly.dao.ITarjetaComunidadDao;
 import monopoly.dao.ITarjetaEstacionDao;
 import monopoly.dao.ITarjetaSuerteDao;
 import monopoly.model.Banco;
-import monopoly.model.Ficha;
-import monopoly.model.Juego;
-import monopoly.model.Jugador;
-import monopoly.model.Usuario;
 import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tablero.Tablero;
 import monopoly.model.tarjetas.TarjetaCalle;
@@ -41,16 +35,16 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class Main {
 
-//	public static void main(String[] args) {
-//
-//		GestorLogs.registrarLog("Realizando algunas pruebas...");
-//		// crearUsuarios();
-//		testLoadGame();
-//		// testRandomizeList();
-//		// testShuffleList();
-//		// Main.testStringUtils();
-//		GestorLogs.registrarLog("END!!!");
-//	}
+	public static void main(String[] args) {
+
+		GestorLogs.registrarLog("Realizando algunas pruebas...");
+		 //crearUsuarios();
+		//testLoadGame();
+		 testRandomizeList();
+		 testShuffleList();
+		 Main.testStringUtils();
+		GestorLogs.registrarLog("END!!!");
+	}
 
 //	private static void testLoadGame() {
 //		GestorLogs.registrarLog("Cargando el juego completo...");
@@ -111,6 +105,7 @@ public class Main {
 //
 //	}
 
+	@SuppressWarnings("unused")
 	private static void testLoadOneCasillero() {
 		ApplicationContext appContext = new ClassPathXmlApplicationContext(
 				"spring/config/BeanLocations.xml");
@@ -131,6 +126,7 @@ public class Main {
 				"Ronda de Valencia", tablero, tarjetaCalleTemp);
 	}
 
+	@SuppressWarnings("unused")
 	private static void testLoadTarjetas() {
 		ApplicationContext appContext = new ClassPathXmlApplicationContext(
 				"spring/config/BeanLocations.xml");
