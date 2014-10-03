@@ -3,8 +3,15 @@
  */
 package monopoly.client.message.impl;
 
+import java.io.IOException;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import monopoly.client.controller.MenuOpcionesController;
+import monopoly.client.util.ScreensFramework;
 import monopoly.model.Usuario;
+import monopoly.util.ConstantesFXML;
+import monopoly.util.GestorLogs;
 import monopoly.util.exception.EmailInvalidoException;
 import monopoly.util.message.ConstantesMensaje;
 import monopoly.util.message.IMensaje;
@@ -33,7 +40,19 @@ public class RegistrarmeResultadoMensaje implements IMensaje {
 		}
 		usuario.setIdUsuario(Long.parseLong(vCadena[5]));
 		
-		MenuOpcionesController.getInstance().showOptionMenu(usuario);
+		String fxml = ConstantesFXML.FXML_MENU_OPCIONES;
+		FXMLLoader loader = null;
+		Parent root = null;
+		try {
+			loader = ScreensFramework.getLoader(fxml);
+			root = (Parent) loader.load();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			GestorLogs.registrarError(e.getMessage());
+		}
+		
+		MenuOpcionesController.getInstance().showOptionMenu(root,usuario);
 		
 		return null;
 	}

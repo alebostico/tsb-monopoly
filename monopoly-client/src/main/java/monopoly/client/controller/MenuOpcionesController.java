@@ -3,7 +3,6 @@
  */
 package monopoly.client.controller;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -58,7 +57,7 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 
 	private static MenuOpcionesController instance = null;
 
-	private static Usuario usuarioLogueado = null;
+	private Usuario usuarioLogueado = null;
 
 	/*
 	 * (non-Javadoc)
@@ -72,14 +71,14 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 		instance = this;
 	}
 
-	public void showOptionMenu(Usuario usuario) {
+	public void showOptionMenu(Parent root, Usuario usuario) {
 		GestorLogs.registrarLog("Desplegar Menú de Opciones..");
+		
 		usuarioLogueado = usuario;
-		currentStage = new Stage();
+		
 		try {
-			final String fxml = ConstantesFXML.FXML_MENU_OPCIONES;
-			final Parent root = ScreensFramework.getParent(fxml);
-
+			currentStage = new Stage();
+			
 			Scene scene = new Scene(root);
 			currentStage.setScene(scene);
 			currentStage.setTitle("Monopoly - Menú de Opciones");
@@ -92,9 +91,6 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 					currentStage.show();
 				}
 			});
-		} catch (IOException ex) {
-			// TODO Auto-generated catch block
-			GestorLogs.registrarError(ex.getMessage());
 		} catch (Exception ex) {
 			// TODO Auto-generated catch block
 			GestorLogs.registrarError(ex.getMessage());
@@ -122,9 +118,8 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 			stage.setTitle("Monopoly - Nuevo Juego");
 			stage.centerOnScreen();
 			// prevStage.close();
-
+			controller.setCurrentStage(stage);
 			stage.show();
-			
 
 		} catch (Exception ex) {
 			// TODO Auto-generated catch block
@@ -186,7 +181,7 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 	/**
 	 * @return the usuarioLogueado
 	 */
-	public static Usuario getUsuarioLogueado() {
+	public Usuario getUsuarioLogueado() {
 		return usuarioLogueado;
 	}
 
@@ -194,8 +189,8 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 	 * @param usuarioLogueado
 	 *            the usuarioLogueado to set
 	 */
-	public static void setUsuarioLogueado(Usuario usuarioLogueado) {
-		MenuOpcionesController.usuarioLogueado = usuarioLogueado;
+	public void setUsuarioLogueado(Usuario usuarioLogueado) {
+		this.usuarioLogueado = usuarioLogueado;
 	}
 
 }
