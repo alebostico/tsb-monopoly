@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -136,13 +137,14 @@ public class LoginController extends AnchorPane implements Initializable {
 				// TODO Auto-generated method stub
 				if (existe)
 				{
-					MenuOpcionesController controller;
 					String fxml = ConstantesFXML.FXML_MENU_OPCIONES;
+					
 					try {
-						controller = (MenuOpcionesController) ScreensFramework
-								.getController(fxml);
+						FXMLLoader loader = ScreensFramework.getLoader(fxml);
+						Parent root = (Parent)loader.load();
+						MenuOpcionesController controller = (MenuOpcionesController)loader.getController();
 						controller.setPrevStage(primaryStage);
-						controller.showOptionMenu(user);
+						controller.showOptionMenu(root, user);
 						
 					} catch (IOException e) {
 						// TODO Auto-generated catch block

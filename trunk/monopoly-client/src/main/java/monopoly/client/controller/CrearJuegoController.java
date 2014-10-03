@@ -3,7 +3,6 @@
  */
 package monopoly.client.controller;
 
-import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -11,6 +10,7 @@ import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -18,11 +18,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import jfx.messagebox.MessageBox;
 import monopoly.client.util.ScreensFramework;
 import monopoly.model.Juego;
 import monopoly.model.Usuario;
 import monopoly.util.ConstantesFXML;
 import monopoly.util.GestorLogs;
+import monopoly.util.exception.CampoVacioException;
 
 /**
  * @author Bostico Alejandro
@@ -30,6 +32,24 @@ import monopoly.util.GestorLogs;
  *
  */
 public class CrearJuegoController extends AnchorPane implements Initializable {
+
+	@FXML
+	private TextField txtUserName;
+
+	@FXML
+	private Button btnCrearJuego;
+
+	@FXML
+	private TextField txtNombreJuego;
+
+	@FXML
+	private TextField txtFechaCreacion;
+
+	@FXML
+	private Button btnCancelar;
+
+	@FXML
+	private TextField txtIdJuego;
 
 	@FXML
 	private Stage currentStage;
@@ -42,7 +62,7 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 	private Juego nuevoJuego = null;
 
 	private static CrearJuegoController instance;
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -70,31 +90,59 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 	}
 
 	@FXML
-	private TextField txtUserName;
-
-	@FXML
-	private Button btnCrearJuego;
-
-	@FXML
-	private TextField txtNombreJuego;
-
-	@FXML
-	private TextField txtFechaCreacion;
-
-	@FXML
-	private Button btnCancelar;
-
-	@FXML
-	private TextField txtIdJuego;
-
-	@FXML
 	void processCancel(ActionEvent event) {
-
+		currentStage.close();
+		prevStage.show();
 	}
 
 	@FXML
 	void processCreateGame(ActionEvent event) {
+		GestorLogs.registrarLog("Creando Jugadores...");
+		String fxml = ConstantesFXML.FXML_CREAR_JUGADORES;
+		Parent root;
+		Stage stage = new Stage();
+		FXMLLoader loader = null;
+		try {
+			if (validarCamposVacios()) {
+				
+				nuevoJuego.setNombreJuego(txtNombreJuego.getText());
+				
+				loader = ScreensFramework.getLoader(fxml);
 
+				root = (Parent) loader.load();
+				CrearJugadoresController controller = (CrearJugadoresController) loader
+						.getController();
+				controller.setPrevStage(prevStage);
+				controller.setJuego(nuevoJuego);
+
+				Scene scene = new Scene(root);
+				stage.setScene(scene);
+				stage.setTitle("Monopoly - Nuevo Juego");
+				stage.centerOnScreen();
+				stage.setFullScreen(true);
+				controller.setCurrentStage(stage);
+				controller.inicializarVariables();
+				currentStage.close();
+				stage.show();
+			}
+		} catch (CampoVacioException cve) {
+			MessageBox.show(currentStage, cve.getMessage(),
+					"Campos Obligatorios", MessageBox.ICON_WARNING
+							| MessageBox.OK);
+		} catch (Exception ex) {
+			// TODO Auto-generated catch block
+			GestorLogs.registrarError(ex.getMessage());
+		}
+	}
+
+	private boolean validarCamposVacios() throws CampoVacioException {
+		if (txtNombreJuego.getText().isEmpty())
+		{
+			txtNombreJuego.setFocusTraversable(true);
+			throw new CampoVacioException(
+					"El Campo Nombre no puedo estar vacio.");
+		}
+		return true;
 	}
 
 	/**
@@ -131,34 +179,19 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 		return instance;
 	}
 
-	public void showMe(Usuario usuario) {
-		GestorLogs.registrarLog("Creando nuevo Juego...");
-
-		Parent root;
-		Stage stage = new Stage();
-
-		String fxml = ConstantesFXML.FXML_CREAR_JUEGO;
-
-		try {
-			root = ScreensFramework.getParent(fxml);
-			Scene scene = new Scene(root);
-			stage.setScene(scene);
-			stage.setTitle("Monopoly - Nuevo Juego");
-			stage.centerOnScreen();
-			// prevStage.close();
-
-			stage.show();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			GestorLogs.registrarError(e.getMessage());
-			;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			GestorLogs.registrarError(e.getMessage());
-			;
-		}
-
+	/**
+	 * @return the currentStage
+	 */
+	public Stage getCurrentStage() {
+		return currentStage;
 	}
 
+	/**
+	 * @param currentStage
+	 *            the currentStage to set
+	 */
+	public void setCurrentStage(Stage currentStage) {
+		this.currentStage = currentStage;
+	}
+	
 }

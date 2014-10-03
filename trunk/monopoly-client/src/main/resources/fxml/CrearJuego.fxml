@@ -7,7 +7,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="457.0" prefWidth="534.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.CrearJuegoController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="457.0" prefWidth="688.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.CrearJuegoController">
    <children>
       <GridPane layoutX="131.0" layoutY="9.0" prefHeight="400.0" prefWidth="521.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -32,8 +32,8 @@
                </image>
             </ImageView>
             <TextField id="txtNombreJuego" fx:id="txtNombreJuego" prefHeight="30.0" prefWidth="200.0" promptText="Nombre del Juego" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-            <TextField id="txtFechaCreacion" fx:id="txtFechaCreacion" disable="true" prefHeight="30.0" prefWidth="200.0" promptText="fecha creación" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-            <TextField id="txtUserName" fx:id="txtUserName" disable="true" prefHeight="30.0" prefWidth="200.0" promptText="Usuario creador" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+            <TextField id="txtFechaCreacion" fx:id="txtFechaCreacion" disable="true" editable="false" prefHeight="30.0" prefWidth="200.0" promptText="fecha creación" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+            <TextField id="txtUserName" fx:id="txtUserName" disable="true" editable="false" prefHeight="30.0" prefWidth="200.0" promptText="Usuario creador" GridPane.columnIndex="2" GridPane.rowIndex="6" />
             <GridPane GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="10">
                <children>
                   <Button id="btnCancelar" fx:id="btnCancelar" mnemonicParsing="false" onAction="#processCancel" prefHeight="51.0" prefWidth="200.0" text="Cancelar">
@@ -56,13 +56,13 @@
                </rowConstraints>
             </GridPane>
             <Label text="Id Juego" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-            <TextField id="txtIdJuego" fx:id="txtIdJuego" disable="true" prefHeight="30.0" prefWidth="200.0" promptText="Id Juego" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+            <TextField id="txtIdJuego" fx:id="txtIdJuego" editable="false" prefHeight="30.0" prefWidth="200.0" promptText="Id Juego" GridPane.columnIndex="2" GridPane.rowIndex="7" />
          </children>
          <columnConstraints>
             <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="262.0" minWidth="10.0" prefWidth="58.0" />
-            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="262.0" minWidth="10.0" prefWidth="177.0" />
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="343.0" minWidth="10.0" prefWidth="236.0" />
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="343.0" minWidth="10.0" prefWidth="63.0" />
+            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="262.0" minWidth="10.0" prefWidth="121.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="369.0" minWidth="10.0" prefWidth="354.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="343.0" minWidth="10.0" prefWidth="103.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
