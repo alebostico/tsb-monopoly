@@ -266,7 +266,17 @@ CREATE TABLE `ficha` (
 
 LOCK TABLES `ficha` WRITE;
 /*!40000 ALTER TABLE `ficha` DISABLE KEYS */;
-INSERT INTO `ficha` (`fichaID`, `nombre`, `pathImageSmall`, `pathImageBig`) VALUES (1,'auto','FichaS01.png','Ficha01.png'),(2,'sombrero','FichaS02.png','Ficha02.png'),(3,'bota','FichaS03.png','Ficha03.png'),(4,'plancha','FichaS04.png','Ficha04.png'),(5,'carretilla','FichaS05.png','Ficha05.png'),(6,'dedal','FichaS06.png','Ficha06.png'),(7,'barco','FichaS07.png','Ficha07.png'),(8,'perro','FichaS08.png','Ficha08.png'),(9,'bolsa de dinero','FichaS09.png','Ficha09.png'),(10,'caballo','FichaS10.png','Ficha10.png'),(11,'cañón','FichaS11.png','Ficha11.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('1','auto','/images/fichas/FichaS01.png','/images/fichas/Ficha01.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('2','sombrero','/images/fichas/FichaS02.png','/images/fichas/Ficha02.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('3','bota','/images/fichas/FichaS03.png','/images/fichas/Ficha03.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('4','plancha','/images/fichas/FichaS04.png','/images/fichas/Ficha04.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('5','carretilla','/images/fichas/FichaS05.png','/images/fichas/Ficha05.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('6','dedal','/images/fichas/FichaS06.png','/images/fichas/Ficha06.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('7','barco','/images/fichas/FichaS07.png','/images/fichas/Ficha07.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('8','perro','/images/fichas/FichaS08.png','/images/fichas/Ficha08.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('9','bolsa de dinero','/images/fichas/FichaS09.png','/images/fichas/Ficha09.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('10','caballo','/images/fichas/FichaS10.png','/images/fichas/Ficha10.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('11','cañón','/images/fichas/FichaS11.png','/images/fichas/Ficha11.png');
 /*!40000 ALTER TABLE `ficha` ENABLE KEYS */;
 UNLOCK TABLES;
 
