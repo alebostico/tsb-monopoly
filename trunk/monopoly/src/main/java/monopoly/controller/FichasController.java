@@ -11,18 +11,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class FichasController {
 
-	// public static final String F_AUTO = "auto";
-	// public static final String F_SOMBRERO = "sombrero";
-	// public static final String F_BOTA = "bota";
-	// public static final String F_PLANCHA = "plancha";
-	// public static final String F_CARRETILLA = "carretilla";
-	// public static final String F_DEDAL = "dedal";
-	// public static final String F_BARCO = "barco";
-	// public static final String F_PERRO = "perro";
-	// public static final String F_BOLSA_DINERO = "bolsa de dinero";
-	// public static final String F_CABALLO = "caballo";
-	// public static final String F_CANON = "cañón";
-
 	public List<Ficha> fichas;
 
 	/**
@@ -48,6 +36,17 @@ public class FichasController {
 			GestorLogs.registrarDebug(this.toString());
 
 		return this.fichas;
+	}
+	
+	public static List<Ficha> getFichas(){
+		ApplicationContext appContext = new ClassPathXmlApplicationContext(
+				"spring/config/BeanLocations.xml");
+
+		IFichaDao fichaDao = (IFichaDao) appContext.getBean("fichaDao");
+		
+		GestorLogs.registrarLog("Fichas cargadas");
+		return fichaDao.getAll();
+
 	}
 
 	/**

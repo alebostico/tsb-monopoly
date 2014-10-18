@@ -3,13 +3,13 @@
  */
 package monopoly.model;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import monopoly.controller.FichasController;
-import monopoly.controller.TarjetaController;
 import monopoly.model.tablero.Tablero;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
@@ -17,10 +17,11 @@ import monopoly.util.GestorLogs;
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
  * 
  */
-public class Juego {
+public class Juego implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Nombre unico que identifica al juego
@@ -46,10 +47,6 @@ public class Juego {
 
 	private List<Jugador> jugadoresList; // cambiar por lista circular
 
-	private TarjetaController gestorTarjetas;
-
-	private FichasController gestorFichas;
-
 	private Tablero tablero;
 
 	private Dado dado;
@@ -74,6 +71,8 @@ public class Juego {
 		this.owner = creador;
 		this.fechaCreacion = new Date();
 		this.jugadoresList = new ArrayList<Jugador>();
+		this.fichasPlayerList = FichasController.getFichas();
+		this.tarjetasPropiedadList = new ArrayList<TarjetaPropiedad>();
 		this.generateUniqueID();
 		GestorLogs.registrarLog("Creado nuevo juego '" + this.getUniqueID()
 				+ "'");
@@ -97,8 +96,6 @@ public class Juego {
 		this.banco = new Banco(); // Cargar el Banco
 		this.tablero = new Tablero(banco); // Cargar el tablero
 		this.dado = new Dado();
-		this.gestorTarjetas = new TarjetaController(this);
-		this.gestorFichas = new FichasController();
 
 		GestorLogs.registrarLog("Iniciado juego '" + this.getUniqueID() + "'");
 	}
@@ -246,33 +243,6 @@ public class Juego {
 	}
 
 	/**
-	 * Devuelve la ficha que tiene el nombre pasado por parámetro. El nombre
-	 * debe ser alguna de las constantes estáticas de la clase GestorFichas:
-	 * <ul>
-	 * <li>GestorFichas.F_CARRETILLA</li>
-	 * <li>GestorFichas.F_AUTO</li>
-	 * <li>GestorFichas.F_SOMBRERO</li>
-	 * <li>GestorFichas.F_BOTA</li>
-	 * <li>GestorFichas.F_PLANCHA</li>
-	 * <li>GestorFichas.F_CARRETILLA</li>
-	 * <li>GestorFichas.F_DEDAL</li>
-	 * <li>GestorFichas.F_BARCO</li>
-	 * <li>GestorFichas.F_PERRO</li>
-	 * <li>GestorFichas.F_BOLSA_DINERO</li>
-	 * <li>GestorFichas.F_CABALLO</li>
-	 * <li>GestorFichas.F_CANON</li>
-	 * </ul>
-	 * 
-	 * @param nombreFicha
-	 *            El nombre de la ficha
-	 * @return La instancia de la clase Ficha o null si no se encuentra una
-	 *         ficha con ese nombre.
-	 */
-	public Ficha getFicha(String nombreFicha) {
-		return this.gestorFichas.getFicha(nombreFicha);
-	}
-
-	/**
 	 * @return the fichasPlayerList
 	 */
 	public List<Ficha> getFichasPlayerList() {
@@ -333,7 +303,6 @@ public class Juego {
 		sb.append(", jugadores="
 				+ ((this.jugadoresList != null) ? this.jugadoresList.toString()
 						: "<SIN JUGADORES>"));
-		sb.append(", tarjetas=" + this.gestorTarjetas.toString());
 		sb.append(", banco=" + this.banco.toString());
 		sb.append(" }");
 

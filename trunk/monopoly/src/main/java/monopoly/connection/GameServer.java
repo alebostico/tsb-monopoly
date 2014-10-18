@@ -13,12 +13,9 @@ import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import monopoly.controller.UsuarioController;
-import monopoly.model.Usuario;
 import monopoly.util.LectorXML;
 import monopoly.util.message.DisconnectMessage;
 import monopoly.util.message.ForwardedMessage;
-import monopoly.util.message.LoginMessage;
 import monopoly.util.message.ResetSignal;
 
 /**
@@ -89,7 +86,6 @@ public class GameServer {
 	 */
 	private TreeMap<Integer, ConnectionToClient> playerConnections;
 
-
 	/**
 	 * A queue of messages received from clients. When a method is received, it
 	 * is placed in this queue. A separate thread takes messages from the queue
@@ -105,8 +101,9 @@ public class GameServer {
 	private volatile boolean autoreset;
 
 	private ServerSocket serverSocket; // Listens for connections.
-	private int port = LectorXML.getPuertoDeConexion(); // the port on which the
-														// server will listen.
+	private static int port = LectorXML.getPuertoDeConexion(); // the port on
+																// which the
+	// server will listen.
 	private Thread serverThread; // Accepts connections on serverSocket
 	volatile private boolean shutdown; // Set to true when the Hub is not
 										// listening.
@@ -123,28 +120,7 @@ public class GameServer {
 	 *             specified port.
 	 */
 	public GameServer() throws IOException {
-		playerConnections = new TreeMap<Integer, ConnectionToClient>();
-		incomingMessages = new LinkedBlockingQueue<Message>();
-		serverSocket = new ServerSocket(port);
-		System.out.println("Listening for client connections on port " + port);
-		serverThread = new ServerThread();
-		serverThread.start();
-		Thread readerThread = new Thread() {
-			public void run() {
-				while (true) {
-					try {
-						Message msg = incomingMessages.take();
-						messageReceived(msg.playerConnection, msg.message);
-					} catch (Exception e) {
-						System.out
-								.println("Exception while handling received message:");
-						e.printStackTrace();
-					}
-				}
-			}
-		};
-		readerThread.setDaemon(true);
-		readerThread.start();
+		this(port);
 	}
 
 	/**
@@ -615,44 +591,17 @@ public class GameServer {
 							msg.playerConnection = ConnectionToClient.this;
 							msg.message = message;
 
-							switch (msg.message.getClass().getSimpleName()) {
-							case "LoginMessage":
-								Usuario usuario = (Usuario) ((LoginMessage) message).message;
-								usuario = UsuarioController.validarUsuario(
-										usuario.getUserName(),
-										usuario.getPassword());
-								sendToOne(msg.playerConnection.playerID, new LoginMessage(
-										msg.playerConnection.playerID,
-										usuario));
-								break;
-
-							case "CreateAccountMessage":
-								// tomar el usuario y grabarlo
-								break;
-
-							case "CreateGameMessage":
-								// create juego
-								
-								break;
-
-							case "JoinGameMessage":
-								// unirse al juego
-								break;
-
-							case "DisconnectMessage":
+							if (message instanceof DisconnectMessage) {
 								closed = true;
 								outgoingMessages.clear();
 								out.writeObject("*goodbye*");
 								out.flush();
 								clientDisconnected(playerID);
 								close();
-								break;
-
-							default:
-								System.out.print(message.getClass()
-										.getSimpleName());
+							} else {
 								incomingMessages.put(msg);
 							}
+
 						} catch (InterruptedException e) {
 							// should mean that connection is closing
 						}
