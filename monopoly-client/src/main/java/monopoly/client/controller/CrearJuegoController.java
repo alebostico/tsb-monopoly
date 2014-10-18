@@ -8,6 +8,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -62,7 +63,7 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 	private Juego nuevoJuego = null;
 
 	private static CrearJuegoController instance;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -75,18 +76,26 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 		instance = this;
 	}
 
-	public void inicializarVariables() {
-		nuevoJuego = new Juego(usuarioLogueado, "");
+	public void showCrearJuego(Juego juego) {
+		this.nuevoJuego = juego;
+		Platform.runLater(new Runnable() {
 
-		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
-		if (nuevoJuego != null) {
-			txtFechaCreacion.setText(df.format(nuevoJuego.getFechaCreacion()));
-			txtIdJuego.setText(nuevoJuego.getUniqueID());
-		}
+				if (nuevoJuego != null) {
+					txtFechaCreacion.setText(df.format(nuevoJuego
+							.getFechaCreacion()));
+					txtIdJuego.setText(nuevoJuego.getUniqueID());
+				}
 
-		if (usuarioLogueado != null)
-			txtUserName.setText(usuarioLogueado.getUserName());
+				if (usuarioLogueado != null)
+					txtUserName.setText(usuarioLogueado.getUserName());
+				currentStage.show();
+			}
+		});
 	}
 
 	@FXML
@@ -104,9 +113,9 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 		FXMLLoader loader = null;
 		try {
 			if (validarCamposVacios()) {
-				
+
 				nuevoJuego.setNombreJuego(txtNombreJuego.getText());
-				
+
 				loader = ScreensFramework.getLoader(fxml);
 
 				root = (Parent) loader.load();
@@ -136,9 +145,8 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 	}
 
 	private boolean validarCamposVacios() throws CampoVacioException {
-		if (txtNombreJuego.getText().isEmpty())
-		{
-			txtNombreJuego.setFocusTraversable(true);
+		if (txtNombreJuego.getText().isEmpty()) {
+			txtNombreJuego.requestFocus();
 			throw new CampoVacioException(
 					"El Campo Nombre no puedo estar vacio.");
 		}
@@ -193,5 +201,5 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 	public void setCurrentStage(Stage currentStage) {
 		this.currentStage = currentStage;
 	}
-	
+
 }

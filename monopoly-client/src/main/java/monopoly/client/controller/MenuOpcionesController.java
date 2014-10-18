@@ -20,6 +20,7 @@ import monopoly.client.util.ScreensFramework;
 import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesFXML;
+import monopoly.util.message.CreateGameMessage;
 
 /**
  * @author pablo
@@ -84,12 +85,6 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 			prevStage.close();
 			currentStage.show();
 			
-//			Platform.runLater(new Runnable() {
-//				@Override
-//				public void run() {
-//					
-//				}
-//			});
 		} catch (Exception ex) {
 			// TODO Auto-generated catch block
 			GestorLogs.registrarError(ex.getMessage());
@@ -110,15 +105,14 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 			CrearJuegoController controller = (CrearJuegoController)loader.getController();
 			controller.setPrevStage(currentStage);
 			controller.setUsuarioLogueado(usuarioLogueado);
-			controller.inicializarVariables();
 
 			Scene scene = new Scene(root);
 			stage.setScene(scene);
 			stage.setTitle("Monopoly - Nuevo Juego");
 			stage.centerOnScreen();
-			// prevStage.close();
 			controller.setCurrentStage(stage);
-			stage.show();
+			int senderId = ConnectionController.getInstance().getIdPlayer();
+			ConnectionController.getInstance().send(new CreateGameMessage(senderId, usuarioLogueado));
 
 		} catch (Exception ex) {
 			// TODO Auto-generated catch block
