@@ -76,7 +76,7 @@ public class Juego implements Serializable{
 		this.generateUniqueID();
 		GestorLogs.registrarLog("Creado nuevo juego '" + this.getUniqueID()
 				+ "'");
-		// this.initJuego();
+		this.initJuego();
 		// GestorLogs.registrarDebug(this.toString());
 	}
 

@@ -51,10 +51,11 @@ public class JugadorHumano extends Jugador implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("{ Jugador Humano [" + (Jugador)this != null ? super.toString() : "<SIN JUGADOR> ");
-		sb.append((this.usuario != null) ? ", " + this.usuario.toString(): "<SIN USUARIO> ");
+		sb.append("{ Jugador Humano [");
+		sb.append((Jugador) this != null ? super.toString() : "<SIN JUGADOR> ");
+		sb.append((this.usuario != null) ? ", " + this.usuario.toString()
+				: "<SIN USUARIO> ");
 		sb.append("] }");
 		return sb.toString();
 	}
-
 }
