@@ -3,14 +3,18 @@
  */
 package monopoly.client.controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -19,7 +23,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import jfx.messagebox.MessageBox;
 import monopoly.client.connection.ConnectionController;
+import monopoly.client.util.ScreensFramework;
 import monopoly.model.Usuario;
+import monopoly.util.GestorLogs;
+import monopoly.util.constantes.ConstantesFXML;
 import monopoly.util.encriptacion.Encrypter;
 import monopoly.util.encriptacion.VernamEncrypter;
 import monopoly.util.exception.CampoVacioException;
@@ -133,28 +140,54 @@ public class RegistrarmeController extends AnchorPane implements Initializable {
 					MessageBox.ICON_WARNING | MessageBox.OK);
 		}
 	}
+	
+	public void iniciarSesion(final Usuario user) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				if (user != null) {
+					try {
+						FXMLLoader loader = ScreensFramework.getLoader(ConstantesFXML.FXML_MENU_OPCIONES);
+						Parent root = (Parent) loader.load();
+						MenuOpcionesController controller = (MenuOpcionesController) loader
+								.getController();
+						controller.setPrevStage(currentStage);
+						controller.setUsuarioLogueado(user);
+						controller.showOptionMenu(root);
+
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						GestorLogs.registrarError(e.getMessage());
+					}
+				} else {
+					lblMsgError.setText("Usuario / Contraseña inválida");
+				}
+			}
+		});
+	}
 
 	private boolean validarCampos() throws CampoVacioException {
 		if (txtNombre.getText().isEmpty()) {
-			txtNombre.setFocusTraversable(true);
+			txtNombre.requestFocus();
 			throw new CampoVacioException(
 					"¡El Campo Nombre no puede estar vacio!");
 		}
 
 		if (txtUserName.getText().isEmpty()) {
-			txtUserName.setFocusTraversable(true);
+			txtUserName.requestFocus();
 			throw new CampoVacioException(
 					"¡El Campo Usuario no puede estar vacio!");
 		}
 
 		if (txtPassword.getText().isEmpty()) {
-			txtPassword.setFocusTraversable(true);
+			txtPassword.requestFocus();
 			throw new CampoVacioException(
 					"¡El Campo Contraseña no puede estar vacio!");
 		}
 
 		if (txtRepeatPassword.getText().isEmpty()) {
-			txtRepeatPassword.setFocusTraversable(true);
+			txtRepeatPassword.requestFocus();
 			throw new CampoVacioException(
 					"¡El Campo Confirmar Contraseña no puede estar vacio!");
 		}

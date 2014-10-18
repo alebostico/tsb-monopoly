@@ -39,16 +39,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import jfx.messagebox.MessageBox;
-import monopoly.dao.IFichaDao;
+import monopoly.controller.FichasController;
 import monopoly.model.Ficha;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.JugadorVirtual;
 import monopoly.model.JugadorVirtual.TipoJugador;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @author Bostico Alejandro
@@ -243,12 +240,9 @@ public class CrearJugadoresController extends AnchorPane implements
 	}
 
 	public void inicializarVariables() {
-		ApplicationContext appContext = new ClassPathXmlApplicationContext(
-				"spring/config/BeanLocations.xml");
-		IFichaDao fichaDao = (IFichaDao) appContext.getBean("fichaDao");
 
 		if (juego != null) {
-			fichaList = fichaDao.getAll();
+			fichaList = FichasController.getFichas();
 			juego.setFichasPlayerList(fichaList);
 
 			vIndexFichas = new int[fichaList.size()];

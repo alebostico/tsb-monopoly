@@ -140,12 +140,12 @@ public class LoginController extends AnchorPane implements Initializable {
 	 */
 	private boolean validarCampos() throws CampoVacioException {
 		if (txtUserName.getText().equals("")) {
-			txtUserName.setFocusTraversable(true);
+			txtUserName.requestFocus();
 			throw new CampoVacioException(
 					"¡El Campo Usuario no puede estar vacio!");
 		}
 		if (txtPassword.getText().equals("")) {
-			txtPassword.setFocusTraversable(true);
+			txtPassword.requestFocus();
 			throw new CampoVacioException(
 					"¡El Campo Contraseña no puede estar vacio!");
 		}
