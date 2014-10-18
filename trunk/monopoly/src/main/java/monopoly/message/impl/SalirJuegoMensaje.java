@@ -3,7 +3,7 @@
  */
 package monopoly.message.impl;
 
-import monopoly.util.message.ConstantesMensaje;
+import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.message.IMensaje;
 
 /**

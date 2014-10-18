@@ -4,6 +4,7 @@
 package monopoly.message.impl;
 
 import monopoly.model.Juego;
+import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.message.IMensaje;
 
 /**
@@ -17,6 +18,10 @@ public class CrearJuegoMensaje implements IMensaje {
 
 	public CrearJuegoMensaje(Juego juego) {
 		this.juego = juego;
+	}
+	
+	public CrearJuegoMensaje() {
+		super();
 	}
 
 	/*
@@ -40,6 +45,7 @@ public class CrearJuegoMensaje implements IMensaje {
 	@Override
 	public String codificarMensaje(String[] vCadena) {
 		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -51,7 +57,7 @@ public class CrearJuegoMensaje implements IMensaje {
 	@Override
 	public String getTipoMensaje() {
 		// TODO Auto-generated method stub
-		return null;
+		return ConstantesMensaje.CREAR_JUEGO;
 	}
 
 }
