@@ -5,8 +5,8 @@ package monopoly.message.impl;
 
 import monopoly.controller.UsuarioController;
 import monopoly.model.Usuario;
+import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.exception.EmailInvalidoException;
-import monopoly.util.message.ConstantesMensaje;
 import monopoly.util.message.IMensaje;
 
 /**

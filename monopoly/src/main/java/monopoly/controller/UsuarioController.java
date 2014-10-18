@@ -26,5 +26,13 @@ public class UsuarioController {
 		usuarioDao.save(usuario);
 		return usuario;
 	}
+	
+	public static Usuario validarUsuario(String userName, String password)
+	{
+		IUsuarioDao usuarioDao = (IUsuarioDao) appContext.getBean("usuarioDao");
+		Usuario usuario = usuarioDao.validarUsuario(userName, password);
+				
+		return usuario;
+	}
 
 }
