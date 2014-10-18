@@ -7,12 +7,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import monopoly.controller.PartidasController;
 import monopoly.dao.ITarjetaCalleDao;
 import monopoly.dao.ITarjetaCompaniaDao;
 import monopoly.dao.ITarjetaComunidadDao;
 import monopoly.dao.ITarjetaEstacionDao;
 import monopoly.dao.ITarjetaSuerteDao;
 import monopoly.model.Banco;
+import monopoly.model.Ficha;
+import monopoly.model.Juego;
+import monopoly.model.Jugador;
+import monopoly.model.Usuario;
 import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tablero.Tablero;
 import monopoly.model.tarjetas.TarjetaCalle;
@@ -39,10 +44,10 @@ public class Main {
 
 		GestorLogs.registrarLog("Realizando algunas pruebas...");
 		 //crearUsuarios();
-		//testLoadGame();
-		 testRandomizeList();
-		 testShuffleList();
-		 Main.testStringUtils();
+		 //testLoadGame();
+		 //testRandomizeList();
+		 //testShuffleList();
+		 //Main.testStringUtils();
 		GestorLogs.registrarLog("END!!!");
 	}
 
@@ -54,11 +59,12 @@ public class Main {
 //		 */
 //		GestorLogs.setLoggingDetailLevel(GestorLogs.MSG_INFO);
 //
-//		JuegoController gj = JuegoController.getInstance();
+//		PartidasController gj = PartidasController.getInstance();
 //
 //		// El usuario1 además de ser jugador es el creador
 //		Usuario usuario1 = new Usuario("testuser1");
 //		Juego juego = gj.crearJuego(usuario1, "Test Juego");
+//		
 //
 //		Jugador jugador1 = juego.addJugador(Ficha.TIPO_AUTO, usuario1);
 //

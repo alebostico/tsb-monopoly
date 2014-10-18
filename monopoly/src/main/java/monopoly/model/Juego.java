@@ -53,13 +53,13 @@ public class Juego {
 	private Tablero tablero;
 
 	private Dado dado;
-	
+
 	private int cantJugadores;
 
 	private List<TarjetaPropiedad> tarjetasPropiedadList;
-	
+
 	private List<Ficha> fichasPlayerList;
-	
+
 	/**
 	 * Constructor con parametros
 	 * 
@@ -77,20 +77,16 @@ public class Juego {
 		this.generateUniqueID();
 		GestorLogs.registrarLog("Creado nuevo juego '" + this.getUniqueID()
 				+ "'");
-		this.initJuego();
+		// this.initJuego();
 		// GestorLogs.registrarDebug(this.toString());
 	}
-	
+
 	public Juego(Usuario creador) {
-		this.owner = creador;
-		this.cantJugadores = 0;
-		this.fechaCreacion = new Date();
-		this.jugadoresList = new ArrayList<Jugador>();
-		this.generateUniqueID();
-		GestorLogs.registrarLog("Creado nuevo juego '" + this.getUniqueID()
-				+ "'");
+		this(creador, "");
+	}
+
+	public void iniciarJuego() {
 		this.initJuego();
-		// GestorLogs.registrarDebug(this.toString());
 	}
 
 	/**
@@ -98,7 +94,6 @@ public class Juego {
 	 */
 	private void initJuego() {
 
-		
 		this.banco = new Banco(); // Cargar el Banco
 		this.tablero = new Tablero(banco); // Cargar el tablero
 		this.dado = new Dado();
@@ -143,7 +138,7 @@ public class Juego {
 		// ubica al jugador en el casillero 1
 		this.getTablero().moverACasillero(jugador, 1, false);
 		// y lo agrega a la lista de jugadores.
-		
+
 		boolean returnValue = this.jugadoresList.add(jugador);
 
 		GestorLogs.registrarLog("Agregado jugador '"
@@ -190,7 +185,8 @@ public class Juego {
 	}
 
 	/**
-	 * @param cantJugadores the cantJugadores to set
+	 * @param cantJugadores
+	 *            the cantJugadores to set
 	 */
 	public void setCantJugadores(int cantJugadores) {
 		this.cantJugadores = cantJugadores;
@@ -204,7 +200,8 @@ public class Juego {
 	}
 
 	/**
-	 * @param nombreJuego the nombreJuego to set
+	 * @param nombreJuego
+	 *            the nombreJuego to set
 	 */
 	public void setNombreJuego(String nombreJuego) {
 		this.nombreJuego = nombreJuego;
@@ -274,7 +271,7 @@ public class Juego {
 	public Ficha getFicha(String nombreFicha) {
 		return this.gestorFichas.getFicha(nombreFicha);
 	}
-	
+
 	/**
 	 * @return the fichasPlayerList
 	 */
@@ -283,7 +280,8 @@ public class Juego {
 	}
 
 	/**
-	 * @param fichasPlayerList the fichasPlayerList to set
+	 * @param fichasPlayerList
+	 *            the fichasPlayerList to set
 	 */
 	public void setFichasPlayerList(List<Ficha> fichasPlayerList) {
 		this.fichasPlayerList = fichasPlayerList;
