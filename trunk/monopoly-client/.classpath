@@ -15,11 +15,6 @@
 	</classpathentry>
 	<classpathentry including="**/*.java" kind="src" path="src/test/resources"/>
 	<classpathentry exported="true" kind="con" path="at.bestsolution.efxclipse.tooling.jdt.core.JAVAFX_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="src" path="/monopoly-util"/>
 	<classpathentry kind="lib" path="/usr/lib/jvm/jdk1.8.0_20/jre/lib/ext/jfxrt.jar">
 		<attributes>
@@ -28,18 +23,14 @@
 	</classpathentry>
 	<classpathentry kind="src" path="/monopoly"/>
 	<classpathentry kind="lib" path="lib/jfxmessagebox-1.1.0.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/pablo/.m2/repository/org/controlsfx/controlsfx/8.20.7/controlsfx-8.20.7.jar">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="maven.groupId" value="org.controlsfx"/>
-			<attribute name="maven.artifactId" value="controlsfx"/>
-			<attribute name="maven.version" value="8.20.7"/>
-			<attribute name="maven.scope" value="compile"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
