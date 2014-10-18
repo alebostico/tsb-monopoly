@@ -5,6 +5,7 @@ package monopoly.controller;
 
 import java.util.Date;
 import java.util.List;
+import java.util.TreeMap;
 
 import monopoly.model.Juego;
 import monopoly.model.Usuario;
@@ -15,21 +16,21 @@ import monopoly.util.GestorLogs;
  * @author Moreno Pablo
  *
  */
-public class PartidaController {
-	
-	private List<Juego> juegosList;
-	
-	private static PartidaController INSTANCE;
+public class PartidasController {
 
-	private PartidaController() {
+	private TreeMap<String, Juego> juegosList;
+
+	private static PartidasController INSTANCE;
+
+	private PartidasController() {
 		super();
-		//juegosList = new ArrayList<Juego>();
+		juegosList = new TreeMap<String, Juego>();
 		GestorLogs.registrarLog("Creado el gestor de juegos");
 	}
 
-	public static PartidaController getInstance() {
+	public static PartidasController getInstance() {
 		if (INSTANCE == null)
-			INSTANCE = new PartidaController();
+			INSTANCE = new PartidasController();
 
 		return INSTANCE;
 	}
@@ -47,7 +48,8 @@ public class PartidaController {
 			GestorLogs.registrarLog("Agregado al GestorJuegos el juego "
 					+ juego.getUniqueID());
 			GestorLogs.registrarDebug(juego.toString());
-			return this.juegosList.add(juego);
+			if (juegosList.put(juego.getUniqueID(), juego) != null)
+				return true;
 		}
 		return false;
 	}
@@ -63,7 +65,6 @@ public class PartidaController {
 	 * @return El juego creado
 	 */
 	public Juego crearJuego(Usuario creador, String nombre) {
-		// TODO: implementar metodo
 		// verificar que el nombre del juego no exista
 		// tanto en las instancias actuales como en la BD.
 		Juego juego = new Juego(creador, nombre);
@@ -75,9 +76,9 @@ public class PartidaController {
 	/**
 	 * @return the juegosList
 	 */
-	public List<Juego> getJuegosList() {
-		return juegosList;
-	}
+	// public TreeMap<String, Juego> getJuegosList() {
+	// return juegosList;
+	// }
 
 	/**
 	 * Busca un juego a partir del usuario que lo creo y el nombre del juego
@@ -88,7 +89,36 @@ public class PartidaController {
 	 */
 	public Juego buscarJuego(String nombreUsuarioCreador, String nombreJuego) {
 		// TODO: implementar metodo
+		for (Juego juegoIterator : juegosList.values()) {
+			if (juegoIterator.getNombreJuego().equals(nombreJuego)
+					&& juegoIterator.getOwner().getUserName()
+							.equals(nombreUsuarioCreador))
+				return juegoIterator;
+		}
 		return null;
+	}
+
+	/**
+	 * Retorna todos los juegos cuyos nombres coinciden con un criterio de
+	 * búsqueda
+	 * 
+	 * @param likeNombre 
+	 * @return
+	 */
+	public List<Juego> buscarJuegos(String likeNombre) {
+		// TODO: Implementar método
+		return null;
+	}
+
+	/**
+	 * Devuelve un juego a partir del UniqueID del juego
+	 * 
+	 * @param juegoUniqueId
+	 *            el UniqueID del juego
+	 * @return El Juego
+	 */
+	public Juego buscarJuego(String juegoUniqueId) {
+		return juegosList.get(juegoUniqueId);
 	}
 
 	/**
@@ -113,8 +143,7 @@ public class PartidaController {
 	 * @return
 	 */
 	public Juego getJuego(String uniqueID) {
-		// TODO: implementar metodo
-		return null;
+		return buscarJuego(uniqueID);
 	}
 
 	/**
@@ -125,7 +154,7 @@ public class PartidaController {
 	 * @return true si el juego existe. false si no existe.
 	 */
 	public boolean existeJuego(Juego juego) {
-		for (Juego juegoIterator : this.juegosList) {
+		for (Juego juegoIterator : this.juegosList.values()) {
 			if (juegoIterator.compareTo(juego) == 0)
 				return true;
 		}

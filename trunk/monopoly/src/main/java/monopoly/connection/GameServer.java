@@ -13,7 +13,6 @@ import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import monopoly.controller.GameController;
 import monopoly.controller.UsuarioController;
 import monopoly.model.Usuario;
 import monopoly.util.LectorXML;
@@ -90,10 +89,6 @@ public class GameServer {
 	 */
 	private TreeMap<Integer, ConnectionToClient> playerConnections;
 
-	/**
-	 * A map that associates games with the controllers the game.
-	 */
-	private TreeMap<Integer, GameController> gameControllerList;
 
 	/**
 	 * A queue of messages received from clients. When a method is received, it
@@ -129,7 +124,6 @@ public class GameServer {
 	 */
 	public GameServer() throws IOException {
 		playerConnections = new TreeMap<Integer, ConnectionToClient>();
-		gameControllerList = new TreeMap<Integer, GameController>();
 		incomingMessages = new LinkedBlockingQueue<Message>();
 		serverSocket = new ServerSocket(port);
 		System.out.println("Listening for client connections on port " + port);
@@ -403,22 +397,6 @@ public class GameServer {
 		return autoreset;
 	}
 
-	/**
-	 * @return the gameControllerList
-	 */
-	public TreeMap<Integer, GameController> getGameControllerList() {
-		return gameControllerList;
-	}
-
-	/**
-	 * @param gameControllerList
-	 *            the gameControllerList to set
-	 */
-	public void setGameControllerList(
-			TreeMap<Integer, GameController> gameControllerList) {
-		this.gameControllerList = gameControllerList;
-	}
-
 	// ------------------------- private implementation part
 	// ---------------------------------------
 
@@ -654,6 +632,7 @@ public class GameServer {
 
 							case "CreateGameMessage":
 								// create juego
+								
 								break;
 
 							case "JoinGameMessage":
