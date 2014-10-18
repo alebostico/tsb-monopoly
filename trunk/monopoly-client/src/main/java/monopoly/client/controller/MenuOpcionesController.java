@@ -6,7 +6,6 @@ package monopoly.client.controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,11 +15,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import monopoly.client.connection.ConexionController;
+import monopoly.client.connection.ConnectionController;
 import monopoly.client.util.ScreensFramework;
 import monopoly.model.Usuario;
-import monopoly.util.ConstantesFXML;
 import monopoly.util.GestorLogs;
+import monopoly.util.constantes.ConstantesFXML;
 
 /**
  * @author pablo
@@ -71,10 +70,8 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 		instance = this;
 	}
 
-	public void showOptionMenu(Parent root, Usuario usuario) {
+	public void showOptionMenu(Parent root) {
 		GestorLogs.registrarLog("Desplegar Menú de Opciones..");
-		
-		usuarioLogueado = usuario;
 		
 		try {
 			currentStage = new Stage();
@@ -83,14 +80,16 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 			currentStage.setScene(scene);
 			currentStage.setTitle("Monopoly - Menú de Opciones");
 			currentStage.centerOnScreen();
+			currentStage.setResizable(false);
+			prevStage.close();
+			currentStage.show();
 			
-			Platform.runLater(new Runnable() {
-				@Override
-				public void run() {
-					prevStage.close();
-					currentStage.show();
-				}
-			});
+//			Platform.runLater(new Runnable() {
+//				@Override
+//				public void run() {
+//					
+//				}
+//			});
 		} catch (Exception ex) {
 			// TODO Auto-generated catch block
 			GestorLogs.registrarError(ex.getMessage());
@@ -145,8 +144,7 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 	@FXML
 	void processExit(ActionEvent event) {
 		GestorLogs.registrarLog("Saliendo del Juego..");
-		ConexionController.THREAD_CLIENTE.detenerHilo();
-		System.exit(0);
+		ConnectionController.getInstance().cerrarConexion();
 	}
 
 	@FXML
@@ -175,6 +173,8 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 	}
 
 	public static MenuOpcionesController getInstance() {
+		if(instance == null)
+			instance = new  MenuOpcionesController();
 		return instance;
 	}
 
