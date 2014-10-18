@@ -1,7 +1,7 @@
 /**
  * 
  */
-package monopoly.util;
+package monopoly.util.constantes;
 
 /**
  * @author Bostico Alejandro
