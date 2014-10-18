@@ -22,8 +22,8 @@ import jfx.messagebox.MessageBox;
 import monopoly.client.util.ScreensFramework;
 import monopoly.model.Juego;
 import monopoly.model.Usuario;
-import monopoly.util.ConstantesFXML;
 import monopoly.util.GestorLogs;
+import monopoly.util.constantes.ConstantesFXML;
 import monopoly.util.exception.CampoVacioException;
 
 /**

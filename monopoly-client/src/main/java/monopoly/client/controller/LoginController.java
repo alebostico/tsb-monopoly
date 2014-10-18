@@ -21,16 +21,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import jfx.messagebox.MessageBox;
-import monopoly.client.connection.ConexionController;
+import monopoly.client.connection.ConnectionController;
 import monopoly.client.util.ScreensFramework;
-import monopoly.message.impl.LoginMensaje;
 import monopoly.model.Usuario;
-import monopoly.util.ConstantesFXML;
 import monopoly.util.GestorLogs;
+import monopoly.util.constantes.ConstantesFXML;
 import monopoly.util.encriptacion.Encrypter;
 import monopoly.util.encriptacion.VernamEncrypter;
 import monopoly.util.exception.CampoVacioException;
-import monopoly.util.message.IMensaje;
 
 /**
  * @author pablo
@@ -58,8 +56,6 @@ public class LoginController extends AnchorPane implements Initializable {
 
 	private Stage primaryStage;
 
-	private IMensaje mensaje;
-	
 	private static LoginController instance = null;
 
 	/*
@@ -78,41 +74,20 @@ public class LoginController extends AnchorPane implements Initializable {
 	public void processLogin(ActionEvent event) {
 		String userName = "";
 		String password = "";
-		if (validarCampos()) {
-			userName = txtUserName.getText();
-			password = txtPassword.getText();
-			validarUsuarioEnServidor(userName, password);
-		}
-	}
-
-	/**
-	 * Devuelve true si todos los campos contienen caracteres, false en caso de
-	 * que existan campos vacios, arrojando una excepcion
-	 * 
-	 * @return
-	 */
-	private boolean validarCampos() {
 		try {
-			if (txtUserName.getText().equals("")) {
-				txtUserName.setFocusTraversable(true);
-				throw new CampoVacioException(
-						"¡El Campo Usuario no puede estar vacio!");
+			if (validarCampos()) {
+				userName = txtUserName.getText();
+				password = txtPassword.getText();
+				validarUsuario(userName, password);
 			}
-			if (txtPassword.getText().equals("")) {
-				txtPassword.setFocusTraversable(true);
-				throw new CampoVacioException(
-						"¡El Campo Contraseña no puede estar vacio!");
-			}
-			return true;
 		} catch (CampoVacioException cve) {
 			MessageBox.show(primaryStage, cve.getMessage(),
 					"Campos Obligatorios", MessageBox.ICON_WARNING
 							| MessageBox.OK);
-			return false;
 		}
 	}
 
-	public void validarUsuarioEnServidor(String userName, String password) {
+	public void validarUsuario(String userName, String password) {
 		String passwordEnc = new String(password);
 		Encrypter enc = new VernamEncrypter(passwordEnc);
 
@@ -123,47 +98,64 @@ public class LoginController extends AnchorPane implements Initializable {
 				.registrarLog("Enviando mensaje al servidor para validar el usuario: "
 						+ userName);
 
-		mensaje = (IMensaje) new LoginMensaje();
+		Usuario usuario = new Usuario(userName);
+		usuario.setPassword(passwordEnc);
 
-		ConexionController.THREAD_CLIENTE.enviarMensaje(mensaje
-				.codificarMensaje(new String[] { userName, passwordEnc }));
-
+		ConnectionController.getInstance().iniciarConexionToLogin(usuario);
 	}
 
-	public void evaluarResultadoLogueo(final boolean existe, final Usuario user) {
+	public void iniciarSesion(final Usuario user) {
+		final String fxml = ConstantesFXML.FXML_MENU_OPCIONES;
+
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				if (existe)
-				{
-					String fxml = ConstantesFXML.FXML_MENU_OPCIONES;
-					
+				if (user != null) {
 					try {
 						FXMLLoader loader = ScreensFramework.getLoader(fxml);
-						Parent root = (Parent)loader.load();
-						MenuOpcionesController controller = (MenuOpcionesController)loader.getController();
+						Parent root = (Parent) loader.load();
+						MenuOpcionesController controller = (MenuOpcionesController) loader
+								.getController();
 						controller.setPrevStage(primaryStage);
-						controller.showOptionMenu(root, user);
-						
+						controller.setUsuarioLogueado(user);
+						controller.showOptionMenu(root);
+
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						GestorLogs.registrarError(e.getMessage());
 					}
-					
-				}
-				else {
+				} else {
 					lblMsgError.setText("Usuario / Contraseña inválida");
 				}
 			}
 		});
 	}
 
+	/**
+	 * Devuelve true si todos los campos contienen caracteres, false en caso de
+	 * que existan campos vacios, arrojando una excepcion
+	 * 
+	 * @return
+	 */
+	private boolean validarCampos() throws CampoVacioException {
+		if (txtUserName.getText().equals("")) {
+			txtUserName.setFocusTraversable(true);
+			throw new CampoVacioException(
+					"¡El Campo Usuario no puede estar vacio!");
+		}
+		if (txtPassword.getText().equals("")) {
+			txtPassword.setFocusTraversable(true);
+			throw new CampoVacioException(
+					"¡El Campo Contraseña no puede estar vacio!");
+		}
+		return true;
+	}
+
 	@FXML
 	public void processExit(ActionEvent event) {
 		GestorLogs.registrarLog("Saliendo del Juego..");
-		ConexionController.THREAD_CLIENTE.detenerHilo();
-		System.exit(0);
+		ConnectionController.getInstance().cerrarConexion();
 	}
 
 	@FXML
@@ -173,17 +165,22 @@ public class LoginController extends AnchorPane implements Initializable {
 		String fxml = ConstantesFXML.FXML_REGISTRARME;
 
 		try {
-			root = ScreensFramework.getParent(fxml);
-			RegistrarmeController.prevStage = primaryStage;
-			primaryStage.setScene(new Scene(root));
-			primaryStage.centerOnScreen();
-			primaryStage.setTitle(
-					"Monopoly - Registrar Usuario");
-			primaryStage.show();
+			Stage stage = new Stage();
+			FXMLLoader loader = ScreensFramework.getLoader(fxml);
 
-		} catch (IOException ex) {
-			// TODO Auto-generated catch block
-			GestorLogs.registrarError(ex.getMessage());
+			root = (Parent) loader.load();
+			RegistrarmeController controller = (RegistrarmeController) loader
+					.getController();
+			controller.setPrevStage(primaryStage);
+
+			Scene scene = new Scene(root);
+			stage.setScene(scene);
+			stage.setTitle("Monopoly - Registrar Usuario");
+			stage.centerOnScreen();
+			primaryStage.hide();
+			controller.setCurrentStage(stage);
+			stage.show();
+
 		} catch (Exception ex) {
 			// TODO Auto-generated catch block
 			GestorLogs.registrarError(ex.getMessage());
@@ -204,7 +201,7 @@ public class LoginController extends AnchorPane implements Initializable {
 	public void setPrimaryStage(Stage stage) {
 		this.primaryStage = stage;
 	}
-	
+
 	public static LoginController getInstance() {
 		// yeah I know, NULL check and synchronize are missing...
 		// the getInstance() method is seldom used - usually only for
