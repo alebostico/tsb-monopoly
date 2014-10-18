@@ -26,7 +26,7 @@ import monopoly.util.ListUtils;
  */
 public class TarjetaController {
 
-	public Juego juego;
+	private Juego juego;
 
 	private List<TarjetaSuerte> tarjetasSuerteList;
 

@@ -89,8 +89,18 @@ public class Ficha implements Serializable {
 
 	public Ficha(TipoFicha tipoFicha) {
 		this.nombre = tipoFicha.getNombreTipo();
-		GestorLogs.registrarLog("Nueva ficha '" + this.getNombre() + "'");
 		isSelected = false;
+		GestorLogs.registrarLog("Nueva ficha '" + this.getNombre() + "'");
+	}
+	
+	public Ficha(int id, TipoFicha tipoFicha, String pathImgSmall, String pathImgBig)
+	{
+		this.idFicha = id;
+		this.nombre = tipoFicha.getNombreTipo();
+		this.pathImgSmall = pathImgSmall;
+		this.pathImgBig = pathImgBig;
+		isSelected = false;
+		GestorLogs.registrarLog("Nueva ficha '" + this.getNombre() + "'");
 	}
 
 	/**
@@ -166,7 +176,7 @@ public class Ficha implements Serializable {
 	public void setSelected(boolean isSelected) {
 		this.isSelected = isSelected;
 	}
-
+	
 	/**
 	 * Devuelve true si la ficha pasada por parametro es igual a la que ejecuta
 	 * el metodo compara en funcion del nombre (string) de la ficha

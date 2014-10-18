@@ -20,19 +20,19 @@ public class PartidasController {
 
 	private TreeMap<String, Juego> juegosList;
 
-	private static PartidasController INSTANCE;
+	private static PartidasController instance;
 
 	private PartidasController() {
 		super();
 		juegosList = new TreeMap<String, Juego>();
-		GestorLogs.registrarLog("Creado el gestor de juegos");
+		GestorLogs.registrarLog("Creando el gestor de juegos");
 	}
 
 	public static PartidasController getInstance() {
-		if (INSTANCE == null)
-			INSTANCE = new PartidasController();
+		if (instance == null)
+			instance = new PartidasController();
 
-		return INSTANCE;
+		return instance;
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class PartidasController {
 			GestorLogs.registrarLog("Agregado al GestorJuegos el juego "
 					+ juego.getUniqueID());
 			GestorLogs.registrarDebug(juego.toString());
-			if (juegosList.put(juego.getUniqueID(), juego) != null)
+			if (juegosList.put(juego.getUniqueID(), juego) == null)
 				return true;
 		}
 		return false;
