@@ -3,11 +3,15 @@
  */
 package monopoly.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 
 import monopoly.model.Juego;
+import monopoly.model.Jugador;
+import monopoly.model.JugadorHumano;
+import monopoly.model.JugadorVirtual;
 import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
 
@@ -18,13 +22,13 @@ import monopoly.util.GestorLogs;
  */
 public class PartidasController {
 
-	private TreeMap<String, Juego> juegosList;
+	private TreeMap<String, JuegoController> juegosControllerList;
 
 	private static PartidasController instance;
 
 	private PartidasController() {
 		super();
-		juegosList = new TreeMap<String, Juego>();
+		juegosControllerList = new TreeMap<String, JuegoController>();
 		GestorLogs.registrarLog("Creando el gestor de juegos");
 	}
 
@@ -44,11 +48,13 @@ public class PartidasController {
 	 */
 	private boolean addJuego(Juego juego) {
 		// TODO: verificar que el juego no exista en la bd
+
 		if (!this.existeJuego(juego)) {
 			GestorLogs.registrarLog("Agregado al GestorJuegos el juego "
 					+ juego.getUniqueID());
 			GestorLogs.registrarDebug(juego.toString());
-			if (juegosList.put(juego.getUniqueID(), juego) == null)
+			JuegoController jc = new JuegoController(juego);
+			if (juegosControllerList.put(juego.getUniqueID(), jc) == null)
 				return true;
 		}
 		return false;
@@ -74,6 +80,21 @@ public class PartidasController {
 	}
 
 	/**
+	 * Verifica si un juego existe en la lista de juegos
+	 * 
+	 * @param juego
+	 *            El juego que cuya existencia se quiere verificar
+	 * @return true si el juego existe. false si no existe.
+	 */
+	public boolean existeJuego(Juego juego) {
+		for (JuegoController jc : this.juegosControllerList.values()) {
+			if (jc.getJuego().compareTo(juego) == 0)
+				return true;
+		}
+		return false;
+	}
+
+	/**
 	 * @return the juegosList
 	 */
 	// public TreeMap<String, Juego> getJuegosList() {
@@ -89,11 +110,11 @@ public class PartidasController {
 	 */
 	public Juego buscarJuego(String nombreUsuarioCreador, String nombreJuego) {
 		// TODO: implementar metodo
-		for (Juego juegoIterator : juegosList.values()) {
-			if (juegoIterator.getNombreJuego().equals(nombreJuego)
-					&& juegoIterator.getOwner().getUserName()
+		for (JuegoController jc : juegosControllerList.values()) {
+			if (jc.getJuego().getNombreJuego().equals(nombreJuego)
+					&& jc.getJuego().getOwner().getUserName()
 							.equals(nombreUsuarioCreador))
-				return juegoIterator;
+				return jc.getJuego();
 		}
 		return null;
 	}
@@ -102,12 +123,17 @@ public class PartidasController {
 	 * Retorna todos los juegos cuyos nombres coinciden con un criterio de
 	 * búsqueda
 	 * 
-	 * @param likeNombre 
+	 * @param likeNombre
 	 * @return
 	 */
 	public List<Juego> buscarJuegos(String likeNombre) {
 		// TODO: Implementar método
-		return null;
+		List<Juego> juegos = new ArrayList<Juego>();
+		for (JuegoController jc : juegosControllerList.values()) {
+			if (jc.getJuego().getNombreJuego().contains(likeNombre))
+				juegos.add(jc.getJuego());
+		}
+		return juegos;
 	}
 
 	/**
@@ -118,7 +144,7 @@ public class PartidasController {
 	 * @return El Juego
 	 */
 	public Juego buscarJuego(String juegoUniqueId) {
-		return juegosList.get(juegoUniqueId);
+		return juegosControllerList.get(juegoUniqueId).getJuego();
 	}
 
 	/**
@@ -146,19 +172,33 @@ public class PartidasController {
 		return buscarJuego(uniqueID);
 	}
 
-	/**
-	 * Verifica si un juego existe en la lista de juegos
-	 * 
-	 * @param juego
-	 *            El juego que cuya existencia se quiere verificar
-	 * @return true si el juego existe. false si no existe.
-	 */
-	public boolean existeJuego(Juego juego) {
-		for (Juego juegoIterator : this.juegosList.values()) {
-			if (juegoIterator.compareTo(juego) == 0)
-				return true;
+	public void initGame(int senderID, Juego juego) {
+		// TODO Auto-generated method stub
+		JuegoController controller = juegosControllerList.get(juego.getUniqueID());
+		controller.setJuego(juego);
+		int cantJugadores = juego.getCantJugadores();
+		controller.setCantJugadores(cantJugadores);
+		
+		int cantJugadoresHumanos = 0;
+		int cantJugadoresVirtuales = 0;
+		
+		for(Jugador jugador :juego.getJugadoresList()){
+			if(jugador instanceof JugadorHumano){
+				cantJugadoresHumanos++;
+				controller.addPlayer(String.valueOf(senderID), jugador);
+			}
+			if(jugador instanceof JugadorVirtual){
+				cantJugadoresVirtuales++;
+				controller.addPlayer(jugador.getNombre(), jugador);
+			}
 		}
-		return false;
+		if(cantJugadores == (cantJugadoresHumanos + cantJugadoresVirtuales)){
+			// debería comenzar el juego
+		}
+		else{
+			
+		}
+		
 	}
 
 }

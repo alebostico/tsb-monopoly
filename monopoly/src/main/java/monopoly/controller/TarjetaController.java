@@ -35,9 +35,13 @@ public class TarjetaController {
 	private int proximaTarjetaSuerte;
 
 	private int proximaTarjetaComunidad;
+	
+	private ApplicationContext appContext;
 
 	public TarjetaController(Juego juego) {
 		super();
+		appContext = new ClassPathXmlApplicationContext(
+				"spring/config/BeanLocations.xml");
 		this.juego = juego;
 		this.cargarTarjetas();
 		this.mezclarTarjetasComunidad();
@@ -48,25 +52,30 @@ public class TarjetaController {
 	}
 
 	private void cargarTarjetas() {
-		GestorLogs.registrarLog("Creando un nuevo juego...");
+		cargarTarjetasComunidad();
+		cargarTarjetasSuerte();
+	}
 
-		ApplicationContext appContext = new ClassPathXmlApplicationContext(
-				"spring/config/BeanLocations.xml");
+	private void cargarTarjetasComunidad() {
 
 		// Cargar las tarjetas de Comunidad
 		ITarjetaComunidadDao tarjetaComunidadDao = (ITarjetaComunidadDao) appContext
 				.getBean("tarjetaComunidadDao");
 		this.tarjetasComunidadList = tarjetaComunidadDao.getAll();
 
-		// Cargar las tarjetas de Suerte
-		ITarjetaSuerteDao tarjetaSuerteDao = (ITarjetaSuerteDao) appContext
-				.getBean("tarjetaSuerteDao");
-		this.tarjetasSuerteList = tarjetaSuerteDao.getAll();
-
 		// GestorLogs.registrarLog("Mostrar lista de tarjetas de Comunidad");
 		for (TarjetaComunidad tarjetaComunidad : tarjetasComunidadList) {
 			GestorLogs.registrarDebug(tarjetaComunidad.toString());
 		}
+
+	}
+
+	private void cargarTarjetasSuerte() {
+
+		// Cargar las tarjetas de Suerte
+		ITarjetaSuerteDao tarjetaSuerteDao = (ITarjetaSuerteDao) appContext
+				.getBean("tarjetaSuerteDao");
+		this.tarjetasSuerteList = tarjetaSuerteDao.getAll();
 
 		// GestorLogs.registrarLog("Mostrar lista de tarjetas de Suerte");
 		for (TarjetaSuerte tarjetaSuerte : tarjetasSuerteList) {
@@ -77,7 +86,7 @@ public class TarjetaController {
 	private void mezclarTarjetasSuerte() {
 		ListUtils.randomizeList(this.tarjetasSuerteList);
 		GestorLogs.registrarLog("Tarjetas Suerte Mezcladas");
-		
+
 		for (TarjetaSuerte tarjetaSuerte : tarjetasSuerteList) {
 			GestorLogs.registrarDebug(tarjetaSuerte.toString());
 		}
@@ -86,7 +95,7 @@ public class TarjetaController {
 	private void mezclarTarjetasComunidad() {
 		ListUtils.randomizeList(this.tarjetasComunidadList);
 		GestorLogs.registrarLog("Tarjetas Comunidad Mezcladas");
-		
+
 		for (TarjetaComunidad tarjetaComunidad : tarjetasComunidadList) {
 			GestorLogs.registrarDebug(tarjetaComunidad.toString());
 		}
@@ -256,10 +265,10 @@ public class TarjetaController {
 
 		return tmpTarjetaComunidad;
 	}
-	
-	public String toString(){
+
+	public String toString() {
 		StringBuilder sb = new StringBuilder("Tarjetas { ");
-		
+
 		sb.append("\nTarjetasComunidad [ ");
 		for (TarjetaComunidad tarjetaComunidad : tarjetasComunidadList) {
 			sb.append("\nidTarjeta=");
@@ -268,7 +277,7 @@ public class TarjetaController {
 			sb.append(tarjetaComunidad.getObjetivo());
 		}
 		sb.append(" ]");
-		
+
 		sb.append("\nTarjetasSuerte [ ");
 		for (TarjetaSuerte tarjetaSuerte : tarjetasSuerteList) {
 			sb.append("\nidTarjeta=");
@@ -276,10 +285,10 @@ public class TarjetaController {
 			sb.append(", objetivo=");
 			sb.append(tarjetaSuerte.getObjetivo());
 		}
-		
+
 		sb.append(" ] ");
 		sb.append(" }");
-		
+
 		return sb.toString();
 	}
 

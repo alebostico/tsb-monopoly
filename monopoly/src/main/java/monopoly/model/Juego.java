@@ -50,6 +50,8 @@ public class Juego implements Serializable{
 	private Tablero tablero;
 
 	private Dado dado;
+	
+	private Estado estadoJuego;
 
 	private int cantJugadores;
 
@@ -273,6 +275,20 @@ public class Juego implements Serializable{
 	 */
 	public Dado getDado() {
 		return dado;
+	}
+
+	/**
+	 * @return the estadoJuego
+	 */
+	public Estado getEstadoJuego() {
+		return estadoJuego;
+	}
+
+	/**
+	 * @param estadoJuego the estadoJuego to set
+	 */
+	public void setEstadoJuego(Estado estadoJuego) {
+		this.estadoJuego = estadoJuego;
 	}
 
 	/**

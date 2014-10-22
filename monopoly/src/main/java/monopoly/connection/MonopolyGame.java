@@ -11,6 +11,7 @@ import monopoly.model.Juego;
 import monopoly.model.Usuario;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
+import monopoly.util.message.InitGameMessage;
 import monopoly.util.message.LoginMessage;
 
 /**
@@ -95,6 +96,12 @@ public class MonopolyGame extends GameServer {
 
 		case "JoinGameMessage":
 			// unirse al juego
+			break;
+			
+		case "InitGameMessage":
+			senderId = ((InitGameMessage) message).senderID;
+			juego = (Juego) ((InitGameMessage) message).message;
+			PartidasController.getInstance().initGame(senderId,juego);
 			break;
 
 		case "DisconnectMessage":

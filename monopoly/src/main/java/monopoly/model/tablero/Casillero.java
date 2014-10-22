@@ -33,7 +33,7 @@ import monopoly.model.Jugador;
  * @author Oliva Pablo
  * 
  */
-public class Casillero implements Serializable {
+public class Casillero implements Serializable{
 	
 	private static final long serialVersionUID = 6028621918042358320L;
 	

@@ -57,6 +57,9 @@ public abstract class Jugador implements Serializable {
 
 	@Transient
 	private int dinero;
+	
+	@Transient
+	private Dado tiradaInicial;
 
 	@Transient
 	private List<Tarjeta> tarjetaCarcelList;
@@ -229,6 +232,20 @@ public abstract class Jugador implements Serializable {
 
 	public int getNroHoteles() {
 		return juego.getTablero().hotelesPorJugador(this);
+	}
+
+	/**
+	 * @return the tiradaInicial
+	 */
+	public Dado getTiradaInicial() {
+		return tiradaInicial;
+	}
+
+	/**
+	 * @param tiradaInicial the tiradaInicial to set
+	 */
+	public void setTiradaInicial(Dado tiradaInicial) {
+		this.tiradaInicial = tiradaInicial;
 	}
 
 	/**
