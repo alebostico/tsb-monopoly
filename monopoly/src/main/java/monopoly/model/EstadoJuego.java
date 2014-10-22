@@ -1,6 +1,10 @@
 package monopoly.model;
 
-public class EstadoJuego {
+import java.io.Serializable;
+
+public class EstadoJuego implements Serializable{
+
+	private static final long serialVersionUID = 332038651618517929L;
 
 	private String nombre;
 

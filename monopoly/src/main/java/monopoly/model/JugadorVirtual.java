@@ -13,7 +13,7 @@ import monopoly.util.GestorLogs;
  * @author Oliva Pablo
  *
  */
-public class JugadorVirtual extends Jugador implements Serializable {
+public class JugadorVirtual extends Jugador {
 
 	/**
 	 * 

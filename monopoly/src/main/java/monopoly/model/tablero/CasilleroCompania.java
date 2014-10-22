@@ -12,6 +12,10 @@ import monopoly.model.tarjetas.TarjetaCompania;
  */
 public class CasilleroCompania extends Casillero {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5668511368096614440L;
 	private String nombreCompania;
 	private TarjetaCompania tarjetaCompania;
 

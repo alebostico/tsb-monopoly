@@ -3,6 +3,7 @@
  */
 package monopoly.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import monopoly.model.tarjetas.TarjetaPropiedad;
@@ -14,7 +15,13 @@ import monopoly.util.GestorLogs;
  * @author Oliva Pablo
  * 
  */
-public class Banco {
+public class Banco implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3371251147808213945L;
+	
 	
 	private List <TarjetaPropiedad> tarjPropiedadList;
 	private int nroCasas;

@@ -1,5 +1,7 @@
 package monopoly.model;
 
+import java.io.Serializable;
+
 import monopoly.util.GestorLogs;
 
 /**
@@ -8,8 +10,13 @@ import monopoly.util.GestorLogs;
  * @author Oliva Pablo
  * 
  */
-public class Dado {
+public class Dado implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6979691718041435144L;
+	
 	int[] dados = new int[2];
 
 	/**

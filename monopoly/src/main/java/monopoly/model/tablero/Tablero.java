@@ -3,6 +3,8 @@
  */
 package monopoly.model.tablero;
 
+import java.io.Serializable;
+
 import monopoly.dao.ITarjetaCalleDao;
 import monopoly.dao.ITarjetaCompaniaDao;
 import monopoly.dao.ITarjetaEstacionDao;
@@ -27,7 +29,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Oliva Pablo
  * 
  */
-public class Tablero {
+public class Tablero implements Serializable {
+	
+	private static final long serialVersionUID = 6332031540679671323L;
 
 	// CONSTANTES
 	private int cantCasilleros = 40;
