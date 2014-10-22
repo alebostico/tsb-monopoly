@@ -1,5 +1,7 @@
 package monopoly.model.tablero;
 
+import java.io.Serializable;
+
 import monopoly.model.Jugador;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
@@ -11,12 +13,13 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
  * @author Oliva Pablo
  * 
  */
-public class CasilleroCalle extends Casillero {
+public class CasilleroCalle extends Casillero implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 7775981623039342062L;
+
 	private String nombreCalle;
 	private int nroCasas;
 	private TarjetaPropiedad tarjetaCalle;
@@ -61,7 +64,7 @@ public class CasilleroCalle extends Casillero {
 				: "<NO EXISTE LA TARJETA>");
 		sb.append(", número de casas: " + this.nroCasas);
 		sb.append("] }");
-		
+
 		return sb.toString();
 	}
 }

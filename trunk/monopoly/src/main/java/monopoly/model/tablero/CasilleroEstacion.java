@@ -1,5 +1,7 @@
 package monopoly.model.tablero;
 
+import java.io.Serializable;
+
 import monopoly.model.Jugador;
 import monopoly.model.tarjetas.TarjetaEstacion;
 
@@ -10,12 +12,10 @@ import monopoly.model.tarjetas.TarjetaEstacion;
  * @author Oliva Pablo
  * 
  */
-public class CasilleroEstacion extends Casillero {
+public class CasilleroEstacion extends Casillero implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5105639502812316240L;
+
 	private String nombreEstacion;
 	private TarjetaEstacion tarjetaEstacion;
 

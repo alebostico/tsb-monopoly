@@ -22,7 +22,6 @@ public class Banco implements Serializable{
 	 */
 	private static final long serialVersionUID = -3371251147808213945L;
 	
-	
 	private List <TarjetaPropiedad> tarjPropiedadList;
 	private int nroCasas;
 	private int nroHoteles;
