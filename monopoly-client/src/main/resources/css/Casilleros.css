@@ -1,0 +1,481 @@
+.bg_casillero01 {
+	-fx-background-image: url("../images/tablero/Casillero01.jpg");
+	-fx-background-repeat: no-repeat;
+	-fx-background-position:center;
+	-fx-background-size: 90 90;
+	-fx-background-color: linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+        	linear-gradient(#20262b, #191d22),
+        	radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+}
+
+.bg_casillero11 {
+	-fx-background-image: url("../images/tablero/Casillero11.jpg");
+	-fx-background-repeat: no-repeat;
+	-fx-background-position:center;
+	-fx-background-size: 90 90;
+	-fx-background-color:
+		linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+        	linear-gradient(#20262b, #191d22),
+        	radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+}
+
+.bg_casillero21 {
+
+	-fx-background-image: url("../images/tablero/Casillero21.jpg");
+	-fx-background-repeat: no-repeat;
+	-fx-background-position:center;
+	-fx-background-size: 90 90;
+	-fx-background-color:linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+        	linear-gradient(#20262b, #191d22),
+        	radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+}
+
+.bg_casillero31 {
+	-fx-background-image: url("../images/tablero/Casillero31.jpg");
+	-fx-background-repeat: no-repeat;
+	-fx-background-position:center;
+	-fx-background-size: 90 90;
+	-fx-background-color:linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+	        linear-gradient(#20262b, #191d22),
+	        radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+}
+
+.bg_casillero02 {
+-fx-background-image: url("../images/tablero/Casillero02.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero03 {
+-fx-background-image: url("../images/tablero/Casillero03.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero04 {
+-fx-background-image: url("../images/tablero/Casillero04.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero05 {
+-fx-background-image: url("../images/tablero/Casillero05.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero06 {
+-fx-background-image: url("../images/tablero/Casillero06.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero07 {
+-fx-background-image: url("../images/tablero/Casillero07.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero08 {
+-fx-background-image: url("../images/tablero/Casillero08.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero09 {
+-fx-background-image: url("../images/tablero/Casillero09.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero10 {
+-fx-background-image: url("../images/tablero/Casillero10.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero12 {
+-fx-background-image: url("../images/tablero/Casillero12.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero13 {
+-fx-background-image: url("../images/tablero/Casillero13.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero14 {
+-fx-background-image: url("../images/tablero/Casillero14.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero15 {
+-fx-background-image: url("../images/tablero/Casillero15.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero16 {
+-fx-background-image: url("../images/tablero/Casillero16.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero17 {
+-fx-background-image: url("../images/tablero/Casillero17.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero18 {
+-fx-background-image: url("../images/tablero/Casillero18.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero19 {
+-fx-background-image: url("../images/tablero/Casillero19.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero20 {
+-fx-background-image: url("../images/tablero/Casillero20.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero22 {
+-fx-background-image: url("../images/tablero/Casillero22.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero23 {
+-fx-background-image: url("../images/tablero/Casillero23.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero24 {
+-fx-background-image: url("../images/tablero/Casillero24.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero25 {
+-fx-background-image: url("../images/tablero/Casillero25.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero26 {
+-fx-background-image: url("../images/tablero/Casillero26.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero27 {
+-fx-background-image: url("../images/tablero/Casillero27.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero28 {
+-fx-background-image: url("../images/tablero/Casillero28.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero29 {
+-fx-background-image: url("../images/tablero/Casillero29.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero30 {
+-fx-background-image: url("../images/tablero/Casillero30.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 50 90;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero32 {
+-fx-background-image: url("../images/tablero/Casillero32.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:right;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero33 {
+-fx-background-image: url("../images/tablero/Casillero33.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero34 {
+-fx-background-image: url("../images/tablero/Casillero34.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero35 {
+-fx-background-image: url("../images/tablero/Casillero35.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero36 {
+-fx-background-image: url("../images/tablero/Casillero36.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero37 {
+-fx-background-image: url("../images/tablero/Casillero37.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero38 {
+-fx-background-image: url("../images/tablero/Casillero38.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero39 {
+-fx-background-image: url("../images/tablero/Casillero39.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+.bg_casillero40 {
+-fx-background-image: url("../images/tablero/Casillero40.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-position:center;
+-fx-background-size: 90 50;	-fx-background-color:
+
+linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+
+linear-gradient(#20262b, #191d22),
+
+radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));}
+
+
+
+
+
+
+
+

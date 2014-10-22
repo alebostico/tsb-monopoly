@@ -17,9 +17,12 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
@@ -39,13 +42,17 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import jfx.messagebox.MessageBox;
-import monopoly.controller.FichasController;
+import monopoly.client.connection.ConnectionController;
+import monopoly.client.util.ScreensFramework;
 import monopoly.model.Ficha;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.JugadorVirtual;
 import monopoly.model.JugadorVirtual.TipoJugador;
+import monopoly.util.GestorLogs;
+import monopoly.util.constantes.ConstantesFXML;
+import monopoly.util.message.InitGameMessage;
 
 /**
  * @author Bostico Alejandro
@@ -126,9 +133,9 @@ public class CrearJugadoresController extends AnchorPane implements
 
 	private int[] vIndexFichas;
 
-	private int indexPlayer;
+	private Ficha fichaPlayer;
 
-	private int indexPlayerVirtual;
+	private Ficha fichaPlayerVirtual;
 
 	private List<VirtualPlayer> jugadoresVirtualesList;
 
@@ -144,8 +151,6 @@ public class CrearJugadoresController extends AnchorPane implements
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		// TODO Auto-generated method stub
 		instance = this;
-		indexPlayer = 0;
-		indexPlayerVirtual = 0;
 
 		jugadoresVirtualesList = new ArrayList<VirtualPlayer>();
 
@@ -175,22 +180,60 @@ public class CrearJugadoresController extends AnchorPane implements
 	@FXML
 	void processStartGame(ActionEvent event) {
 		String nombre = juego.getOwner().getUserName();
-		Ficha ficha = fichaList.get(indexPlayer);
-		Jugador playerOwner = new JugadorHumano(nombre, ficha, juego,
+		Jugador playerOwner = new JugadorHumano(nombre, fichaPlayer, juego,
 				juego.getOwner());
 		juego.addJugador(playerOwner);
 		int cantSldJugadores = !txtNroJugadores.getText().isEmpty() ? Integer
 				.parseInt(txtNroJugadores.getText()) : 0;
-		juego.setCantJugadores(1 + cantSldJugadores
-				+ jugadoresVirtualesList.size());
-		for (VirtualPlayer j : jugadoresVirtualesList) {
-			juego.addJugador(new JugadorVirtual(j.name.get().getNombre(),
-					j.nameFicha.get(), juego, j.nameTipo.get()));
+
+		if (cantSldJugadores > 0) {
+			juego.setCantJugadores(1 + cantSldJugadores
+					+ jugadoresVirtualesList.size());
+			for (VirtualPlayer j : jugadoresVirtualesList) {
+				juego.addJugador(new JugadorVirtual(j.name.get().getNombre(),
+						j.nameFicha.get(), juego, j.nameTipo.get()));
+			}
+
+			int senderId = ConnectionController.getInstance().getIdPlayer();
+			juego.getEstadoJuego().actualizarEstadoJuego();
+			ConnectionController.getInstance().send(
+					new InitGameMessage(senderId, juego));
+
+			String fxml = ConstantesFXML.FXML_MOSTRAR_TABLERO;
+
+			try {
+				Parent root;
+				Stage stage = new Stage();
+				FXMLLoader loader = ScreensFramework.getLoader(fxml);
+
+				root = (Parent) loader.load();
+				TableroController controller = (TableroController) loader
+						.getController();
+				controller.setPrevStage(currentStage);
+				controller.setJuego(juego);
+
+				Scene scene = new Scene(root);
+				stage.setScene(scene);
+				stage.setTitle("Monopoly - Tablero");
+				stage.centerOnScreen();
+				controller.setCurrentStage(stage);
+				controller.showBoard();
+				
+			} catch (Exception ex) {
+				// TODO Auto-generated catch block
+				GestorLogs.registrarError(ex.getMessage());
+			}
+		} else {
+			MessageBox.show(currentStage,
+					"¡El juego permite un mínimo de 2 jugadores en total!",
+					"Advertencia", MessageBox.ICON_WARNING | MessageBox.OK);
+			return;
 		}
-		
 	}
 
 	public static CrearJugadoresController getInstance() {
+		if (instance == null)
+			instance = new CrearJugadoresController();
 		return instance;
 	}
 
@@ -242,8 +285,7 @@ public class CrearJugadoresController extends AnchorPane implements
 	public void inicializarVariables() {
 
 		if (juego != null) {
-			fichaList = FichasController.getFichas();
-			juego.setFichasPlayerList(fichaList);
+			fichaList = juego.getFichasPlayerList();
 
 			vIndexFichas = new int[fichaList.size()];
 			int i = 0;
@@ -251,14 +293,11 @@ public class CrearJugadoresController extends AnchorPane implements
 				vIndexFichas[i] = ficha.getIdFicha();
 				i++;
 			}
-			indexPlayer = 0;
-			indexPlayerVirtual = 0;
 
-			Ficha fichaPlayer = fichaList.get(indexPlayer);
-			Ficha fichaPlayerVirtual = fichaList.get(indexPlayerVirtual);
+			fichaPlayer = fichaList.get(0);
+			fichaPlayerVirtual = fichaList.get(0);
 
 			fichaPlayer.setSelected(true);
-			fichaPlayerVirtual.setSelected(true);
 
 			Image img = new Image(
 					CrearJugadoresController.class.getResourceAsStream(fichaPlayer
@@ -267,7 +306,7 @@ public class CrearJugadoresController extends AnchorPane implements
 			imgFicha.setId("ficha_" + fichaPlayer.getIdFicha());
 
 			imgFichaPc.setImage(img);
-			imgFicha.setId("ficha_" + fichaPlayerVirtual.getIdFicha());
+			imgFichaPc.setId("ficha_" + fichaPlayerVirtual.getIdFicha());
 			txtNombreVirtual.setText(fichaPlayerVirtual.getNombre());
 		}
 	}
@@ -314,13 +353,11 @@ public class CrearJugadoresController extends AnchorPane implements
 		imgNext.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
-				System.out.println("processNextFichaPlayer");
-				if (indexPlayer < vIndexFichas.length) {
-					Ficha fichaPlayer = fichaList.get(indexPlayer);
-					fichaPlayer.setSelected(false);
+				int indexOf = fichaList.indexOf(fichaPlayer);
 
-					indexPlayer++;
-					fichaPlayer = fichaList.get(indexPlayer);
+				if (indexOf < fichaList.size() - 1) {
+					fichaPlayer.setSelected(false);
+					fichaPlayer = fichaList.get(indexOf + 1);
 					fichaPlayer.setSelected(true);
 
 					Image img = new Image(CrearJugadoresController.class
@@ -337,13 +374,11 @@ public class CrearJugadoresController extends AnchorPane implements
 		imgBack.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
-				System.out.println("processBackFichaPlayer");
-				if (indexPlayer != 0) {
-					Ficha fichaPlayer = fichaList.get(indexPlayer);
-					fichaPlayer.setSelected(false);
+				int indexOf = fichaList.indexOf(fichaPlayer);
 
-					indexPlayer--;
-					fichaPlayer = fichaList.get(indexPlayer);
+				if (indexOf > 0) {
+					fichaPlayer.setSelected(false);
+					fichaPlayer = fichaList.get(indexOf - 1);
 					fichaPlayer.setSelected(true);
 
 					Image img = new Image(CrearJugadoresController.class
@@ -360,11 +395,11 @@ public class CrearJugadoresController extends AnchorPane implements
 		imgNextPc.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
-				System.out.println("processNextFichaPlayerVirtual");
-				for (int i = indexPlayerVirtual + 1; i < vIndexFichas.length; i++) {
-					Ficha fichaPlayerVirtual = fichaList.get(i);
-					if (!fichaPlayerVirtual.isSelected()) {
-						indexPlayerVirtual = i;
+				int indexOf = fichaList.indexOf(fichaPlayerVirtual);
+
+				for (int i = indexOf + 1; i < fichaList.size(); i++) {
+					if (!fichaList.get(i).isSelected()) {
+						fichaPlayerVirtual = fichaList.get(i);
 						Image img = new Image(CrearJugadoresController.class
 								.getResourceAsStream(fichaPlayerVirtual
 										.getPathImgBig()), 90, 87, true, true);
@@ -382,11 +417,11 @@ public class CrearJugadoresController extends AnchorPane implements
 		imgBackPc.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
-				System.out.println("processBackFichaPlayerVirtual");
-				for (int i = indexPlayerVirtual - 1; i >= 0; i--) {
-					Ficha fichaPlayerVirtual = fichaList.get(i);
-					if (!fichaPlayerVirtual.isSelected()) {
-						indexPlayerVirtual = i;
+				int indexOf = fichaList.indexOf(fichaPlayerVirtual);
+
+				for (int i = indexOf - 1; i >= 0; i--) {
+					if (!fichaList.get(i).isSelected()) {
+						fichaPlayerVirtual = fichaList.get(i);
 						Image img = new Image(CrearJugadoresController.class
 								.getResourceAsStream(fichaPlayerVirtual
 										.getPathImgBig()), 90, 87, true, true);
@@ -433,20 +468,19 @@ public class CrearJugadoresController extends AnchorPane implements
 							tipoJugador = monopoly.model.JugadorVirtual.TipoJugador.TJ_MAGNATE;
 						}
 
-						Ficha fichaSelected = fichaList.get(indexPlayerVirtual);
-						if (!fichaSelected.isSelected()) {
+						if (!fichaPlayerVirtual.isSelected()) {
 							Jugador jv = new JugadorVirtual(txtNombreVirtual
-									.getText(), fichaSelected, juego,
+									.getText(), fichaPlayerVirtual, juego,
 									tipoJugador);
 							VirtualPlayer vp = new VirtualPlayer(jv);
 							jugadoresVirtualesList.add(vp);
-							fichaSelected.setSelected(true);
+							fichaPlayerVirtual.setSelected(true);
 							ajustarSlider(5 - jugadoresVirtualesList.size());
 						} else {
 							MessageBox.show(
 									currentStage,
 									"¡La Ficha "
-											+ fichaSelected.getNombre()
+											+ fichaPlayerVirtual.getNombre()
 											+ " ya está seleccionada, por favor seleccione otra!",
 									"Advertencia", MessageBox.ICON_WARNING
 											| MessageBox.OK);
