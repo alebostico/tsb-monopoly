@@ -3,6 +3,7 @@
  */
 package monopoly.model.tablero;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,8 +33,10 @@ import monopoly.model.Jugador;
  * @author Oliva Pablo
  * 
  */
-public class Casillero {
-
+public class Casillero implements Serializable {
+	
+	private static final long serialVersionUID = 6028621918042358320L;
+	
 	private List<Jugador> jugadores;
 	private int numeroCasillero;
 	private TipoCasillero tipoCasillero;
