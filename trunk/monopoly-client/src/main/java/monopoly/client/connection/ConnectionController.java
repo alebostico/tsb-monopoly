@@ -80,7 +80,7 @@ public class ConnectionController {
 		}
 		System.exit(0);
 	}
-
+	
 	public void send(Object message) {
 		if (connection != null)
 			connection.send(message);
