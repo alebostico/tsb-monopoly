@@ -18,5 +18,6 @@ public class ConstantesFXML {
 	public final static String FXML_CREAR_JUGADORES = "/fxml/CrearJugadores.fxml";
 	public final static String FXML_MOSTRAR_TABLERO = "/fxml/Tablero.fxml";
 	public final static String FXML_SPLASH = "/fxml/Splash.fxml";
+	public final static String FXML_TIRAR_DADOS = "/fxml/TirarDados.fxml";
 
 }
