@@ -164,6 +164,13 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.0</version>
 				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>monopoly.client.gui.IniciarAplicacion</mainClass>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib</classpathPrefix>
+						</manifest>
+					</archive>
 					<source>1.7</source>
 					<target>1.7</target>
 				</configuration>

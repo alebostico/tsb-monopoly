@@ -156,7 +156,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>monopoly.gui.Main</mainClass>
+							<mainClass>monopoly.connection.Main</mainClass>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib</classpathPrefix>
 						</manifest>

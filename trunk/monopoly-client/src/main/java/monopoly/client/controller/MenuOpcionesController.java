@@ -21,6 +21,7 @@ import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesFXML;
 import monopoly.util.message.CreateGameMessage;
+import monopoly.util.message.JoinGameMessage;
 
 /**
  * @author pablo
@@ -119,6 +120,35 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 			GestorLogs.registrarError(ex.getMessage());
 		}
 	}
+	
+	@FXML
+	void processJoinGame(ActionEvent event) {
+		GestorLogs.registrarLog("Creando nuevo Juego...");
+		String fxml = ConstantesFXML.FXML_UNIRME_JUEGO;
+		
+		try {
+			Parent root;
+			Stage stage = new Stage();
+			FXMLLoader loader = ScreensFramework.getLoader(fxml);
+			
+			root = (Parent)loader.load();
+			UnirmeJuegoController controller = (UnirmeJuegoController)loader.getController();
+			controller.setPrevStage(currentStage);
+			controller.setUsuarioLogueado(usuarioLogueado);
+
+			Scene scene = new Scene(root);
+			stage.setScene(scene);
+			stage.setTitle("Monopoly - Unirme a Juego");
+			stage.centerOnScreen();
+			controller.setCurrentStage(stage);
+			int senderId = ConnectionController.getInstance().getIdPlayer();
+			ConnectionController.getInstance().send(new JoinGameMessage(senderId, usuarioLogueado));
+
+		} catch (Exception ex) {
+			// TODO Auto-generated catch block
+			GestorLogs.registrarError(ex.getMessage());
+		}
+	}
 
 	@FXML
 	void processLoadGame(ActionEvent event) {
@@ -143,11 +173,6 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 
 	@FXML
 	void processAbout(ActionEvent event) {
-
-	}
-
-	@FXML
-	void processJoinGame(ActionEvent event) {
 
 	}
 

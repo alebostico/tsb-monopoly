@@ -4,14 +4,17 @@
 package monopoly.connection;
 
 import java.io.IOException;
+import java.util.List;
 
 import monopoly.controller.PartidasController;
 import monopoly.controller.UsuarioController;
+import monopoly.model.Estado.EstadoJuego;
 import monopoly.model.Juego;
 import monopoly.model.Usuario;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
 import monopoly.util.message.InitGameMessage;
+import monopoly.util.message.JoinGameMessage;
 import monopoly.util.message.LoginMessage;
 
 /**
@@ -68,6 +71,7 @@ public class MonopolyGame extends GameServer {
 		int senderId = 0;
 		Usuario usuario;
 		Juego juego;
+		List<Juego> juegosList;
 		
 		switch (message.getClass().getSimpleName()) {
 		case "LoginMessage":
@@ -96,12 +100,15 @@ public class MonopolyGame extends GameServer {
 
 		case "JoinGameMessage":
 			// unirse al juego
+			senderId = ((JoinGameMessage) message).senderID;
+			juegosList = PartidasController.getInstance().buscarJuegos(EstadoJuego.ESPERANDO_JUGADOR);
+			sendToOne(senderId, new JoinGameMessage(senderId, juegosList));
 			break;
 			
 		case "InitGameMessage":
 			senderId = ((InitGameMessage) message).senderID;
 			juego = (Juego) ((InitGameMessage) message).message;
-			PartidasController.getInstance().initGame(senderId,juego);
+			PartidasController.getInstance().initGame(this, senderId,juego);
 			break;
 
 		case "DisconnectMessage":

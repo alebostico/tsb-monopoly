@@ -37,8 +37,6 @@ public class Estado implements Serializable {
 
 	private EstadoJuego estado;
 
-	private static Estado instance;
-
 	/**
 	 * @param nombre
 	 */
@@ -53,6 +51,13 @@ public class Estado implements Serializable {
 	 */
 	public Estado(EstadoJuego estado) {
 		this(estado.getNombreEstadoJuego(), estado);
+	}
+	
+	/**
+	 * 
+	 */
+	public Estado() {
+		this(EstadoJuego.CREADO.getNombreEstadoJuego(), EstadoJuego.CREADO);
 	}
 
 	/**
@@ -103,11 +108,14 @@ public class Estado implements Serializable {
 
 		}
 	}
-
-	public static Estado getInstance() {
-		if (instance == null)
-			instance = new Estado(EstadoJuego.CREADO);
-
-		return instance;
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == null)
+			return false;
+		if (o.getClass() != this.getClass())
+			return false;
+		Estado f = (Estado) o;
+		return this.getEstado().equals(f.getEstado());
 	}
 }

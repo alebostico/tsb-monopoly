@@ -4,14 +4,19 @@
 package monopoly.client.connection;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import monopoly.client.controller.CrearJuegoController;
 import monopoly.client.controller.LoginController;
 import monopoly.client.controller.RegistrarmeController;
+import monopoly.client.controller.TableroController;
+import monopoly.client.controller.UnirmeJuegoController;
 import monopoly.model.Juego;
 import monopoly.model.Usuario;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
+import monopoly.util.message.JoinGameMessage;
 import monopoly.util.message.LoginMessage;
 
 /**
@@ -24,6 +29,8 @@ public class MonopolyClient extends GameClient {
 	private Usuario usuario;
 	
 	private Juego juego;
+	
+	private List<Juego> juegosList;
 	
 	
 	/**
@@ -57,6 +64,22 @@ public class MonopolyClient extends GameClient {
 			juego = (Juego) ((CreateGameMessage) message).message;
 			CrearJuegoController.getInstance().showCrearJuego(juego);
 			break;
+			
+		case "JoinGameMessage":
+			List<?> list = (List<?>) ((JoinGameMessage) message).message;
+			juegosList = new ArrayList<Juego>();
+			if (!list.isEmpty()) {
+				for (Object obj : list) {
+					juegosList.add((Juego) obj);
+				}
+			}
+			UnirmeJuegoController.getInstance().showUnirmeJuego(juegosList);
+			break;
+			
+		case "StartGameMessage":
+			TableroController.getInstance().startGame();
+			break;
+			
 
 		case "String":
 

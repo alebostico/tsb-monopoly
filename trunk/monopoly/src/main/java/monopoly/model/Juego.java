@@ -75,6 +75,7 @@ public class Juego implements Serializable{
 		this.jugadoresList = new ArrayList<Jugador>();
 		this.fichasPlayerList = FichasController.getFichas();
 		this.tarjetasPropiedadList = new ArrayList<TarjetaPropiedad>();
+		this.estadoJuego = new Estado();
 		this.generateUniqueID();
 		GestorLogs.registrarLog("Creado nuevo juego '" + this.getUniqueID()
 				+ "'");
@@ -282,13 +283,6 @@ public class Juego implements Serializable{
 	 */
 	public Estado getEstadoJuego() {
 		return estadoJuego;
-	}
-
-	/**
-	 * @param estadoJuego the estadoJuego to set
-	 */
-	public void setEstadoJuego(Estado estadoJuego) {
-		this.estadoJuego = estadoJuego;
 	}
 
 	/**

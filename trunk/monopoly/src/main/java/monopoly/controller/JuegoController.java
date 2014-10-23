@@ -90,9 +90,6 @@ public class JuegoController {
 			jugadores.put(senderID, jugador);
 			turnosList.push_back(jugador);
 		}
-		if(cantJugadores == jugadores.size()){
-			// StartGame
-		}
 	}
 	
 	private boolean existePlayer(String senderID){
@@ -112,5 +109,35 @@ public class JuegoController {
 	public void setCantJugadores(int cantJugadores) {
 		this.cantJugadores = cantJugadores;
 	}
+
+	/**
+	 * @return the jugadores
+	 */
+	public TreeMap<String, Jugador> getJugadores() {
+		return jugadores;
+	}
+
+	/**
+	 * @param jugadores the jugadores to set
+	 */
+	public void setJugadores(TreeMap<String, Jugador> jugadores) {
+		this.jugadores = jugadores;
+	}
+
+	/**
+	 * @return the turnosList
+	 */
+	public CircularList<Jugador> getTurnosList() {
+		return turnosList;
+	}
+
+	/**
+	 * @param turnosList the turnosList to set
+	 */
+	public void setTurnosList(CircularList<Jugador> turnosList) {
+		this.turnosList = turnosList;
+	}
+	
+	
 
 }
