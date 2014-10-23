@@ -37,22 +37,25 @@ import monopoly.util.exception.CampoVacioException;
 public class LoginController extends AnchorPane implements Initializable {
 
 	@FXML
-	private TextField txtUserName;
+    private Button btnSalir;
 
-	@FXML
-	private PasswordField txtPassword;
+    @FXML
+    private Button btnConfig;
 
-	@FXML
-	private Button login;
+    @FXML
+    private TextField txtUserName;
 
-	@FXML
-	private Button registrarme;
+    @FXML
+    private Button btnRegistrarme;
 
-	@FXML
-	private Button salir;
+    @FXML
+    private Button btnLohgin;
 
-	@FXML
-	private Label lblMsgError;
+    @FXML
+    private Label lblMsgError;
+
+    @FXML
+    private PasswordField txtPassword;
 
 	private Stage primaryStage;
 
@@ -157,9 +160,14 @@ public class LoginController extends AnchorPane implements Initializable {
 		GestorLogs.registrarLog("Saliendo del Juego..");
 		ConnectionController.getInstance().cerrarConexion();
 	}
+	
+	@FXML
+    void processConfig(ActionEvent event) {
+
+    }
 
 	@FXML
-	public void processRegister(ActionEvent event) {
+	public void processCreateAccount(ActionEvent event) {
 		GestorLogs.registrarLog("Registrar Juego...");
 		Parent root;
 		String fxml = ConstantesFXML.FXML_REGISTRARME;

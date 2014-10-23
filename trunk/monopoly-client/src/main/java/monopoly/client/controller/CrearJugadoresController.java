@@ -99,7 +99,19 @@ public class CrearJugadoresController extends AnchorPane implements
 
 	@FXML
 	private TableView<VirtualPlayer> tblJugadoresVirtuales;
-
+	
+	@FXML
+	TableColumn<VirtualPlayer, Jugador> colNombreJugador;
+	
+	@FXML
+	private TableColumn<VirtualPlayer, Ficha> colFicha;
+	
+	@FXML
+	private TableColumn<VirtualPlayer, TipoJugador> colTipoJugador;
+	
+	@FXML
+	private TableColumn<VirtualPlayer, VirtualPlayer> colAction;
+	
 	@FXML
 	private TextField txtNroJugadores;
 
@@ -219,7 +231,7 @@ public class CrearJugadoresController extends AnchorPane implements
 				stage.centerOnScreen();
 				controller.setCurrentStage(stage);
 				controller.showBoard();
-				
+
 			} catch (Exception ex) {
 				// TODO Auto-generated catch block
 				GestorLogs.registrarError(ex.getMessage());
@@ -487,113 +499,7 @@ public class CrearJugadoresController extends AnchorPane implements
 											| MessageBox.OK);
 						}
 
-						// Columna Jugador
-						TableColumn<VirtualPlayer, Jugador> colNombreJugador = new TableColumn<>(
-								"Jugador");
-						colNombreJugador.setMinWidth(100);
-						colNombreJugador
-								.setCellValueFactory(new PropertyValueFactory<VirtualPlayer, Jugador>(
-										"name"));
-
-						// Columna Ficha
-						TableColumn<VirtualPlayer, Ficha> colFicha = new TableColumn<>(
-								"Ficha");
-						colFicha.setMinWidth(100);
-						colFicha.setCellValueFactory(new PropertyValueFactory<VirtualPlayer, Ficha>(
-								"nameFicha"));
-
-						// Columna Tipo Jugador
-						TableColumn<VirtualPlayer, TipoJugador> colTipoJugador = new TableColumn<>(
-								"Tipo Jugador");
-						colTipoJugador.setMinWidth(150);
-						colTipoJugador
-								.setCellValueFactory(new PropertyValueFactory<VirtualPlayer, TipoJugador>(
-										"nameTipo"));
-
-						// Columna Acciones
-						TableColumn<VirtualPlayer, VirtualPlayer> colAction = new TableColumn<>(
-								"Acción");
-						colAction.setMinWidth(100);
-						colAction
-								.setCellValueFactory(new Callback<CellDataFeatures<VirtualPlayer, VirtualPlayer>, ObservableValue<VirtualPlayer>>() {
-									@Override
-									public ObservableValue<VirtualPlayer> call(
-											CellDataFeatures<VirtualPlayer, VirtualPlayer> features) {
-										return new ReadOnlyObjectWrapper<VirtualPlayer>(
-												features.getValue());
-									}
-								});
-
-						colAction
-								.setCellFactory(new Callback<TableColumn<VirtualPlayer, VirtualPlayer>, TableCell<VirtualPlayer, VirtualPlayer>>() {
-									@Override
-									public TableCell<VirtualPlayer, VirtualPlayer> call(
-											TableColumn<VirtualPlayer, VirtualPlayer> collumnEliminar) {
-										return new TableCell<VirtualPlayer, VirtualPlayer>() {
-											@Override
-											public void updateItem(
-													final VirtualPlayer player,
-													boolean empty) {
-												super.updateItem(player, empty);
-												if (player != null) {
-													VBox vb = new VBox();
-													vb.setAlignment(Pos.CENTER);
-													ImageView img = new ImageView(
-															new Image(
-																	CrearJugadoresController.class
-																			.getResourceAsStream("/images/iconos/delete.png"),
-																	18, 18,
-																	true, true));
-													Tooltip t = new Tooltip(
-															"Eliminar Jugador Virtual");
-													Tooltip.install(img, t);
-													vb.getChildren().add(img);
-													img.setCursor(Cursor.HAND);
-
-													// Agregar jugador virtual a
-													// la tabla
-													img.setOnMouseClicked(new EventHandler<MouseEvent>() {
-														@Override
-														public void handle(
-																MouseEvent e) {
-															int response = MessageBox
-																	.show(currentStage,
-																			"Elimnar Jugador Virtual",
-																			"¿Está seguro que desea eliminar este jugador virtual?",
-																			MessageBox.ICON_QUESTION
-																					| MessageBox.YES
-																					| MessageBox.NO
-																					| MessageBox.CANCEL);
-
-															if (response == MessageBox.YES) {
-																// ... user
-																// chose YES
-																jugadoresVirtualesList
-																		.remove(player);
-																oListJugadoresVirtuales = FXCollections
-																		.observableArrayList(jugadoresVirtualesList);
-																tblJugadoresVirtuales
-																		.setItems(null);
-																tblJugadoresVirtuales
-																		.setItems(oListJugadoresVirtuales);
-																player.nameFicha
-																		.get()
-																		.setSelected(
-																				false);
-																ajustarSlider(5 - jugadoresVirtualesList
-																		.size());
-
-															}
-														}
-													});
-													setGraphic(vb);
-												} else {
-													setGraphic(null);
-												}
-											}
-										};
-									}
-								});
+						configurarTable();
 
 						oListJugadoresVirtuales = FXCollections
 								.observableArrayList(jugadoresVirtualesList);
@@ -617,6 +523,110 @@ public class CrearJugadoresController extends AnchorPane implements
 				}
 			}
 		});
+	}
+
+	private void configurarTable() {
+		// Columna Jugador
+		colNombreJugador = new TableColumn<>(
+				"Jugador");
+		colNombreJugador.setMinWidth(100);
+		colNombreJugador
+				.setCellValueFactory(new PropertyValueFactory<VirtualPlayer, Jugador>(
+						"name"));
+
+		// Columna Ficha
+		colFicha = new TableColumn<>("Ficha");
+		colFicha.setMinWidth(100);
+		colFicha.setCellValueFactory(new PropertyValueFactory<VirtualPlayer, Ficha>(
+				"nameFicha"));
+
+		// Columna Tipo Jugador
+		colTipoJugador = new TableColumn<>(
+				"Tipo Jugador");
+		colTipoJugador.setMinWidth(150);
+		colTipoJugador
+				.setCellValueFactory(new PropertyValueFactory<VirtualPlayer, TipoJugador>(
+						"nameTipo"));
+
+		// Columna Acciones
+		colAction = new TableColumn<>(
+				"Acción");
+		colAction.setMinWidth(100);
+		colAction
+				.setCellValueFactory(new Callback<CellDataFeatures<VirtualPlayer, VirtualPlayer>, ObservableValue<VirtualPlayer>>() {
+					@Override
+					public ObservableValue<VirtualPlayer> call(
+							CellDataFeatures<VirtualPlayer, VirtualPlayer> features) {
+						return new ReadOnlyObjectWrapper<VirtualPlayer>(
+								features.getValue());
+					}
+				});
+
+		colAction
+				.setCellFactory(new Callback<TableColumn<VirtualPlayer, VirtualPlayer>, TableCell<VirtualPlayer, VirtualPlayer>>() {
+					@Override
+					public TableCell<VirtualPlayer, VirtualPlayer> call(
+							TableColumn<VirtualPlayer, VirtualPlayer> collumnEliminar) {
+						return new TableCell<VirtualPlayer, VirtualPlayer>() {
+							@Override
+							public void updateItem(final VirtualPlayer player,
+									boolean empty) {
+								super.updateItem(player, empty);
+								if (player != null) {
+									VBox vb = new VBox();
+									vb.setAlignment(Pos.CENTER);
+									ImageView img = new ImageView(
+											new Image(
+													CrearJugadoresController.class
+															.getResourceAsStream("/images/iconos/delete.png"),
+													18, 18, true, true));
+									Tooltip t = new Tooltip(
+											"Eliminar Jugador Virtual");
+									Tooltip.install(img, t);
+									vb.getChildren().add(img);
+									img.setCursor(Cursor.HAND);
+
+									// Agregar jugador virtual a
+									// la tabla
+									img.setOnMouseClicked(new EventHandler<MouseEvent>() {
+										@Override
+										public void handle(MouseEvent e) {
+											int response = MessageBox
+													.show(currentStage,
+															"Elimnar Jugador Virtual",
+															"¿Está seguro que desea eliminar este jugador virtual?",
+															MessageBox.ICON_QUESTION
+																	| MessageBox.YES
+																	| MessageBox.NO
+																	| MessageBox.CANCEL);
+
+											if (response == MessageBox.YES) {
+												// ... user
+												// chose YES
+												jugadoresVirtualesList
+														.remove(player);
+												oListJugadoresVirtuales = FXCollections
+														.observableArrayList(jugadoresVirtualesList);
+												tblJugadoresVirtuales
+														.setItems(null);
+												tblJugadoresVirtuales
+														.setItems(oListJugadoresVirtuales);
+												player.nameFicha.get()
+														.setSelected(false);
+												ajustarSlider(5 - jugadoresVirtualesList
+														.size());
+
+											}
+										}
+									});
+									setGraphic(vb);
+								} else {
+									setGraphic(null);
+								}
+							}
+						};
+					}
+				});
 	}
 
 	private void ajustarSlider(int maxValue) {
