@@ -129,6 +129,13 @@
     -fx-background-position:center;
 }
 
+.bg_logo_option {
+    -fx-background-image: url("../images/logos/OptionFont.jpg");
+    -fx-background-position: left top, center;
+	-fx-background-repeat: no-repeat;
+	-fx-background-size: cover, auto;
+}
+
 .bg_ficha {
     -fx-background-image: url("../images/background/bg_ficha.png");
     -fx-background-repeat: no-repeat;

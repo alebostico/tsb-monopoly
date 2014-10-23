@@ -6,7 +6,9 @@ package monopoly.client.controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -17,6 +19,9 @@ import javafx.stage.Stage;
  */
 public class SplashController extends AnchorPane implements Initializable {
 
+	@FXML
+	private Label lblMensaje;
+	
 	private AnchorPane controller;
 	
 	private Stage currentStage;
