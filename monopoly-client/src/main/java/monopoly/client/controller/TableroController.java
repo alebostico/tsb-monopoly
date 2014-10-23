@@ -7,14 +7,18 @@ import java.io.Serializable;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -37,7 +41,9 @@ import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import monopoly.client.connection.ConnectionController;
 import monopoly.client.util.ScreensFramework;
+import monopoly.model.History;
 import monopoly.model.Juego;
+import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesFXML;
 
@@ -55,7 +61,10 @@ public class TableroController extends AnchorPane implements Serializable,
 	private Button btnHipotecar;
 
 	@FXML
-	private ListView<?> lvHistory;
+	private ListView<History> lvHistory;
+
+	private List<History> historyGameList;
+	private ObservableList<History> oHistoryGameList;
 
 	@FXML
 	private Pane pCasillero10;
@@ -94,7 +103,10 @@ public class TableroController extends AnchorPane implements Serializable,
 	private Button btnMenu;
 
 	@FXML
-	private ListView<?> lvHistoryChat;
+	private ListView<History> lvHistoryChat;
+
+	private List<History> historyChatList;
+	private ObservableList<History> oHistoryChatList;
 
 	@FXML
 	private Pane pCasillero40;
@@ -223,7 +235,11 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	private Juego juego;
 
+	private Usuario usuarioLogueado;
+
 	private StringProperty clockLabelTextProperty;
+
+	private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
 	/*
 	 * (non-Javadoc)
@@ -235,6 +251,10 @@ public class TableroController extends AnchorPane implements Serializable,
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		// TODO Auto-generated method stub
 		instance = this;
+		historyGameList = new ArrayList<History>();
+		oHistoryGameList = FXCollections.observableArrayList(historyGameList);
+		historyChatList = new ArrayList<History>();
+		oHistoryChatList = FXCollections.observableArrayList(historyChatList);
 	}
 
 	@FXML
@@ -281,30 +301,106 @@ public class TableroController extends AnchorPane implements Serializable,
 			}
 		});
 		this.clockLabelTextProperty = lblStopwatch.textProperty();
-		createDigitalClock();
 
+		createDigitalClock();
+		addHistoryGame(usuarioLogueado.getUserName(), "Juego Creado");
+		esperarJugadores();
+
+	}
+
+	private void addHistoryGame(String usuario, String mensaje) {
+		Calendar calendar = GregorianCalendar.getInstance();
+		History history = new History(dateFormat.format(calendar.getTime()),
+				usuario, mensaje);
+		historyGameList.add(history);
+		oHistoryGameList = FXCollections.observableArrayList(historyGameList);
+		lvHistory.setItems(oHistoryGameList);
+	}
+
+	@SuppressWarnings("unused")
+	private void addHistoryChat(String usuario, String mensaje) {
+		Calendar calendar = GregorianCalendar.getInstance();
+		History history = new History(dateFormat.format(calendar.getTime()),
+				usuario, mensaje);
+		historyChatList.add(history);
+		oHistoryChatList = FXCollections.observableArrayList(historyChatList);
+		lvHistoryChat.setItems(oHistoryChatList);
+	}
+
+	private void esperarJugadores() {
+		preloaderStage = new Stage();
+
+		try {
+
+			String fxml = ConstantesFXML.FXML_SPLASH;
+			Parent root;
+
+			FXMLLoader loader = ScreensFramework.getLoader(fxml);
+
+			root = (Parent) loader.load();
+
+			Scene scene = new Scene(root);
+			preloaderStage.setScene(scene);
+			preloaderStage.setTitle("Monopoly - Waiting for players");
+			preloaderStage.centerOnScreen();
+			preloaderStage.setResizable(false);
+			preloaderStage.initModality(Modality.APPLICATION_MODAL);
+			preloaderStage.initStyle(StageStyle.UNDECORATED);
+			SplashController controller = (SplashController) loader
+					.getController();
+			controller.setController(TableroController.this);
+			controller.setCurrentStage(preloaderStage);
+			preloaderStage.show();
+
+		} catch (Exception ex) {
+			// TODO Auto-generated catch block
+			GestorLogs.registrarError(ex.getMessage());
+		}
+	}
+
+	public void createDigitalClock() {
+		final Timeline timeline = new Timeline();
+
+		timeline.setCycleCount(Timeline.INDEFINITE);
+		final KeyFrame kf = new KeyFrame(Duration.seconds(1),
+				new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent actionEvent) {
+						Calendar calendar = GregorianCalendar.getInstance();
+						clockLabelTextProperty.setValue(dateFormat
+								.format(calendar.getTime()));
+					}
+				});
+		timeline.getKeyFrames().add(kf);
+		timeline.play();
+	}
+
+	public void startGame() {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
 				try {
 
-					String fxml = ConstantesFXML.FXML_SPLASH;
+					String fxml = ConstantesFXML.FXML_TIRAR_DADOS;
 					Parent root;
 
-					preloaderStage = new Stage();
+					Stage tirarDadosStage = new Stage();
 					FXMLLoader loader = ScreensFramework.getLoader(fxml);
 
 					root = (Parent) loader.load();
 
-					Scene preloaderScene = new Scene(root);
-					preloaderStage.setScene(preloaderScene);
-					preloaderStage.setTitle("Monopoly - Waiting for players");
-					preloaderStage.centerOnScreen();
-					preloaderStage.setResizable(false);
-					preloaderStage.initModality(Modality.APPLICATION_MODAL);
-					preloaderStage.initStyle(StageStyle.UNDECORATED);
-					preloaderStage.show();
+					Scene scene = new Scene(root);
+					tirarDadosStage.setScene(scene);
+					tirarDadosStage
+							.setTitle("Monopoly - Tirar Dados para establecer turnos");
+					tirarDadosStage.centerOnScreen();
+					tirarDadosStage.setResizable(false);
+					tirarDadosStage.initModality(Modality.APPLICATION_MODAL);
+					tirarDadosStage.initStyle(StageStyle.UNDECORATED);
+
+					SplashController.getInstance().getCurrentStage().close();
+					tirarDadosStage.show();
 
 				} catch (Exception ex) {
 					// TODO Auto-generated catch block
@@ -312,24 +408,6 @@ public class TableroController extends AnchorPane implements Serializable,
 				}
 			}
 		});
-
-	}
-
-	public void createDigitalClock() {
-		final Timeline timeline = new Timeline();
-		final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-		
-		timeline.setCycleCount(Timeline.INDEFINITE);
-		final KeyFrame kf = new KeyFrame(Duration.seconds(1),
-				new EventHandler<ActionEvent>() {
-					@Override
-					public void handle(ActionEvent actionEvent) {
-						Calendar calendar = GregorianCalendar.getInstance();
-						clockLabelTextProperty.setValue(dateFormat.format(calendar.getTime()));
-					}
-				});
-		timeline.getKeyFrames().add(kf);
-		timeline.play();
 	}
 
 	/**
@@ -381,6 +459,21 @@ public class TableroController extends AnchorPane implements Serializable,
 	 */
 	public void setJuego(Juego juego) {
 		this.juego = juego;
+	}
+
+	/**
+	 * @return the usuarioLogueado
+	 */
+	public Usuario getUsuarioLogueado() {
+		return usuarioLogueado;
+	}
+
+	/**
+	 * @param usuarioLogueado
+	 *            the usuarioLogueado to set
+	 */
+	public void setUsuarioLogueado(Usuario usuarioLogueado) {
+		this.usuarioLogueado = usuarioLogueado;
 	}
 
 }

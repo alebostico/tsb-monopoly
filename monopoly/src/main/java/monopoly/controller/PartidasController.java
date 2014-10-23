@@ -8,12 +8,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 
+import monopoly.connection.MonopolyGame;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.JugadorVirtual;
 import monopoly.model.Usuario;
+import monopoly.model.Estado.EstadoJuego;
 import monopoly.util.GestorLogs;
+import monopoly.util.message.game.StartGameMessage;
 
 /**
  * @author Bostico Alejandro
@@ -161,6 +164,23 @@ public class PartidasController {
 		return null;
 
 	}
+	
+	/**
+	 * Retorna todos los juegos cuyos nombres coinciden con un criterio de
+	 * búsqueda
+	 * 
+	 * @param likeNombre
+	 * @return
+	 */
+	public List<Juego> buscarJuegos(EstadoJuego estado) {
+		// TODO: Implementar método
+		List<Juego> juegos = new ArrayList<Juego>();
+		for (JuegoController jc : juegosControllerList.values()) {
+			if (jc.getJuego().getEstadoJuego().getEstado().equals(estado))
+				juegos.add(jc.getJuego());
+		}
+		return juegos;
+	}
 
 	/**
 	 * Devuelve un juego a partir de su uniqueID
@@ -172,31 +192,26 @@ public class PartidasController {
 		return buscarJuego(uniqueID);
 	}
 
-	public void initGame(int senderID, Juego juego) {
+	public void initGame(MonopolyGame monopolyGame, int senderID, Juego juego) {
 		// TODO Auto-generated method stub
 		JuegoController controller = juegosControllerList.get(juego.getUniqueID());
 		controller.setJuego(juego);
 		int cantJugadores = juego.getCantJugadores();
 		controller.setCantJugadores(cantJugadores);
 		
-		int cantJugadoresHumanos = 0;
-		int cantJugadoresVirtuales = 0;
-		
 		for(Jugador jugador :juego.getJugadoresList()){
 			if(jugador instanceof JugadorHumano){
-				cantJugadoresHumanos++;
 				controller.addPlayer(String.valueOf(senderID), jugador);
 			}
 			if(jugador instanceof JugadorVirtual){
-				cantJugadoresVirtuales++;
 				controller.addPlayer(jugador.getNombre(), jugador);
 			}
 		}
-		if(cantJugadores == (cantJugadoresHumanos + cantJugadoresVirtuales)){
-			// debería comenzar el juego
-		}
-		else{
-			
+
+		if(cantJugadores == controller.getJugadores().size()){
+			// StartGame
+			StartGameMessage msg = new StartGameMessage(senderID, juego);
+			monopolyGame.sendToOne(senderID, msg);
 		}
 		
 	}

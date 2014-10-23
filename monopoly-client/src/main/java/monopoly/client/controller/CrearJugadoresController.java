@@ -186,7 +186,7 @@ public class CrearJugadoresController extends AnchorPane implements
 		int cantSldJugadores = !txtNroJugadores.getText().isEmpty() ? Integer
 				.parseInt(txtNroJugadores.getText()) : 0;
 
-		if (cantSldJugadores > 0) {
+		if (cantSldJugadores > 0 || jugadoresVirtualesList.size() > 0) {
 			juego.setCantJugadores(1 + cantSldJugadores
 					+ jugadoresVirtualesList.size());
 			for (VirtualPlayer j : jugadoresVirtualesList) {
@@ -211,6 +211,7 @@ public class CrearJugadoresController extends AnchorPane implements
 						.getController();
 				controller.setPrevStage(currentStage);
 				controller.setJuego(juego);
+				controller.setUsuarioLogueado(juego.getOwner());
 
 				Scene scene = new Scene(root);
 				stage.setScene(scene);
