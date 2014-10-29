@@ -13,6 +13,7 @@ import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import monopoly.util.GestorLogs;
 import monopoly.util.LectorXML;
 import monopoly.util.message.DisconnectMessage;
 import monopoly.util.message.ForwardedMessage;
@@ -137,8 +138,10 @@ public class GameServer {
 		playerConnections = new TreeMap<Integer, ConnectionToClient>();
 		incomingMessages = new LinkedBlockingQueue<Message>();
 		serverSocket = new ServerSocket(port);
-		System.out.println("Listening for client connections on port " + port
-				+ " for start to game");
+		// System.out.println("Listening for client connections on port " + port
+		// + " for start to game");
+		GestorLogs.registrarLog("Listening for client connections on port "
+				+ port + " for start to game");
 		serverThread = new ServerThread();
 		serverThread.start();
 		Thread readerThread = new Thread() {
@@ -148,9 +151,9 @@ public class GameServer {
 						Message msg = incomingMessages.take();
 						messageReceived(msg.playerConnection, msg.message);
 					} catch (Exception e) {
-						System.out
-								.println("Exception while handling received message:");
-						e.printStackTrace();
+						GestorLogs.registrarError("Exception while handling received message:");
+						GestorLogs.registrarError(e.toString());
+						//e.printStackTrace();
 					}
 				}
 			}
@@ -389,7 +392,8 @@ public class GameServer {
 		// StatusMessage sm = new StatusMessage(ID, true, getPlayerList());
 		// sendToAll(sm);
 		playerConnected(ID);
-		System.out.println("Connection accepted from client number " + ID);
+		// System.out.println("Connection accepted from client number " + ID);
+		GestorLogs.registrarLog("Connection accepted from client number " + ID);
 	}
 
 	synchronized private void clientDisconnected(int playerID) {
@@ -399,7 +403,9 @@ public class GameServer {
 			// getPlayerList());
 			// sendToAll(sm);
 			playerDisconnected(playerID);
-			System.out.println("Connection with client number " + playerID
+			// System.out.println("Connection with client number " + playerID
+			// + " closed by DisconnectMessage from client.");
+			GestorLogs.registrarLog("Connection with client number " + playerID
 					+ " closed by DisconnectMessage from client.");
 		}
 	}
@@ -425,17 +431,18 @@ public class GameServer {
 				while (!shutdown) {
 					Socket connection = serverSocket.accept();
 					if (shutdown) {
-						System.out.println("Listener socket has shut down.");
+						GestorLogs
+								.registrarError("Listener socket has shut down.");
 						break;
 					}
 					new ConnectionToClient(incomingMessages, connection);
 				}
 			} catch (Exception e) {
 				if (shutdown)
-					System.out.println("Listener socket has shut down.");
+					GestorLogs.registrarError("Listener socket has shut down.");
 				else
-					System.out
-							.println("Listener socket has been shut down by error: "
+					GestorLogs
+							.registrarError("Listener socket has been shut down by error: "
 									+ e);
 			}
 		}
@@ -531,8 +538,9 @@ public class GameServer {
 						connection.close();
 					} catch (Exception e1) {
 					}
-					System.out.println("\nError while setting up connection: "
-							+ e);
+					GestorLogs
+							.registrarError("\nError while setting up connection: "
+									+ e);
 					e.printStackTrace();
 					return;
 				}
@@ -559,16 +567,16 @@ public class GameServer {
 				} catch (IOException e) {
 					if (!closed) {
 						closedWithError("Error while sending data to client.");
-						System.out
-								.println("Hub send thread terminated by IOException: "
+						GestorLogs
+								.registrarError("Hub send thread terminated by IOException: "
 										+ e);
 					}
 				} catch (Exception e) {
 					if (!closed) {
 						closedWithError("Internal Error: Unexpected exception in output thread: "
 								+ e);
-						System.out
-								.println("\nUnexpected error shuts down hub's send thread:");
+						GestorLogs
+								.registrarError("\nUnexpected error shuts down hub's send thread:");
 						e.printStackTrace();
 					}
 				}
