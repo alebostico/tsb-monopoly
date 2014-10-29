@@ -13,13 +13,10 @@ import monopoly.util.GestorLogs;
  * @author Oliva Pablo
  *
  */
-public class JugadorVirtual extends Jugador {
+public class JugadorVirtual extends Jugador implements Serializable{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = -8121213780558221444L;
+	
 	public static final String TIPO_COMPRADOR_PRIMERIZO = "comprador primerizo";
 	public static final String TIPO_EMPRESARIO = "empresario";
 	public static final String TIPO_MAGNATE = "magnate";
