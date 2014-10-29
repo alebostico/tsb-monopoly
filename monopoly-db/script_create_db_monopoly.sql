@@ -182,6 +182,7 @@ CREATE TABLE `tarjeta_propiedad` (
   `valorHipotecario` int(11) NOT NULL,
   `nombreImagen` varchar(45) DEFAULT NULL,
   `isHipotecada` tinyint(4) NOT NULL DEFAULT '0',
+  `nombrePropiedad` VARCHAR(45) NULL,
   PRIMARY KEY (`tarjetaPropiedadID`),
   KEY `fk_tarjeta_propiedad_jugador` (`jugadorID`),
   CONSTRAINT `fk_tarjeta_propiedad_jugador` FOREIGN KEY (`jugadorID`) REFERENCES `jugador` (`jugadorID`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -194,7 +195,36 @@ CREATE TABLE `tarjeta_propiedad` (
 
 LOCK TABLES `tarjeta_propiedad` WRITE;
 /*!40000 ALTER TABLE `tarjeta_propiedad` DISABLE KEYS */;
-INSERT INTO `tarjeta_propiedad` (`tarjetaPropiedadID`, `jugadorID`, `nombre`, `valorPropiedad`, `valorHipotecario`, `nombreImagen`, `isHipotecada`) VALUES (1,NULL,'RONDA DE VALENCIA',60,30,'Tarjeta02.jpg',0),(2,NULL,'PLAZA DE LAVAPIÉS',60,30,'Tarjeta04.jpg',0),(3,NULL,'GLORIETA CUATRO CAMINOS',100,50,'Tarjeta07.jpg',0),(4,NULL,'AVENIDA REINA VICTORIA',100,50,'Tarjeta09.jpg',0),(5,NULL,'CALLE BRAVO MURILLO',120,60,'Tarjeta10.jpg',0),(6,NULL,'GLORIETA DE BILBAO',140,70,'Tarjeta12.jpg',0),(7,NULL,'CALLE ALBERTO AGUILERA',140,70,'Tarjeta14.jpg',0),(8,NULL,'CALLE FUENCARRAL',160,80,'Tarjeta15.jpg',0),(9,NULL,'AVENIDA FELIPE II',180,90,'Tarjeta17.jpg',0),(10,NULL,'CALLE VELÁZQUEZ',180,90,'Tarjeta19.jpg',0),(11,NULL,'CALLE SERRANO',200,100,'Tarjeta20.jpg',0),(12,NULL,'AVENIDA AMÉRICA',220,110,'Tarjeta22.jpg',0),(13,NULL,'CALLE MARÍA DE MOLINA',220,110,'Tarjeta24.jpg',0),(14,NULL,'CALLE CEA BERMÚDEZ',240,120,'Tarjeta25.jpg',0),(15,NULL,'AVENIDA DE LOS REYES CATÓLICOS',260,130,'Tarjeta27.jpg',0),(16,NULL,'CALLE BAILÉN',260,130,'Tarjeta28.jpg',0),(17,NULL,'PLAZA ESPAÑA',280,140,'Tarjeta30.jpg',0),(18,NULL,'PUERTA DEL SOL',300,150,'Tarjeta32.jpg',0),(19,NULL,'CALLE ALCALÁ',300,150,'Tarjeta33.jpg',0),(20,NULL,'GRAN VÍA',320,160,'Tarjeta35.jpg',0),(21,NULL,'PASEO DE LA CASTELLANA',350,175,'Tarjeta38.jpg',0),(22,NULL,'PASEO DEL PRADO',400,200,'Tarjeta40.jpg',0),(23,NULL,'ESTACIÓN DE GOYA',200,100,'Tarjeta06.jpg',0),(24,NULL,'ESTACIÓN DE LAS DELICIAS',200,100,'Tarjeta16.jpg',0),(25,NULL,'ESTACIÓN DEL MEDIODÍA',200,100,'Tarjeta26.jpg',0),(26,NULL,'ESTACIÓN DEL NORTE',200,100,'Tarjeta36.jpg',0),(27,NULL,'COMPAÑIA DE AGUAS',150,75,'Tarjeta29.jpg',0),(28,NULL,'COMPAÑIA DE ELECTRICIDAD',150,75,'Tarjeta13.jpg',0);
+INSERT INTO `tarjeta_propiedad` (`tarjetaPropiedadID`, `jugadorID`, `nombre`, `valorPropiedad`, `valorHipotecario`, `nombreImagen`, `isHipotecada`,`nombrePropiedad`) 
+VALUES 
+(1,NULL,'RONDA DE VALENCIA',60,30,'/images/tarjetas/propiedades/tarjeta02.jpg',0,'tarjeta02'),
+(2,NULL,'PLAZA DE LAVAPIÉS',60,30,'/images/tarjetas/propiedades/tarjeta04.jpg',0,'tarjeta04'),
+(3,NULL,'GLORIETA CUATRO CAMINOS',100,50,'/images/tarjetas/propiedades/tarjeta07.jpg',0,'tarjeta07'),
+(4,NULL,'AVENIDA REINA VICTORIA',100,50,'/images/tarjetas/propiedades/tarjeta09.jpg',0,'tarjeta09'),
+(5,NULL,'CALLE BRAVO MURILLO',120,60,'/images/tarjetas/propiedades/tarjeta10.jpg',0,'tarjeta10'),
+(6,NULL,'GLORIETA DE BILBAO',140,70,'/images/tarjetas/propiedades/tarjeta12.jpg',0,'tarjeta12'),
+(7,NULL,'CALLE ALBERTO AGUILERA',140,70,'/images/tarjetas/propiedades/tarjeta14.jpg',0,'tarjeta14'),
+(8,NULL,'CALLE FUENCARRAL',160,80,'/images/tarjetas/propiedades/tarjeta15.jpg',0,'tarjeta15'),
+(9,NULL,'AVENIDA FELIPE II',180,90,'/images/tarjetas/propiedades/tarjeta17.jpg',0,'tarjeta17'),
+(10,NULL,'CALLE VELÁZQUEZ',180,90,'/images/tarjetas/propiedades/tarjeta19.jpg',0,'tarjeta19'),
+(11,NULL,'CALLE SERRANO',200,100,'/images/tarjetas/propiedades/tarjeta20.jpg',0,'tarjeta20'),
+(12,NULL,'AVENIDA AMÉRICA',220,110,'/images/tarjetas/propiedades/tarjeta22.jpg',0,'tarjeta22'),
+(13,NULL,'CALLE MARÍA DE MOLINA',220,110,'/images/tarjetas/propiedades/tarjeta24.jpg',0,'tarjeta24'),
+(14,NULL,'CALLE CEA BERMÚDEZ',240,120,'/images/tarjetas/propiedades/tarjeta25.jpg',0,'tarjeta25'),
+(15,NULL,'AVENIDA DE LOS REYES CATÓLICOS',260,130,'/images/tarjetas/propiedades/tarjeta27.jpg',0,'tarjeta27'),
+(16,NULL,'CALLE BAILÉN',260,130,'/images/tarjetas/propiedades/tarjeta28.jpg',0,'tarjeta28'),
+(17,NULL,'PLAZA ESPAÑA',280,140,'/images/tarjetas/propiedades/tarjeta30.jpg',0,'tarjeta30'),
+(18,NULL,'PUERTA DEL SOL',300,150,'/images/tarjetas/propiedades/tarjeta32.jpg',0,'tarjeta32'),
+(19,NULL,'CALLE ALCALÁ',300,150,'/images/tarjetas/propiedades/tarjeta33.jpg',0,'tarjeta33'),
+(20,NULL,'GRAN VÍA',320,160,'/images/tarjetas/propiedades/tarjeta35.jpg',0,'tarjeta35'),
+(21,NULL,'PASEO DE LA CASTELLANA',350,175,'/images/tarjetas/propiedades/tarjeta38.jpg',0,'tarjeta38'),
+(22,NULL,'PASEO DEL PRADO',400,200,'/images/tarjetas/propiedades/tarjeta40.jpg',0,'tarjeta40'),
+(23,NULL,'ESTACIÓN DE GOYA',200,100,'/images/tarjetas/propiedades/tarjeta06.jpg',0,'tarjeta06'),
+(24,NULL,'ESTACIÓN DE LAS DELICIAS',200,100,'/images/tarjetas/propiedades/tarjeta16.jpg',0,'tarjeta16'),
+(25,NULL,'ESTACIÓN DEL MEDIODÍA',200,100,'/images/tarjetas/propiedades/tarjeta26.jpg',0,'tarjeta26'),
+(26,NULL,'ESTACIÓN DEL NORTE',200,100,'/images/tarjetas/propiedades/tarjeta36.jpg',0,'tarjeta36'),
+(27,NULL,'COMPAÑIA DE AGUAS',150,75,'/images/tarjetas/propiedades/tarjeta29.jpg',0,'tarjeta29'),
+(28,NULL,'COMPAÑIA DE ELECTRICIDAD',150,75,'/images/tarjetas/propiedades/tarjeta13.jpg',0,'tarjeta13');
 /*!40000 ALTER TABLE `tarjeta_propiedad` ENABLE KEYS */;
 UNLOCK TABLES;
 
