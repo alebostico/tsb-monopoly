@@ -1,7 +1,7 @@
 /**
  * 
  */
-package monopoly.util.message;
+package monopoly.util.message.game;
 
 import java.io.Serializable;
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package monopoly.util.message;
+package monopoly.util.message.game;
 
 import java.io.Serializable;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author Moreno Pablo
  *
  */
-public class InitGameMessage implements Serializable {
+public class LoadGameMessage implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -25,7 +25,7 @@ public class InitGameMessage implements Serializable {
 	 * @param message
 	 *            the original message.
 	 */
-	public InitGameMessage(int senderID, Object message) {
+	public LoadGameMessage(int senderID, Object message) {
 		this.senderID = senderID;
 		this.message = message;
 	}

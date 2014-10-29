@@ -23,9 +23,12 @@ public class CircularList<T> implements Serializable {
 	}
 
 	/*
-	 * Description: Deletes the head node from the linked list and returns the
-	 * head node's key. Running Time: O(1) Precondition: Linked list must not be
-	 * null Postcondition: The head node is deleted and its key is returned.
+	 * Description: Elimina el nodo cabecera de la lista enlazada y retorna
+	 * el valor del nodo cabecera.
+	 * Precondition: La  lista no debería ser nula.
+	 * Postcondition: El nodo cabecera es eliminado.
+	 * 
+	 * @return T, retorna el valor del nodo eliminado
 	 */
 	public T pop() {
 		if (isEmpty())
@@ -36,19 +39,23 @@ public class CircularList<T> implements Serializable {
 		if (head == head.getNext()) {
 			head = null;
 		} else {
-			Node<T> f = head, b = head.getPrev();
-			b.setNext(f.getNext());
+			Node<T> h = head; 
+			Node<T> p = head.getPrev();
+			p.setNext(h.getNext());
 			head = head.getNext();
-			head.setPrev(b);
+			head.setPrev(p);
 		}
 
 		return k;
 	}
 
 	/*
-	 * Description: Deletes the tail node from the linked list and returns its
-	 * node's key. Running Time: O(1) Precondition: Linked list must not be null
-	 * Postcondition: The tail node is deleted and its key is returned.
+	 * Description: Elimina el último nodo de la lista enlazada y retorna 
+	 * el valor del nodo eliminado
+	 * Precondition: La  lista no debería ser nula.
+	 * Postcondition: El último nodo es eliminado.
+	 * 
+	 * @return T, retorna el valor del nodo eliminado.
 	 */
 	public T pop_back() {
 		if (isEmpty())
@@ -82,21 +89,25 @@ public class CircularList<T> implements Serializable {
 		}
 	}
 
-	/*
-	 * Description: Allocates a new node x and inserts the node into the back of
-	 * the linked list. Running Time: O(1) Precondition: Linked list must be
-	 * instantiated. Postcondition: A node x with the key passed in through k is
-	 * inserted into the back of the linked list.
+	/**
+	 * Description: Inserta un nuevo nodo x al final de la lista enlazada.
+	 * Precondition: La  lista no debería ser nula.
+	 * Postcondition: El nodo x con valor pasado por parametro k
+	 * es insertado al final de la lista enlazada.
+	 * 
+	 * @param k, valor del nodo que se va a insertar al final de la lista.
 	 */
 	public void push_back(T k) {
 		Node<T> x = new Node<T>(k);
 		push_back(x);
 	}
 
-	/*
-	 * Description: Inserts node x into the back of the linked list. Running
-	 * Time: O(1) Precondition: Node x must be allocated Postcondition: A node x
-	 * is inserted into the back of the linked list.
+	/**
+	 * Description: Inserta un nodo x al final de la lista enlazada.
+	 * Precondition: El nodo x debería ser insertado.
+	 * Postcondition: El nodo x es insertado al final de la lista enlazada.
+	 * 
+	 * @param x
 	 */
 	private void push_back(Node<T> x) {
 		if (isEmpty()) {
@@ -112,21 +123,25 @@ public class CircularList<T> implements Serializable {
 		}
 	}
 
-	/*
-	 * Description: Allocates a new node x and inserts the node into the front
-	 * of the linked list. Running Time: O(1) Precondition: Linked list must be
-	 * instantiated. Postcondition: A node x with the key passed in through k is
-	 * inserted into the front of the linked list.
+	/**
+	 * Description: Inserta un nodo x al principio de la lista enlazada
+	 * Precondition: La  lista no debería ser nula.
+	 * Postcondition: El nodo x con el valor pasado por parametro k
+	 * es insertado al principio de la lista enlazada.
+	 * 
+	 * @param k
 	 */
 	public void push_front(T k) {
 		Node<T> x = new Node<T>(k);
 		push_front(x);
 	}
 
-	/*
-	 * Description: Inserts node x into the front of the linked list. Running
-	 * Time: O(1) Precondition: Node x must be allocated Postcondition: A node x
-	 * is inserted into the front of the linked list.
+	/**
+	 * Description: Inserta un nodo x al principio de la lista enlazada.
+	 * Precondition: El nodo x debería ser insertado.
+	 * Postcondition: El nodo x es insertado al principio de la lista enlazada.
+	 * 
+	 * @param x
 	 */
 	private void push_front(Node<T> x) {
 		if (isEmpty()) {
@@ -173,10 +188,6 @@ public class CircularList<T> implements Serializable {
 		return out;
 	}
 
-	public Object[] toArray() {
-		return toList().toArray();
-	}
-
 	public T top() {
 		if (isEmpty())
 			return null;
@@ -187,5 +198,19 @@ public class CircularList<T> implements Serializable {
 	public boolean isEmpty() {
 		return (head == null);
 	}
+	
+	public Node<T> getHeader(){
+		if (isEmpty())
+			return null;
 
+		return head;
+	}
+
+	/**
+	 * @param head the head to set
+	 */
+	public void setHead(Node<T> head) {
+		this.head = head;
+	}
+	
 }
