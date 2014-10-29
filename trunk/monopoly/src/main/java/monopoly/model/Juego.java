@@ -8,8 +8,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TreeMap;
 
 import monopoly.controller.FichasController;
+import monopoly.controller.TarjetaController;
 import monopoly.model.tablero.Tablero;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
@@ -51,11 +53,9 @@ public class Juego implements Serializable{
 
 	private Dado dado;
 	
-	private Estado estadoJuego;
-
 	private int cantJugadores;
 
-	private List<TarjetaPropiedad> tarjetasPropiedadList;
+	private TreeMap<String, TarjetaPropiedad> tarjetasPropiedadList;
 
 	private List<Ficha> fichasPlayerList;
 
@@ -74,8 +74,7 @@ public class Juego implements Serializable{
 		this.fechaCreacion = new Date();
 		this.jugadoresList = new ArrayList<Jugador>();
 		this.fichasPlayerList = FichasController.getFichas();
-		this.tarjetasPropiedadList = new ArrayList<TarjetaPropiedad>();
-		this.estadoJuego = new Estado();
+		this.tarjetasPropiedadList = TarjetaController.getTarjetasPropiedades();
 		this.generateUniqueID();
 		GestorLogs.registrarLog("Creado nuevo juego '" + this.getUniqueID()
 				+ "'");
@@ -173,8 +172,8 @@ public class Juego implements Serializable{
 	/**
 	 * @return the tarjetasPropiedadList
 	 */
-	public List<TarjetaPropiedad> getTarjetasPropiedadList() {
-		return tarjetasPropiedadList;
+	public TarjetaPropiedad getTarjetasPropiedad(String key) {
+		return tarjetasPropiedadList.get(key);
 	}
 
 	/**
@@ -266,7 +265,7 @@ public class Juego implements Serializable{
 	 * @return La suma de los valores que salieron en los dados.
 	 */
 	public int tirarDados() {
-		return this.getDado().tirarDados();
+		return this.getDado().getSuma();
 	}
 
 	/**
@@ -276,13 +275,6 @@ public class Juego implements Serializable{
 	 */
 	public Dado getDado() {
 		return dado;
-	}
-
-	/**
-	 * @return the estadoJuego
-	 */
-	public Estado getEstadoJuego() {
-		return estadoJuego;
 	}
 
 	/**

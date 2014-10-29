@@ -66,11 +66,11 @@ public class Main {
 		Usuario usuario1 = new Usuario("testuser1");
 		Juego juego = gj.crearJuego(usuario1, "Test Juego");
 		
-		Jugador jugadorH1 = new JugadorHumano("Jugador1", new Ficha(Ficha.TipoFicha.F_AUTO), juego, usuario1);
+		Jugador jugadorH1 = new JugadorHumano("Jugador1", new Ficha(Ficha.TipoFicha.F_AUTO), juego, usuario1,0);
 		
 		// creamos un segundo usuario que será solo jugador
 		Usuario usuario2 = new Usuario("testuser2");
-		Jugador jugadorH2 = new JugadorHumano("Jugador2", new Ficha(Ficha.TipoFicha.F_BOTA), juego, usuario2);
+		Jugador jugadorH2 = new JugadorHumano("Jugador2", new Ficha(Ficha.TipoFicha.F_BOTA), juego, usuario2,0);
 		
 		juego.addJugador(jugadorH1);
 		juego.addJugador(jugadorH2);

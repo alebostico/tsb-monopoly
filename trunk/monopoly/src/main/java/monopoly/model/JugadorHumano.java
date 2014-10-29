@@ -3,8 +3,6 @@
  */
 package monopoly.model;
 
-import java.io.Serializable;
-
 import javax.persistence.Transient;
 
 import monopoly.util.GestorLogs;
@@ -24,11 +22,15 @@ public class JugadorHumano extends Jugador {
 
 	@Transient
 	private Usuario usuario;
+	
+	@Transient 
+	private int senderID;
 
 	public JugadorHumano(String nombre, Ficha ficha, Juego juego,
-			Usuario usuario) {
+			Usuario usuario, int senderID) {
 		super(nombre, ficha, juego);
 		this.usuario = usuario;
+		this.senderID = senderID;
 		GestorLogs.registrarLog("Nuevo jugador humano '" + nombre + "'");
 		GestorLogs.registrarDebug(this.toString());
 	}
@@ -46,6 +48,20 @@ public class JugadorHumano extends Jugador {
 	 */
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+
+	/**
+	 * @return the senderId
+	 */
+	public int getSenderID() {
+		return senderID;
+	}
+
+	/**
+	 * @param senderId the senderId to set
+	 */
+	public void setSenderID(int senderId) {
+		this.senderID = senderId;
 	}
 
 	@Override

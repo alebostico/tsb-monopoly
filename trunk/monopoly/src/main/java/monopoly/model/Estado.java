@@ -11,12 +11,14 @@ public class Estado implements Serializable {
 	 */
 	public static final String ESTADO_CREADO = "creado";
 	public static final String ESTADO_ESPERANDO_JUGADOR = "esperando jugador";
+	public static final String ESTADO_ESTABLECIENDO_TURNOS = "Estableciendo turnos";
 	public static final String ESTADO_INICIADO = "iniciado";
 	public static final String ESTADO_FINALIZADO = "finalizado";
 
 	public enum EstadoJuego {
-		CREADO("creado"), ESPERANDO_JUGADOR("esperando jugador"), INICIADO(
-				"iniciado"),FINALIZADO("finalizado");
+		CREADO("creado"), ESPERANDO_JUGADOR("esperando jugador"), ESTABLECIENDO_TURNOS(
+				"Estableciendo turnos"), INICIADO("iniciado"), FINALIZADO(
+				"finalizado");
 
 		private final String nombreEstadoJuego;
 
@@ -52,7 +54,7 @@ public class Estado implements Serializable {
 	public Estado(EstadoJuego estado) {
 		this(estado.getNombreEstadoJuego(), estado);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -96,9 +98,11 @@ public class Estado implements Serializable {
 			estado = EstadoJuego.ESPERANDO_JUGADOR;
 			break;
 		case ESPERANDO_JUGADOR:
+			estado = EstadoJuego.ESTABLECIENDO_TURNOS;
+			break;
+		case ESTABLECIENDO_TURNOS:
 			estado = EstadoJuego.INICIADO;
 			break;
-
 		case INICIADO:
 			estado = EstadoJuego.FINALIZADO;
 			break;
@@ -108,7 +112,7 @@ public class Estado implements Serializable {
 
 		}
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (o == null)
