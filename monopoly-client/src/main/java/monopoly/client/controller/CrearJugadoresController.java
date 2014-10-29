@@ -41,7 +41,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import jfx.messagebox.MessageBox;
 import monopoly.client.connection.ConnectionController;
 import monopoly.client.util.ScreensFramework;
 import monopoly.model.Ficha;
@@ -52,13 +51,18 @@ import monopoly.model.JugadorVirtual;
 import monopoly.model.JugadorVirtual.TipoJugador;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesFXML;
-import monopoly.util.message.InitGameMessage;
+import monopoly.util.message.game.LoadGameMessage;
+
+import org.controlsfx.control.action.Action;
+import org.controlsfx.dialog.Dialog;
+import org.controlsfx.dialog.Dialogs;
 
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
  *
  */
+@SuppressWarnings("deprecation")
 public class CrearJugadoresController extends AnchorPane implements
 		Initializable {
 
@@ -99,19 +103,19 @@ public class CrearJugadoresController extends AnchorPane implements
 
 	@FXML
 	private TableView<VirtualPlayer> tblJugadoresVirtuales;
-	
+
 	@FXML
 	TableColumn<VirtualPlayer, Jugador> colNombreJugador;
-	
+
 	@FXML
 	private TableColumn<VirtualPlayer, Ficha> colFicha;
-	
+
 	@FXML
 	private TableColumn<VirtualPlayer, TipoJugador> colTipoJugador;
-	
+
 	@FXML
 	private TableColumn<VirtualPlayer, VirtualPlayer> colAction;
-	
+
 	@FXML
 	private TextField txtNroJugadores;
 
@@ -193,7 +197,7 @@ public class CrearJugadoresController extends AnchorPane implements
 	void processStartGame(ActionEvent event) {
 		String nombre = juego.getOwner().getUserName();
 		Jugador playerOwner = new JugadorHumano(nombre, fichaPlayer, juego,
-				juego.getOwner());
+				juego.getOwner(), ConnectionController.getInstance().getIdPlayer());
 		juego.addJugador(playerOwner);
 		int cantSldJugadores = !txtNroJugadores.getText().isEmpty() ? Integer
 				.parseInt(txtNroJugadores.getText()) : 0;
@@ -207,9 +211,8 @@ public class CrearJugadoresController extends AnchorPane implements
 			}
 
 			int senderId = ConnectionController.getInstance().getIdPlayer();
-			juego.getEstadoJuego().actualizarEstadoJuego();
 			ConnectionController.getInstance().send(
-					new InitGameMessage(senderId, juego));
+					new LoadGameMessage(senderId, juego));
 
 			String fxml = ConstantesFXML.FXML_MOSTRAR_TABLERO;
 
@@ -237,9 +240,9 @@ public class CrearJugadoresController extends AnchorPane implements
 				GestorLogs.registrarError(ex.getMessage());
 			}
 		} else {
-			MessageBox.show(currentStage,
-					"¡El juego permite un mínimo de 2 jugadores en total!",
-					"Advertencia", MessageBox.ICON_WARNING | MessageBox.OK);
+			Dialogs.create().owner(currentStage).title("Advertencia")
+			.masthead("Límites de jugadores").message("¡El juego permite un mínimo de 2 jugadores en total!")
+			.showWarning();
 			return;
 		}
 	}
@@ -490,13 +493,12 @@ public class CrearJugadoresController extends AnchorPane implements
 							fichaPlayerVirtual.setSelected(true);
 							ajustarSlider(5 - jugadoresVirtualesList.size());
 						} else {
-							MessageBox.show(
-									currentStage,
-									"¡La Ficha "
-											+ fichaPlayerVirtual.getNombre()
-											+ " ya está seleccionada, por favor seleccione otra!",
-									"Advertencia", MessageBox.ICON_WARNING
-											| MessageBox.OK);
+							Dialogs.create().owner(currentStage).title("Advertencia")
+							.masthead("Ficha Seleccionada")
+							.message("¡La Ficha "
+									+ fichaPlayerVirtual.getNombre()
+									+ " ya está seleccionada, por favor seleccione otra!")
+							.showWarning();
 						}
 
 						configurarTable();
@@ -508,18 +510,17 @@ public class CrearJugadoresController extends AnchorPane implements
 								colNombreJugador, colFicha, colTipoJugador,
 								colAction);
 					} else {
-						MessageBox
-								.show(currentStage,
-										"¡El juego permite un máximo de 6 jugadores en total!",
-										"Advertencia", MessageBox.ICON_WARNING
-												| MessageBox.OK);
+						Dialogs.create().owner(currentStage).title("Advertencia")
+						.masthead("Límites de jugadores")
+						.message("¡El juego permite un máximo de 6 jugadores en total!")
+						.showWarning();
+						
 					}
 				} else {
-					MessageBox
-							.show(currentStage,
-									"¡El juego permite un máximo de 6 jugadores en total!",
-									"Advertencia", MessageBox.ICON_WARNING
-											| MessageBox.OK);
+					Dialogs.create().owner(currentStage).title("Advertencia")
+					.masthead("Límites de jugadores")
+					.message("¡El juego permite un máximo de 6 jugadores en total!")
+					.showWarning();
 				}
 			}
 		});
@@ -527,31 +528,24 @@ public class CrearJugadoresController extends AnchorPane implements
 
 	private void configurarTable() {
 		// Columna Jugador
-		colNombreJugador = new TableColumn<>(
-				"Jugador");
-		colNombreJugador.setMinWidth(100);
+		colNombreJugador = new TableColumn<>("Jugador");
 		colNombreJugador
 				.setCellValueFactory(new PropertyValueFactory<VirtualPlayer, Jugador>(
 						"name"));
 
 		// Columna Ficha
 		colFicha = new TableColumn<>("Ficha");
-		colFicha.setMinWidth(100);
 		colFicha.setCellValueFactory(new PropertyValueFactory<VirtualPlayer, Ficha>(
 				"nameFicha"));
 
 		// Columna Tipo Jugador
-		colTipoJugador = new TableColumn<>(
-				"Tipo Jugador");
-		colTipoJugador.setMinWidth(150);
+		colTipoJugador = new TableColumn<>("Tipo Jugador");
 		colTipoJugador
 				.setCellValueFactory(new PropertyValueFactory<VirtualPlayer, TipoJugador>(
 						"nameTipo"));
 
 		// Columna Acciones
-		colAction = new TableColumn<>(
-				"Acción");
-		colAction.setMinWidth(100);
+		colAction = new TableColumn<>("Acción");
 		colAction
 				.setCellValueFactory(new Callback<CellDataFeatures<VirtualPlayer, VirtualPlayer>, ObservableValue<VirtualPlayer>>() {
 					@Override
@@ -591,16 +585,12 @@ public class CrearJugadoresController extends AnchorPane implements
 									img.setOnMouseClicked(new EventHandler<MouseEvent>() {
 										@Override
 										public void handle(MouseEvent e) {
-											int response = MessageBox
-													.show(currentStage,
-															"Elimnar Jugador Virtual",
-															"¿Está seguro que desea eliminar este jugador virtual?",
-															MessageBox.ICON_QUESTION
-																	| MessageBox.YES
-																	| MessageBox.NO
-																	| MessageBox.CANCEL);
+											Action response = Dialogs.create().owner(currentStage).title("Advertencia")
+											.masthead("Elimnar Jugador Virtual")
+											.message("¿Está seguro que desea eliminar este jugador virtual?")
+											.showConfirm();
 
-											if (response == MessageBox.YES) {
+											if (response == Dialog.ACTION_YES) {
 												// ... user
 												// chose YES
 												jugadoresVirtualesList

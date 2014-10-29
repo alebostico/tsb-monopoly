@@ -121,7 +121,6 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 		// Columna Nombre
 		colNombre = new TableColumn<>(
 				"Juego");
-		colNombre.setMinWidth(100);
 		colNombre
 				.setCellValueFactory(new PropertyValueFactory<JuegoSimpleProperty, String>(
 						"nombre"));
@@ -129,7 +128,6 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 		// Column Fecha
 		colFecha = new TableColumn<>(
 				"Fecha");
-		colFecha.setMinWidth(100);
 		colFecha
 				.setCellValueFactory(new PropertyValueFactory<JuegoSimpleProperty, String>(
 						"fecha"));
@@ -137,7 +135,6 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 		// Columna Creador
 		colCreador = new TableColumn<>(
 				"Creador");
-		colCreador.setMinWidth(100);
 		colCreador
 				.setCellValueFactory(new PropertyValueFactory<JuegoSimpleProperty, String>(
 						"creador"));
@@ -145,7 +142,6 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 		// Columna Participantes
 		colParticipantes = new TableColumn<>(
 				"Participantes");
-		colParticipantes.setMinWidth(100);
 		colParticipantes
 				.setCellValueFactory(new PropertyValueFactory<JuegoSimpleProperty, String>(
 						"participantes"));

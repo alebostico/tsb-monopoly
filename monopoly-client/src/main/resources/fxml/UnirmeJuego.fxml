@@ -47,7 +47,7 @@
                   </GridPane>
                   <HBox alignment="CENTER">
                      <children>
-                        <TableView id="tblJuegos" fx:id="tblJuegos" maxHeight="200.0" minHeight="200.0">
+                        <TableView id="tblJuegos" fx:id="tblJuegos" maxHeight="200.0" minHeight="200.0" minWidth="600.0">
                            <columns>
                               <TableColumn id="collumnNombre" fx:id="colNombre" maxWidth="300.0" minWidth="50.0" prefWidth="175.0" text="Nombre" />
                               <TableColumn id="collumnCreador" fx:id="colCreador" maxWidth="300.0" minWidth="50.0" prefWidth="175.0" text="Creador" />
@@ -60,7 +60,7 @@
                   <HBox alignment="CENTER" minHeight="80.0" spacing="20.0">
                      <children>
                         <Button id="btnCancelar" fx:id="btnCancelar" mnemonicParsing="false" onAction="#processCancel" prefHeight="51.0" prefWidth="200.0" text="Cancelar" />
-                        <Button id="btnCrearJuego" fx:id="btnCrearJuego" contentDisplay="CENTER" mnemonicParsing="false" onAction="#processCreateGame" prefHeight="51.0" prefWidth="200.0" text="Crear Juego" />
+                        <Button id="btnCrearJuego" fx:id="btnCrearJuego" contentDisplay="CENTER" mnemonicParsing="false" onAction="#processCreateGame" prefHeight="51.0" text="Unirme a Juego" />
                      </children>
                   </HBox>
                </children>

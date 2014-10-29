@@ -5,7 +5,6 @@ package monopoly.client.connection;
 
 import java.io.IOException;
 
-import monopoly.message.impl.MonopolyGameState;
 import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
 import monopoly.util.LectorXML;
@@ -18,18 +17,6 @@ import monopoly.util.message.LoginMessage;
  *
  */
 public class ConnectionController {
-
-	/**
-	 * The state of the game. This state is a copy of the official state, which
-	 * is stored on the server. When the state changes, the state is sent as a
-	 * message to this window. (It is actually sent to the TicTacToeClient
-	 * object that represents the connection to the server.) When that happens,
-	 * the state that was received in the message replaces the value of this
-	 * variable, and the board and UI is updated to reflect the changed state.
-	 * This is done in the newState() method, which is called by the
-	 * TicTacToeClient object.
-	 */
-	private MonopolyGameState state;
 
 	private int idPlayer; // The ID number that identifies the player using this
 							// window.
@@ -101,21 +88,6 @@ public class ConnectionController {
 		this.idPlayer = myID;
 	}
 
-	/**
-	 * @return the state
-	 */
-	public MonopolyGameState getState() {
-		return state;
-	}
-
-	/**
-	 * @param state
-	 *            the state to set
-	 */
-	public void setState(MonopolyGameState state) {
-		this.state = state;
-	}
-	
 	public static ConnectionController getInstance() {
 		if (instance == null)
 			instance = new ConnectionController();

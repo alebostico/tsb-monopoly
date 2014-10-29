@@ -8,6 +8,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
+import org.controlsfx.dialog.Dialogs;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,7 +21,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import jfx.messagebox.MessageBox;
 import monopoly.client.util.ScreensFramework;
 import monopoly.model.Juego;
 import monopoly.model.Usuario;
@@ -32,6 +33,7 @@ import monopoly.util.exception.CampoVacioException;
  * @author Moreno Pablo
  *
  */
+@SuppressWarnings("deprecation")
 public class CrearJuegoController extends AnchorPane implements Initializable {
 
 	@FXML
@@ -128,19 +130,21 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 				stage.setScene(scene);
 				stage.setTitle("Monopoly - Nuevo Juego");
 				stage.centerOnScreen();
-				stage.setFullScreen(true);
 				controller.setCurrentStage(stage);
 				controller.inicializarVariables();
 				currentStage.close();
 				stage.show();
 			}
 		} catch (CampoVacioException cve) {
-			MessageBox.show(currentStage, cve.getMessage(),
-					"Campos Obligatorios", MessageBox.ICON_WARNING
-							| MessageBox.OK);
+			Dialogs.create().owner(currentStage).title("Advertencia")
+			.masthead("Campo Obligatorio").message(cve.getMessage())
+			.showWarning();
 		} catch (Exception ex) {
 			// TODO Auto-generated catch block
 			GestorLogs.registrarError(ex.getMessage());
+			Dialogs.create().owner(currentStage).title("Error")
+			.masthead("Error mediante una excepción").message(ex.getMessage())
+			.showError();
 		}
 	}
 

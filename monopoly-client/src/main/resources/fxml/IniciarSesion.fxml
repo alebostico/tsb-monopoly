@@ -9,47 +9,43 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="500.0" styleClass="background" stylesheets="@../css/Sheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.LoginController">
+<StackPane alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="500.0" styleClass="background" stylesheets="@../css/Sheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.LoginController">
    <children>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0">
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" StackPane.alignment="CENTER">
          <children>
-            <VBox alignment="CENTER" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <VBox alignment="CENTER" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <ImageView id="app-login-logo" fitHeight="134.0" fitWidth="472.0">
                      <image>
                         <Image url="@../images/logos/Logo.png" />
                      </image>
                   </ImageView>
-                  <VBox alignment="CENTER_LEFT" fillWidth="false" spacing="10.0">
+                  <VBox alignment="CENTER">
                      <children>
-                        <Label id="label1" text="Usuario" />
-                        <TextField id="txtusuario" fx:id="txtUserName" minWidth="200.0" prefWidth="250.0" promptText="Usuario" />
+                        <GridPane alignment="CENTER" hgap="10.0" vgap="10.0">
+                          <columnConstraints>
+                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="165.0" minWidth="40.0" prefWidth="117.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.0" minWidth="10.0" prefWidth="285.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label id="label1" text="Usuario" />
+                              <TextField id="txtusuario" fx:id="txtUserName" minWidth="200.0" prefWidth="250.0" promptText="Usuario" GridPane.columnIndex="1" />
+                              <Label id="label1" text="Contraseña" GridPane.rowIndex="1" />
+                              <PasswordField id="txtContraseña" fx:id="txtPassword" minWidth="200.0" prefWidth="250.0" promptText="Contraseña" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label id="lblMensajeError" fx:id="lblMsgError" opacity="0.0" styleClass="labelError" text="" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+                           </children>
+                        </GridPane>
                      </children>
-                     <padding>
-                        <Insets left="20.0" />
-                     </padding>
+                     <VBox.margin>
+                        <Insets left="40.0" right="40.0" top="10.0" />
+                     </VBox.margin>
                   </VBox>
-                  <VBox alignment="CENTER_LEFT" fillWidth="false" spacing="10.0">
-                     <padding>
-                        <Insets left="20.0" />
-                     </padding>
-                     <children>
-                        <Label id="label1" text="Contraseña" />
-                        <PasswordField id="txtContraseña" fx:id="txtPassword" minWidth="200.0" prefWidth="250.0" promptText="Contraseña" />
-                     </children>
-                  </VBox>
-                  <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="top-segment">
-                     <children>
-                        <Label id="lblMensajeError" fx:id="lblMsgError" opacity="0.0" styleClass="labelError" text="">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </Label>
-                     </children>
-                     <padding>
-                        <Insets left="20.0" />
-                     </padding>
-                  </HBox>
+                  <VBox styleClass="top-segment" />
                   <VBox alignment="CENTER" spacing="10.0">
                      <children>
                         <Button id="btnIngresar" fx:id="btnLohgin" defaultButton="true" onAction="#processLogin" prefHeight="70.0" prefWidth="400.0" text="Ingresar" />
@@ -57,6 +53,9 @@
                         <Button id="btnRegistrarme" fx:id="btnConfig" onAction="#processConfig" prefHeight="70.0" prefWidth="400.0" text="Configuraciones" />
                         <Button id="btnSalir" fx:id="btnSalir" cancelButton="true" onAction="#processExit" prefHeight="70.0" prefWidth="400.0" text="Salir" />
                      </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
                   </VBox>
                </children>
             </VBox>

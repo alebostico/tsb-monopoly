@@ -11,13 +11,16 @@ import monopoly.client.controller.CrearJuegoController;
 import monopoly.client.controller.LoginController;
 import monopoly.client.controller.RegistrarmeController;
 import monopoly.client.controller.TableroController;
+import monopoly.client.controller.TirarDadosController;
 import monopoly.client.controller.UnirmeJuegoController;
 import monopoly.model.Juego;
+import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
+import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
-import monopoly.util.message.JoinGameMessage;
 import monopoly.util.message.LoginMessage;
+import monopoly.util.message.game.JoinGameMessage;
 
 /**
  * @author Bostico Alejandro
@@ -50,22 +53,22 @@ public class MonopolyClient extends GameClient {
 	protected void messageReceived(final Object message) {
 		
 		switch (message.getClass().getSimpleName()) {
-		case "LoginMessage":
+		case ConstantesMensaje.LOGIN_MESSAGE:
 			usuario = (Usuario) ((LoginMessage) message).message;
 			LoginController.getInstance().iniciarSesion(usuario);
 			break;
 
-		case "CreateAccountMessage":
+		case ConstantesMensaje.CREATE_ACCOUNT_MESSAGE:
 			usuario = (Usuario) ((CreateAccountMessage) message).message;
 			RegistrarmeController.getInstance().iniciarSesion(usuario);
 			break;
 			
-		case "CreateGameMessage":
+		case ConstantesMensaje.CREATE_GAME_MESSAGE:
 			juego = (Juego) ((CreateGameMessage) message).message;
 			CrearJuegoController.getInstance().showCrearJuego(juego);
 			break;
 			
-		case "JoinGameMessage":
+		case ConstantesMensaje.JOIN_GAME_MESSAGE:
 			List<?> list = (List<?>) ((JoinGameMessage) message).message;
 			juegosList = new ArrayList<Juego>();
 			if (!list.isEmpty()) {
@@ -76,30 +79,43 @@ public class MonopolyClient extends GameClient {
 			UnirmeJuegoController.getInstance().showUnirmeJuego(juegosList);
 			break;
 			
-		case "StartGameMessage":
-			TableroController.getInstance().startGame();
+		case ConstantesMensaje.STATUS_GAME_MESSAGE:
+			determinarAccion(message);
 			break;
 			
-
 		case "String":
-
+			messageString(message);
 			break;
 
 		default:
 			break;
 		}
 
-		// if (message instanceof MonopolyGameState) {
-		// newState((MonopolyGameState) message);
-		// }
-		// if (message instanceof MonopolyGameState)
-		// newState((MonopolyGameState) message);
-		// else if (message instanceof String)
-		// messageFromServer.setText( (String)message );
-		// else if (message instanceof PokerCard[]) {
-		// opponentHand = (PokerCard[])message;
-		// display.repaint();
-		// }
+	}
+	private void messageString(Object message){
+		switch((String) message){
+		case ConstantesMensaje.THROW_DICE_TURNS_MESSAGE:
+			TableroController.getInstance().tirarDadosParaTurno();
+			break;
+			
+			default:
+				break;
+		
+		}
+	}
+	
+	private void determinarAccion(Object message){
+		MonopolyGameStatus status = (MonopolyGameStatus) message;
+		
+		switch(status.status){
+		case MonopolyGameStatus.EMPEZAR:
+			TirarDadosController.getInstance().habilitarBotonAceptar(status);
+			break;
+			
+			default:
+				break;
+		
+		}
 	}
 
 	/**
