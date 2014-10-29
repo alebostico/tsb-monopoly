@@ -199,7 +199,7 @@ public class Main {
 		// //////////////////////////////////////////////////////
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused" })
 	private static void testShuffleList() {
 
 		int cantElementos = 100000;
@@ -273,6 +273,7 @@ public class Main {
 		 */
 	}
 
+	@SuppressWarnings("unused")
 	private static void testRandomizeList() {
 
 		List<String> testListString = new ArrayList<String>();
@@ -309,6 +310,7 @@ public class Main {
 
 	}
 
+	@SuppressWarnings("unused")
 	private static void testStringUtils() {
 		System.out
 				.println("Salida esperada para 'hola': 4d186321c1a7f0f354b297e8914ab240");
