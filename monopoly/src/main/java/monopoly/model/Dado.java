@@ -17,7 +17,32 @@ public class Dado implements Serializable {
 	 */
 	private static final long serialVersionUID = 6979691718041435144L;
 	
-	int[] dados = new int[2];
+	private int[] dados;
+	
+	public Dado(){
+		 dados = new int[2];
+		 tirarDados();
+	}
+	
+	public static String getPathImageDado(int numero){
+		switch (numero) {
+		case 1:
+			return "/images/dados/dado_1.png";
+		case 2:
+			return "/images/dados/dado_2.png";
+		case 3:
+			return "/images/dados/dado_3.png";
+		case 4:
+			return "/images/dados/dado_4.png";
+		case 5:
+			return "/images/dados/dado_5.png";
+		case 6:
+			return "/images/dados/dado_6.png";
+		default:
+			break;
+		}
+		return "";
+	}
 
 	/**
 	 * Devuelve un entero aleatorio entre 1 y 6
@@ -34,7 +59,7 @@ public class Dado implements Serializable {
 	 * 
 	 * @return La suma de los dos dados.
 	 */
-	public int tirarDados() {
+	private int tirarDados() {
 		dados[0] = this.tirarDado();
 		dados[1] = this.tirarDado();
 
@@ -42,6 +67,15 @@ public class Dado implements Serializable {
 				+ getValorDado(2) + " = " + getSuma());
 
 		return dados[0] + dados[1];
+	}
+	
+	/**
+	 * Tira los dos dados y devuelve el valor de cada dado.
+	 * 
+	 * @return La suma de los dos dados.
+	 */
+	public int[] getValorDados() {
+		return dados;
 	}
 
 	/**

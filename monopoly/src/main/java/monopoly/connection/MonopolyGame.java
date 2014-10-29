@@ -11,11 +11,12 @@ import monopoly.controller.UsuarioController;
 import monopoly.model.Estado.EstadoJuego;
 import monopoly.model.Juego;
 import monopoly.model.Usuario;
+import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
-import monopoly.util.message.InitGameMessage;
-import monopoly.util.message.JoinGameMessage;
 import monopoly.util.message.LoginMessage;
+import monopoly.util.message.game.LoadGameMessage;
+import monopoly.util.message.game.JoinGameMessage;
 
 /**
  * @author Bostico Alejandro
@@ -24,6 +25,10 @@ import monopoly.util.message.LoginMessage;
  */
 public class MonopolyGame extends GameServer {
 
+	private Usuario usuario;
+	private Juego juego;
+	private List<Juego> juegosList;
+	
 	/**
 	 * Creates a MonopolyGame listening on a specified port.
 	 */
@@ -67,57 +72,72 @@ public class MonopolyGame extends GameServer {
 	 * state to each player, and it will generally send a string to each client
 	 * as a message to be displayed to that player.
 	 */
-	protected void messageReceived(int playerID, Object message) {
-		int senderId = 0;
-		Usuario usuario;
-		Juego juego;
-		List<Juego> juegosList;
+	protected void messageReceived(int senderId, Object message) {
 		
 		switch (message.getClass().getSimpleName()) {
-		case "LoginMessage":
-			senderId = ((LoginMessage) message).senderID;
+		case ConstantesMensaje.LOGIN_MESSAGE:
 			usuario = (Usuario) ((LoginMessage) message).message;
 			usuario = UsuarioController.validarUsuario(usuario.getUserName(),
 					usuario.getPassword());
 			sendToOne(senderId, new LoginMessage(senderId, usuario));
 			break;
 
-		case "CreateAccountMessage":
+		case ConstantesMensaje.CREATE_ACCOUNT_MESSAGE:
 			// tomar el usuario y grabarlo
-			senderId = ((CreateAccountMessage) message).senderID;
 			usuario = (Usuario) ((CreateAccountMessage) message).message;
 			UsuarioController.saveUsuario(usuario);
 			sendToOne(senderId, new CreateAccountMessage(senderId, usuario));
 			break;
 
-		case "CreateGameMessage":
+		case ConstantesMensaje.CREATE_GAME_MESSAGE:
 			// create juego
-			senderId = ((CreateGameMessage) message).senderID;
 			usuario = (Usuario) ((CreateGameMessage) message).message;
 			juego = PartidasController.getInstance().crearJuego(usuario, "");
 			sendToOne(senderId, new CreateGameMessage(senderId, juego));
 			break;
 
-		case "JoinGameMessage":
+		case ConstantesMensaje.JOIN_GAME_MESSAGE:
 			// unirse al juego
-			senderId = ((JoinGameMessage) message).senderID;
-			juegosList = PartidasController.getInstance().buscarJuegos(EstadoJuego.ESPERANDO_JUGADOR);
-			sendToOne(senderId, new JoinGameMessage(senderId, juegosList));
+			
 			break;
 			
-		case "InitGameMessage":
-			senderId = ((InitGameMessage) message).senderID;
-			juego = (Juego) ((InitGameMessage) message).message;
-			PartidasController.getInstance().initGame(this, senderId,juego);
+		case ConstantesMensaje.LOAD_GAME_MESSAGE:
+			juego = (Juego) ((LoadGameMessage) message).message;
+			PartidasController.getInstance().loadGame(senderId,juego);
+			break;
+			
+		case ConstantesMensaje.START_GAME_MESSAGE:
+			PartidasController.getInstance().StartGame(senderId, message);
 			break;
 
-		case "DisconnectMessage":
+		case ConstantesMensaje.DISCONNECT_MESSAGE:
 
+			break;
+			
+		case "String":
+			messageString(senderId, message);
 			break;
 
 		default:
 			System.out.print(message.getClass().getSimpleName());
 			break;
+		}
+	}
+	
+	private void messageString(int senderId, Object message){
+		switch((String) message){
+		case ConstantesMensaje.GET_PENDING_GAMES_MESSAGE:
+			juegosList = PartidasController.getInstance().buscarJuegos(EstadoJuego.ESPERANDO_JUGADOR);
+			sendToOne(senderId, new JoinGameMessage(senderId, juegosList));
+			break;
+			
+		case ConstantesMensaje.THROW_DICE_TURNS_MESSAGE:
+			
+			break;
+			
+			default:
+				break;
+		
 		}
 	}
 

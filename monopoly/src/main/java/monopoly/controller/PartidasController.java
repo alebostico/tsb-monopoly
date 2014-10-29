@@ -8,13 +8,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 
-import monopoly.connection.MonopolyGame;
+import monopoly.connection.GameServer;
+import monopoly.model.Dado;
+import monopoly.model.Estado.EstadoJuego;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
-import monopoly.model.JugadorHumano;
-import monopoly.model.JugadorVirtual;
 import monopoly.model.Usuario;
-import monopoly.model.Estado.EstadoJuego;
 import monopoly.util.GestorLogs;
 import monopoly.util.message.game.StartGameMessage;
 
@@ -28,6 +27,8 @@ public class PartidasController {
 	private TreeMap<String, JuegoController> juegosControllerList;
 
 	private static PartidasController instance;
+
+	private GameServer monopolyGame;
 
 	private PartidasController() {
 		super();
@@ -164,7 +165,7 @@ public class PartidasController {
 		return null;
 
 	}
-	
+
 	/**
 	 * Retorna todos los juegos cuyos nombres coinciden con un criterio de
 	 * búsqueda
@@ -176,7 +177,7 @@ public class PartidasController {
 		// TODO: Implementar método
 		List<Juego> juegos = new ArrayList<Juego>();
 		for (JuegoController jc : juegosControllerList.values()) {
-			if (jc.getJuego().getEstadoJuego().getEstado().equals(estado))
+			if (jc.getEstadoJuego().getEstado().equals(estado))
 				juegos.add(jc.getJuego());
 		}
 		return juegos;
@@ -192,28 +193,44 @@ public class PartidasController {
 		return buscarJuego(uniqueID);
 	}
 
-	public void initGame(MonopolyGame monopolyGame, int senderID, Juego juego) {
+	public void loadGame(int senderID, Juego juego) {
 		// TODO Auto-generated method stub
-		JuegoController controller = juegosControllerList.get(juego.getUniqueID());
-		controller.setJuego(juego);
+		JuegoController controller = juegosControllerList.get(juego
+				.getUniqueID());
 		int cantJugadores = juego.getCantJugadores();
-		controller.setCantJugadores(cantJugadores);
-		
-		for(Jugador jugador :juego.getJugadoresList()){
-			if(jugador instanceof JugadorHumano){
-				controller.addPlayer(String.valueOf(senderID), jugador);
-			}
-			if(jugador instanceof JugadorVirtual){
-				controller.addPlayer(jugador.getNombre(), jugador);
-			}
-		}
 
-		if(cantJugadores == controller.getJugadores().size()){
-			// StartGame
-			StartGameMessage msg = new StartGameMessage(senderID, juego);
-			monopolyGame.sendToOne(senderID, msg);
+		controller.setJuego(juego);
+		controller.getEstadoJuego().actualizarEstadoJuego();
+		controller.setCantJugadores(cantJugadores);
+
+		for (Jugador jugador : juego.getJugadoresList()) {
+			controller.addPlayer(jugador);
 		}
-		
+	}
+
+	public void StartGame(int senderId, Object message) {
+		// TODO Auto-generated method stub
+		Object[] vDatos = (Object[]) ((StartGameMessage) message).message;
+		String idJuego = vDatos[0].toString();
+		Dado dados = (Dado) vDatos[1];
+
+		JuegoController controller = juegosControllerList.get(idJuego);
+		controller.startGame(senderId, dados);
+	}
+
+	/**
+	 * @return the monopolyGame
+	 */
+	public GameServer getMonopolyGame() {
+		return monopolyGame;
+	}
+
+	/**
+	 * @param monopolyGame
+	 *            the monopolyGame to set
+	 */
+	public void setMonopolyGame(GameServer monopolyGame) {
+		this.monopolyGame = monopolyGame;
 	}
 
 }

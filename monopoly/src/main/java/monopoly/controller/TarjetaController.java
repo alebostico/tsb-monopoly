@@ -3,17 +3,23 @@
  */
 package monopoly.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import monopoly.dao.ITarjetaCalleDao;
+import monopoly.dao.ITarjetaCompaniaDao;
 import monopoly.dao.ITarjetaComunidadDao;
+import monopoly.dao.ITarjetaEstacionDao;
 import monopoly.dao.ITarjetaSuerteDao;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaComunidad;
+import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
 import monopoly.util.ListUtils;
@@ -31,7 +37,7 @@ public class TarjetaController {
 	private List<TarjetaSuerte> tarjetasSuerteList;
 
 	private List<TarjetaComunidad> tarjetasComunidadList;
-
+	
 	private int proximaTarjetaSuerte;
 
 	private int proximaTarjetaComunidad;
@@ -81,6 +87,30 @@ public class TarjetaController {
 		for (TarjetaSuerte tarjetaSuerte : tarjetasSuerteList) {
 			GestorLogs.registrarDebug(tarjetaSuerte.toString());
 		}
+	}
+	
+	public static TreeMap<String, TarjetaPropiedad> getTarjetasPropiedades(){
+		TreeMap<String, TarjetaPropiedad> tarjetaPropiedad = new TreeMap<String, TarjetaPropiedad>();
+		List<TarjetaPropiedad> list = new ArrayList<TarjetaPropiedad>();
+		
+		ApplicationContext appCon = new ClassPathXmlApplicationContext(
+				"spring/config/BeanLocations.xml");
+		ITarjetaCalleDao callesDao = (ITarjetaCalleDao) appCon
+				.getBean("tarjetaCalleDao");
+		ITarjetaCompaniaDao companiasDao = (ITarjetaCompaniaDao) appCon
+				.getBean("tarjetaCompaniaDao");
+		ITarjetaEstacionDao estacionesDao = (ITarjetaEstacionDao) appCon
+				.getBean("tarjetaEstacionDao");
+		
+		list.addAll(callesDao.getAll());
+		list.addAll(companiasDao.getAll());
+		list.addAll(estacionesDao.getAll());
+		
+		for(TarjetaPropiedad tp : list){
+			tarjetaPropiedad.put(tp.getNombrePropiedad(), tp);
+		}
+		
+		return tarjetaPropiedad;
 	}
 
 	private void mezclarTarjetasSuerte() {

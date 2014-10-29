@@ -20,12 +20,6 @@ import monopoly.model.Jugador;
  */
 @Entity
 @Table(name="tarjeta_estacion", catalog = "monopoly_db")
-//@AttributeOverrides({
-//    @AttributeOverride(name="jugador", column=@Column(name="jugadorID")),
-//    @AttributeOverride(name="nombre", column=@Column(name="nombre")),
-//    @AttributeOverride(name="valorHipoticario", column=@Column(name="valorHipoticario"))
-//    @AttributeOverride(name="valorPropiedad", column=@Column(name="valorPropiedad"))
-//})
 @PrimaryKeyJoinColumn(name="tarjetaPropiedadID")
 public class TarjetaEstacion extends TarjetaPropiedad implements Serializable{
 

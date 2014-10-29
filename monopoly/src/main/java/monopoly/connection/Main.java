@@ -5,6 +5,8 @@ package monopoly.connection;
 
 import java.io.IOException;
 
+import monopoly.controller.PartidasController;
+
 
 /**
  * @author Bostico Alejandro
@@ -23,6 +25,7 @@ public class Main {
 		gs = null;
 		try {
 			gs = new MonopolyGame();
+			PartidasController.getInstance().setMonopolyGame(gs);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
