@@ -6,6 +6,7 @@ package monopoly.client.controller;
 import java.io.Serializable;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,16 +25,23 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -43,6 +51,9 @@ import monopoly.client.connection.ConnectionController;
 import monopoly.client.util.ScreensFramework;
 import monopoly.model.History;
 import monopoly.model.Juego;
+import monopoly.model.Jugador;
+import monopoly.model.JugadorHumano;
+import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesFXML;
@@ -100,7 +111,7 @@ public class TableroController extends AnchorPane implements Serializable,
 	private Button btnComerciar;
 
 	@FXML
-	private Button btnMenu;
+	private MenuButton btnMenu;
 
 	@FXML
 	private ListView<History> lvHistoryChat;
@@ -134,6 +145,9 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	@FXML
 	private Accordion accordionPlayers;
+
+	@FXML
+	private Accordion accordionHistorial;
 
 	@FXML
 	private Button btnDesconstruir;
@@ -233,6 +247,8 @@ public class TableroController extends AnchorPane implements Serializable,
 	@FXML
 	private Stage preloaderStage;
 
+	private TitledPane[] tps;
+
 	private Juego juego;
 
 	private Usuario usuarioLogueado;
@@ -255,6 +271,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		oHistoryGameList = FXCollections.observableArrayList(historyGameList);
 		historyChatList = new ArrayList<History>();
 		oHistoryChatList = FXCollections.observableArrayList(historyChatList);
+		accordionHistorial.setExpandedPane(tpHistory);
 	}
 
 	@FXML
@@ -308,7 +325,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	}
 
-	private void addHistoryGame(String usuario, String mensaje) {
+	public void addHistoryGame(String usuario, String mensaje) {
 		Calendar calendar = GregorianCalendar.getInstance();
 		History history = new History(dateFormat.format(calendar.getTime()),
 				usuario, mensaje);
@@ -317,8 +334,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		lvHistory.setItems(oHistoryGameList);
 	}
 
-	@SuppressWarnings("unused")
-	private void addHistoryChat(String usuario, String mensaje) {
+	public void addHistoryChat(String usuario, String mensaje) {
 		Calendar calendar = GregorianCalendar.getInstance();
 		History history = new History(dateFormat.format(calendar.getTime()),
 				usuario, mensaje);
@@ -375,7 +391,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		timeline.play();
 	}
 
-	public void startGame() {
+	public void tirarDadosParaTurno() {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -384,11 +400,13 @@ public class TableroController extends AnchorPane implements Serializable,
 
 					String fxml = ConstantesFXML.FXML_TIRAR_DADOS;
 					Parent root;
+					TirarDadosController controller;
 
 					Stage tirarDadosStage = new Stage();
 					FXMLLoader loader = ScreensFramework.getLoader(fxml);
 
 					root = (Parent) loader.load();
+					controller = (TirarDadosController) loader.getController();
 
 					Scene scene = new Scene(root);
 					tirarDadosStage.setScene(scene);
@@ -400,7 +418,10 @@ public class TableroController extends AnchorPane implements Serializable,
 					tirarDadosStage.initStyle(StageStyle.UNDECORATED);
 
 					SplashController.getInstance().getCurrentStage().close();
-					tirarDadosStage.show();
+					controller.setCurrentStage(tirarDadosStage);
+
+					controller.showEstablecerTurno(TableroController
+							.getInstance().getUsuarioLogueado().getNombre());
 
 				} catch (Exception ex) {
 					// TODO Auto-generated catch block
@@ -408,6 +429,284 @@ public class TableroController extends AnchorPane implements Serializable,
 				}
 			}
 		});
+	}
+
+	public void empezarJuego(MonopolyGameStatus status) {
+		showAccordionJugadores(status.turnos);
+		displayFichasInicio(status.turnos);
+		TirarDadosController.getInstance().getCurrentStage().close();
+	}
+
+	private void showAccordionJugadores(List<Jugador> turnos) {
+		tps = new TitledPane[turnos.size() + 1];
+		String title;
+
+		for (int i = 0; i < turnos.size(); i++) {
+			title = turnos.get(i).getNombre() + " - ";
+			title += (turnos.get(i) instanceof JugadorHumano) ? "Jugador Humano"
+					: "Jugador Virtual";
+			tps[i] = getPaneInfoPlayer(turnos.get(i), title);
+		}
+		tps[turnos.size()] = new TitledPane("Banco", new Pane());
+
+		accordionPlayers.getPanes().addAll(tps);
+		accordionPlayers.setExpandedPane(tps[0]);
+	}
+
+	private void displayFichasInicio(List<Jugador> turnos) {
+		GridPane grid = new GridPane();
+		grid.setHgap(5);
+		grid.setVgap(5);
+
+		Image img;
+
+		int row = 0;
+		int col = 0;
+		for (int i = 0; i < turnos.size(); i++) {
+			img = new Image(TableroController.class.getResourceAsStream(turnos
+					.get(i).getFicha().getPathImgSmall()), 25, 25, true, true);
+			grid.add(new ImageView(img), col, row);
+
+			col++;
+
+			if (col > 1) {
+				row++;
+				col = 0;
+			}
+		}
+		AnchorPane.setLeftAnchor(grid, (double) 0);
+		AnchorPane.setRightAnchor(grid, (double) 0);
+		AnchorPane.setTopAnchor(grid, (double) 0);
+		AnchorPane.setBottomAnchor(grid, (double) 0);
+
+		pCasillero01.getChildren().add(grid);
+	}
+
+	private TitledPane getPaneInfoPlayer(Jugador jugador, String title) {
+		AnchorPane root = new AnchorPane();
+		VBox vBox = new VBox();
+		HBox hbInfoJugador = new HBox();
+		HBox hbPropiedades = new HBox();
+		HBox hbExtra = new HBox();
+
+		AnchorPane.setLeftAnchor(vBox, (double) 0);
+		AnchorPane.setRightAnchor(vBox, (double) 0);
+		AnchorPane.setTopAnchor(vBox, (double) 0);
+		AnchorPane.setBottomAnchor(vBox, (double) 0);
+		vBox.getStyleClass().add("bg_info_panel");
+		vBox.setAlignment(Pos.CENTER);
+		vBox.setSpacing(10);
+
+		hbInfoJugador.setAlignment(Pos.CENTER);
+		hbInfoJugador.setSpacing(20);
+
+		hbPropiedades.setAlignment(Pos.CENTER);
+		hbPropiedades.setSpacing(20);
+
+		hbExtra.setAlignment(Pos.CENTER);
+		hbExtra.setSpacing(20);
+
+		vBox.getChildren().add(hbInfoJugador);
+		vBox.getChildren().add(hbPropiedades);
+		vBox.getChildren().add(hbExtra);
+		root.getChildren().add(vBox);
+
+		VBox pImgFicha = new VBox();
+		AnchorPane.setLeftAnchor(pImgFicha, (double) 0);
+		AnchorPane.setRightAnchor(pImgFicha, (double) 0);
+		AnchorPane.setTopAnchor(pImgFicha, (double) 0);
+		AnchorPane.setBottomAnchor(pImgFicha, (double) 0);
+		pImgFicha.setAlignment(Pos.CENTER);
+
+		pImgFicha.getStyleClass().add("bg_info_ficha");
+		pImgFicha.setMinSize((double) 75, (double) 75);
+		pImgFicha.setMaxSize((double) 75, (double) 75);
+		Image img = new Image(
+				TableroController.class.getResourceAsStream(jugador.getFicha()
+						.getPathImgBig()), 40, 40, true, true);
+		ImageView ivFicha = new ImageView(img);
+
+		pImgFicha.getChildren().add(ivFicha);
+
+		NumberFormat formatoImporte = NumberFormat.getCurrencyInstance();
+
+		hbInfoJugador.getChildren().add(pImgFicha);
+		hbInfoJugador.getChildren().add(new Label(jugador.getNombre()));
+		hbInfoJugador.getChildren().add(
+				new Label(formatoImporte.format(jugador.getDinero())));
+
+		GridPane gridPane1 = new GridPane();
+		GridPane gridPane2 = new GridPane();
+
+		AnchorPane.setLeftAnchor(gridPane1, (double) 0);
+		AnchorPane.setRightAnchor(gridPane1, (double) 0);
+		AnchorPane.setTopAnchor(gridPane1, (double) 0);
+		AnchorPane.setBottomAnchor(gridPane1, (double) 0);
+
+		AnchorPane.setLeftAnchor(gridPane2, (double) 0);
+		AnchorPane.setRightAnchor(gridPane2, (double) 0);
+		AnchorPane.setTopAnchor(gridPane2, (double) 0);
+		AnchorPane.setBottomAnchor(gridPane2, (double) 0);
+		
+		gridPane1.setHgap(5);
+		gridPane1.setVgap(10);
+		gridPane2.setHgap(5);
+		gridPane2.setVgap(10);
+
+		// Image bgPropiedad = new Image(
+		// TableroController.class
+		// .getResourceAsStream("/images/background/bg_propiedad.png"),
+		// 40, 60, false, false);
+		
+		double hbWidth = 35;
+		double hbHeight = 60;
+
+		HBox hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_marron");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane1.add(hBox_inner, 0, 0);
+
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_marron");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane1.add(hBox_inner, 1, 0);
+
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_celeste");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane1.add(hBox_inner, 0, 1);
+
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_celeste");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane1.add(hBox_inner, 1, 1);
+
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_celeste");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane1.add(hBox_inner, 2, 1);
+		
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_fuczia");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane1.add(hBox_inner, 0, 2);
+
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_fuczia");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane1.add(hBox_inner, 1, 2);
+
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_fuczia");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane1.add(hBox_inner, 2, 2);
+		
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_naranja");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane1.add(hBox_inner, 0, 3);
+
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_naranja");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane1.add(hBox_inner, 1, 3);
+
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_naranja");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane1.add(hBox_inner, 2, 3);
+		
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_rojo");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane1.add(hBox_inner, 0, 4);
+
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_rojo");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane1.add(hBox_inner, 1, 4);
+
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_rojo");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane1.add(hBox_inner, 2, 4);
+		
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_amarillo");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane2.add(hBox_inner, 0, 0);
+
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_amarillo");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane2.add(hBox_inner, 1, 0);
+		
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_amarillo");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane2.add(hBox_inner, 2, 0);
+		
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_verde");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane2.add(hBox_inner, 0, 1);
+
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_verde");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane2.add(hBox_inner, 1, 1);
+		
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_verde");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane2.add(hBox_inner, 2, 1);
+		
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_azul");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane2.add(hBox_inner, 0, 2);
+
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_azul");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane2.add(hBox_inner, 1, 2);
+		
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_blanco");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane2.add(hBox_inner, 0, 3);
+
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_blanco");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane2.add(hBox_inner, 1, 3);
+		
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_negro");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane2.add(hBox_inner, 0, 4);
+
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_negro");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane2.add(hBox_inner, 1, 4);
+		
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_negro");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane2.add(hBox_inner, 2, 4);
+
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_negro");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		gridPane2.add(hBox_inner, 3, 4);
+
+		hbPropiedades.getChildren().add(gridPane1);
+		hbPropiedades.getChildren().add(gridPane2);
+
+		TitledPane tp = new TitledPane(title, root);
+		tp.setId("tp_" + jugador.getNombre());
+		return tp;
 	}
 
 	/**

@@ -7,10 +7,7 @@ import java.io.Serializable;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import monopoly.client.controller.LoginController;
-import monopoly.model.Usuario;
 import monopoly.util.message.DisconnectMessage;
-import monopoly.util.message.LoginMessage;
 import monopoly.util.message.ResetSignal;
 
 /**
@@ -403,28 +400,12 @@ abstract public class GameClient {
 					while (!closed) {
 						Object obj = in.readObject();
 
-						switch (obj.getClass().getSimpleName()) {
-						case "DisconnectMessage":
+						if (obj instanceof DisconnectMessage) {
 							close();
 							serverShutdown(((DisconnectMessage) obj).message);
-							break;
-						case "StatusMessage":
-							// StatusMessage msg = (StatusMessage) obj;
-							// connectedPlayerIDs = msg.players;
-							// if (msg.connecting)
-							// playerConnected(msg.playerID);
-							// else
-							// playerDisconnected(msg.playerID);
-							break;
-						case "LoginMessage":
-							LoginMessage msgLogin = (LoginMessage) obj;
-							LoginController.getInstance().iniciarSesion((Usuario) msgLogin.message);
-							break;
-
-						default:
+						} else
 							messageReceived(obj);
-							break;
-						}
+
 					}
 				} catch (IOException e) {
 					if (!closed) {

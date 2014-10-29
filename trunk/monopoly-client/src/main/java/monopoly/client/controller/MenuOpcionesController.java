@@ -20,8 +20,8 @@ import monopoly.client.util.ScreensFramework;
 import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesFXML;
+import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.message.CreateGameMessage;
-import monopoly.util.message.JoinGameMessage;
 
 /**
  * @author pablo
@@ -141,8 +141,9 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 			stage.setTitle("Monopoly - Unirme a Juego");
 			stage.centerOnScreen();
 			controller.setCurrentStage(stage);
-			int senderId = ConnectionController.getInstance().getIdPlayer();
-			ConnectionController.getInstance().send(new JoinGameMessage(senderId, usuarioLogueado));
+//			int senderId = ConnectionController.getInstance().getIdPlayer();
+//			ConnectionController.getInstance().send(new JoinGameMessage(senderId, usuarioLogueado));
+			ConnectionController.getInstance().send(ConstantesMensaje.GET_PENDING_GAMES_MESSAGE);
 
 		} catch (Exception ex) {
 			// TODO Auto-generated catch block

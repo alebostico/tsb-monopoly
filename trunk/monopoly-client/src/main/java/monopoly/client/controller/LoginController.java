@@ -20,7 +20,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import jfx.messagebox.MessageBox;
 import monopoly.client.connection.ConnectionController;
 import monopoly.client.util.ScreensFramework;
 import monopoly.model.Usuario;
@@ -30,32 +29,35 @@ import monopoly.util.encriptacion.Encrypter;
 import monopoly.util.encriptacion.VernamEncrypter;
 import monopoly.util.exception.CampoVacioException;
 
+import org.controlsfx.dialog.Dialogs;
+
 /**
  * @author pablo
  * 
  */
+@SuppressWarnings("deprecation")
 public class LoginController extends AnchorPane implements Initializable {
 
 	@FXML
-    private Button btnSalir;
+	private Button btnSalir;
 
-    @FXML
-    private Button btnConfig;
+	@FXML
+	private Button btnConfig;
 
-    @FXML
-    private TextField txtUserName;
+	@FXML
+	private TextField txtUserName;
 
-    @FXML
-    private Button btnRegistrarme;
+	@FXML
+	private Button btnRegistrarme;
 
-    @FXML
-    private Button btnLohgin;
+	@FXML
+	private Button btnLohgin;
 
-    @FXML
-    private Label lblMsgError;
+	@FXML
+	private Label lblMsgError;
 
-    @FXML
-    private PasswordField txtPassword;
+	@FXML
+	private PasswordField txtPassword;
 
 	private Stage primaryStage;
 
@@ -84,9 +86,9 @@ public class LoginController extends AnchorPane implements Initializable {
 				validarUsuario(userName, password);
 			}
 		} catch (CampoVacioException cve) {
-			MessageBox.show(primaryStage, cve.getMessage(),
-					"Campos Obligatorios", MessageBox.ICON_WARNING
-							| MessageBox.OK);
+			Dialogs.create().owner(primaryStage).title("Advertencia")
+					.masthead("Campo Obligatorio").message(cve.getMessage())
+					.showWarning();
 		}
 	}
 
@@ -160,11 +162,11 @@ public class LoginController extends AnchorPane implements Initializable {
 		GestorLogs.registrarLog("Saliendo del Juego..");
 		ConnectionController.getInstance().cerrarConexion();
 	}
-	
-	@FXML
-    void processConfig(ActionEvent event) {
 
-    }
+	@FXML
+	void processConfig(ActionEvent event) {
+
+	}
 
 	@FXML
 	public void processCreateAccount(ActionEvent event) {

@@ -71,7 +71,7 @@ public class SplashController extends AnchorPane implements Initializable {
 	public void toContinue(){
 		if(controller instanceof TableroController)
 		{
-			TableroController.getInstance().startGame();
+			TableroController.getInstance().tirarDadosParaTurno();
 			currentStage.close();
 		}
 	}

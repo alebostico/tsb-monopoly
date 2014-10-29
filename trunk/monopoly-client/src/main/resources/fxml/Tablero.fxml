@@ -160,9 +160,9 @@
                                     </AnchorPane>
                                     <AnchorPane>
                                        <children>
-                                          <Accordion AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Accordion fx:id="accordionHistorial" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <panes>
-                                                <TitledPane fx:id="tpHistory" animated="false" expanded="true" text="Historia">
+                                                <TitledPane fx:id="tpHistory" animated="false" expanded="true" text="Historia" wrapText="true">
                                                    <content>
                                                       <AnchorPane minHeight="0.0" minWidth="0.0">
                                                          <children>
@@ -202,11 +202,12 @@
                   </HBox>
                   <HBox alignment="CENTER" maxHeight="60.0" minHeight="60.0" prefHeight="60.0">
                      <children>
-                        <Button fx:id="btnMenu" mnemonicParsing="false" onAction="#processMenu" text="Menú">
-                           <HBox.margin>
-                              <Insets left="5.0" right="5.0" />
-                           </HBox.margin>
-                        </Button>
+                        <MenuButton fx:id="btnMenu" mnemonicParsing="false" onAction="#processMenu" styleClass="button" text="Menú">
+                          <items>
+                            <MenuItem mnemonicParsing="false" text="Action 1" />
+                            <MenuItem mnemonicParsing="false" text="Action 2" />
+                          </items>
+                        </MenuButton>
                         <Button fx:id="btnConstruir" mnemonicParsing="false" onAction="#processContruir" text="Construir">
                            <HBox.margin>
                               <Insets left="5.0" right="5.0" />

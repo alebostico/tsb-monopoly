@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.controlsfx.dialog.Dialogs;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -21,7 +23,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import jfx.messagebox.MessageBox;
 import monopoly.client.connection.ConnectionController;
 import monopoly.client.util.ScreensFramework;
 import monopoly.model.Usuario;
@@ -36,6 +37,7 @@ import monopoly.util.exception.EmailInvalidoException;
  * @author pablo
  *
  */
+@SuppressWarnings("deprecation")
 public class RegistrarmeController extends AnchorPane implements Initializable {
 
 	@FXML
@@ -131,13 +133,15 @@ public class RegistrarmeController extends AnchorPane implements Initializable {
 
 				ConnectionController.getInstance().iniciarConexionToAccount(usuario);
 			}
-		} catch (EmailInvalidoException e) {
+		} catch (EmailInvalidoException eie) {
 			// TODO Auto-generated catch block
-			MessageBox.show(prevStage, e.getMessage(), "Campo inválido",
-					MessageBox.ICON_WARNING | MessageBox.OK);
+			Dialogs.create().owner(currentStage).title("Advertencia")
+			.masthead("Campo Inválido").message(eie.getMessage())
+			.showWarning();
 		} catch (CampoVacioException cve) {
-			MessageBox.show(prevStage, cve.getMessage(), "Campo Obligatorio",
-					MessageBox.ICON_WARNING | MessageBox.OK);
+			Dialogs.create().owner(currentStage).title("Advertencia")
+			.masthead("Campo Obligatorio").message(cve.getMessage())
+			.showWarning();
 		}
 	}
 	

@@ -6,28 +6,27 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane maxHeight="150.0" maxWidth="350.0" minHeight="150.0" minWidth="350.0" prefHeight="150.0" prefWidth="350.0" styleClass="background" stylesheets="@../css/Sheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.TirarDadosController">
+<StackPane maxHeight="200.0" maxWidth="350.0" minHeight="200.0" minWidth="350.0" prefHeight="200.0" prefWidth="350.0" styleClass="background" stylesheets="@../css/Sheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.TirarDadosController">
    <children>
       <AnchorPane>
          <children>
-            <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <VBox fx:id="vbPanel" alignment="CENTER" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Label fx:id="lblNombre" text="[Nombre Jugador]">
+                  <Label fx:id="lblNombre" alignment="CENTER" text="[Nombre Jugador]">
                      <VBox.margin>
-                        <Insets bottom="10.0" />
+                        <Insets />
                      </VBox.margin>
                   </Label>
-                  <HBox fx:id="hbDados" alignment="CENTER">
+                  <HBox fx:id="hbPanel" alignment="CENTER" spacing="20.0">
                      <children>
                         <ImageView fitHeight="80.0" fitWidth="130.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/dados/dados.gif" />
+                              <Image url="@../images/dados/dice.png" />
                            </image>
                            <HBox.margin>
-                              <Insets left="10.0" right="10.0" />
+                              <Insets />
                            </HBox.margin>
                         </ImageView>
-                        <Button fx:id="btnTirarDados" mnemonicParsing="false" onAction="#processTirarDados" text="Tirar Dados" />
                      </children>
                   </HBox>
                </children>
