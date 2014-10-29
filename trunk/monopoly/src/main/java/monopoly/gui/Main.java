@@ -46,6 +46,10 @@ public class Main {
 		GestorLogs.registrarLog("Realizando algunas pruebas...");
 		 //crearUsuarios();
 		 testLoadGame();
+		 
+		 GestorLogs.registrarExeption(new Exception("PROBANDO!!!"));
+		 		 
+		 
 		 //testRandomizeList();
 		 //testShuffleList();
 		 //Main.testStringUtils();

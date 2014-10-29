@@ -3,6 +3,7 @@ package monopoly.util;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -35,14 +36,15 @@ public class GestorLogs {
 	 */
 	// En este caso loguea MSG_INFO, MSG_WARNING y MSG_ERROR.
 	private static int loggingDetailLevel = GestorLogs.MSG_INFO;
-	//private static int loggingDetailLevel = GestorLogs.MSG_DEBUG;
-	//private static int loggingDetailLevel = GestorLogs.MSG_DEBUG_DETAIL;
+	// private static int loggingDetailLevel = GestorLogs.MSG_DEBUG;
+	// private static int loggingDetailLevel = GestorLogs.MSG_DEBUG_DETAIL;
 
 	private static final String pathFolderLog = System.getProperty("user.home")
 			+ File.separator + "monopoly_logs";;
 	private static File fileLog = null;
 	private static File folderLog = null;
 	private static FileWriter escritor;
+	private static PrintStream ps;
 
 	/**
 	 * Inicializa el logger. Crea las carpetas y archivos necesarios.
@@ -67,6 +69,8 @@ public class GestorLogs {
 			System.out.print("\n");
 			// .....................................................
 
+			ps = new PrintStream(fileLog);
+
 			if (!fileLog.exists()) {
 				fileLog.createNewFile();
 			}
@@ -79,9 +83,9 @@ public class GestorLogs {
 	}
 
 	/**
-	 * M&eacute;todo para registrar errores de las diferentes funcionalidades del
-	 * sistemas en un archivo de texto. &Eacute;ste m&eacute;todo genera una carpeta en donde
-	 * se guardan los logs del d&iacute;a.
+	 * M&eacute;todo para registrar errores de las diferentes funcionalidades
+	 * del sistemas en un archivo de texto. &Eacute;ste m&eacute;todo genera una
+	 * carpeta en donde se guardan los logs del d&iacute;a.
 	 * 
 	 * @param error
 	 *            Mensaje que se va a escribir en el txt
@@ -91,9 +95,9 @@ public class GestorLogs {
 	}
 
 	/**
-	 * M&eacute;todo para registrar warnings de las diferentes funcionalidades del
-	 * sistemas en un archivo de texto. &eacute;ste m&eacute;todo genera una carpeta en donde
-	 * se guardan los logs del d&iacute;a.
+	 * M&eacute;todo para registrar warnings de las diferentes funcionalidades
+	 * del sistemas en un archivo de texto. &eacute;ste m&eacute;todo genera una
+	 * carpeta en donde se guardan los logs del d&iacute;a.
 	 * 
 	 * @param log
 	 *            Mensaje que se va a escribir en el txt
@@ -103,9 +107,9 @@ public class GestorLogs {
 	}
 
 	/**
-	 * M&eacute;todo para registrar logs de las diferentes funcionalidades del sistemas
-	 * en un archivo de texto. &Eacute;ste m&eacute;todo genera una carpeta en donde se
-	 * guardan los logs del d&iacute;a.
+	 * M&eacute;todo para registrar logs de las diferentes funcionalidades del
+	 * sistemas en un archivo de texto. &Eacute;ste m&eacute;todo genera una
+	 * carpeta en donde se guardan los logs del d&iacute;a.
 	 * 
 	 * @param log
 	 *            Mensaje que se va a escribir en el txt
@@ -115,9 +119,10 @@ public class GestorLogs {
 	}
 
 	/**
-	 * M&eacute;todo para registrar informaci&oacute;n de debug de las diferentes
-	 * funcionalidades del sistemas en un archivo de texto. &eacute;ste m&eacute;todo genera
-	 * una carpeta en donde se guardan los logs del d&iacute;a.
+	 * M&eacute;todo para registrar informaci&oacute;n de debug de las
+	 * diferentes funcionalidades del sistemas en un archivo de texto.
+	 * &eacute;ste m&eacute;todo genera una carpeta en donde se guardan los logs
+	 * del d&iacute;a.
 	 * 
 	 * @param log
 	 *            Mensaje que se va a escribir en el txt
@@ -127,15 +132,31 @@ public class GestorLogs {
 	}
 
 	/**
-	 * M&eacute;todo para registrar informaci&oacute;n de debug m&aacute;s detallada de las
-	 * diferentes funcionalidades del sistemas en un archivo de texto. &eacute;ste
-	 * m&eacute;todo genera una carpeta en donde se guardan los logs del d&iacute;a.
+	 * M&eacute;todo para registrar informaci&oacute;n de debug m&aacute;s
+	 * detallada de las diferentes funcionalidades del sistemas en un archivo de
+	 * texto. &eacute;ste m&eacute;todo genera una carpeta en donde se guardan
+	 * los logs del d&iacute;a.
 	 * 
 	 * @param log
 	 *            Mensaje que se va a escribir en el txt
 	 */
 	public static void registrarDebugDetail(String log) {
 		GestorLogs.registrar(GestorLogs.MSG_DEBUG_DETAIL, log);
+	}
+
+	/**
+	 * 
+	 * @param e
+	 */
+	public static void registrarExeption(Exception e) {
+		GestorLogs.registrar(GestorLogs.MSG_ERROR, "Exception: ");
+		//GestorLogs.registrar(GestorLogs.MSG_ERROR, e.toString());
+		//GestorLogs.registrar(GestorLogs.MSG_ERROR, e.getMessage());
+		e.printStackTrace(ps);
+		ps.flush();
+		if (GestorLogs.printToConsole) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -197,7 +218,7 @@ public class GestorLogs {
 			escritor.append(mensajeFile.toString());
 
 			if (GestorLogs.printToConsole) {
-				//formateador = new SimpleDateFormat("HH:mm:ss");
+				// formateador = new SimpleDateFormat("HH:mm:ss");
 
 				// Si es ERROR o WARNING imprimo en rojo en la cosola
 				switch (tipoMensaje) {
@@ -239,14 +260,16 @@ public class GestorLogs {
 	}
 
 	/**
-	 * @param printToConsole the printToConsole to set
+	 * @param printToConsole
+	 *            the printToConsole to set
 	 */
 	public static void setPrintToConsole(boolean printToConsole) {
 		GestorLogs.printToConsole = printToConsole;
 	}
 
 	/**
-	 * @param loggingDetailLevel the loggingDetailLevel to set
+	 * @param loggingDetailLevel
+	 *            the loggingDetailLevel to set
 	 */
 	public static void setLoggingDetailLevel(int loggingDetailLevel) {
 		GestorLogs.loggingDetailLevel = loggingDetailLevel;
