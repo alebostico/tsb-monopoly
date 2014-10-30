@@ -21,7 +21,7 @@ import monopoly.util.GestorLogs;
  * @author Moreno Pablo
  * 
  */
-public class Juego implements Serializable{
+public class Juego implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -45,19 +45,17 @@ public class Juego implements Serializable{
 
 	private Date fechaCreacion;
 
-	private Banco banco;
-
 	private List<Jugador> jugadoresList; // cambiar por lista circular
 
-	private Tablero tablero;
-
 	private Dado dado;
-	
+
 	private int cantJugadores;
 
 	private TreeMap<String, TarjetaPropiedad> tarjetasPropiedadList;
 
 	private List<Ficha> fichasPlayerList;
+	
+	private Tablero tablero;
 
 	/**
 	 * Constructor con parametros
@@ -74,7 +72,8 @@ public class Juego implements Serializable{
 		this.fechaCreacion = new Date();
 		this.jugadoresList = new ArrayList<Jugador>();
 		this.fichasPlayerList = FichasController.getFichas();
-		this.tarjetasPropiedadList = TarjetaController.getTarjetasPropiedades();
+		this.tarjetasPropiedadList = TarjetaController
+				.getTarjetasPropiedadesTreeMap();
 		this.generateUniqueID();
 		GestorLogs.registrarLog("Creado nuevo juego '" + this.getUniqueID()
 				+ "'");
@@ -95,8 +94,8 @@ public class Juego implements Serializable{
 	 */
 	private void initJuego() {
 
-		this.banco = new Banco(); // Cargar el Banco
-		this.tablero = new Tablero(banco); // Cargar el tablero
+		// this.banco = new Banco(); // Cargar el Banco
+		// this.tablero = new Tablero(banco); // Cargar el tablero
 		this.dado = new Dado();
 
 		GestorLogs.registrarLog("Iniciado juego '" + this.getUniqueID() + "'");
@@ -123,7 +122,7 @@ public class Juego implements Serializable{
 
 	/**
 	 * Agrega un jugador al juego.
-	 * 
+	 *
 	 * @param jugador
 	 *            El jugador que se va a agregar
 	 * @return true si se agrego, false en caso contrario
@@ -134,9 +133,6 @@ public class Juego implements Serializable{
 			if (j.equals(jugador))
 				return false;
 		}
-		// ubica al jugador en el casillero 1
-		this.getTablero().moverACasillero(jugador, 1, false);
-		// y lo agrega a la lista de jugadores.
 
 		boolean returnValue = this.jugadoresList.add(jugador);
 
@@ -149,24 +145,10 @@ public class Juego implements Serializable{
 	}
 
 	/**
-	 * @return the banco
-	 */
-	public Banco getBanco() {
-		return banco;
-	}
-
-	/**
 	 * @return the jugadores
 	 */
 	public List<Jugador> getJugadoresList() {
 		return jugadoresList;
-	}
-
-	/**
-	 * @return the tablero
-	 */
-	public Tablero getTablero() {
-		return tablero;
 	}
 
 	/**
@@ -278,6 +260,20 @@ public class Juego implements Serializable{
 	}
 
 	/**
+	 * @return the tablero
+	 */
+	public Tablero getTablero() {
+		return tablero;
+	}
+
+	/**
+	 * @param tablero the tablero to set
+	 */
+	public void setTablero(Tablero tablero) {
+		this.tablero = tablero;
+	}
+
+	/**
 	 * Un toSrting resumido con los atributos de la instancia.
 	 */
 	@Override
@@ -301,11 +297,9 @@ public class Juego implements Serializable{
 		sb.append(", uniqueID=" + this.getUniqueID());
 		sb.append(", owner=" + this.getOwner().getUserName());
 		sb.append(", cantJugadores=" + this.cantJugadores);
-		sb.append(", tablero=" + this.getTablero().toString());
 		sb.append(", jugadores="
 				+ ((this.jugadoresList != null) ? this.jugadoresList.toString()
 						: "<SIN JUGADORES>"));
-		sb.append(", banco=" + this.banco.toString());
 		sb.append(" }");
 
 		return sb.toString();

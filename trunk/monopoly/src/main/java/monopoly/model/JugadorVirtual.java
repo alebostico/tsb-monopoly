@@ -38,9 +38,6 @@ public class JugadorVirtual extends Jugador implements Serializable{
 
 	private TipoJugador tipoJugador;
 
-	public JugadorVirtual() {
-		super();
-	}
 
 	public JugadorVirtual(String nombre, Ficha ficha, Juego juego,
 			TipoJugador tipoJugador) {

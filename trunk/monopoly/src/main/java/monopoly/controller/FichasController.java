@@ -4,6 +4,7 @@ import java.util.List;
 
 import monopoly.dao.IFichaDao;
 import monopoly.model.Ficha;
+import monopoly.model.Ficha.TipoFicha;
 import monopoly.util.GestorLogs;
 
 import org.springframework.context.ApplicationContext;
@@ -11,42 +12,41 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class FichasController {
 
-	public List<Ficha> fichas;
+	private static ApplicationContext appContext;
 
 	/**
 	 * Constructor por defecto. Crea las fichas.
 	 */
-	public FichasController() {
-		super();
-		this.cargarFichas();
+	// public FichasController() {
+	// super();
+	// this.cargarFichas();
+	//
+	// }
+	//
+	// private List<Ficha> cargarFichas() {
+	//
+	// ApplicationContext appContext = new ClassPathXmlApplicationContext(
+	// "spring/config/BeanLocations.xml");
+	//
+	// // Cargar las tarjetas de Comunidad
+	// IFichaDao fichaDao = (IFichaDao) appContext.getBean("fichaDao");
+	// this.fichas = fichaDao.getAll();
+	//
+	// GestorLogs.registrarLog("Fichas cargadas");
+	// if (GestorLogs.getLoggingDetailLevel() >= GestorLogs.MSG_DEBUG)
+	// GestorLogs.registrarDebug(this.toString());
+	//
+	// return this.fichas;
+	// }
 
-	}
-
-	private List<Ficha> cargarFichas() {
-
-		ApplicationContext appContext = new ClassPathXmlApplicationContext(
+	public static List<Ficha> getFichas() {
+		appContext = new ClassPathXmlApplicationContext(
 				"spring/config/BeanLocations.xml");
 
-		// Cargar las tarjetas de Comunidad
 		IFichaDao fichaDao = (IFichaDao) appContext.getBean("fichaDao");
-		this.fichas = fichaDao.getAll();
 
 		GestorLogs.registrarLog("Fichas cargadas");
-		if (GestorLogs.getLoggingDetailLevel() >= GestorLogs.MSG_DEBUG)
-			GestorLogs.registrarDebug(this.toString());
-
-		return this.fichas;
-	}
-	
-	public static List<Ficha> getFichas(){
-		ApplicationContext appContext = new ClassPathXmlApplicationContext(
-				"spring/config/BeanLocations.xml");
-
-		IFichaDao fichaDao = (IFichaDao) appContext.getBean("fichaDao");
-		
-		GestorLogs.registrarLog("Fichas cargadas");
-		return fichaDao.getAll();
-
+		return  fichaDao.getAll();
 	}
 
 	/**
@@ -72,21 +72,21 @@ public class FichasController {
 	 * @return La instancia de la clase Ficha o null si no se encuentra una
 	 *         ficha con ese nombre.
 	 */
-	public Ficha getFicha(String nombreFicha) {
-		for (Ficha ficha : this.fichas) {
-			if (ficha.getNombre().compareTo(nombreFicha) == 0) {
+	public Ficha getFicha(TipoFicha tipoFicha) {
+		for (Ficha ficha : getFichas()) {
+			if (ficha.getNombre().compareTo(tipoFicha.getNombreTipo()) == 0) {
 				return ficha;
 			}
 		}
 		return null;
 	}
-	
+
 	public String toString() {
 
 		StringBuilder sb = new StringBuilder("GestorFichas [ ");
 
 		sb.append("fichas=");
-		for (Ficha ficha : this.fichas) {
+		for (Ficha ficha : getFichas()) {
 			sb.append("'");
 			sb.append(ficha.getNombre());
 			sb.append("' ");

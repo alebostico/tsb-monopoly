@@ -15,6 +15,8 @@ import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.JugadorVirtual;
 import monopoly.model.MonopolyGameStatus;
+import monopoly.model.Usuario;
+import monopoly.model.tablero.Casillero;
 import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.list.CircularList;
 import monopoly.util.list.Node;
@@ -33,9 +35,9 @@ public class JuegoController {
 
 	private int cantJugadores;
 
-	private TarjetaController gestorTarjetas;
+	private BancoController gestorBanco;
 
-	private FichasController gestorFichas;
+	private TableroController gestorTablero;
 
 	private TreeMap<Integer, JugadorHumano> networkPlayers;
 
@@ -43,61 +45,27 @@ public class JuegoController {
 
 	private CircularList<Jugador> turnosList;
 
+	private Node<Jugador> currentPlayer;
+
 	private MonopolyGameStatus status;
 
-	public JuegoController(Juego juego) {
-		this.juego = juego;
+	public JuegoController(Usuario creador, String nombre) {
+		this.gestorBanco = new BancoController();
+		this.gestorTablero = new TableroController();
+		this.juego = new Juego(creador, nombre);
+		this.juego.setTablero(gestorTablero.getTablero());
 		this.estadoJuego = new Estado();
 		this.networkPlayers = new TreeMap<Integer, JugadorHumano>();
 		this.turnosList = new CircularList<Jugador>();
 		this.jugadoresList = new ArrayList<Jugador>();
-		gestorTarjetas = new TarjetaController(this.juego);
-		gestorFichas = new FichasController();
 	}
 
-	/**
-	 * @return the juego
-	 */
 	public Juego getJuego() {
 		return juego;
 	}
 
-	/**
-	 * @param juego
-	 *            the juego to set
-	 */
 	public void setJuego(Juego juego) {
 		this.juego = juego;
-	}
-
-	/**
-	 * @return the gestorTarjetas
-	 */
-	public TarjetaController getGestorTarjetas() {
-		return gestorTarjetas;
-	}
-
-	/**
-	 * @param gestorTarjetas
-	 *            the gestorTarjetas to set
-	 */
-	public void setGestorTarjetas(TarjetaController gestorTarjetas) {
-		this.gestorTarjetas = gestorTarjetas;
-	}
-
-	/**
-	 * @return the gestorFichas
-	 */
-	public FichasController getGestorFichas() {
-		return gestorFichas;
-	}
-
-	/**
-	 * @param gestorFichas
-	 *            the gestorFichas to set
-	 */
-	public void setGestorFichas(FichasController gestorFichas) {
-		this.gestorFichas = gestorFichas;
 	}
 
 	/**
@@ -109,15 +77,15 @@ public class JuegoController {
 		if (jugador instanceof JugadorHumano) {
 			jh = (JugadorHumano) jugador;
 			if (!networkPlayers.containsKey(jh.getSenderID())) {
-				networkPlayers.put(jh.getSenderID(), (JugadorHumano)jugador);
+				networkPlayers.put(jh.getSenderID(), (JugadorHumano) jugador);
 			}
 		}
-		
+
 		if (!jugadoresList.contains(jugador)) {
 			jugadoresList.add(jugador);
 			turnosList.push_back(jugador);
 		}
-		
+
 		if (jugadoresList.size() == cantJugadores) {
 			estadoJuego.actualizarEstadoJuego();
 			establecerTurnos();
@@ -202,8 +170,7 @@ public class JuegoController {
 
 	public void startGame(int key, Dado dados) {
 		// TODO Auto-generated method stub
-		JugadorHumano jugador = (JugadorHumano) networkPlayers
-				.get(key);
+		JugadorHumano jugador = (JugadorHumano) networkPlayers.get(key);
 		jugador.setTiradaInicial(dados);
 		boolean tiraronTodosDados = true;
 		for (Jugador j : networkPlayers.values()) {
@@ -240,16 +207,31 @@ public class JuegoController {
 			primero = primero.getNext();
 
 		} while (tmp != (Node<Jugador>) turnosList.getHeader());
-		
-		status = new MonopolyGameStatus(turnosList.toList(),
-				MonopolyGameStatus.EMPEZAR, turnosList.toList().get(0));
-		
-		for(Map.Entry<Integer, JugadorHumano> entry : networkPlayers.entrySet()) {
-			  int key = entry.getKey();
 
-			  PartidasController.getInstance().getMonopolyGame()
-				.sendToOne(key, status);
+		for (Jugador jug : turnosList.toList()) {
+			for (Casillero casillero : gestorTablero.getTablero()
+					.getCasillerosList()) {
+
+				if (jug.getCasilleroActual().equals(casillero)) {
+					casillero.addJugador(jug);
+					break;
+				}
 			}
+		}
+		
+		currentPlayer = (Node<Jugador>) turnosList.getHeader();
+
+		status = new MonopolyGameStatus(turnosList.toList(),
+				gestorBanco.getBanco(), gestorTablero.getTablero(),
+				MonopolyGameStatus.EMPEZAR, currentPlayer.getKey());
+
+		for (Map.Entry<Integer, JugadorHumano> entry : networkPlayers
+				.entrySet()) {
+			int key = entry.getKey();
+
+			PartidasController.getInstance().getMonopolyGame()
+					.sendToOne(key, status);
+		}
 	}
 
 }
