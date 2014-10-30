@@ -19,21 +19,21 @@
                      <children>
                       <AnchorPane maxHeight="632.0" maxWidth="650.0" minHeight="632.0" minWidth="650.0" prefHeight="632.0" prefWidth="650.0">
                            <children>
-                              <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <BorderPane>
                                  <bottom>
-                                    <HBox BorderPane.alignment="TOP_LEFT">
+                                    <HBox BorderPane.alignment="TOP_CENTER">
                                        <children>
-                                          <TilePane fx:id="pCasillero11" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="90.0" styleClass="bg_casillero11" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero10" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero10" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero09" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero09" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero08" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero08" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero07" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero07" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero06" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero06" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero05" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero05" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero04" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero04" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero03" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero03" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero02" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero02" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero01" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="90.0" styleClass="bg_casillero01" vgap="5.0" />
+                                          <Pane fx:id="pCasillero11" minHeight="90.0" minWidth="90.0" styleClass="bg_casillero11" />
+                                          <Pane fx:id="pCasillero10" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero10" />
+                                          <Pane fx:id="pCasillero09" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero09" />
+                                          <Pane fx:id="pCasillero08" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero08" />
+                                          <Pane fx:id="pCasillero07" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero07" />
+                                          <Pane fx:id="pCasillero06" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero06" />
+                                          <Pane fx:id="pCasillero05" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero05" />
+                                          <Pane fx:id="pCasillero04" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero04" />
+                                          <Pane fx:id="pCasillero02" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero03" />
+                                          <Pane fx:id="pCasillero02" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero02" />
+                                          <Pane fx:id="pCasillero01" minHeight="90.0" minWidth="90.0" styleClass="bg_casillero01" />
                                        </children>
                                        <padding>
                                           <Insets bottom="2.0" />
@@ -41,9 +41,9 @@
                                     </HBox>
                                  </bottom>
                                  <center>
-                                    <GridPane alignment="CENTER" maxHeight="450.0" maxWidth="430.0" minHeight="450.0" minWidth="430.0" prefHeight="450.0" prefWidth="430.0" BorderPane.alignment="CENTER">
+                                    <GridPane alignment="CENTER" maxHeight="450.0" maxWidth="450.0" minHeight="450.0" minWidth="450.0" prefHeight="450.0" prefWidth="450.0" BorderPane.alignment="TOP_LEFT">
                                        <children>
-                                          <VBox alignment="BOTTOM_CENTER">
+                                          <VBox alignment="BOTTOM_CENTER" prefHeight="200.0" prefWidth="100.0">
                                              <children>
                                                 <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
@@ -91,47 +91,47 @@
                                  <left>
                                     <VBox BorderPane.alignment="TOP_RIGHT">
                                        <children>
-                                          <TilePane fx:id="pCasillero20" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero20" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero19" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero19" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero18" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero18" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero17" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero17" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero16" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero16" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero15" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero15" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero14" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero14" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero13" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero13" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero12" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero12" vgap="5.0" />
+                                          <Pane fx:id="pCasillero20" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero20" />
+                                          <Pane fx:id="pCasillero19" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero19" />
+                                          <Pane fx:id="pCasillero18" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero18" />
+                                          <Pane fx:id="pCasillero17" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero17" />
+                                          <Pane fx:id="pCasillero16" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero16" />
+                                          <Pane fx:id="pCasillero15" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero15" />
+                                          <Pane fx:id="pCasillero14" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero14" />
+                                          <Pane fx:id="pCasillero13" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero13" />
+                                          <Pane fx:id="pCasillero12" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero12" />
                                        </children>
                                     </VBox>
                                  </left>
                                  <right>
                                     <VBox BorderPane.alignment="TOP_LEFT">
                                        <children>
-                                          <TilePane fx:id="pCasillero32" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero32" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero33" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero33" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero34" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero34" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero35" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero35" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero36" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero36" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero37" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero37" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero38" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero38" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero39" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero39" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero40" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefRows="3" styleClass="bg_casillero40" vgap="5.0" />
+                                          <Pane fx:id="pCasillero32" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero32" />
+                                          <Pane fx:id="pCasillero33" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero33" />
+                                          <Pane fx:id="pCasillero34" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero34" />
+                                          <Pane fx:id="pCasillero35" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero35" />
+                                          <Pane fx:id="pCasillero36" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero36" />
+                                          <Pane fx:id="pCasillero37" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero37" />
+                                          <Pane fx:id="pCasillero38" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero38" />
+                                          <Pane fx:id="pCasillero39" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero39" />
+                                          <Pane fx:id="pCasillero40" minHeight="50.0" minWidth="90.0" styleClass="bg_casillero40" />
                                        </children>
                                     </VBox>
                                  </right>
                                  <top>
                                     <HBox alignment="CENTER_LEFT" BorderPane.alignment="BOTTOM_CENTER">
                                        <children>
-                                          <TilePane fx:id="pCasillero21" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="90.0" styleClass="bg_casillero21" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero22" alignment="CENTER" hgap="5.0" minHeight="90.0" minWidth="50.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero22" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero23" alignment="CENTER" hgap="5.0" minHeight="90.0" minWidth="50.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero23" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero24" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero24" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero25" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero25" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero26" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero26" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero27" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero27" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero28" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero28" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero29" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero29" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero30" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="50.0" styleClass="bg_casillero30" vgap="5.0" />
-                                          <TilePane fx:id="pCasillero31" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="90.0" styleClass="bg_casillero31" vgap="5.0" />
+                                          <Pane fx:id="pCasillero21" minHeight="90.0" minWidth="90.0" styleClass="bg_casillero21" />
+                                          <Pane fx:id="pCasillero22" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero22" />
+                                          <Pane fx:id="pCasillero23" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero23" />
+                                          <Pane fx:id="pCasillero24" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero24" />
+                                          <Pane fx:id="pCasillero25" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero25" />
+                                          <Pane fx:id="pCasillero26" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero26" />
+                                          <Pane fx:id="pCasillero27" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero27" />
+                                          <Pane fx:id="pCasillero28" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero28" />
+                                          <Pane fx:id="pCasillero29" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero29" />
+                                          <Pane fx:id="pCasillero30" minHeight="90.0" minWidth="50.0" styleClass="bg_casillero30" />
+                                          <Pane fx:id="pCasillero31" minHeight="90.0" minWidth="90.0" styleClass="bg_casillero31" />
                                        </children>
                                        <BorderPane.margin>
                                           <Insets />

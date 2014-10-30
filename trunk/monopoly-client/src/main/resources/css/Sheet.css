@@ -16,6 +16,15 @@
 	-fx-border-insets: -1, 0; 
 }
 
+.separador {
+	-fx-background-color: rgba(255, 255, 255, 0.05);
+	-fx-border-color: 
+		rgb(255, 255, 255, 0.08) transparent rgb(255, 255, 255, 0.08) transparent,
+		rgb(0, 0, 0, 0.5) transparent rgb(0, 0, 0, 0.5) transparent;
+	-fx-border-width: 1, 1.5;
+	-fx-border-insets: -1, 0; 
+}
+
 .label {
 	-fx-font-family: "Arial";
     -fx-font-size: 14;
@@ -144,7 +153,7 @@
 }
 
 .bg_info_panel {
-    -fx-background-image: url("../images/background/bg_info_panel.png");
+    -fx-background-image: url("../images/background/bg_info_panel2.png");
     -fx-background-position: left top, center;
 	-fx-background-repeat: no-repeat;
 	-fx-background-size: cover, auto;
