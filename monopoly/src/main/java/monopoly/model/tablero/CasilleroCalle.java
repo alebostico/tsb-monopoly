@@ -2,8 +2,6 @@ package monopoly.model.tablero;
 
 import java.io.Serializable;
 
-import monopoly.model.Jugador;
-import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 
 /**
@@ -24,9 +22,8 @@ public class CasilleroCalle extends Casillero implements Serializable {
 	private int nroCasas;
 	private TarjetaPropiedad tarjetaCalle;
 
-	public CasilleroCalle(int numeroCasillero, String nombreCalle,
-			Tablero tablero, TarjetaPropiedad tarjetaCalle) {
-		super(numeroCasillero, TipoCasillero.C_CALLE, tablero);
+	public CasilleroCalle(int numeroCasillero, String nombreCalle, TarjetaPropiedad tarjetaCalle) {
+		super(numeroCasillero, TipoCasillero.C_CALLE);
 		this.nombreCalle = nombreCalle;
 		this.tarjetaCalle = tarjetaCalle;
 		this.nroCasas = 0;
@@ -46,14 +43,6 @@ public class CasilleroCalle extends Casillero implements Serializable {
 
 	public void setNroCasas(int nroCasas) {
 		this.nroCasas = nroCasas;
-	}
-
-	public TarjetaCalle comprarCalle(Jugador jugador) {
-		// TODO: implementar el metodo que realiza la compra de la calle.
-		if (this.getTablero().getBanco()
-				.venderPropiedad(jugador, this.getTarjetaCalle()))
-			return (TarjetaCalle) tarjetaCalle;
-		return null;
 	}
 
 	@Override

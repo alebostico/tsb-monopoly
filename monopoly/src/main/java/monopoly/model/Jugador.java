@@ -63,23 +63,28 @@ public abstract class Jugador implements Serializable {
 
 	@Transient
 	private List<Tarjeta> tarjetaCarcelList;
+	
+	@Transient
+	private int nroCasas;
+	
+	@Transient
+	private int nroHoteles;
 
 	/**
 	 * Constructor por defecto. inicializa el arraylist tarjetaCarcelList, que
 	 * será utilizado para almacenar las tarjetas de comunidad y suerte que
 	 * permiten salir de la cárcel.
 	 */
-	public Jugador() {
-		tarjetaCarcelList = new ArrayList<>();
-		this.dinero = 200;
-	}
-
 	public Jugador(String nombre, Ficha ficha, Juego juego) {
-		this();
 		this.nombre = nombre;
 		this.ficha = ficha;
 		this.juego = juego;
-		this.casilleroActual = this.getJuego().getTablero().getCasillero(1);
+		this.dinero = 1500;
+		this.nroCasas = 0;
+		this.nroHoteles = 0;
+		tarjetaCarcelList = new ArrayList<>();
+		tarjPropiedadList = new ArrayList<>();
+		casilleroActual = juego.getTablero().getCasillerosList()[0];
 	}
 
 	/**
@@ -226,12 +231,23 @@ public abstract class Jugador implements Serializable {
 	}
 
 	public int getNroCasas() {
-		return juego.getTablero().casasPorJugador(this);
+		return nroCasas;
 	}
 
 
 	public int getNroHoteles() {
-		return juego.getTablero().hotelesPorJugador(this);
+		return nroHoteles;
+	}
+	
+	public int incrementNroCasas(int cantidad) {
+		nroCasas += cantidad;
+		return nroCasas;
+	}
+
+
+	public int incrementNroHoteles(int cantidad) {
+		nroHoteles += cantidad;
+		return nroHoteles;
 	}
 
 	/**

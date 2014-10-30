@@ -7,15 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import monopoly.dao.ITarjetaCalleDao;
 import monopoly.dao.ITarjetaCompaniaDao;
 import monopoly.dao.ITarjetaComunidadDao;
 import monopoly.dao.ITarjetaEstacionDao;
 import monopoly.dao.ITarjetaSuerteDao;
-import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaComunidad;
@@ -23,6 +19,9 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
 import monopoly.util.ListUtils;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @author Bostico Alejandro
@@ -32,85 +31,24 @@ import monopoly.util.ListUtils;
  */
 public class TarjetaController {
 
-	private Juego juego;
-
 	private List<TarjetaSuerte> tarjetasSuerteList;
 
 	private List<TarjetaComunidad> tarjetasComunidadList;
-	
+
 	private int proximaTarjetaSuerte;
 
 	private int proximaTarjetaComunidad;
-	
-	private ApplicationContext appContext;
 
-	public TarjetaController(Juego juego) {
-		super();
-		appContext = new ClassPathXmlApplicationContext(
-				"spring/config/BeanLocations.xml");
-		this.juego = juego;
-		this.cargarTarjetas();
+	private static ApplicationContext appContext;
+
+	public TarjetaController() {
+		tarjetasSuerteList = tarjetasSuerteList();
+		tarjetasComunidadList = tarjetasComunidadList();
 		this.mezclarTarjetasComunidad();
 		this.mezclarTarjetasSuerte();
 		this.proximaTarjetaComunidad = 0;
 		this.proximaTarjetaSuerte = 0;
 		GestorLogs.registrarLog("Creado el gestor de tarjetas");
-	}
-
-	private void cargarTarjetas() {
-		cargarTarjetasComunidad();
-		cargarTarjetasSuerte();
-	}
-
-	private void cargarTarjetasComunidad() {
-
-		// Cargar las tarjetas de Comunidad
-		ITarjetaComunidadDao tarjetaComunidadDao = (ITarjetaComunidadDao) appContext
-				.getBean("tarjetaComunidadDao");
-		this.tarjetasComunidadList = tarjetaComunidadDao.getAll();
-
-		// GestorLogs.registrarLog("Mostrar lista de tarjetas de Comunidad");
-		for (TarjetaComunidad tarjetaComunidad : tarjetasComunidadList) {
-			GestorLogs.registrarDebug(tarjetaComunidad.toString());
-		}
-
-	}
-
-	private void cargarTarjetasSuerte() {
-
-		// Cargar las tarjetas de Suerte
-		ITarjetaSuerteDao tarjetaSuerteDao = (ITarjetaSuerteDao) appContext
-				.getBean("tarjetaSuerteDao");
-		this.tarjetasSuerteList = tarjetaSuerteDao.getAll();
-
-		// GestorLogs.registrarLog("Mostrar lista de tarjetas de Suerte");
-		for (TarjetaSuerte tarjetaSuerte : tarjetasSuerteList) {
-			GestorLogs.registrarDebug(tarjetaSuerte.toString());
-		}
-	}
-	
-	public static TreeMap<String, TarjetaPropiedad> getTarjetasPropiedades(){
-		TreeMap<String, TarjetaPropiedad> tarjetaPropiedad = new TreeMap<String, TarjetaPropiedad>();
-		List<TarjetaPropiedad> list = new ArrayList<TarjetaPropiedad>();
-		
-		ApplicationContext appCon = new ClassPathXmlApplicationContext(
-				"spring/config/BeanLocations.xml");
-		ITarjetaCalleDao callesDao = (ITarjetaCalleDao) appCon
-				.getBean("tarjetaCalleDao");
-		ITarjetaCompaniaDao companiasDao = (ITarjetaCompaniaDao) appCon
-				.getBean("tarjetaCompaniaDao");
-		ITarjetaEstacionDao estacionesDao = (ITarjetaEstacionDao) appCon
-				.getBean("tarjetaEstacionDao");
-		
-		list.addAll(callesDao.getAll());
-		list.addAll(companiasDao.getAll());
-		list.addAll(estacionesDao.getAll());
-		
-		for(TarjetaPropiedad tp : list){
-			tarjetaPropiedad.put(tp.getNombrePropiedad(), tp);
-		}
-		
-		return tarjetaPropiedad;
 	}
 
 	private void mezclarTarjetasSuerte() {
@@ -156,37 +94,22 @@ public class TarjetaController {
 	public boolean jugarTarjetaComunidad(Jugador jugador,
 			Tarjeta tarjetaComunidad) {
 		switch (((TarjetaComunidad) tarjetaComunidad).getIdTarjeta()) {
-		case 1:
-			return juego.getBanco().pagar(jugador, 50);
-		case 2:
-			return juego.getBanco().cobrarATodosPagarAUno(
-					juego.getJugadoresList(), jugador, 10);
-		case 3:
-			return (juego.getTablero().moverACasillero(jugador, 1, true) != null);// salida
-		case 4:
-			return juego.getBanco().pagar(jugador, 50);
-		case 5:
-			return juego.getBanco().cobrar(jugador, 10);
-		case 6:
-			return juego.getBanco().cobrar(jugador, 200);
-		case 7:
-			return (juego.getTablero().irACarcel(jugador) != null);
-		case 8:
-			return juego.getBanco().pagar(jugador, 20);
-		case 9:
-			return juego.getBanco().pagar(jugador, 100);
-		case 10:
-			return juego.getBanco().pagar(jugador, 100);
-		case 11:
-			return juego.getBanco().cobrar(jugador, 100);
-		case 12:
-			return (juego.getTablero().retrocederA(jugador, 2) != null);
-			// TODO: como hago aca?
-		case 13:
-			jugador.getTarjetaCarcelList().add(tarjetaComunidad);
-			return true;
-		case 14:
-			return juego.getBanco().pagar(jugador, 50);
+		/**
+		 * case 1: return banco.pagar(jugador, 50); case 2: return
+		 * banco.cobrarATodosPagarAUno(juego.getJugadoresList(), jugador, 10);
+		 * case 3: return (juego.getTablero().moverACasillero(jugador, 1, true)
+		 * != null);// salida case 4: return banco.pagar(jugador, 50); case 5:
+		 * return banco.cobrar(jugador, 10); case 6: return
+		 * banco.cobrar(jugador, 200); case 7: return
+		 * (juego.getTablero().irACarcel(jugador) != null); case 8: return
+		 * banco.pagar(jugador, 20); case 9: return banco.pagar(jugador, 100);
+		 * case 10: return banco.pagar(jugador, 100); case 11: return
+		 * banco.cobrar(jugador, 100); case 12: return
+		 * (juego.getTablero().retrocederA(jugador, 2) != null); // TODO: como
+		 * hago aca? case 13:
+		 * jugador.getTarjetaCarcelList().add(tarjetaComunidad); return true;
+		 * case 14: return banco.pagar(jugador, 50);
+		 */
 		default:
 			return false;
 		}
@@ -218,58 +141,28 @@ public class TarjetaController {
 
 	public boolean jugarTarjetaSuerte(Jugador jugador, Tarjeta tarjetaSuerte) {
 		switch (((TarjetaComunidad) tarjetaSuerte).getIdTarjeta()) {
-		case 1:
-			return (juego.getTablero().moverACasillero(jugador, 40, false) != null);// del
-																					// prado
-		case 2:
-			return (juego.getTablero().moverACasillero(jugador, 12, true) != null);// glorieta
-																					// de
-																					// bilbao
-		case 3:
-			return juego.getBanco().pagar(jugador, 50);
-		case 4:
-			return (juego.getTablero().moverACasillero(jugador, 1, true) != null);// salida
-		case 5:
-			return (juego.getTablero().moverACasillero(jugador, 25, true) != null);// calle
-																					// bermudez
-		case 6:
-			return juego.getBanco().pagar(jugador, 150);
-		case 7:
-			return (juego.getTablero().irACarcel(jugador) != null);
-		case 8:
-			return juego.getBanco().cobrar(jugador, 20);
-		case 9:
-			return (juego.getTablero().moverAtras(jugador, 3) != null);
-		case 10:
-			return juego.getBanco().cobrarPorCasaYHotel(jugador, 25, 100);
-		case 11:
-			return juego.getBanco().cobrarPorCasaYHotel(jugador, 40, 115);
-			// TODO: como hago aca?
-		case 12:
-			jugador.getTarjetaCarcelList().add(tarjetaSuerte);
-			return true;
-		case 13:
-			return juego.getBanco().cobrar(jugador, 150);
-		case 14:
-			return (juego.getTablero().moverACasillero(jugador, 16, true) != null);// las
-																					// delicias
+		/*
+		 * case 1: return (juego.getTablero().moverACasillero(jugador, 40,
+		 * false) != null);// del // prado case 2: return
+		 * (juego.getTablero().moverACasillero(jugador, 12, true) != null);//
+		 * glorieta // de // bilbao case 3: return banco.pagar(jugador, 50);
+		 * case 4: return (juego.getTablero().moverACasillero(jugador, 1, true)
+		 * != null);// salida case 5: return
+		 * (juego.getTablero().moverACasillero(jugador, 25, true) != null);//
+		 * calle // bermudez case 6: return banco.pagar(jugador, 150); case 7:
+		 * return (juego.getTablero().irACarcel(jugador) != null); case 8:
+		 * return banco.cobrar(jugador, 20); case 9: return
+		 * (juego.getTablero().moverAtras(jugador, 3) != null); case 10: return
+		 * banco.cobrarPorCasaYHotel(jugador, 25, 100); case 11: return
+		 * banco.cobrarPorCasaYHotel(jugador, 40, 115); // TODO: como hago aca?
+		 * case 12: jugador.getTarjetaCarcelList().add(tarjetaSuerte); return
+		 * true; case 13: return banco.cobrar(jugador, 150); case 14: return
+		 * (juego.getTablero().moverACasillero(jugador, 16, true) != null);//
+		 * las
+		 */// delicias
 		default:
 			return false;
 		}
-	}
-
-	/**
-	 * @return the tarjetasSuerteList
-	 */
-	public List<TarjetaSuerte> getTarjetasSuerteList() {
-		return tarjetasSuerteList;
-	}
-
-	/**
-	 * @return the tarjetasComunidadList
-	 */
-	public List<TarjetaComunidad> getTarjetasComunidadList() {
-		return tarjetasComunidadList;
 	}
 
 	public TarjetaSuerte getNextTarjetaSuerte() {
@@ -322,4 +215,85 @@ public class TarjetaController {
 		return sb.toString();
 	}
 
+	/**
+	 * devuelve todas las tarjetas de la suerte de la base de datos.
+	 * 
+	 * @return una lista de tarjetas de la suerte
+	 */
+	public static List<TarjetaSuerte> tarjetasSuerteList() {
+		appContext = new ClassPathXmlApplicationContext(
+				"spring/config/BeanLocations.xml");
+		ITarjetaSuerteDao tarjetaSuerteDao = (ITarjetaSuerteDao) appContext
+				.getBean("tarjetaSuerteDao");
+		
+		GestorLogs.registrarLog("Tarjetas Suerte Cargadas..");
+		return tarjetaSuerteDao.getAll();
+	}
+
+	/**
+	 * devuelve todas las tarjetas de la caja de la comunidad de la base de datos.
+	 * 
+	 * @return una lista detarjeta de la caja de la comunidad
+	 */
+	public static List<TarjetaComunidad> tarjetasComunidadList() {
+		appContext = new ClassPathXmlApplicationContext(
+				"spring/config/BeanLocations.xml");
+		ITarjetaComunidadDao tarjetaComunidadDao = (ITarjetaComunidadDao) appContext
+				.getBean("tarjetaComunidadDao");
+		
+		GestorLogs.registrarLog("Tarjetas de la Caja de la Comunidad Cargadas..");
+		return tarjetaComunidadDao.getAll();
+	}
+	
+	/* devuelve todas las tarjetas de propiedades de la base de datos.
+	 * 
+	 * @return una lista de tarjetas de propiedades.
+	 */
+	public static List<TarjetaPropiedad> tarjetasPropiedadesList() {
+		List<TarjetaPropiedad> list = new ArrayList<TarjetaPropiedad>();
+
+		ApplicationContext appCon = new ClassPathXmlApplicationContext(
+				"spring/config/BeanLocations.xml");
+		ITarjetaCalleDao callesDao = (ITarjetaCalleDao) appCon
+				.getBean("tarjetaCalleDao");
+		ITarjetaCompaniaDao companiasDao = (ITarjetaCompaniaDao) appCon
+				.getBean("tarjetaCompaniaDao");
+		ITarjetaEstacionDao estacionesDao = (ITarjetaEstacionDao) appCon
+				.getBean("tarjetaEstacionDao");
+
+		list.addAll(callesDao.getAll());
+		list.addAll(companiasDao.getAll());
+		list.addAll(estacionesDao.getAll());
+
+		return list;
+	}
+	
+	/**
+	 * devuelve un TreeMap con key; nombre del a propiedad y value, la propiedad.
+	 * 
+	 * @return un TreeMap de tarjetas de propiedades
+	 */
+	public static TreeMap<String, TarjetaPropiedad> getTarjetasPropiedadesTreeMap() {
+		TreeMap<String, TarjetaPropiedad> tarjetaPropiedad = new TreeMap<String, TarjetaPropiedad>();
+		List<TarjetaPropiedad> list = new ArrayList<TarjetaPropiedad>();
+
+		ApplicationContext appCon = new ClassPathXmlApplicationContext(
+				"spring/config/BeanLocations.xml");
+		ITarjetaCalleDao callesDao = (ITarjetaCalleDao) appCon
+				.getBean("tarjetaCalleDao");
+		ITarjetaCompaniaDao companiasDao = (ITarjetaCompaniaDao) appCon
+				.getBean("tarjetaCompaniaDao");
+		ITarjetaEstacionDao estacionesDao = (ITarjetaEstacionDao) appCon
+				.getBean("tarjetaEstacionDao");
+
+		list.addAll(callesDao.getAll());
+		list.addAll(companiasDao.getAll());
+		list.addAll(estacionesDao.getAll());
+
+		for (TarjetaPropiedad tp : list) {
+			tarjetaPropiedad.put(tp.getNombrePropiedad(), tp);
+		}
+
+		return tarjetaPropiedad;
+	}
 }

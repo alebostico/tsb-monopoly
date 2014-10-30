@@ -186,14 +186,14 @@ public abstract class TarjetaPropiedad implements Serializable {
 				+ valorHipotecario + ",valoPropiedadr=" + valorPropiedad + " ]";
 	}
 
-	public boolean hipotecarPropiedad() {
-		return this.getJugador().getJuego().getBanco()
-				.hipotecarPropiedad(jugador, this);
-	}
-
-	public boolean deshipotecarPropiedad() {
-		return this.getJugador().getJuego().getBanco()
-				.deshipotecarPropiedad(this.getJugador(), this);
-	}
+	// public boolean hipotecarPropiedad() {
+	// return this.getJugador().getJuego().getBanco()
+	// .hipotecarPropiedad(jugador, this);
+	// }
+	//
+	// public boolean deshipotecarPropiedad() {
+	// return this.getJugador().getJuego().getBanco()
+	// .deshipotecarPropiedad(this.getJugador(), this);
+	// }
 
 }

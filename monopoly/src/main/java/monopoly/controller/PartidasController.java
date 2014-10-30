@@ -50,15 +50,14 @@ public class PartidasController {
 	 *            El juego a agregar
 	 * @return true si se agrega el juego. fasle en caso contrario
 	 */
-	private boolean addJuego(Juego juego) {
+	private boolean addJuego(JuegoController jc) {
 		// TODO: verificar que el juego no exista en la bd
 
-		if (!this.existeJuego(juego)) {
+		if (!this.existeJuego(jc.getJuego())) {
 			GestorLogs.registrarLog("Agregado al GestorJuegos el juego "
-					+ juego.getUniqueID());
-			GestorLogs.registrarDebug(juego.toString());
-			JuegoController jc = new JuegoController(juego);
-			if (juegosControllerList.put(juego.getUniqueID(), jc) == null)
+					+ jc.getJuego().getUniqueID());
+			GestorLogs.registrarDebug(jc.getJuego().toString());
+			if (juegosControllerList.put(jc.getJuego().getUniqueID(), jc) == null)
 				return true;
 		}
 		return false;
@@ -77,10 +76,10 @@ public class PartidasController {
 	public Juego crearJuego(Usuario creador, String nombre) {
 		// verificar que el nombre del juego no exista
 		// tanto en las instancias actuales como en la BD.
-		Juego juego = new Juego(creador, nombre);
-		if (!this.addJuego(juego))
+		JuegoController jc = new JuegoController(creador, nombre);
+		if (!this.addJuego(jc))
 			return null;
-		return juego;
+		return jc.getJuego();
 	}
 
 	/**
