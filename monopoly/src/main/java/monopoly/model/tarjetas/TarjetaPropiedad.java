@@ -30,7 +30,7 @@ import org.hibernate.annotations.Type;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class TarjetaPropiedad implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -2385980028602703757L;
 
 	public static String TARJETA_02 = "tarjeta02";
 	public static String TARJETA_04 = "tarjeta04";
@@ -184,6 +184,25 @@ public abstract class TarjetaPropiedad implements Serializable {
 	public String toString() {
 		return "TarjetaPropiedad [ nombre=" + nombre + ", valorHipotecario="
 				+ valorHipotecario + ",valoPropiedadr=" + valorPropiedad + " ]";
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (object == this)
+			return true;
+
+		if (object == null || getClass() != object.getClass())
+			return false;
+
+		TarjetaPropiedad tp = (TarjetaPropiedad) object;
+		if (this.idTarjeta != tp.idTarjeta)
+			return false;
+
+		// return (id != null && other != null && getClass() ==
+		// other.getClass()) ? id
+		// .equals(((Tarifa) other).id) : (other == this);
+
+		return true;
 	}
 
 	// public boolean hipotecarPropiedad() {

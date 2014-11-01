@@ -241,5 +241,25 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 				+ ", valorHotel=" + valorHotel + ", precioCadaCasa="
 				+ precioCadaCasa + ", precioCadaHotel=" + precioCadaHotel + "]";
 	}
+	
+	@Override
+	public boolean equals(Object object) {
+		System.out.println("Object id: "
+				+ ((TarjetaPropiedad) object).getIdTarjeta() + "This id: "
+				+ this.getIdTarjeta());
+		if (((TarjetaPropiedad) object).getIdTarjeta() == 1
+				&& this.getIdTarjeta() == 1)
+			System.out.println("Este es el uno");
+        if (object == this)
+            return true;
+        if (object == null || getClass() != object.getClass())
+            return false;
+
+        TarjetaCalle tp = (TarjetaCalle) object;
+        if (super.getIdTarjeta().intValue() != tp.getIdTarjeta().intValue())
+            return false;
+
+        return true;
+    }
 
 }
