@@ -35,12 +35,12 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -50,6 +50,7 @@ import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import monopoly.client.connection.ConnectionController;
 import monopoly.client.util.ScreensFramework;
+import monopoly.model.Banco;
 import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
@@ -261,6 +262,8 @@ public class TableroController extends AnchorPane implements Serializable,
 	private StringProperty clockLabelTextProperty;
 
 	private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+	
+	private final NumberFormat formatoImporte = NumberFormat.getCurrencyInstance();
 
 	/*
 	 * (non-Javadoc)
@@ -454,7 +457,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					: "Jugador Virtual";
 			tps[i] = getPaneInfoPlayer(turnos.get(i), title);
 		}
-		tps[turnos.size()] = new TitledPane("Banco", new Pane());
+		tps[turnos.size()] = getPaneInfoBanco(status.banco, "BANCO");
 
 		accordionPlayers.getPanes().addAll(tps);
 		accordionPlayers.setExpandedPane(tps[0]);
@@ -732,8 +735,6 @@ public class TableroController extends AnchorPane implements Serializable,
 
 		pImgFicha.getChildren().add(ivFicha);
 
-		NumberFormat formatoImporte = NumberFormat.getCurrencyInstance();
-
 		hbInfoJugador.getChildren().add(pImgFicha);
 		hbInfoJugador.getChildren().add(new Label(jugador.getNombre()));
 		hbInfoJugador.getChildren().add(
@@ -754,6 +755,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		TarjetaPropiedad propiedad;
 		Image imgPropiedad;
 		HBox hBox_inner;
+		Tooltip tpImagen;
 		double hbWidth = 35;
 		double hbHeight = 60;
 
@@ -787,6 +789,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 0, 0);
 
@@ -801,6 +805,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 1, 0);
 
@@ -815,6 +821,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 0, 1);
 
@@ -829,6 +837,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 1, 1);
 
@@ -843,6 +853,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 2, 1);
 
@@ -857,6 +869,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 0, 2);
 
@@ -871,6 +885,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 1, 2);
 
@@ -885,6 +901,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 2, 2);
 
@@ -899,6 +917,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 0, 3);
 
@@ -913,6 +933,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 1, 3);
 
@@ -927,6 +949,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 2, 3);
 
@@ -941,6 +965,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 0, 4);
 
@@ -955,6 +981,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 1, 4);
 
@@ -969,6 +997,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 2, 4);
 
@@ -983,6 +1013,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 0, 0);
 
@@ -997,6 +1029,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 1, 0);
 
@@ -1011,6 +1045,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 2, 0);
 
@@ -1025,6 +1061,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 0, 1);
 
@@ -1039,6 +1077,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 1, 1);
 
@@ -1053,6 +1093,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 2, 1);
 
@@ -1067,6 +1109,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 0, 2);
 
@@ -1081,6 +1125,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 1, 2);
 
@@ -1095,6 +1141,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 0, 3);
 
@@ -1109,6 +1157,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 1, 3);
 
@@ -1123,6 +1173,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 0, 4);
 
@@ -1137,6 +1189,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 1, 4);
 
@@ -1151,6 +1205,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 2, 4);
 
@@ -1165,6 +1221,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 3, 4);
 
@@ -1204,6 +1262,534 @@ public class TableroController extends AnchorPane implements Serializable,
 		return tp;
 	}
 
+	private TitledPane getPaneInfoBanco(Banco banco, String title){
+		AnchorPane root = new AnchorPane();
+		VBox vBox = new VBox();
+		HBox hbPropiedades = new HBox();
+		HBox hbExtra = new HBox();
+
+		AnchorPane.setLeftAnchor(vBox, (double) 0);
+		AnchorPane.setRightAnchor(vBox, (double) 0);
+		AnchorPane.setTopAnchor(vBox, (double) 0);
+		AnchorPane.setBottomAnchor(vBox, (double) 0);
+		root.getStyleClass().add("bg_info_panel");
+		vBox.setAlignment(Pos.CENTER);
+		vBox.setSpacing(10);
+
+		hbPropiedades.setAlignment(Pos.CENTER);
+		hbPropiedades.setSpacing(20);
+
+		hbExtra.setAlignment(Pos.CENTER);
+		hbExtra.setSpacing(20);
+
+		vBox.getChildren().add(hbPropiedades);
+		vBox.getChildren().add(hbExtra);
+		root.getChildren().add(vBox);
+
+		// ===================== HBox de propiedades =====================//
+
+		TarjetaPropiedad propiedad;
+		Image imgPropiedad;
+		HBox hBox_inner;
+		Tooltip tpImagen;
+		double hbWidth = 35;
+		double hbHeight = 60;
+
+		GridPane gridPane1 = new GridPane();
+		GridPane gridPane2 = new GridPane();
+
+		AnchorPane.setLeftAnchor(gridPane1, (double) 0);
+		AnchorPane.setRightAnchor(gridPane1, (double) 0);
+		AnchorPane.setTopAnchor(gridPane1, (double) 0);
+		AnchorPane.setBottomAnchor(gridPane1, (double) 0);
+
+		AnchorPane.setLeftAnchor(gridPane2, (double) 0);
+		AnchorPane.setRightAnchor(gridPane2, (double) 0);
+		AnchorPane.setTopAnchor(gridPane2, (double) 0);
+		AnchorPane.setBottomAnchor(gridPane2, (double) 0);
+
+		gridPane1.setHgap(5);
+		gridPane1.setVgap(10);
+
+		gridPane2.setHgap(5);
+		gridPane2.setVgap(10);
+
+		// ----- tarjeta02 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_marron");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta02");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane1.add(hBox_inner, 0, 0);
+
+		// ----- tarjeta04 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_marron");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta04");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane1.add(hBox_inner, 1, 0);
+
+		// ----- tarjeta07 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_celeste");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta07");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane1.add(hBox_inner, 0, 1);
+
+		// ----- tarjeta09 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_celeste");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta09");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane1.add(hBox_inner, 1, 1);
+
+		// ----- tarjeta10 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_celeste");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta10");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane1.add(hBox_inner, 2, 1);
+
+		// ----- tarjeta12 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_fuczia");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta12");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane1.add(hBox_inner, 0, 2);
+
+		// ----- tarjeta14 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_fuczia");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta14");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane1.add(hBox_inner, 1, 2);
+
+		// ----- tarjeta15 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_fuczia");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta15");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane1.add(hBox_inner, 2, 2);
+
+		// ----- tarjeta17 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_naranja");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta17");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane1.add(hBox_inner, 0, 3);
+
+		// ----- tarjeta19 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_naranja");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta19");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane1.add(hBox_inner, 1, 3);
+
+		// ----- tarjeta20 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_naranja");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta20");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane1.add(hBox_inner, 2, 3);
+
+		// ----- tarjeta22 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_rojo");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta22");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane1.add(hBox_inner, 0, 4);
+
+		// ----- tarjeta24 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_rojo");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta24");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane1.add(hBox_inner, 1, 4);
+
+		// ----- tarjeta25 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_rojo");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta25");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane1.add(hBox_inner, 2, 4);
+
+		// ----- tarjeta27 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_amarillo");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta27");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane2.add(hBox_inner, 0, 0);
+
+		// ----- tarjeta28 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_amarillo");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta28");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane2.add(hBox_inner, 1, 0);
+
+		// ----- tarjeta30 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_amarillo");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta30");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane2.add(hBox_inner, 2, 0);
+
+		// ----- tarjeta32 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_verde");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta32");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane2.add(hBox_inner, 0, 1);
+
+		// ----- tarjeta33 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_verde");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta33");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane2.add(hBox_inner, 1, 1);
+
+		// ----- tarjeta35 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_verde");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta35");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane2.add(hBox_inner, 2, 1);
+
+		// ----- tarjeta38 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_azul");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta38");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane2.add(hBox_inner, 0, 2);
+
+		// ----- tarjeta40 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_azul");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta40");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane2.add(hBox_inner, 1, 2);
+
+		// ----- tarjeta13 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_blanco");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta13");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane2.add(hBox_inner, 0, 3);
+
+		// ----- tarjeta29 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_blanco");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta29");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane2.add(hBox_inner, 1, 3);
+
+		// ----- tarjeta06 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_negro");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta06");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane2.add(hBox_inner, 0, 4);
+
+		// ----- tarjeta16 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_negro");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta16");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane2.add(hBox_inner, 1, 4);
+
+		// ----- tarjeta26 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_negro");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta26");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane2.add(hBox_inner, 2, 4);
+
+		// ----- tarjeta36 --------//
+		hBox_inner = new HBox();
+		hBox_inner.getStyleClass().add("border_negro");
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		propiedad = juego.getTarjetasPropiedad("tarjeta36");
+		if (banco.getTarjPropiedadList().contains(propiedad)) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(propiedad
+							.getNombreImagen()), hbWidth, hbHeight, false,
+					false);
+			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		gridPane2.add(hBox_inner, 3, 4);
+
+		hbPropiedades.getChildren().add(gridPane1);
+		hbPropiedades.getChildren().add(gridPane2);
+
+		// ===================== Area extra =========================//
+
+		Image imgCasa;
+		Image imgHotel;
+
+		imgCasa = new Image(
+				TableroController.class
+						.getResourceAsStream("/images/fichas/Casa01.png"),
+				30, 30, false, false);
+		imgHotel = new Image(
+				TableroController.class
+						.getResourceAsStream("/images/fichas/Casa05.png"),
+				30, 30, false, false);
+		
+		hbExtra.getChildren().add(new ImageView(imgCasa));
+		hbExtra.getChildren().add(new Label("x " + banco.getNroCasas()));
+		hbExtra.getChildren().add(new ImageView(imgHotel));
+		hbExtra.getChildren().add(new Label("x " + banco.getNroHoteles()));
+
+		TitledPane tp = new TitledPane(title, root);
+		tp.setId("tp_banco");
+		tp.setCollapsible(true);
+		return tp;
+	}
+	
 	/**
 	 * @return the currentStage
 	 */
