@@ -17,7 +17,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -25,14 +28,20 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import monopoly.client.util.ScreensFramework;
 import monopoly.model.Juego;
 import monopoly.model.Usuario;
+import monopoly.util.GestorLogs;
+import monopoly.util.constantes.ConstantesFXML;
+
+import org.controlsfx.dialog.Dialogs;
 
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
  *
  */
+@SuppressWarnings("deprecation")
 public class UnirmeJuegoController extends AnchorPane implements Initializable {
 
     @FXML
@@ -57,7 +66,7 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
     private TableColumn<JuegoSimpleProperty, String> colParticipantes;
     
     @FXML
-    private Button btnCrearJuego;
+    private Button btnUnirmeJuego;
 
     @FXML
     private TextField txtNombreJuego;
@@ -82,7 +91,7 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 
 	private Usuario usuarioLogueado = null;
 	
-	private Juego juegoUnido;
+	private Juego juegoSelected;
 
 	private static UnirmeJuegoController instance;
 	
@@ -146,6 +155,11 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 				.setCellValueFactory(new PropertyValueFactory<JuegoSimpleProperty, String>(
 						"participantes"));
 		
+		colNombre.prefWidthProperty().bind(tblJuegos.widthProperty().multiply(0.30));
+		colFecha.prefWidthProperty().bind(tblJuegos.widthProperty().multiply(0.15));
+		colCreador.prefWidthProperty().bind(tblJuegos.widthProperty().multiply(0.25));
+		colParticipantes.prefWidthProperty().bind(tblJuegos.widthProperty().multiply(0.30));
+		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -158,9 +172,38 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 				colParticipantes);
 	}
 	
-    @FXML
-    void processCreateGame(ActionEvent event) {
+	@FXML
+    void processJoinGame(ActionEvent event) {
+    	final JuegoSimpleProperty juegoSelected = tblJuegos.getSelectionModel().getSelectedItem();
+    	String fxml = ConstantesFXML.FXML_UNIR_JUGADOR;
+		Parent root;
+		Stage stage = new Stage();
+		FXMLLoader loader = null;
+		try {
 
+				loader = ScreensFramework.getLoader(fxml);
+
+				root = (Parent) loader.load();
+				UnirJugadorController controller = (UnirJugadorController) loader
+						.getController();
+
+				Scene scene = new Scene(root);
+				stage.setScene(scene);
+				stage.setTitle("Monopoly - Unirme a Juego");
+				stage.centerOnScreen();
+				controller.setPrevStage(currentStage);
+				controller.setCurrentStage(stage);
+				controller.setJuegoSelected(juegoSelected.getJuego());
+				controller.setUsuarioLogueado(usuarioLogueado);
+				stage.show();
+		} catch (Exception ex) {
+			// TODO Auto-generated catch block
+			GestorLogs.registrarError(ex.getMessage());
+			Dialogs.create().owner(currentStage).title("Error")
+			.masthead("Error mediante una excepción").message(ex.getMessage())
+			.showError();
+		}
+    	
     }
 
     @FXML
@@ -218,15 +261,15 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 	/**
 	 * @return the juegoUnido
 	 */
-	public Juego getJuegoUnido() {
-		return juegoUnido;
+	public Juego getJuegoSelected() {
+		return juegoSelected;
 	}
 	
 	/**
 	 * @param juegoUnido the juegoUnido to set
 	 */
-	public void setJuegoUnido(Juego juegoUnido) {
-		this.juegoUnido = juegoUnido;
+	public void setJuegoSelected(Juego juegoUnido) {
+		this.juegoSelected = juegoUnido;
 	}
 	/**
 	 * @return the instance
