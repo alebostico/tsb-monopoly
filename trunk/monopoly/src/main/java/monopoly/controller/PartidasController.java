@@ -31,7 +31,6 @@ public class PartidasController {
 	private GameServer monopolyGame;
 
 	private PartidasController() {
-		super();
 		juegosControllerList = new TreeMap<String, JuegoController>();
 		GestorLogs.registrarLog("Creando el gestor de juegos");
 	}
@@ -120,6 +119,14 @@ public class PartidasController {
 				return jc.getJuego();
 		}
 		return null;
+	}
+	
+	public JuegoController buscarControladorJuego(String key){
+		return this.juegosControllerList.get(key);
+	}
+	
+	public JuegoController buscarControladorJuego(Juego juego){
+		return buscarControladorJuego(juego.getUniqueID());
 	}
 
 	/**

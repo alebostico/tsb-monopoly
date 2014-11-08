@@ -20,9 +20,9 @@ import monopoly.util.GestorLogs;
 public class TableroController {
 
 	private Tablero tablero;
-	
+
 	private int cantCasilleros;
-	
+
 	private TarjetaController gestorTarjetas;
 
 	public TableroController() {
@@ -47,13 +47,14 @@ public class TableroController {
 	}
 
 	/**
-	 * @param gestorTarjetas the gestorTarjetas to set
+	 * @param gestorTarjetas
+	 *            the gestorTarjetas to set
 	 */
 	public void setGestorTarjetas(TarjetaController gestorTarjetas) {
 		this.gestorTarjetas = gestorTarjetas;
 	}
-	
-	public void resetCasilleros(){
+
+	public void resetCasilleros() {
 		tablero.setCasillerosList(CasillerosController.getCasilleros());
 	}
 
@@ -180,7 +181,7 @@ public class TableroController {
 			cobroSalida = -1;
 			if (cobraSalida) {
 				// ... los cobra
-				//this.banco.cobrar(jugador, 200);
+				// this.banco.cobrar(jugador, 200);
 				cobroSalida = 1;
 			}
 
@@ -232,12 +233,9 @@ public class TableroController {
 	 *            El nÃºmero de casillero al cual se quiere mover el jugador.
 	 * @param cobraSalida
 	 *            true en el caso que el jugador deba cobrar los $200 si pasa
-	 *            por la salida. false si no los cobra. <<<<<<< .mine
+	 *            por la salida. false si no los cobra.
 	 * @return El casillero al cual se movió el jugador si 'nroCasillero' es
-	 *         válido (entre 1 y 40). null en caso contrario. =======
-	 * @return El casillero al cual se moviÃ³ el jugador si 'nroCasillero' es
-	 *         vÃ¡lido (menor a 1 o mayor a 40). null en caso contrario. >>>>>>>
-	 *         .r73
+	 *         válido (entre 1 y 40). null en caso contrario.
 	 */
 	public Casillero moverACasillero(Jugador jugador, int nroCasillero,
 			boolean cobraSalida) {
@@ -264,7 +262,7 @@ public class TableroController {
 			cobroSalida = -1;
 			if (cobraSalida) {
 				// ... los cobra
-				//this.banco.cobrar(jugador, 200);
+				// this.banco.cobrar(jugador, 200);
 				cobroSalida = 1;
 			}
 		}
@@ -334,7 +332,7 @@ public class TableroController {
 	public Casillero retrocederA(Jugador jugador, int nroCasillero) {
 		return this.moverACasillero(jugador, nroCasillero, false);
 	}
-	
+
 	/**
 	 * Registra la información de los movimientos el el logger
 	 * 

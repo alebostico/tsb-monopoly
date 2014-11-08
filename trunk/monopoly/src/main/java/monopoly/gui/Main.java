@@ -7,31 +7,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import monopoly.controller.JuegoController;
 import monopoly.controller.PartidasController;
-import monopoly.dao.ITarjetaCalleDao;
-import monopoly.dao.ITarjetaCompaniaDao;
-import monopoly.dao.ITarjetaComunidadDao;
-import monopoly.dao.ITarjetaEstacionDao;
-import monopoly.dao.ITarjetaSuerteDao;
-import monopoly.model.Banco;
 import monopoly.model.Ficha;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.Usuario;
-import monopoly.model.tablero.CasilleroCalle;
-import monopoly.model.tablero.Tablero;
-import monopoly.model.tarjetas.TarjetaCalle;
-import monopoly.model.tarjetas.TarjetaCompania;
-import monopoly.model.tarjetas.TarjetaComunidad;
-import monopoly.model.tarjetas.TarjetaEstacion;
-import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
 import monopoly.util.ListUtils;
 import monopoly.util.StringUtils;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @author Bostico Alejandro
@@ -44,15 +29,14 @@ public class Main {
 	public static void main(String[] args) {
 
 		GestorLogs.registrarLog("Realizando algunas pruebas...");
-		 //crearUsuarios();
-		 testLoadGame();
-		 
-		 GestorLogs.registrarExeption(new Exception("PROBANDO!!!"));
-		 		 
-		 
-		 //testRandomizeList();
-		 //testShuffleList();
-		 //Main.testStringUtils();
+		// crearUsuarios();
+		testLoadGame();
+		//
+		// GestorLogs.registrarExeption(new Exception("PROBANDO!!!"));
+
+		// testRandomizeList();
+		// testShuffleList();
+		// Main.testStringUtils();
 		GestorLogs.registrarLog("END!!!");
 	}
 
@@ -64,49 +48,58 @@ public class Main {
 		 */
 		GestorLogs.setLoggingDetailLevel(GestorLogs.MSG_INFO);
 
-		PartidasController gj = PartidasController.getInstance();
+		// PartidasController gj = PartidasController.getInstance();
 
 		// El usuario1 además de ser jugador es el creador
 		Usuario usuario1 = new Usuario("testuser1");
-		Juego juego = gj.crearJuego(usuario1, "Test Juego");
-		
-		Jugador jugadorH1 = new JugadorHumano("Jugador1", new Ficha(Ficha.TipoFicha.F_AUTO), juego, usuario1,0);
-		
+		// Juego juego = gj.crearJuego(usuario1, "Test Juego");
+		Juego juego = PartidasController.getInstance().crearJuego(usuario1,
+				"Test Juego");
+
+		Jugador jugadorH1 = new JugadorHumano("Jugador1", new Ficha(
+				Ficha.TipoFicha.F_AUTO), juego, usuario1, 0);
+
 		// creamos un segundo usuario que será solo jugador
 		Usuario usuario2 = new Usuario("testuser2");
-		Jugador jugadorH2 = new JugadorHumano("Jugador2", new Ficha(Ficha.TipoFicha.F_BOTA), juego, usuario2,0);
-		
+		Jugador jugadorH2 = new JugadorHumano("Jugador2", new Ficha(	
+				Ficha.TipoFicha.F_BOTA), juego, usuario2, 0);
+
 		juego.addJugador(jugadorH1);
 		juego.addJugador(jugadorH2);
-		
+
 		GestorLogs.setLoggingDetailLevel(GestorLogs.MSG_DEBUG);
 
 		// Hacemos algunos movimientos de los jugadores.
-		juego.getTablero().moverAdelante(jugadorH1, 5, true);
+		JuegoController jc = PartidasController.getInstance()
+				.buscarControladorJuego(juego);
+
+		jc.getGestorTablero().moverAdelante(jugadorH1, 5, true);
 		System.out.println("Jugador auto 5 lugares hacia adelante: "
 				+ jugadorH1.getCasilleroActual());
-		juego.getTablero().moverAtras(jugadorH2, 10);
+		jc.getGestorTablero().moverAtras(jugadorH2, 10);
 		System.out.println("Jugador bota 10 lugares hacia atras: "
 				+ jugadorH2.getCasilleroActual());
-		juego.getTablero().moverACasillero(jugadorH1, 35, false);
+		jc.getGestorTablero().moverACasillero(jugadorH1, 35, false);
 		System.out.println("Jugador auto al casillero 35: "
 				+ jugadorH1.getCasilleroActual());
-		juego.getTablero().moverAdelante(jugadorH1, 10, true);
+		jc.getGestorTablero().moverAdelante(jugadorH1, 10, true);
 		System.out.println("Jugador auto 10 lugares hacia adelante y cobra: "
 				+ jugadorH1.getCasilleroActual());
-		juego.getTablero().moverACasillero(jugadorH2, 6, false);
+		jc.getGestorTablero().moverACasillero(jugadorH2, 6, false);
 		System.out.println("Jugador bota 6 lugares hacia adelante y NO cobra: "
 				+ jugadorH2.getCasilleroActual());
 
 		// Ahora movemos de acuerdo a los dados
-		juego.getTablero().moverAdelante(jugadorH1, juego.tirarDados(), true);
+		jc.getGestorTablero()
+				.moverAdelante(jugadorH1, juego.tirarDados(), true);
 		System.out.println("Jugador auto " + juego.getDado().getSuma() + " ("
 				+ juego.getDado().getValorDado(1) + "+"
 				+ juego.getDado().getValorDado(2)
 				+ ") lugares hacia adelante y cobra: "
 				+ jugadorH1.getCasilleroActual());
 
-		juego.getTablero().moverAdelante(jugadorH2, juego.tirarDados(), true);
+		jc.getGestorTablero()
+				.moverAdelante(jugadorH2, juego.tirarDados(), true);
 		System.out.println("Jugador bota " + juego.getDado().getSuma() + " ("
 				+ juego.getDado().getValorDado(1) + "+"
 				+ juego.getDado().getValorDado(2)
@@ -118,90 +111,94 @@ public class Main {
 
 	}
 
-	@SuppressWarnings("unused")
-	private static void testLoadOneCasillero() {
-		ApplicationContext appContext = new ClassPathXmlApplicationContext(
-				"spring/config/BeanLocations.xml");
-		ITarjetaCalleDao tarjetaCalleDao = (ITarjetaCalleDao) appContext
-				.getBean("tarjetaCalleDao");
-
-		Banco banco = new Banco();
-		Tablero tablero = new Tablero(banco);
-
-		// Test link cassillero-tarjeta
-
-		GestorLogs.registrarLog("Cargando tarjeta 'RONDA DE VALENCIA'");
-		TarjetaCalle tarjetaCalleTemp = tarjetaCalleDao
-				.findByNombre("RONDA DE VALENCIA");
-
-		GestorLogs.registrarLog("Cargando casillero 'Ronda de Valencia'");
-		CasilleroCalle casillerosTest = new CasilleroCalle(2,
-				"Ronda de Valencia", tablero, tarjetaCalleTemp);
-	}
-
-	@SuppressWarnings("unused")
-	private static void testLoadTarjetas() {
-		ApplicationContext appContext = new ClassPathXmlApplicationContext(
-				"spring/config/BeanLocations.xml");
-
-		// Cargar las tarjetas de las calles
-		ITarjetaCalleDao tarjetaCalleDao = (ITarjetaCalleDao) appContext
-				.getBean("tarjetaCalleDao");
-		List<TarjetaCalle> tarjetasCallesList = new ArrayList<TarjetaCalle>();
-		tarjetasCallesList = tarjetaCalleDao.getAll();
-
-		// Cargar las tarjetas de las companias
-		ITarjetaCompaniaDao tarjetaCompaniaDao = (ITarjetaCompaniaDao) appContext
-				.getBean("tarjetaCompaniaDao");
-		List<TarjetaCompania> tarjetasCompaniaList = new ArrayList<TarjetaCompania>();
-		tarjetasCompaniaList = tarjetaCompaniaDao.getAll();
-
-		// Cargar las tarjetas de las Estaciones
-		ITarjetaEstacionDao tarjetaEstacionDao = (ITarjetaEstacionDao) appContext
-				.getBean("tarjetaEstacionDao");
-		List<TarjetaEstacion> tarjetasEstacionList = new ArrayList<TarjetaEstacion>();
-		tarjetasEstacionList = tarjetaEstacionDao.getAll();
-
-		// Cargar las tarjetas de Comunidad
-		ITarjetaComunidadDao tarjetaComunidadDao = (ITarjetaComunidadDao) appContext
-				.getBean("tarjetaComunidadDao");
-		List<TarjetaComunidad> tarjetasComunidadList = new ArrayList<TarjetaComunidad>();
-		tarjetasComunidadList = tarjetaComunidadDao.getAll();
-
-		// Cargar las tarjetas de Suerte
-		ITarjetaSuerteDao tarjetaSuerteDao = (ITarjetaSuerteDao) appContext
-				.getBean("tarjetaSuerteDao");
-		List<TarjetaSuerte> tarjetasSuerteList = new ArrayList<TarjetaSuerte>();
-		tarjetasSuerteList = tarjetaSuerteDao.getAll();
-
-		// //////////////////////////////////////////////////////
-		// Imprimimos info de debug para ver si anda todo......
-		for (TarjetaCalle tarjetaCalle : tarjetasCallesList) {
-			System.out.println(tarjetaCalle.toString() + "\n");
-		}
-		GestorLogs.registrarLog("Mostrar lista de tarjetas de Calles");
-
-		for (TarjetaCompania tarjetaCompania : tarjetasCompaniaList) {
-			System.out.println(tarjetaCompania.toString() + "\n");
-		}
-		GestorLogs.registrarLog("Mostrar lista de tarjetas de Compania");
-
-		for (TarjetaEstacion tarjetaEstacion : tarjetasEstacionList) {
-			System.out.println(tarjetaEstacion.toString() + "\n");
-		}
-		GestorLogs.registrarLog("Mostrar lista de tarjetas de Estacion");
-
-		for (TarjetaComunidad tarjetaComunidad : tarjetasComunidadList) {
-			System.out.println(tarjetaComunidad.toString() + "\n");
-		}
-		GestorLogs.registrarLog("Mostrar lista de tarjetas de Comunidad");
-
-		for (TarjetaSuerte tarjetaSuerte : tarjetasSuerteList) {
-			System.out.println(tarjetaSuerte.toString() + "\n");
-		}
-		GestorLogs.registrarLog("Mostrar lista de tarjetas de Suerte");
-		// //////////////////////////////////////////////////////
-	}
+	// @SuppressWarnings("unused")
+	// private static void testLoadOneCasillero() {
+	// ApplicationContext appContext = new ClassPathXmlApplicationContext(
+	// "spring/config/BeanLocations.xml");
+	// ITarjetaCalleDao tarjetaCalleDao = (ITarjetaCalleDao) appContext
+	// .getBean("tarjetaCalleDao");
+	//
+	// Banco banco = new Banco();
+	// Tablero tablero = new Tablero(banco);
+	//
+	// // Test link cassillero-tarjeta
+	//
+	// GestorLogs.registrarLog("Cargando tarjeta 'RONDA DE VALENCIA'");
+	// TarjetaCalle tarjetaCalleTemp = tarjetaCalleDao
+	// .findByNombre("RONDA DE VALENCIA");
+	//
+	// GestorLogs.registrarLog("Cargando casillero 'Ronda de Valencia'");
+	// CasilleroCalle casillerosTest = new CasilleroCalle(2,
+	// "Ronda de Valencia", tablero, tarjetaCalleTemp);
+	// }
+	//
+	// @SuppressWarnings("unused")
+	// private static void testLoadTarjetas() {
+	// ApplicationContext appContext = new ClassPathXmlApplicationContext(
+	// "spring/config/BeanLocations.xml");
+	//
+	// // Cargar las tarjetas de las calles
+	// ITarjetaCalleDao tarjetaCalleDao = (ITarjetaCalleDao) appContext
+	// .getBean("tarjetaCalleDao");
+	// List<TarjetaCalle> tarjetasCallesList = new ArrayList<TarjetaCalle>();
+	// tarjetasCallesList = tarjetaCalleDao.getAll();
+	//
+	// // Cargar las tarjetas de las companias
+	// ITarjetaCompaniaDao tarjetaCompaniaDao = (ITarjetaCompaniaDao) appContext
+	// .getBean("tarjetaCompaniaDao");
+	// List<TarjetaCompania> tarjetasCompaniaList = new
+	// ArrayList<TarjetaCompania>();
+	// tarjetasCompaniaList = tarjetaCompaniaDao.getAll();
+	//
+	// // Cargar las tarjetas de las Estaciones
+	// ITarjetaEstacionDao tarjetaEstacionDao = (ITarjetaEstacionDao) appContext
+	// .getBean("tarjetaEstacionDao");
+	// List<TarjetaEstacion> tarjetasEstacionList = new
+	// ArrayList<TarjetaEstacion>();
+	// tarjetasEstacionList = tarjetaEstacionDao.getAll();
+	//
+	// // Cargar las tarjetas de Comunidad
+	// ITarjetaComunidadDao tarjetaComunidadDao = (ITarjetaComunidadDao)
+	// appContext
+	// .getBean("tarjetaComunidadDao");
+	// List<TarjetaComunidad> tarjetasComunidadList = new
+	// ArrayList<TarjetaComunidad>();
+	// tarjetasComunidadList = tarjetaComunidadDao.getAll();
+	//
+	// // Cargar las tarjetas de Suerte
+	// ITarjetaSuerteDao tarjetaSuerteDao = (ITarjetaSuerteDao) appContext
+	// .getBean("tarjetaSuerteDao");
+	// List<TarjetaSuerte> tarjetasSuerteList = new ArrayList<TarjetaSuerte>();
+	// tarjetasSuerteList = tarjetaSuerteDao.getAll();
+	//
+	// // //////////////////////////////////////////////////////
+	// // Imprimimos info de debug para ver si anda todo......
+	// for (TarjetaCalle tarjetaCalle : tarjetasCallesList) {
+	// System.out.println(tarjetaCalle.toString() + "\n");
+	// }
+	// GestorLogs.registrarLog("Mostrar lista de tarjetas de Calles");
+	//
+	// for (TarjetaCompania tarjetaCompania : tarjetasCompaniaList) {
+	// System.out.println(tarjetaCompania.toString() + "\n");
+	// }
+	// GestorLogs.registrarLog("Mostrar lista de tarjetas de Compania");
+	//
+	// for (TarjetaEstacion tarjetaEstacion : tarjetasEstacionList) {
+	// System.out.println(tarjetaEstacion.toString() + "\n");
+	// }
+	// GestorLogs.registrarLog("Mostrar lista de tarjetas de Estacion");
+	//
+	// for (TarjetaComunidad tarjetaComunidad : tarjetasComunidadList) {
+	// System.out.println(tarjetaComunidad.toString() + "\n");
+	// }
+	// GestorLogs.registrarLog("Mostrar lista de tarjetas de Comunidad");
+	//
+	// for (TarjetaSuerte tarjetaSuerte : tarjetasSuerteList) {
+	// System.out.println(tarjetaSuerte.toString() + "\n");
+	// }
+	// GestorLogs.registrarLog("Mostrar lista de tarjetas de Suerte");
+	// // //////////////////////////////////////////////////////
+	// }
 
 	@SuppressWarnings({ "unchecked", "unused" })
 	private static void testShuffleList() {
@@ -357,22 +354,22 @@ public class Main {
 
 	}
 
-//	private static void crearUsuarios() {
-//		Usuario uAlejandro = new Usuario("alejandro", "123456");
-//		uAlejandro.setNombre("Alejandro");
-//		uAlejandro.setEmail("alejandro@monopoly.com");
-//		UsuarioController.saveUsuario(uAlejandro);
-//
-//		Usuario uPabloM = new Usuario("pablom", "123456");
-//		uPabloM.setNombre("Pablo M.");
-//		uPabloM.setEmail("pablom@monopoly.com");
-//		UsuarioController.saveUsuario(uPabloM);
-//
-//		Usuario uPabloO = new Usuario("pabloo", "123456");
-//		uPabloO.setNombre("Pablo O.");
-//		uPabloO.setEmail("pabloo@monopoly.com");
-//		UsuarioController.saveUsuario(uPabloO);
-//
-//	}
+	// private static void crearUsuarios() {
+	// Usuario uAlejandro = new Usuario("alejandro", "123456");
+	// uAlejandro.setNombre("Alejandro");
+	// uAlejandro.setEmail("alejandro@monopoly.com");
+	// UsuarioController.saveUsuario(uAlejandro);
+	//
+	// Usuario uPabloM = new Usuario("pablom", "123456");
+	// uPabloM.setNombre("Pablo M.");
+	// uPabloM.setEmail("pablom@monopoly.com");
+	// UsuarioController.saveUsuario(uPabloM);
+	//
+	// Usuario uPabloO = new Usuario("pabloo", "123456");
+	// uPabloO.setNombre("Pablo O.");
+	// uPabloO.setEmail("pabloo@monopoly.com");
+	// UsuarioController.saveUsuario(uPabloO);
+	//
+	// }
 
 }

@@ -432,14 +432,14 @@ public class GameServer {
 					Socket connection = serverSocket.accept();
 					if (shutdown) {
 						GestorLogs
-								.registrarError("Listener socket has shut down.");
+								.registrarLog("Listener socket has shut down.");
 						break;
 					}
 					new ConnectionToClient(incomingMessages, connection);
 				}
 			} catch (Exception e) {
 				if (shutdown)
-					GestorLogs.registrarError("Listener socket has shut down.");
+					GestorLogs.registrarLog("Listener socket has shut down.");
 				else
 					GestorLogs
 							.registrarError("Listener socket has been shut down by error: "
