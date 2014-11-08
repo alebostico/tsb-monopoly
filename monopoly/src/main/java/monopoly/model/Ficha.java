@@ -39,18 +39,18 @@ public class Ficha implements Serializable {
 	public static final String TIPO_BOLSA_DINERO = "bolsa de dinero";
 	public static final String TIPO_CABALLO = "caballo";
 	public static final String TIPO_CANON = "cañón";
-	
+
 	public enum TipoFicha {
-		F_AUTO("auto"),
-		F_SOMBRERO("sombrero"),
+		F_AUTO("auto"), 
+		F_SOMBRERO("sombrero"), 
 		F_BOTA("bota"), 
 		F_PLANCHA("plancha"), 
 		F_CARRETILLA("carretilla"), 
-		F_DEDAL("dedal"),
-		F_BARCO("barco"),
-		F_PERRO("perro"),
-		F_BOLSA_DINERO("bolsa de dinero"),
-		F_CABALLO("caballo"),
+		F_DEDAL("dedal"), 
+		F_BARCO("barco"), 
+		F_PERRO("perro"), 
+		F_BOLSA_DINERO("bolsa de dinero"), 
+		F_CABALLO("caballo"), 
 		F_CANON("cañón");
 
 		private final String nombreTipo;
@@ -58,12 +58,12 @@ public class Ficha implements Serializable {
 		TipoFicha(String nombre) {
 			this.nombreTipo = nombre;
 		}
-		
-		public String getNombreTipo(){
+
+		public String getNombreTipo() {
 			return this.nombreTipo;
 		}
 	}
-	
+
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "fichaID")
@@ -77,7 +77,10 @@ public class Ficha implements Serializable {
 
 	@Column(name = "pathImageSmall")
 	private String pathImgSmall;
-	
+
+	@Transient
+	private TipoFicha tipoFicha;
+
 	@Transient
 	private boolean isSelected = false;
 
@@ -89,12 +92,13 @@ public class Ficha implements Serializable {
 
 	public Ficha(TipoFicha tipoFicha) {
 		this.nombre = tipoFicha.getNombreTipo();
+		this.tipoFicha = tipoFicha;
 		isSelected = false;
 		GestorLogs.registrarLog("Nueva ficha '" + this.getNombre() + "'");
 	}
-	
-	public Ficha(int id, TipoFicha tipoFicha, String pathImgSmall, String pathImgBig)
-	{
+
+	public Ficha(int id, TipoFicha tipoFicha, String pathImgSmall,
+			String pathImgBig) {
 		this.idFicha = id;
 		this.nombre = tipoFicha.getNombreTipo();
 		this.pathImgSmall = pathImgSmall;
@@ -117,7 +121,8 @@ public class Ficha implements Serializable {
 	 */
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
-		GestorLogs.registrarDebug("Asignado nombre a ficha '" + this.getNombre() + "'");
+		GestorLogs.registrarDebug("Asignado nombre a ficha '"
+				+ this.getNombre() + "'");
 	}
 
 	/**
@@ -143,7 +148,8 @@ public class Ficha implements Serializable {
 	}
 
 	/**
-	 * @param pathImgBig the pathImgBig to set
+	 * @param pathImgBig
+	 *            the pathImgBig to set
 	 */
 	public void setPathImgBig(String pathImgBig) {
 		this.pathImgBig = pathImgBig;
@@ -157,7 +163,8 @@ public class Ficha implements Serializable {
 	}
 
 	/**
-	 * @param pathImgSmall the pathImgSmall to set
+	 * @param pathImgSmall
+	 *            the pathImgSmall to set
 	 */
 	public void setPathImgSmall(String pathImgSmall) {
 		this.pathImgSmall = pathImgSmall;
@@ -171,12 +178,13 @@ public class Ficha implements Serializable {
 	}
 
 	/**
-	 * @param isSelected the isSelected to set
+	 * @param isSelected
+	 *            the isSelected to set
 	 */
 	public void setSelected(boolean isSelected) {
 		this.isSelected = isSelected;
 	}
-	
+
 	/**
 	 * Devuelve true si la ficha pasada por parametro es igual a la que ejecuta
 	 * el metodo compara en funcion del nombre (string) de la ficha
@@ -197,9 +205,8 @@ public class Ficha implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("{ Ficha [id: " + this.getIdFicha()
-				+ ", nombre: " + this.getNombre() 
-				+ "] }");
+		sb.append("{ Ficha [id: " + this.getIdFicha() + ", nombre: "
+				+ this.getNombre() + "] }");
 		return sb.toString();
 	}
 

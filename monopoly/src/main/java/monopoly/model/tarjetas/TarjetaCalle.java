@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import monopoly.model.Jugador;
 
@@ -60,6 +61,26 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	@Column(name = "color")
 	private String colorTarjeta;
 
+	@Transient
+	private Color color;
+
+	public enum Color {
+		C_MARRON("marron"), C_CELESTE("celeste"), C_FUCSIA("fucsia"), C_NARANJA(
+				"naranja"), C_ROJO("rojo"), C_AMARILLO("amarillo"), C_VERDE(
+				"verde"), C_AZUL("azul");
+
+		private final String color;
+
+		Color(String color) {
+			this.color = color;
+		}
+
+		public String getColor() {
+			return color;
+		}
+
+	}
+
 	public TarjetaCalle() {
 		super();
 	}
@@ -80,7 +101,7 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 			Integer valorTresCasas, Integer valorCuatroCasas,
 			Integer valorHotel, Integer precioCadaCasa,
 			Integer precioCadaHotel, String nombreImagen,
-			Integer valorPropiedad) {
+			Integer valorPropiedad, Color color) {
 		super(jugador, nombre, valorHipotecario, nombreImagen, valorPropiedad);
 		this.precioAlquiler = precioAlquiler;
 		this.valorUnaCasa = valorUnaCasa;
@@ -90,6 +111,7 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 		this.valorHotel = valorHotel;
 		this.precioCadaCasa = precioCadaCasa;
 		this.precioCadaHotel = precioCadaHotel;
+		this.color = color;
 	}
 
 	/**
@@ -227,6 +249,22 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 		this.colorTarjeta = colorTarjeta;
 	}
 
+	/**
+	 * 
+	 * @param colorTarjeta
+	 */
+	public void setColor(Color colorTarjeta) {
+		this.color = colorTarjeta;
+		// this.colorTarjeta = this.color.getColor();
+	}
+
+	/**
+	 * @return the color
+	 */
+	public Color getColor() {
+		return color;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -241,25 +279,20 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 				+ ", valorHotel=" + valorHotel + ", precioCadaCasa="
 				+ precioCadaCasa + ", precioCadaHotel=" + precioCadaHotel + "]";
 	}
-	
+
 	@Override
 	public boolean equals(Object object) {
-		System.out.println("Object id: "
-				+ ((TarjetaPropiedad) object).getIdTarjeta() + "This id: "
-				+ this.getIdTarjeta());
-		if (((TarjetaPropiedad) object).getIdTarjeta() == 1
-				&& this.getIdTarjeta() == 1)
-			System.out.println("Este es el uno");
-        if (object == this)
-            return true;
-        if (object == null || getClass() != object.getClass())
-            return false;
 
-        TarjetaCalle tp = (TarjetaCalle) object;
-        if (super.getIdTarjeta().intValue() != tp.getIdTarjeta().intValue())
-            return false;
+		if (object == this)
+			return true;
+		if (object == null || getClass() != object.getClass())
+			return false;
 
-        return true;
-    }
+		TarjetaCalle tp = (TarjetaCalle) object;
+		if (super.getIdTarjeta().intValue() != tp.getIdTarjeta().intValue())
+			return false;
+
+		return true;
+	}
 
 }

@@ -109,6 +109,20 @@ public class JuegoController {
 	}
 
 	/**
+	 * @return the gestorBanco
+	 */
+	public BancoController getGestorBanco() {
+		return gestorBanco;
+	}
+
+	/**
+	 * @return the gestorTablero
+	 */
+	public TableroController getGestorTablero() {
+		return gestorTablero;
+	}
+
+	/**
 	 * @return the cantJugadores
 	 */
 	public int getCantJugadores() {
