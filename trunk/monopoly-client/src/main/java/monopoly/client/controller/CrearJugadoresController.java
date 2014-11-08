@@ -253,47 +253,25 @@ public class CrearJugadoresController extends AnchorPane implements
 		return instance;
 	}
 
-	/**
-	 * @return the currentStage
-	 */
 	public Stage getCurrentStage() {
 		return currentStage;
 	}
 
-	/**
-	 * @param currentStage
-	 *            the currentStage to set
-	 */
 	public void setCurrentStage(Stage currentStage) {
 		this.currentStage = currentStage;
 	}
 
-	/**
-	 * @return the prevStage
-	 */
 	public Stage getPrevStage() {
 		return prevStage;
 	}
 
-	/**
-	 * @param prevStage
-	 *            the prevStage to set
-	 */
 	public void setPrevStage(Stage prevStage) {
 		this.prevStage = prevStage;
 	}
-
-	/**
-	 * @return the juego
-	 */
 	public Juego getJuego() {
 		return juego;
 	}
 
-	/**
-	 * @param juego
-	 *            the juego to set
-	 */
 	public void setJuego(Juego juego) {
 		this.juego = juego;
 	}

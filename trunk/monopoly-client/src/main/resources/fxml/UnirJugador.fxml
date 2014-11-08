@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.UnirJugadorController">
+   <children>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="background" stylesheets="@../css/Sheet.css">
+         <children>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <ImageView fitHeight="213.0" fitWidth="403.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/logos/Logo.png" />
+                     </image>
+                  </ImageView>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                     <children>
+                        <Label alignment="CENTER_RIGHT" prefWidth="100.0" text="Mi Ficha" />
+                        <ImageView id="imgBack" fx:id="imgBack" fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <image>
+                              <Image url="@../images/iconos/back.png" />
+                           </image>
+                        </ImageView>
+                        <Pane maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" prefHeight="100.0" prefWidth="100.0" styleClass="bg_ficha">
+                           <children>
+                              <VBox alignment="CENTER" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" prefHeight="100.0" prefWidth="100.0">
+                                 <children>
+                                    <ImageView id="imgFicha" fx:id="imgFicha" fitHeight="52.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                                       <viewport>
+                                          <Rectangle2D height="99.0" width="99.0" />
+                                       </viewport>
+                                    </ImageView>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </Pane>
+                        <ImageView id="imgNext" fx:id="imgNext" fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <image>
+                              <Image url="@../images/iconos/next.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="70.0" right="70.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets left="30.0" right="30.0" />
+                     </padding>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+                     <children>
+                        <Button fx:id="btnCancelar" alignment="CENTER" mnemonicParsing="false" onAction="#processCancel" text="Cancelar" />
+                        <Button fx:id="btnAceptar" alignment="CENTER" mnemonicParsing="false" onAction="#processJoinPlayer" text="Aceptar" />
+                     </children>
+                     <VBox.margin>
+                        <Insets left="70.0" right="70.0" />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </AnchorPane>
+   </children>
+</StackPane>

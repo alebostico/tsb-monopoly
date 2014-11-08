@@ -60,7 +60,7 @@
                   <HBox alignment="CENTER" minHeight="80.0" spacing="20.0">
                      <children>
                         <Button id="btnCancelar" fx:id="btnCancelar" mnemonicParsing="false" onAction="#processCancel" prefHeight="51.0" prefWidth="200.0" text="Cancelar" />
-                        <Button id="btnCrearJuego" fx:id="btnCrearJuego" contentDisplay="CENTER" mnemonicParsing="false" onAction="#processCreateGame" prefHeight="51.0" text="Unirme a Juego" />
+                        <Button fx:id="btnUnirmeJuego" contentDisplay="CENTER" mnemonicParsing="false" onAction="#processJoinGame" prefHeight="51.0" text="Unirme a Juego" />
                      </children>
                   </HBox>
                </children>
