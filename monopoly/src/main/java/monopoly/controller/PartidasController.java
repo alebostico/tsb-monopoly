@@ -144,10 +144,23 @@ public class PartidasController {
 		return null;
 	}
 	
+	/**
+	 * Busca el controlador del juego a partir del key del juego
+	 * 
+	 * @param key
+	 * 			UniqueID del juego
+	 * @return
+	 */
 	public JuegoController buscarControladorJuego(String key){
 		return this.juegosControllerList.get(key);
 	}
 	
+	/**
+	 * Busca el controlador del juego a partir del juego
+	 * 
+	 * @param juego
+	 * @return
+	 */
 	public JuegoController buscarControladorJuego(Juego juego){
 		return buscarControladorJuego(juego.getUniqueID());
 	}
@@ -221,18 +234,13 @@ public class PartidasController {
 	public Juego getJuego(String uniqueID) {
 		return buscarJuego(uniqueID);
 	}
+	
+	
 
-	/**
-	 * @return the monopolyGame
-	 */
 	public GameServer getMonopolyGame() {
 		return monopolyGame;
 	}
 
-	/**
-	 * @param monopolyGame
-	 *            the monopolyGame to set
-	 */
 	public void setMonopolyGame(GameServer monopolyGame) {
 		this.monopolyGame = monopolyGame;
 	}

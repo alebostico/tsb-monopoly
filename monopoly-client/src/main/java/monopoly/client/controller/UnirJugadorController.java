@@ -9,7 +9,10 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,11 +20,14 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import monopoly.client.connection.ConnectionController;
+import monopoly.client.util.ScreensFramework;
 import monopoly.model.Ficha;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.Usuario;
+import monopoly.util.GestorLogs;
+import monopoly.util.constantes.ConstantesFXML;
 import monopoly.util.message.game.JoinGameMessage;
 
 /**
@@ -84,8 +90,38 @@ public class UnirJugadorController extends AnchorPane implements Initializable {
 		int senderID = ConnectionController.getInstance().getIdPlayer();
 		Jugador jugador = new  JugadorHumano(usuarioLogueado.getUserName(),
 											fichaPlayer, juegoSelected, usuarioLogueado, senderID);
-		JoinGameMessage msg = new JoinGameMessage(jugador);
-		ConnectionController.getInstance().send(msg);
+		
+		String fxml = ConstantesFXML.FXML_MOSTRAR_TABLERO;
+
+		try {
+			Parent root;
+			Stage stage = new Stage();
+			FXMLLoader loader = ScreensFramework.getLoader(fxml);
+
+			root = (Parent) loader.load();
+			TableroController controller = (TableroController) loader
+					.getController();
+			controller.setPrevStage(currentStage);
+			controller.setJuego(juegoSelected);
+			controller.setUsuarioLogueado(usuarioLogueado);
+
+			Scene scene = new Scene(root);
+			stage.setScene(scene);
+			stage.setTitle("Monopoly - Tablero");
+			stage.centerOnScreen();
+			controller.setCurrentStage(stage);
+			controller.showBoard();
+			
+			JoinGameMessage msg = new JoinGameMessage(jugador);
+			ConnectionController.getInstance().send(msg);
+			
+			prevStage.close();
+			currentStage.close();
+
+		} catch (Exception ex) {
+			// TODO Auto-generated catch block
+			GestorLogs.registrarError(ex.getMessage());
+		}
 	}
 
 	private void settearActions() {
