@@ -3,28 +3,18 @@
  */
 package monopoly.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import monopoly.model.Dado;
 import monopoly.model.Estado;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
-import monopoly.model.JugadorVirtual;
 import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
 import monopoly.model.tablero.Casillero;
-import monopoly.util.constantes.ConstantesMensaje;
-import monopoly.util.list.CircularList;
-import monopoly.util.list.Node;
 
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
  * 
  */
 public class JuegoController {
@@ -39,13 +29,7 @@ public class JuegoController {
 
 	private TableroController gestorTablero;
 
-	private TreeMap<Integer, JugadorHumano> networkPlayers;
-
-	private List<Jugador> jugadoresList;
-
-	private CircularList<Jugador> turnosList;
-
-	private Node<Jugador> currentPlayer;
+	private JugadorController gestorJugadores;
 
 	private MonopolyGameStatus status;
 
@@ -55,9 +39,7 @@ public class JuegoController {
 		this.juego = new Juego(creador, nombre);
 		this.juego.setTablero(gestorTablero.getTablero());
 		this.estadoJuego = new Estado();
-		this.networkPlayers = new TreeMap<Integer, JugadorHumano>();
-		this.turnosList = new CircularList<Jugador>();
-		this.jugadoresList = new ArrayList<Jugador>();
+		this.gestorJugadores = new JugadorController();
 	}
 
 	public Juego getJuego() {
@@ -68,43 +50,12 @@ public class JuegoController {
 		this.juego = juego;
 	}
 
-	/**
-	 * 
-	 */
 	public void addPlayer(Jugador jugador) {
-		JugadorHumano jh;
+		this.gestorJugadores.addPlayer(jugador);
 
-		if (jugador instanceof JugadorHumano) {
-			jh = (JugadorHumano) jugador;
-			if (!networkPlayers.containsKey(jh.getSenderID())) {
-				networkPlayers.put(jh.getSenderID(), (JugadorHumano) jugador);
-			}
-		}
-
-		if (!jugadoresList.contains(jugador)) {
-			jugadoresList.add(jugador);
-			turnosList.push_back(jugador);
-		}
-
-		if (jugadoresList.size() == cantJugadores) {
+		if (this.gestorJugadores.cantJugadoresConectados() == cantJugadores) {
 			estadoJuego.actualizarEstadoJuego();
-			establecerTurnos();
-		}
-
-	}
-
-	private void establecerTurnos() {
-		for (Jugador jugador : jugadoresList) {
-			if (jugador instanceof JugadorVirtual)
-				jugador.setTiradaInicial(new Dado());
-			else {
-				int recipientID = ((JugadorHumano) jugador).getSenderID();
-				PartidasController
-						.getInstance()
-						.getMonopolyGame()
-						.sendToOne(recipientID,
-								ConstantesMensaje.THROW_DICE_TURNS_MESSAGE);
-			}
+			gestorJugadores.establecerTurnos();
 		}
 	}
 
@@ -123,6 +74,13 @@ public class JuegoController {
 	}
 
 	/**
+	 * @return the gestorJugadores
+	 */
+	public JugadorController getGestorJugadores() {
+		return gestorJugadores;
+	}
+
+	/**
 	 * @return the cantJugadores
 	 */
 	public int getCantJugadores() {
@@ -135,36 +93,6 @@ public class JuegoController {
 	 */
 	public void setCantJugadores(int cantJugadores) {
 		this.cantJugadores = cantJugadores;
-	}
-
-	/**
-	 * @return the jugadores
-	 */
-	public TreeMap<Integer, JugadorHumano> getJugadores() {
-		return networkPlayers;
-	}
-
-	/**
-	 * @param jugadores
-	 *            the jugadores to set
-	 */
-	public void setJugadores(TreeMap<Integer, JugadorHumano> jugadores) {
-		this.networkPlayers = jugadores;
-	}
-
-	/**
-	 * @return the turnosList
-	 */
-	public CircularList<Jugador> getTurnosList() {
-		return turnosList;
-	}
-
-	/**
-	 * @param turnosList
-	 *            the turnosList to set
-	 */
-	public void setTurnosList(CircularList<Jugador> turnosList) {
-		this.turnosList = turnosList;
 	}
 
 	/**
@@ -184,10 +112,10 @@ public class JuegoController {
 
 	public void startGame(int key, Dado dados) {
 		// TODO Auto-generated method stub
-		JugadorHumano jugador = (JugadorHumano) networkPlayers.get(key);
+		JugadorHumano jugador = gestorJugadores.getJugadorHumano(key);
 		jugador.setTiradaInicial(dados);
 		boolean tiraronTodosDados = true;
-		for (Jugador j : networkPlayers.values()) {
+		for (Jugador j : gestorJugadores.getListaJugadoresHumanos()) {
 			if (j.getTiradaInicial() == null) {
 				tiraronTodosDados = false;
 				break;
@@ -202,27 +130,9 @@ public class JuegoController {
 
 	private void ordenarTurnos() {
 
-		Node<Jugador> primero = (Node<Jugador>) turnosList.getHeader();
-		Node<Jugador> tmp = null;
-		Jugador aux;
+		this.gestorJugadores.ordenarTurnos();
 
-		do {
-			tmp = primero.getNext();
-			while (tmp != (Node<Jugador>) turnosList.getHeader()) {
-				if (primero.getKey().getTiradaInicial().getSuma() < tmp
-						.getKey().getTiradaInicial().getSuma()) {
-					aux = primero.getKey();
-					primero.setKey(tmp.getKey());
-					tmp.setKey(aux);
-
-				}
-				tmp = tmp.getNext();
-			}
-			primero = primero.getNext();
-
-		} while (tmp != (Node<Jugador>) turnosList.getHeader());
-
-		for (Jugador jug : turnosList.toList()) {
+		for (Jugador jug : gestorJugadores.getTurnoslist()) {
 			for (Casillero casillero : gestorTablero.getTablero()
 					.getCasillerosList()) {
 
@@ -232,20 +142,17 @@ public class JuegoController {
 				}
 			}
 		}
-		
-		currentPlayer = (Node<Jugador>) turnosList.getHeader();
 
-		status = new MonopolyGameStatus(turnosList.toList(),
+		status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
 				gestorBanco.getBanco(), gestorTablero.getTablero(),
-				MonopolyGameStatus.EMPEZAR, currentPlayer.getKey());
+				MonopolyGameStatus.EMPEZAR,
+				gestorJugadores.getCurrentPlayer());
 
-		for (Map.Entry<Integer, JugadorHumano> entry : networkPlayers
-				.entrySet()) {
-			int key = entry.getKey();
-
+		for (int key : gestorJugadores.getIdConnectionClient()) {
 			PartidasController.getInstance().getMonopolyGame()
 					.sendToOne(key, status);
 		}
+
 	}
 
 }
