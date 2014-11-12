@@ -13,6 +13,8 @@ import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import monopoly.controller.JuegoController;
+import monopoly.controller.PartidasController;
 import monopoly.util.GestorLogs;
 import monopoly.util.LectorXML;
 import monopoly.util.message.DisconnectMessage;
@@ -149,11 +151,12 @@ public class GameServer {
 				while (true) {
 					try {
 						Message msg = incomingMessages.take();
-						messageReceived(msg.playerConnection, msg.message);
+						messageReceived("", msg.playerConnection, msg.message);
 					} catch (Exception e) {
-						GestorLogs.registrarError("Exception while handling received message:");
+						GestorLogs
+								.registrarError("Exception while handling received message:");
 						GestorLogs.registrarError(e.toString());
-						//e.printStackTrace();
+						// e.printStackTrace();
 					}
 				}
 			}
@@ -175,8 +178,8 @@ public class GameServer {
 	 * @param message
 	 *            The message that was received from the player.
 	 */
-	protected void messageReceived(int playerID, Object message) {
-		sendToAll(new ForwardedMessage(playerID, message));
+	protected void messageReceived(String keyGame, int playerID, Object message) {
+		sendToAll(keyGame, new ForwardedMessage(playerID, message));
 	}
 
 	/**
@@ -286,7 +289,7 @@ public class GameServer {
 	 */
 	public void shutdownServer() {
 		shutdownServerSocket();
-		sendToAll(new DisconnectMessage("*shutdown*"));
+		sendToAll("", new DisconnectMessage("*shutdown*"));
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
@@ -303,15 +306,50 @@ public class GameServer {
 	 *            must implement the Serializable interface. Messages must not
 	 *            be null.
 	 */
-	synchronized public void sendToAll(Object message) {
+	// synchronized public void sendToAll(Object message) {
+	// if (message == null)
+	// throw new IllegalArgumentException(
+	// "Null cannot be sent as a message.");
+	// if (!(message instanceof Serializable))
+	// throw new IllegalArgumentException(
+	// "Messages must implement the Serializable interface.");
+	// for (ConnectionToClient pc : playerConnections.values())
+	// pc.send(message);
+	// }
+
+	/**
+	 * Sends a specified non-null Object as a message to all connected client.
+	 * 
+	 * @param keyJuego
+	 *            key para identificar a los jugadores conectado al juego
+	 * @param message
+	 *            the message to be sent to all connected clients. This object
+	 *            must implement the Serializable interface. Messages must not
+	 *            be null.
+	 */
+	synchronized public void sendToAll(String keyJuego, Object message) {
 		if (message == null)
 			throw new IllegalArgumentException(
-					"Null cannot be sent as a message.");
+					"No se puede enviar un mensaje nulo.");
 		if (!(message instanceof Serializable))
 			throw new IllegalArgumentException(
-					"Messages must implement the Serializable interface.");
-		for (ConnectionToClient pc : playerConnections.values())
-			pc.send(message);
+					"El Mensaje debería implementar la Interfaz Serializable.");
+		if (!keyJuego.equals("")) {
+			JuegoController juegoController = PartidasController.getInstance()
+					.buscarControladorJuego(keyJuego);
+			int[] vIdConnection = juegoController.getGestorJugadores()
+					.getIdConnectionClient();
+
+			for (int i = 0; i < vIdConnection.length; i++) {
+				playerConnections.get(vIdConnection[i]).send(message);
+			}
+		}
+		else
+		{
+			for (ConnectionToClient pc : playerConnections.values()) {
+				pc.send(message);
+			}
+		}
 	}
 
 	/**
@@ -379,11 +417,11 @@ public class GameServer {
 	// ------------------------- private implementation part
 	// ---------------------------------------
 
-	synchronized private void messageReceived(
+	synchronized private void messageReceived(String keyGame,
 			ConnectionToClient fromConnection, Object message) {
 		// Note: DisconnectMessage is handled in the ConnectionToClient class.
 		int sender = fromConnection.getPlayer();
-		messageReceived(sender, message);
+		messageReceived(keyGame, sender, message);
 	}
 
 	synchronized private void acceptConnection(ConnectionToClient newConnection) {

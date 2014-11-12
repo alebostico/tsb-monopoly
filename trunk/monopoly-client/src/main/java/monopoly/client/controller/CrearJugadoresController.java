@@ -210,10 +210,6 @@ public class CrearJugadoresController extends AnchorPane implements
 						j.nameFicha.get(), juego, j.nameTipo.get()));
 			}
 
-			int senderId = ConnectionController.getInstance().getIdPlayer();
-			ConnectionController.getInstance().send(
-					new LoadGameMessage(senderId, juego));
-
 			String fxml = ConstantesFXML.FXML_MOSTRAR_TABLERO;
 
 			try {
@@ -234,6 +230,10 @@ public class CrearJugadoresController extends AnchorPane implements
 				stage.centerOnScreen();
 				controller.setCurrentStage(stage);
 				controller.showBoard();
+				
+				int senderId = ConnectionController.getInstance().getIdPlayer();
+				ConnectionController.getInstance().send(
+						new LoadGameMessage(senderId, juego));
 
 			} catch (Exception ex) {
 				// TODO Auto-generated catch block
