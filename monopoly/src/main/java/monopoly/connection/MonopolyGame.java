@@ -10,6 +10,7 @@ import monopoly.controller.PartidasController;
 import monopoly.controller.UsuarioController;
 import monopoly.model.Estado.EstadoJuego;
 import monopoly.model.Juego;
+import monopoly.model.Jugador;
 import monopoly.model.Usuario;
 import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.message.CreateAccountMessage;
@@ -98,7 +99,8 @@ public class MonopolyGame extends GameServer {
 
 		case ConstantesMensaje.JOIN_GAME_MESSAGE:
 			// unirse al juego
-			
+			Jugador jugador = (Jugador) ((JoinGameMessage) message).message;
+			PartidasController.getInstance().joinPlayerGame(jugador);
 			break;
 			
 		case ConstantesMensaje.LOAD_GAME_MESSAGE:
@@ -128,7 +130,7 @@ public class MonopolyGame extends GameServer {
 		switch((String) message){
 		case ConstantesMensaje.GET_PENDING_GAMES_MESSAGE:
 			juegosList = PartidasController.getInstance().buscarJuegos(EstadoJuego.ESPERANDO_JUGADOR);
-			sendToOne(senderId, new JoinGameMessage(senderId, juegosList));
+			sendToOne(senderId, new JoinGameMessage(juegosList));
 			break;
 			
 		case ConstantesMensaje.THROW_DICE_TURNS_MESSAGE:

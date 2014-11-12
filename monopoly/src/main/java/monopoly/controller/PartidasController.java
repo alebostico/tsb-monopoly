@@ -42,6 +42,36 @@ public class PartidasController {
 		return instance;
 	}
 
+	public void loadGame(int senderID, Juego juego) {
+		// TODO Auto-generated method stub
+		JuegoController controller = juegosControllerList.get(juego
+				.getUniqueID());
+		int cantJugadores = juego.getCantJugadores();
+
+		controller.setJuego(juego);
+		controller.getEstadoJuego().actualizarEstadoJuego();
+		controller.setCantJugadores(cantJugadores);
+
+		for (Jugador jugador : juego.getJugadoresList()) {
+			controller.addPlayer(jugador);
+		}
+	}
+
+	public void StartGame(int senderId, Object message) {
+		// TODO Auto-generated method stub
+		Object[] vDatos = (Object[]) ((StartGameMessage) message).message;
+		String idJuego = vDatos[0].toString();
+		Dado dados = (Dado) vDatos[1];
+
+		JuegoController controller = juegosControllerList.get(idJuego);
+		controller.startGame(senderId, dados);
+	}
+	
+	public void joinPlayerGame(Jugador jugador){
+		JuegoController juegoController = buscarControladorJuego(jugador.getJuego());
+		juegoController.addPlayer(jugador);
+	}
+	
 	/**
 	 * Agrega un juego a la lista de juegos
 	 * 
@@ -95,13 +125,6 @@ public class PartidasController {
 		}
 		return false;
 	}
-
-	/**
-	 * @return the juegosList
-	 */
-	// public TreeMap<String, Juego> getJuegosList() {
-	// return juegosList;
-	// }
 
 	/**
 	 * Busca un juego a partir del usuario que lo creo y el nombre del juego
@@ -197,31 +220,6 @@ public class PartidasController {
 	 */
 	public Juego getJuego(String uniqueID) {
 		return buscarJuego(uniqueID);
-	}
-
-	public void loadGame(int senderID, Juego juego) {
-		// TODO Auto-generated method stub
-		JuegoController controller = juegosControllerList.get(juego
-				.getUniqueID());
-		int cantJugadores = juego.getCantJugadores();
-
-		controller.setJuego(juego);
-		controller.getEstadoJuego().actualizarEstadoJuego();
-		controller.setCantJugadores(cantJugadores);
-
-		for (Jugador jugador : juego.getJugadoresList()) {
-			controller.addPlayer(jugador);
-		}
-	}
-
-	public void StartGame(int senderId, Object message) {
-		// TODO Auto-generated method stub
-		Object[] vDatos = (Object[]) ((StartGameMessage) message).message;
-		String idJuego = vDatos[0].toString();
-		Dado dados = (Dado) vDatos[1];
-
-		JuegoController controller = juegosControllerList.get(idJuego);
-		controller.startGame(senderId, dados);
 	}
 
 	/**

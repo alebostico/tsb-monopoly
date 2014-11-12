@@ -16,9 +16,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import monopoly.client.connection.ConnectionController;
 import monopoly.model.Ficha;
 import monopoly.model.Juego;
+import monopoly.model.Jugador;
+import monopoly.model.JugadorHumano;
 import monopoly.model.Usuario;
+import monopoly.util.message.game.JoinGameMessage;
 
 /**
  * @author Bostico Alejandro
@@ -71,12 +75,17 @@ public class UnirJugadorController extends AnchorPane implements Initializable {
 
 	@FXML
 	void processCancel(ActionEvent event) {
-
+		prevStage.show();
+		currentStage.close();
 	}
 
 	@FXML
 	void processJoinPlayer(ActionEvent event) {
-
+		int senderID = ConnectionController.getInstance().getIdPlayer();
+		Jugador jugador = new  JugadorHumano(usuarioLogueado.getUserName(),
+											fichaPlayer, juegoSelected, usuarioLogueado, senderID);
+		JoinGameMessage msg = new JoinGameMessage(jugador);
+		ConnectionController.getInstance().send(msg);
 	}
 
 	private void settearActions() {
@@ -136,19 +145,6 @@ public class UnirJugadorController extends AnchorPane implements Initializable {
 			}
 		});
 	}
-
-	// public void inicializarVariables() {
-	// List<Ficha> fichaList;
-	// if (juegoSelected != null) {
-	// fichaList = juegoSelected.getFichasPlayerList();
-	//
-	// for (Ficha ficha : fichaList) {
-	// if(ficha.isSelected())
-	//
-	// }
-	//
-	// }
-	// }
 
 	public Stage getCurrentStage() {
 		return currentStage;
