@@ -15,7 +15,6 @@ public class JoinGameMessage implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public final Object message; // Original message from a client.
-	public final int senderID; // The ID of the client who sent that message.
 
 	/**
 	 * Create a ForwadedMessage to wrap a message sent by a client.
@@ -25,8 +24,7 @@ public class JoinGameMessage implements Serializable {
 	 * @param message
 	 *            the original message.
 	 */
-	public JoinGameMessage(int senderID, Object message) {
-		this.senderID = senderID;
+	public JoinGameMessage(Object message) {
 		this.message = message;
 	}
 
