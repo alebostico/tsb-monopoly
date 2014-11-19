@@ -29,7 +29,7 @@ public class TarjetaSuerte extends Tarjeta implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "tarjetaSuerteID")
-	private Integer idTarjeta;
+	private int idTarjeta;
 
 	@Column(name = "objetivo")
 	private String objetivo;
@@ -38,7 +38,7 @@ public class TarjetaSuerte extends Tarjeta implements Serializable {
 	 * @param idTarjeta
 	 * @param objetivo
 	 */
-	public TarjetaSuerte(Integer idTarjeta, String objetivo) {
+	public TarjetaSuerte(int idTarjeta, String objetivo) {
 		super();
 		this.idTarjeta = idTarjeta;
 		this.objetivo = objetivo;
@@ -62,7 +62,7 @@ public class TarjetaSuerte extends Tarjeta implements Serializable {
 	/**
 	 * @return the idTarjeta
 	 */
-	public Integer getIdTarjeta() {
+	public int getIdTarjeta() {
 		return idTarjeta;
 	}
 
@@ -70,7 +70,7 @@ public class TarjetaSuerte extends Tarjeta implements Serializable {
 	 * @param idTarjeta
 	 *            the idTarjeta to set
 	 */
-	public void setIdTarjeta(Integer idTarjeta) {
+	public void setIdTarjeta(int idTarjeta) {
 		this.idTarjeta = idTarjeta;
 	}
 

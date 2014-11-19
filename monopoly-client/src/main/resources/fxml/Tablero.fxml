@@ -9,15 +9,15 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane maxHeight="700.0" maxWidth="-Infinity" minHeight="700.0" minWidth="900.0" prefHeight="700.0" style="-fx-background-color: #C4E1FF;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.TableroController">
+<StackPane maxHeight="750.0" maxWidth="-Infinity" minHeight="750.0" minWidth="900.0" prefHeight="750.0" style="-fx-background-color: #C4E1FF;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.TableroController">
    <children>
-      <AnchorPane maxHeight="700.0" minHeight="700.0" minWidth="900.0" prefHeight="700.0">
+      <AnchorPane maxHeight="750.0" minHeight="750.0" minWidth="900.0" prefHeight="750.0">
          <children>
-            <VBox alignment="CENTER" maxHeight="700.0" minHeight="700.0" prefHeight="700.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <VBox alignment="CENTER" maxHeight="750.0" minHeight="750.0" prefHeight="750.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <HBox prefHeight="100.0" prefWidth="200.0">
+                  <HBox alignment="CENTER" prefHeight="750.0">
                      <children>
-                      <AnchorPane maxHeight="632.0" maxWidth="650.0" minHeight="632.0" minWidth="650.0" prefHeight="632.0" prefWidth="650.0">
+                      <AnchorPane maxHeight="582.0" maxWidth="650.0" minHeight="582.0" minWidth="650.0" prefHeight="582.0" prefWidth="650.0">
                            <children>
                               <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <bottom>
@@ -144,21 +144,21 @@
                               <Insets left="30.0" right="30.0" />
                            </HBox.margin>
                         </AnchorPane>
-                      <AnchorPane prefHeight="632.0" prefWidth="436.0">
+                      <AnchorPane prefHeight="680.0" prefWidth="450.0">
                            <children>
-                              <SplitPane dividerPositions="0.6703096539162113, 0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <SplitPane dividerPositions="0.6703096539162113, 0.5" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <items>
-                                    <AnchorPane>
+                                    <AnchorPane minHeight="360.0">
                                        <children>
                                           <Accordion fx:id="accordionPlayers" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane maxHeight="40.0" minHeight="40.0" prefHeight="40.0">
+                                    <AnchorPane maxHeight="30.0" minHeight="30.0" prefHeight="30.0">
                                        <children>
                                           <Label fx:id="lblStopwatch" alignment="CENTER" layoutX="80.0" layoutY="7.0" styleClass="label_hora" text="[HH:mm:ss]" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane>
+                                    <AnchorPane minHeight="260.0">
                                        <children>
                                           <Accordion fx:id="accordionHistorial" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <panes>
@@ -200,7 +200,7 @@
                         </AnchorPane>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER" maxHeight="60.0" minHeight="60.0" prefHeight="60.0">
+                  <HBox alignment="CENTER" maxHeight="60.0" minHeight="60.0" prefHeight="60.0" spacing="15.0">
                      <children>
                         <MenuButton fx:id="btnMenu" mnemonicParsing="false" onAction="#processMenu" styleClass="button" text="Menú">
                           <items>
@@ -210,27 +210,27 @@
                         </MenuButton>
                         <Button fx:id="btnConstruir" mnemonicParsing="false" onAction="#processContruir" text="Construir">
                            <HBox.margin>
-                              <Insets left="5.0" right="5.0" />
+                              <Insets />
                            </HBox.margin>
                         </Button>
                         <Button fx:id="btnDesconstruir" mnemonicParsing="false" onAction="#processDesconstruir" text="Desconstruir">
                            <HBox.margin>
-                              <Insets left="5.0" right="5.0" />
+                              <Insets />
                            </HBox.margin>
                         </Button>
                         <Button fx:id="btnHipotecar" mnemonicParsing="false" onAction="#processHipotecar" text="Hipotecar">
                            <HBox.margin>
-                              <Insets left="5.0" right="5.0" />
+                              <Insets />
                            </HBox.margin>
                         </Button>
                         <Button fx:id="btnDeshipotecar" mnemonicParsing="false" onAction="#processDeshipotecar" text="Deshipotecar">
                            <HBox.margin>
-                              <Insets left="5.0" right="5.0" />
+                              <Insets />
                            </HBox.margin>
                         </Button>
                         <Button fx:id="btnComerciar" mnemonicParsing="false" onAction="#processComerciar" text="Comerciar">
                            <HBox.margin>
-                              <Insets left="5.0" right="5.0" />
+                              <Insets />
                            </HBox.margin>
                         </Button>
                      </children>

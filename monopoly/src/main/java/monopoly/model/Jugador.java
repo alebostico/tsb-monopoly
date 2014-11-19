@@ -38,7 +38,7 @@ public abstract class Jugador implements Serializable {
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "jugadorID")
-	private Integer idJugador;
+	private int idJugador;
 	
 	@Transient
 	private String nombre;

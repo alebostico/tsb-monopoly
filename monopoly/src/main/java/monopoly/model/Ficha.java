@@ -67,7 +67,7 @@ public class Ficha implements Serializable {
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "fichaID")
-	private Integer idFicha;
+	private int idFicha;
 
 	@Column(name = "nombre")
 	private String nombre;

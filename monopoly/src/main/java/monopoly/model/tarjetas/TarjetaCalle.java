@@ -35,28 +35,28 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "precioAlquiler")
-	private Integer precioAlquiler;
+	private int precioAlquiler;
 
 	@Column(name = "valorUnaCasa")
-	private Integer valorUnaCasa;
+	private int valorUnaCasa;
 
 	@Column(name = "valorDosCasas")
-	private Integer valorDosCasas;
+	private int valorDosCasas;
 
 	@Column(name = "valorTresCasas")
-	private Integer valorTresCasas;
+	private int valorTresCasas;
 
 	@Column(name = "valorCuatroCasas")
-	private Integer valorCuatroCasas;
+	private int valorCuatroCasas;
 
 	@Column(name = "valorHotel")
-	private Integer valorHotel;
+	private int valorHotel;
 
 	@Column(name = "precioCadaCasa")
-	private Integer precioCadaCasa;
+	private int precioCadaCasa;
 
 	@Column(name = "precioCadaHotel")
-	private Integer precioCadaHotel;
+	private int precioCadaHotel;
 
 	@Column(name = "color")
 	private String colorTarjeta;
@@ -96,12 +96,12 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	 * @param precioCadaHotel
 	 */
 	public TarjetaCalle(Jugador jugador, String nombre,
-			Integer valorHipotecario, Integer precioAlquiler,
-			Integer valorUnaCasa, Integer valorDosCasas,
-			Integer valorTresCasas, Integer valorCuatroCasas,
-			Integer valorHotel, Integer precioCadaCasa,
-			Integer precioCadaHotel, String nombreImagen,
-			Integer valorPropiedad, Color color) {
+			int valorHipotecario, int precioAlquiler,
+			int valorUnaCasa, int valorDosCasas,
+			int valorTresCasas, int valorCuatroCasas,
+			int valorHotel, int precioCadaCasa,
+			int precioCadaHotel, String nombreImagen,
+			int valorPropiedad, Color color) {
 		super(jugador, nombre, valorHipotecario, nombreImagen, valorPropiedad);
 		this.precioAlquiler = precioAlquiler;
 		this.valorUnaCasa = valorUnaCasa;
@@ -117,7 +117,7 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	/**
 	 * @return the precioAlquiler
 	 */
-	public Integer getPrecioAlquiler() {
+	public int getPrecioAlquiler() {
 		return precioAlquiler;
 	}
 
@@ -125,14 +125,14 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	 * @param precioAlquiler
 	 *            the precioAlquiler to set
 	 */
-	public void setPrecioAlquiler(Integer precioAlquiler) {
+	public void setPrecioAlquiler(int precioAlquiler) {
 		this.precioAlquiler = precioAlquiler;
 	}
 
 	/**
 	 * @return the valorUnaCasa
 	 */
-	public Integer getValorUnaCasa() {
+	public int getValorUnaCasa() {
 		return valorUnaCasa;
 	}
 
@@ -140,14 +140,14 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	 * @param valorUnaCasa
 	 *            the valorUnaCasa to set
 	 */
-	public void setValorUnaCasa(Integer valorUnaCasa) {
+	public void setValorUnaCasa(int valorUnaCasa) {
 		this.valorUnaCasa = valorUnaCasa;
 	}
 
 	/**
 	 * @return the valorDosCasas
 	 */
-	public Integer getValorDosCasas() {
+	public int getValorDosCasas() {
 		return valorDosCasas;
 	}
 
@@ -155,14 +155,14 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	 * @param valorDosCasas
 	 *            the valorDosCasas to set
 	 */
-	public void setValorDosCasas(Integer valorDosCasas) {
+	public void setValorDosCasas(int valorDosCasas) {
 		this.valorDosCasas = valorDosCasas;
 	}
 
 	/**
 	 * @return the valorTresCasas
 	 */
-	public Integer getValorTresCasas() {
+	public int getValorTresCasas() {
 		return valorTresCasas;
 	}
 
@@ -170,14 +170,14 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	 * @param valorTresCasas
 	 *            the valorTresCasas to set
 	 */
-	public void setValorTresCasas(Integer valorTresCasas) {
+	public void setValorTresCasas(int valorTresCasas) {
 		this.valorTresCasas = valorTresCasas;
 	}
 
 	/**
 	 * @return the valorCuatroCasas
 	 */
-	public Integer getValorCuatroCasas() {
+	public int getValorCuatroCasas() {
 		return valorCuatroCasas;
 	}
 
@@ -185,14 +185,14 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	 * @param valorCuatroCasas
 	 *            the valorCuatroCasas to set
 	 */
-	public void setValorCuatroCasas(Integer valorCuatroCasas) {
+	public void setValorCuatroCasas(int valorCuatroCasas) {
 		this.valorCuatroCasas = valorCuatroCasas;
 	}
 
 	/**
 	 * @return the valorHotel
 	 */
-	public Integer getValorHotel() {
+	public int getValorHotel() {
 		return valorHotel;
 	}
 
@@ -200,14 +200,14 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	 * @param valorHotel
 	 *            the valorHotel to set
 	 */
-	public void setValorHotel(Integer valorHotel) {
+	public void setValorHotel(int valorHotel) {
 		this.valorHotel = valorHotel;
 	}
 
 	/**
 	 * @return the precioCadaCasa
 	 */
-	public Integer getPrecioCadaCasa() {
+	public int getPrecioCadaCasa() {
 		return precioCadaCasa;
 	}
 
@@ -215,14 +215,14 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	 * @param precioCadaCasa
 	 *            the precioCadaCasa to set
 	 */
-	public void setPrecioCadaCasa(Integer precioCadaCasa) {
+	public void setPrecioCadaCasa(int precioCadaCasa) {
 		this.precioCadaCasa = precioCadaCasa;
 	}
 
 	/**
 	 * @return the precioCadaHotel
 	 */
-	public Integer getPrecioCadaHotel() {
+	public int getPrecioCadaHotel() {
 		return precioCadaHotel;
 	}
 
@@ -230,7 +230,7 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	 * @param precioCadaHotel
 	 *            the precioCadaHotel to set
 	 */
-	public void setPrecioCadaHotel(Integer precioCadaHotel) {
+	public void setPrecioCadaHotel(int precioCadaHotel) {
 		this.precioCadaHotel = precioCadaHotel;
 	}
 
@@ -289,7 +289,7 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 			return false;
 
 		TarjetaCalle tp = (TarjetaCalle) object;
-		if (super.getIdTarjeta().intValue() != tp.getIdTarjeta().intValue())
+		if (super.getIdTarjeta() != tp.getIdTarjeta())
 			return false;
 
 		return true;

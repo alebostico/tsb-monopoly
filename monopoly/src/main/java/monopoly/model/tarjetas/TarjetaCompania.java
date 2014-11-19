@@ -15,29 +15,20 @@ import monopoly.model.Jugador;
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
  * 
  */
 @Entity
 @Table(name = "tarjeta_compania", catalog = "monopoly_db")
-// @AttributeOverrides({
-// @AttributeOverride(name="jugador", column=@Column(name="jugadorID")),
-// @AttributeOverride(name="nombre", column=@Column(name="nombre")),
-// @AttributeOverride(name="valorHipoticario",
-// column=@Column(name="valorHipoticario"))
-// @AttributeOverride(name="valorPropiedad",
-// column=@Column(name="valorPropiedad"))
-// })
 @PrimaryKeyJoinColumn(name = "tarjetaPropiedadID")
 public class TarjetaCompania extends TarjetaPropiedad implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "vecesPorUnaCarta")
-	private Integer vecesPorUnaCarta;
+	private int vecesPorUnaCarta;
 
 	@Column(name = "vecesPorDosCartas")
-	private Integer vecesPorDosCartas;
+	private int vecesPorDosCartas;
 
 	/**
      * 
@@ -54,9 +45,9 @@ public class TarjetaCompania extends TarjetaPropiedad implements Serializable {
 	 * @param vecesPorDosCartas
 	 */
 	public TarjetaCompania(Jugador jugador, String nombre,
-			Integer valorHipotecario, Integer vecesPorUnaCarta,
-			Integer vecesPorDosCartas, String nombreImagen,
-			Integer valorPropiedad) {
+			int valorHipotecario, int vecesPorUnaCarta,
+			int vecesPorDosCartas, String nombreImagen,
+			int valorPropiedad) {
 		super(jugador, nombre, valorHipotecario, nombreImagen, valorPropiedad);
 		this.vecesPorUnaCarta = vecesPorUnaCarta;
 		this.vecesPorDosCartas = vecesPorDosCartas;
@@ -65,7 +56,7 @@ public class TarjetaCompania extends TarjetaPropiedad implements Serializable {
 	/**
 	 * @return the vecesPorUnaCarta
 	 */
-	public Integer getVecesPorUnaCarta() {
+	public int getVecesPorUnaCarta() {
 		return vecesPorUnaCarta;
 	}
 
@@ -73,14 +64,14 @@ public class TarjetaCompania extends TarjetaPropiedad implements Serializable {
 	 * @param vecesPorUnaCarta
 	 *            the vecesPorUnaCarta to set
 	 */
-	public void setVecesPorUnaCarta(Integer vecesPorUnaCarta) {
+	public void setVecesPorUnaCarta(int vecesPorUnaCarta) {
 		this.vecesPorUnaCarta = vecesPorUnaCarta;
 	}
 
 	/**
 	 * @return the vecesPorDosCartas
 	 */
-	public Integer getVecesPorDosCartas() {
+	public int getVecesPorDosCartas() {
 		return vecesPorDosCartas;
 	}
 
@@ -88,7 +79,7 @@ public class TarjetaCompania extends TarjetaPropiedad implements Serializable {
 	 * @param vecesPorDosCartas
 	 *            the vecesPorDosCartas to set
 	 */
-	public void setVecesPorDosCartas(Integer vecesPorDosCartas) {
+	public void setVecesPorDosCartas(int vecesPorDosCartas) {
 		this.vecesPorDosCartas = vecesPorDosCartas;
 	}
 	
@@ -100,7 +91,7 @@ public class TarjetaCompania extends TarjetaPropiedad implements Serializable {
             return false;
 
         TarjetaCompania tp = (TarjetaCompania) object;
-        if (super.getIdTarjeta().intValue() != tp.getIdTarjeta().intValue())
+        if (super.getIdTarjeta() != tp.getIdTarjeta())
             return false;
 
         return true;

@@ -64,7 +64,7 @@ public abstract class TarjetaPropiedad implements Serializable {
 	@Id
 	@GeneratedValue
 	@Column(name = "tarjetaPropiedadID")
-	private Integer idTarjeta;
+	private int idTarjeta;
 
 	@ManyToOne
 	@JoinColumn(name = "jugadorID")
@@ -74,7 +74,7 @@ public abstract class TarjetaPropiedad implements Serializable {
 	private String nombre;
 
 	@Column(name = "valorHipotecario")
-	private Integer valorHipotecario;
+	private int valorHipotecario;
 
 	@Column(name = "nombreImagen")
 	private String nombreImagen;
@@ -100,8 +100,8 @@ public abstract class TarjetaPropiedad implements Serializable {
 	 * @param valorPropiedad
 	 */
 	public TarjetaPropiedad(Jugador jugador, String nombre,
-			Integer valorHipotecario, String nombreImagen,
-			Integer valorPropiedad) {
+			int valorHipotecario, String nombreImagen,
+			int valorPropiedad) {
 		super();
 		this.jugador = jugador;
 		this.nombre = nombre;
@@ -119,11 +119,11 @@ public abstract class TarjetaPropiedad implements Serializable {
 		this.jugador = jugador;
 	}
 
-	public Integer getIdTarjeta() {
+	public int getIdTarjeta() {
 		return idTarjeta;
 	}
 
-	public void setIdTarjeta(Integer idTarjeta) {
+	public void setIdTarjeta(int idTarjeta) {
 		this.idTarjeta = idTarjeta;
 	}
 
@@ -135,11 +135,11 @@ public abstract class TarjetaPropiedad implements Serializable {
 		this.nombre = nombre;
 	}
 
-	public Integer getValorHipotecario() {
+	public int getValorHipotecario() {
 		return valorHipotecario;
 	}
 
-	public void setValorHipotecario(Integer valorHipotecario) {
+	public void setValorHipotecario(int valorHipotecario) {
 		this.valorHipotecario = valorHipotecario;
 	}
 

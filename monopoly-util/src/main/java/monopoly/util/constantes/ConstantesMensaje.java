@@ -21,6 +21,7 @@ public class ConstantesMensaje {
 	public final static String LOAD_GAME_MESSAGE = "LoadGameMessage";
 	public final static String START_GAME_MESSAGE = "StartGameMessage";
 	public final static String STATUS_GAME_MESSAGE = "MonopolyGameStatus";
+	public final static String HISTORY_GAME_MESSAGE = "HistoryGameMessage";
 	
 	
 	/*************************************************************************************/

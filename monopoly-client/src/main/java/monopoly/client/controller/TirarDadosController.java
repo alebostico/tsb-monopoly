@@ -21,7 +21,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import monopoly.client.connection.ConnectionController;
 import monopoly.model.Dado;
+import monopoly.model.History;
 import monopoly.model.MonopolyGameStatus;
+import monopoly.util.StringUtils;
 import monopoly.util.message.game.StartGameMessage;
 
 /**
@@ -47,7 +49,7 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 	private Stage currentStage;
 
 	private Dado dados;
-	
+
 	private MonopolyGameStatus status;
 
 	private static TirarDadosController instance;
@@ -108,15 +110,22 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 		hbPanel.getChildren().add(new Label(" = "));
 		hbPanel.getChildren().add(new Label(" " + dados.getSuma() + " "));
 
-		TableroController.getInstance().addHistoryGame(TableroController.getInstance().getUsuarioLogueado().getUserName(), "El resultado de los dados para establecer su turno ha sido " + dados.getSuma());
-		
+		History history = new History(StringUtils.getFechaActual(),
+				TableroController.getInstance().getUsuarioLogueado()
+						.getUserName(),
+				"El resultado de los dados para establecer su turno ha sido "
+						+ dados.getSuma());
+
+		TableroController.getInstance().addHistoryGame(history);
+
 		btnAceptar = new Button("Aceptar");
 		btnAceptar.setDisable(true);
 		btnAceptar.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
 				// devolver el valor de los dados
-				TableroController.getInstance().empezarJuego(TirarDadosController.getInstance().getStatus());
+				TableroController.getInstance().empezarJuego(
+						TirarDadosController.getInstance().getStatus());
 			}
 		});
 		vbPanel.getChildren().add(btnAceptar);
@@ -124,7 +133,8 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 		Object[] vDatos = new Object[3];
 		vDatos[0] = TableroController.getInstance().getJuego().getUniqueID();
 		vDatos[1] = dados;
-		ConnectionController.getInstance().send(new StartGameMessage(senderId, vDatos));
+		ConnectionController.getInstance().send(
+				new StartGameMessage(senderId, vDatos));
 	}
 
 	/**
@@ -150,7 +160,8 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 	}
 
 	/**
-	 * @param status the status to set
+	 * @param status
+	 *            the status to set
 	 */
 	public void setStatus(MonopolyGameStatus status) {
 		this.status = status;

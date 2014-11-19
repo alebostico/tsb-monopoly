@@ -23,7 +23,7 @@ public class Usuario implements Serializable {
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "usuarioID")
-	private long idUsuario;
+	private int idUsuario;
 
 	/**
 	 * Nombre de usuario para el login
@@ -79,7 +79,7 @@ public class Usuario implements Serializable {
 	 * @param idUsuario
 	 *            the idUsuario to set
 	 */
-	public void setIdUsuario(long idUsuario) {
+	public void setIdUsuario(int idUsuario) {
 		this.idUsuario = idUsuario;
 	}
 
