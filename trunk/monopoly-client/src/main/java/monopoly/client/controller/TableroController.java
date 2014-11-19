@@ -5,12 +5,7 @@ package monopoly.client.controller;
 
 import java.io.Serializable;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -59,6 +54,7 @@ import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
+import monopoly.util.StringUtils;
 import monopoly.util.constantes.ConstantesFXML;
 
 /**
@@ -261,10 +257,6 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	private StringProperty clockLabelTextProperty;
 
-	private final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-	
-	private final NumberFormat formatoImporte = NumberFormat.getCurrencyInstance();
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -333,19 +325,26 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	}
 
-	public void addHistoryGame(String usuario, String mensaje) {
-		Calendar calendar = GregorianCalendar.getInstance();
-		History history = new History(dateFormat.format(calendar.getTime()),
-				usuario, mensaje);
+	private void addHistoryGame(String usuario, String mensaje) {
+		History history = new History(StringUtils.getFechaActual(), usuario,
+				mensaje);
+		addHistoryGame(history);
+	}
+
+	public void addHistoryGame(History history) {
 		historyGameList.add(history);
 		oHistoryGameList = FXCollections.observableArrayList(historyGameList);
 		lvHistory.setItems(oHistoryGameList);
 	}
 
-	public void addHistoryChat(String usuario, String mensaje) {
-		Calendar calendar = GregorianCalendar.getInstance();
-		History history = new History(dateFormat.format(calendar.getTime()),
-				usuario, mensaje);
+	@SuppressWarnings("unused")
+	private void addHistoryChat(String usuario, String mensaje) {
+		History history = new History(StringUtils.getFechaActual(), usuario,
+				mensaje);
+		addHistoryChat(history);
+	}
+
+	public void addHistoryChat(History history) {
 		historyChatList.add(history);
 		oHistoryChatList = FXCollections.observableArrayList(historyChatList);
 		lvHistoryChat.setItems(oHistoryChatList);
@@ -390,9 +389,8 @@ public class TableroController extends AnchorPane implements Serializable,
 				new EventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent actionEvent) {
-						Calendar calendar = GregorianCalendar.getInstance();
-						clockLabelTextProperty.setValue(dateFormat
-								.format(calendar.getTime()));
+						clockLabelTextProperty.setValue(StringUtils
+								.getFechaActual());
 					}
 				});
 		timeline.getKeyFrames().add(kf);
@@ -738,7 +736,8 @@ public class TableroController extends AnchorPane implements Serializable,
 		hbInfoJugador.getChildren().add(pImgFicha);
 		hbInfoJugador.getChildren().add(new Label(jugador.getNombre()));
 		hbInfoJugador.getChildren().add(
-				new Label(formatoImporte.format(jugador.getDinero())));
+				new Label(StringUtils.FORMATO_IMPORTE.format(jugador
+						.getDinero())));
 
 		if (status.currentPlayer.getNombre().equals(jugador.getNombre())) {
 			img = new Image(
@@ -789,7 +788,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 0, 0);
@@ -805,7 +804,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 1, 0);
@@ -821,7 +820,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 0, 1);
@@ -837,7 +836,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 1, 1);
@@ -853,7 +852,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 2, 1);
@@ -869,7 +868,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 0, 2);
@@ -885,7 +884,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 1, 2);
@@ -901,7 +900,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 2, 2);
@@ -917,7 +916,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 0, 3);
@@ -933,7 +932,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 1, 3);
@@ -949,7 +948,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 2, 3);
@@ -965,7 +964,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 0, 4);
@@ -981,7 +980,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 1, 4);
@@ -997,7 +996,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane1.add(hBox_inner, 2, 4);
@@ -1013,7 +1012,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 0, 0);
@@ -1029,7 +1028,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 1, 0);
@@ -1045,7 +1044,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 2, 0);
@@ -1061,7 +1060,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 0, 1);
@@ -1077,7 +1076,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 1, 1);
@@ -1093,7 +1092,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 2, 1);
@@ -1109,7 +1108,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 0, 2);
@@ -1125,7 +1124,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 1, 2);
@@ -1141,7 +1140,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 0, 3);
@@ -1157,7 +1156,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 1, 3);
@@ -1173,7 +1172,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 0, 4);
@@ -1189,7 +1188,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 1, 4);
@@ -1205,7 +1204,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 2, 4);
@@ -1221,7 +1220,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 		}
 		gridPane2.add(hBox_inner, 3, 4);
@@ -1243,18 +1242,19 @@ public class TableroController extends AnchorPane implements Serializable,
 				TableroController.class
 						.getResourceAsStream("/images/fichas/Casa05.png"),
 				30, 30, false, false);
-		
+
 		imgCarcel = new Image(
 				TableroController.class
-				.getResourceAsStream("/images/tarjetas/Carcel.jpg"),
-		30, 30, false, false);
-		
+						.getResourceAsStream("/images/tarjetas/Carcel.jpg"),
+				30, 30, false, false);
+
 		hbExtra.getChildren().add(new ImageView(imgCasa));
 		hbExtra.getChildren().add(new Label("x " + jugador.getNroCasas()));
 		hbExtra.getChildren().add(new ImageView(imgHotel));
 		hbExtra.getChildren().add(new Label("x " + jugador.getNroHoteles()));
 		hbExtra.getChildren().add(new ImageView(imgCarcel));
-		hbExtra.getChildren().add(new Label("x " + jugador.getTarjetaCarcelList().size()));
+		hbExtra.getChildren().add(
+				new Label("x " + jugador.getTarjetaCarcelList().size()));
 
 		TitledPane tp = new TitledPane(title, root);
 		tp.setId("tp_" + jugador.getNombre());
@@ -1262,7 +1262,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		return tp;
 	}
 
-	private TitledPane getPaneInfoBanco(Banco banco, String title){
+	private TitledPane getPaneInfoBanco(Banco banco, String title) {
 		AnchorPane root = new AnchorPane();
 		VBox vBox = new VBox();
 		HBox hbPropiedades = new HBox();
@@ -1324,7 +1324,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1340,7 +1340,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1356,7 +1356,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1372,7 +1372,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1388,7 +1388,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1404,7 +1404,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1420,7 +1420,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1436,7 +1436,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1452,7 +1452,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1468,7 +1468,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1484,7 +1484,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1500,7 +1500,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1516,7 +1516,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1532,7 +1532,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1548,7 +1548,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1564,7 +1564,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1580,7 +1580,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1596,7 +1596,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1612,7 +1612,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1628,7 +1628,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1644,7 +1644,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1660,7 +1660,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1676,7 +1676,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1692,7 +1692,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1708,7 +1708,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1724,7 +1724,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1740,7 +1740,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1756,7 +1756,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					TableroController.class.getResourceAsStream(propiedad
 							.getNombreImagen()), hbWidth, hbHeight, false,
 					false);
-			tpImagen = new Tooltip(propiedad.getNombre() +" - " + formatoImporte.format(propiedad.getValorPropiedad()));
+			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
 			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 		}
@@ -1778,7 +1778,7 @@ public class TableroController extends AnchorPane implements Serializable,
 				TableroController.class
 						.getResourceAsStream("/images/fichas/Casa05.png"),
 				30, 30, false, false);
-		
+
 		hbExtra.getChildren().add(new ImageView(imgCasa));
 		hbExtra.getChildren().add(new Label("x " + banco.getNroCasas()));
 		hbExtra.getChildren().add(new ImageView(imgHotel));
@@ -1789,7 +1789,14 @@ public class TableroController extends AnchorPane implements Serializable,
 		tp.setCollapsible(true);
 		return tp;
 	}
-	
+
+	private String showToolTipsPropiedad(TarjetaPropiedad propiedad) {
+		return propiedad.getNombre()
+				+ " - "
+				+ StringUtils.FORMATO_IMPORTE.format(propiedad
+						.getValorPropiedad());
+	}
+
 	/**
 	 * @return the currentStage
 	 */

@@ -2,7 +2,12 @@ package monopoly.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -137,4 +142,14 @@ public class StringUtils {
 		return tokens;
 	}
 	
+	/**
+	 * @return devuelve la  fecha actual
+	 */
+	private final static DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+	public static String getFechaActual(){
+		Calendar calendar = GregorianCalendar.getInstance();
+		return dateFormat.format(calendar.getTime()); 
+	}
+	
+	public static final NumberFormat FORMATO_IMPORTE = NumberFormat.getCurrencyInstance();
 }

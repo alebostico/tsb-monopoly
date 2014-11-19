@@ -13,6 +13,7 @@ import monopoly.client.controller.RegistrarmeController;
 import monopoly.client.controller.TableroController;
 import monopoly.client.controller.TirarDadosController;
 import monopoly.client.controller.UnirmeJuegoController;
+import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
@@ -20,6 +21,7 @@ import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
 import monopoly.util.message.LoginMessage;
+import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.JoinGameMessage;
 
 /**
@@ -81,6 +83,11 @@ public class MonopolyClient extends GameClient {
 			
 		case ConstantesMensaje.STATUS_GAME_MESSAGE:
 			determinarAccion(message);
+			break;
+			
+		case ConstantesMensaje.HISTORY_GAME_MESSAGE:
+			History history = (History) ((HistoryGameMessage) message).message;
+			TableroController.getInstance().addHistoryGame(history);
 			break;
 			
 		case "String":

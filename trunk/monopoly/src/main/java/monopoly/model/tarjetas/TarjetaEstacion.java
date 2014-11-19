@@ -26,16 +26,16 @@ public class TarjetaEstacion extends TarjetaPropiedad implements Serializable{
     private static final long serialVersionUID = 1459008914691723627L;
 
     @Column(name = "precioAlquiler")
-    private Integer precioAlquiler;
+    private int precioAlquiler;
 
     @Column(name = "valorDosEstacion")
-    private Integer valorDosEstacion;
+    private int valorDosEstacion;
 
     @Column(name = "valorTresEstacion")
-    private Integer valorTresEstacion;
+    private int valorTresEstacion;
 
     @Column(name = "valorCuatroEstacion")
-    private Integer valorCuatroEstacion;
+    private int valorCuatroEstacion;
 
     
     public TarjetaEstacion() {
@@ -52,9 +52,9 @@ public class TarjetaEstacion extends TarjetaPropiedad implements Serializable{
      * @param valorTresEstacion
      * @param valorCuatroEstacion
      */
-    public TarjetaEstacion(Jugador jugador, String nombre, Integer valorHipotecario, Integer precioAlquiler,
-	    Integer valorDosEstacion, Integer valorTresEstacion, Integer valorCuatroEstacion, String nombreImagen,
-	    Integer valorPropiedad) {
+    public TarjetaEstacion(Jugador jugador, String nombre, int valorHipotecario, int precioAlquiler,
+	    int valorDosEstacion, int valorTresEstacion, int valorCuatroEstacion, String nombreImagen,
+	    int valorPropiedad) {
 	super(jugador, nombre, valorHipotecario, nombreImagen,valorPropiedad);
 	this.precioAlquiler = precioAlquiler;
 	this.valorDosEstacion = valorDosEstacion;
@@ -65,56 +65,56 @@ public class TarjetaEstacion extends TarjetaPropiedad implements Serializable{
     /**
      * @return the precioAlquiler
      */
-    public Integer getPrecioAlquiler() {
+    public int getPrecioAlquiler() {
         return precioAlquiler;
     }
 
     /**
      * @param precioAlquiler the precioAlquiler to set
      */
-    public void setPrecioAlquiler(Integer precioAlquiler) {
+    public void setPrecioAlquiler(int precioAlquiler) {
         this.precioAlquiler = precioAlquiler;
     }
 
     /**
      * @return the valorDosEstacion
      */
-    public Integer getValorDosEstacion() {
+    public int getValorDosEstacion() {
         return valorDosEstacion;
     }
 
     /**
      * @param valorDosEstacion the valorDosEstacion to set
      */
-    public void setValorDosEstacion(Integer valorDosEstacion) {
+    public void setValorDosEstacion(int valorDosEstacion) {
         this.valorDosEstacion = valorDosEstacion;
     }
 
     /**
      * @return the valorTresEstacion
      */
-    public Integer getValorTresEstacion() {
+    public int getValorTresEstacion() {
         return valorTresEstacion;
     }
 
     /**
      * @param valorTresEstacion the valorTresEstacion to set
      */
-    public void setValorTresEstacion(Integer valorTresEstacion) {
+    public void setValorTresEstacion(int valorTresEstacion) {
         this.valorTresEstacion = valorTresEstacion;
     }
 
     /**
      * @return the valorCuatroEstacion
      */
-    public Integer getValorCuatroEstacion() {
+    public int getValorCuatroEstacion() {
         return valorCuatroEstacion;
     }
 
     /**
      * @param valorCuatroEstacion the valorCuatroEstacion to set
      */
-    public void setValorCuatroEstacion(Integer valorCuatroEstacion) {
+    public void setValorCuatroEstacion(int valorCuatroEstacion) {
         this.valorCuatroEstacion = valorCuatroEstacion;
     }
 
@@ -132,7 +132,7 @@ public class TarjetaEstacion extends TarjetaPropiedad implements Serializable{
             return false;
 
         TarjetaEstacion tp = (TarjetaEstacion) object;
-        if (super.getIdTarjeta().intValue() != tp.getIdTarjeta().intValue())
+        if (super.getIdTarjeta() != tp.getIdTarjeta())
             return false;
 
         return true;

@@ -5,12 +5,15 @@ package monopoly.controller;
 
 import monopoly.model.Dado;
 import monopoly.model.Estado;
+import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
 import monopoly.model.tablero.Casillero;
+import monopoly.util.StringUtils;
+import monopoly.util.message.game.HistoryGameMessage;
 
 /**
  * @author Bostico Alejandro
@@ -42,21 +45,84 @@ public class JuegoController {
 		this.gestorJugadores = new JugadorController();
 	}
 
+	public void addPlayer(Jugador jugador) {
+		this.gestorJugadores.addPlayer(jugador);
+		
+		History history = new History(StringUtils.getFechaActual(), jugador.getNombre(), "Se unió al juego."); 
+		HistoryGameMessage msg = new HistoryGameMessage(history);
+		if(jugador instanceof JugadorHumano)
+			sentToOther(msg, ((JugadorHumano)jugador).getSenderID());
+
+		if (this.gestorJugadores.cantJugadoresConectados() == cantJugadores) {
+			estadoJuego.actualizarEstadoJuego();
+			gestorJugadores.establecerTurnos();
+		}
+	}
+	
+	public void startGame(int key, Dado dados) {
+		// TODO Auto-generated method stub
+		JugadorHumano jugador = gestorJugadores.getJugadorHumano(key);
+		jugador.setTiradaInicial(dados);
+		boolean tiraronTodosDados = true;
+		for (Jugador j : gestorJugadores.getListaJugadoresHumanos()) {
+			if (j.getTiradaInicial() == null) {
+				tiraronTodosDados = false;
+				break;
+			}
+		}
+		if (tiraronTodosDados) {
+			estadoJuego.actualizarEstadoJuego();
+			ordenarTurnos();
+			// quien es el primero?
+		}
+	}
+
+	private void ordenarTurnos() {
+
+		this.gestorJugadores.ordenarTurnos();
+
+		for (Jugador jug : gestorJugadores.getTurnoslist()) {
+			for (Casillero casillero : gestorTablero.getTablero()
+					.getCasillerosList()) {
+
+				if (jug.getCasilleroActual().equals(casillero)) {
+					casillero.addJugador(jug);
+					break;
+				}
+			}
+		}
+
+		status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+				gestorBanco.getBanco(), gestorTablero.getTablero(),
+				MonopolyGameStatus.EMPEZAR, gestorJugadores.getCurrentPlayer());
+
+		sentToAll(status);
+
+	}
+
+	private void sentToAll(Object message) {
+		for (int key : gestorJugadores.getIdConnectionClient()) {
+			PartidasController.getInstance().getMonopolyGame()
+					.sendToOne(key, message);
+		}
+	}
+
+	private void sentToOther(Object message, int senderId) {
+		for (int key : gestorJugadores.getIdConnectionClient()) {
+			if (key != senderId)
+				PartidasController.getInstance().getMonopolyGame()
+						.sendToOne(key, message);
+		}
+	}
+	
+	//============================= Getter & Setter ==========================//
+	
 	public Juego getJuego() {
 		return juego;
 	}
 
 	public void setJuego(Juego juego) {
 		this.juego = juego;
-	}
-
-	public void addPlayer(Jugador jugador) {
-		this.gestorJugadores.addPlayer(jugador);
-
-		if (this.gestorJugadores.cantJugadoresConectados() == cantJugadores) {
-			estadoJuego.actualizarEstadoJuego();
-			gestorJugadores.establecerTurnos();
-		}
 	}
 
 	/**
@@ -108,51 +174,6 @@ public class JuegoController {
 	 */
 	public void setEstadoJuego(Estado estadoJuego) {
 		this.estadoJuego = estadoJuego;
-	}
-
-	public void startGame(int key, Dado dados) {
-		// TODO Auto-generated method stub
-		JugadorHumano jugador = gestorJugadores.getJugadorHumano(key);
-		jugador.setTiradaInicial(dados);
-		boolean tiraronTodosDados = true;
-		for (Jugador j : gestorJugadores.getListaJugadoresHumanos()) {
-			if (j.getTiradaInicial() == null) {
-				tiraronTodosDados = false;
-				break;
-			}
-		}
-		if (tiraronTodosDados) {
-			estadoJuego.actualizarEstadoJuego();
-			ordenarTurnos();
-			// quien es el primero?
-		}
-	}
-
-	private void ordenarTurnos() {
-
-		this.gestorJugadores.ordenarTurnos();
-
-		for (Jugador jug : gestorJugadores.getTurnoslist()) {
-			for (Casillero casillero : gestorTablero.getTablero()
-					.getCasillerosList()) {
-
-				if (jug.getCasilleroActual().equals(casillero)) {
-					casillero.addJugador(jug);
-					break;
-				}
-			}
-		}
-
-		status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
-				gestorBanco.getBanco(), gestorTablero.getTablero(),
-				MonopolyGameStatus.EMPEZAR,
-				gestorJugadores.getCurrentPlayer());
-
-		for (int key : gestorJugadores.getIdConnectionClient()) {
-			PartidasController.getInstance().getMonopolyGame()
-					.sendToOne(key, status);
-		}
-
 	}
 
 }
