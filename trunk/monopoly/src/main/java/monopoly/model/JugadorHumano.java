@@ -5,8 +5,6 @@ package monopoly.model;
 
 import javax.persistence.Transient;
 
-import monopoly.util.GestorLogs;
-
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
@@ -31,8 +29,6 @@ public class JugadorHumano extends Jugador {
 		super(nombre, ficha, juego);
 		this.usuario = usuario;
 		this.senderID = senderID;
-		GestorLogs.registrarLog("Nuevo jugador humano '" + nombre + "'");
-		GestorLogs.registrarDebug(this.toString());
 	}
 
 	/**
@@ -73,5 +69,20 @@ public class JugadorHumano extends Jugador {
 				: "<SIN USUARIO> ");
 		sb.append("] }");
 		return sb.toString();
+	}
+	
+	@Override
+	public boolean equals(Object object) {
+		if (object == this)
+			return true;
+
+		if (object == null || getClass() != object.getClass())
+			return false;
+
+		JugadorHumano jugador = (JugadorHumano) object;
+		if (this.getNombre() != jugador.getNombre())
+			return false;
+
+		return true;
 	}
 }

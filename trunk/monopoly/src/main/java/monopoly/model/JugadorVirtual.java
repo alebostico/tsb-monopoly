@@ -5,8 +5,6 @@ package monopoly.model;
 
 import java.io.Serializable;
 
-import monopoly.util.GestorLogs;
-
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
@@ -43,8 +41,6 @@ public class JugadorVirtual extends Jugador implements Serializable{
 			TipoJugador tipoJugador) {
 		super(nombre, ficha, juego);
 		this.tipoJugador = tipoJugador;
-		GestorLogs.registrarLog("Nuevo jugador Virtual '" + nombre + "'");
-		GestorLogs.registrarDebug(this.toString());
 	}
 
 	/**
@@ -69,6 +65,21 @@ public class JugadorVirtual extends Jugador implements Serializable{
 		sb.append((this.tipoJugador != null) ? ", tipo jugador: " + this.tipoJugador.getNombreTipo(): "<SIN TIPO JUGADOR> ");
 		sb.append("] }");
 		return sb.toString();
+	}
+	
+	@Override
+	public boolean equals(Object object) {
+		if (object == this)
+			return true;
+
+		if (object == null || getClass() != object.getClass())
+			return false;
+
+		JugadorVirtual jugador = (JugadorVirtual) object;
+		if (this.getNombre() != jugador.getNombre())
+			return false;
+
+		return true;
 	}
 
 }

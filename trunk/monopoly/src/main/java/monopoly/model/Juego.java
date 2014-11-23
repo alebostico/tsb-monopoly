@@ -75,10 +75,7 @@ public class Juego implements Serializable {
 		this.tarjetasPropiedadList = TarjetaController
 				.getTarjetasPropiedadesTreeMap();
 		this.generateUniqueID();
-		GestorLogs.registrarLog("Creado nuevo juego '" + this.getUniqueID()
-				+ "'");
 		this.initJuego();
-		// GestorLogs.registrarDebug(this.toString());
 	}
 
 	public Juego(Usuario creador) {

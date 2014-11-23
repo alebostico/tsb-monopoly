@@ -198,10 +198,6 @@ public abstract class TarjetaPropiedad implements Serializable {
 		if (this.idTarjeta != tp.idTarjeta)
 			return false;
 
-		// return (id != null && other != null && getClass() ==
-		// other.getClass()) ? id
-		// .equals(((Tarifa) other).id) : (other == this);
-
 		return true;
 	}
 

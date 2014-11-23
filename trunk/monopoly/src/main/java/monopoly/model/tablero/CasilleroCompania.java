@@ -55,4 +55,19 @@ public class CasilleroCompania extends Casillero implements Serializable {
 
 		return sb.toString();
 	}
+	
+	@Override
+	public boolean equals(Object object) {
+		if (object == this)
+			return true;
+
+		if (object == null || getClass() != object.getClass())
+			return false;
+
+		CasilleroCompania casillero = (CasilleroCompania) object;
+		if (this.getNumeroCasillero() != casillero.getNumeroCasillero())
+			return false;
+
+		return true;
+	}
 }
