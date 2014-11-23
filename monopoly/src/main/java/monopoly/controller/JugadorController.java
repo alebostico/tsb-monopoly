@@ -35,7 +35,7 @@ public class JugadorController {
 		this.turnosList = new CircularList<Jugador>();
 		this.jugadoresList = new ArrayList<Jugador>();
 	}
-	
+
 	public void addPlayer(Jugador jugador) {
 		JugadorHumano jh;
 
@@ -67,7 +67,7 @@ public class JugadorController {
 			}
 		}
 	}
-	
+
 	public void ordenarTurnos() {
 
 		Node<Jugador> primero = (Node<Jugador>) turnosList.getHeader();
@@ -93,33 +93,37 @@ public class JugadorController {
 		currentPlayer = (Node<Jugador>) turnosList.getHeader();
 
 	}
-	
+
 	public int cantJugadoresConectados() {
 		return this.jugadoresList.size();
 	}
 
-	public JugadorHumano getJugadorHumano(int key){
+	public JugadorHumano getJugadorHumano(int key) {
 		return networkPlayers.get(key);
 	}
-	
-	public List<JugadorHumano> getListaJugadoresHumanos(){
-		return (List<JugadorHumano>) networkPlayers.values();
+
+	public List<JugadorHumano> getListaJugadoresHumanos() {
+		List<JugadorHumano> list = new ArrayList<JugadorHumano>();
+		for (JugadorHumano jugadorHumano : networkPlayers.values()) {
+			list.add(jugadorHumano);
+		}
+		return list;
 	}
-	
-	public List<Jugador> getTurnoslist(){
+
+	public List<Jugador> getTurnoslist() {
 		return turnosList.toList();
 	}
-	
-	public Jugador getCurrentPlayer(){
+
+	public Jugador getCurrentPlayer() {
 		return this.currentPlayer.getKey();
 	}
-	
-	public int[] getIdConnectionClient(){
-		
+
+	public int[] getIdConnectionClient() {
+
 		int[] vIdConnection = new int[networkPlayers.size()];
-		
+
 		int index = 0;
-		
+
 		for (Map.Entry<Integer, JugadorHumano> entry : networkPlayers
 				.entrySet()) {
 			vIdConnection[index] = entry.getKey();
@@ -128,8 +132,5 @@ public class JugadorController {
 		}
 		return vIdConnection;
 	}
-	
-	
-	
-	
+
 }

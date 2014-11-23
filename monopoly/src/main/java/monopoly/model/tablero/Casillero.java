@@ -185,7 +185,7 @@ public class Casillero implements Serializable {
 
 		return sb.toString();
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (o == null)
@@ -193,7 +193,7 @@ public class Casillero implements Serializable {
 		if (o.getClass() != this.getClass())
 			return false;
 		Casillero c = (Casillero) o;
-		return this.numeroCasillero ==  c.getNumeroCasillero();
+		return this.numeroCasillero == c.getNumeroCasillero();
 	}
 	
 }

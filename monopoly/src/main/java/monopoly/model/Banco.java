@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import monopoly.model.tarjetas.TarjetaPropiedad;
-import monopoly.util.GestorLogs;
 
 /**
  * @author Bostico Alejandro
@@ -24,17 +23,16 @@ public class Banco implements Serializable {
 	private static final long serialVersionUID = -3371251147808213945L;
 
 	private List<TarjetaPropiedad> tarjPropiedadList;
+	private int idBanco;
 	private int nroCasas;
 	private int nroHoteles;
 
 	public Banco(List<TarjetaPropiedad> list, int nroCasas, int nroHoteles) {
 		// TODO cargar todas las propiedades
-		
 		tarjPropiedadList = new ArrayList<TarjetaPropiedad>();
 		tarjPropiedadList.addAll(list);
 		this.nroCasas = nroCasas;
 		this.nroHoteles = nroHoteles;
-		GestorLogs.registrarLog("Banco Cargado");
 	}
 
 	/**
@@ -80,6 +78,29 @@ public class Banco implements Serializable {
 	 */
 	public void setNroHoteles(int nroHoteles) {
 		this.nroHoteles = nroHoteles;
+	}
+	
+	public int getIdBanco() {
+		return idBanco;
+	}
+
+	public void setIdBanco(int bancoId) {
+		this.idBanco = bancoId;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (object == this)
+			return true;
+
+		if (object == null || getClass() != object.getClass())
+			return false;
+
+		Banco banco = (Banco) object;
+		if (this.idBanco != banco.getIdBanco())
+			return false;
+
+		return true;
 	}
 
 }

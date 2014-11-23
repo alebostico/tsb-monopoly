@@ -12,8 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import monopoly.util.GestorLogs;
-
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
@@ -43,14 +41,6 @@ public class TarjetaComunidad extends Tarjeta implements Serializable {
 		super();
 		this.idTarjeta = idTarjeta;
 		this.objetivo = objetivo;
-
-		if (GestorLogs.getLoggingDetailLevel() == GestorLogs.MSG_DEBUG) {
-			GestorLogs.registrarDebug("Tarjeta Comunidad " + this.idTarjeta
-					+ " cargada");
-		} else if (GestorLogs.getLoggingDetailLevel() == GestorLogs.MSG_DEBUG_DETAIL) {
-			GestorLogs.registrarDebugDetail(this.toString());
-		}
-
 	}
 
 	/**
@@ -100,6 +90,21 @@ public class TarjetaComunidad extends Tarjeta implements Serializable {
 	public String toString() {
 		return "TarjetaComunidad [idTarjeta=" + idTarjeta + ", objetivo="
 				+ objetivo + "]";
+	}
+	
+	@Override
+	public boolean equals(Object object) {
+		if (object == this)
+			return true;
+
+		if (object == null || getClass() != object.getClass())
+			return false;
+
+		TarjetaComunidad casillero = (TarjetaComunidad) object;
+		if (this.getIdTarjeta() != casillero.getIdTarjeta())
+			return false;
+
+		return true;
 	}
 
 }

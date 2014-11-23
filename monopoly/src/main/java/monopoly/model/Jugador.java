@@ -278,7 +278,7 @@ public abstract class Jugador implements Serializable {
 		if (o.getClass() != this.getClass())
 			return false;
 		Jugador j = (Jugador) o;
-		return this.getFicha().equals(j.getFicha());
+		return this.getNombre().equals(j.getNombre());
 	}
 
 	@Override

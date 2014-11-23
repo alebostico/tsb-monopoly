@@ -24,10 +24,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
@@ -206,25 +206,25 @@ public class TableroController extends AnchorPane implements Serializable,
 	private Label lblStopwatch;
 
 	@FXML
-	private Button btnDesconstruir;
-
-	@FXML
-	private Button btnDeshipotecar;
-
-	@FXML
-	private Button btnSendMessage;
-
-	@FXML
-	private Button btnConstruir;
-
-	@FXML
-	private Button btnHipotecar;
-
-	@FXML
-	private Button btnComerciar;
-
-	@FXML
 	private MenuButton btnMenu;
+	
+	@FXML
+    private MenuButton btnAcciones;
+	
+    @FXML
+    private MenuItem btnHipotecar;
+
+    @FXML
+    private MenuItem btnVender;
+    
+    @FXML
+    private MenuItem btnDeshipotecar;
+
+    @FXML
+    private MenuItem btnComercializar;
+
+    @FXML
+    private MenuItem btnConstruir;
 
 	@FXML
 	private ListView<History> lvHistoryChat;
@@ -274,42 +274,14 @@ public class TableroController extends AnchorPane implements Serializable,
 		accordionHistorial.setExpandedPane(tpHistory);
 	}
 
-	@FXML
-	void processSendMessage(ActionEvent event) {
-
-	}
-
-	@FXML
-	void processMenu(ActionEvent event) {
-
-	}
-
-	@FXML
-	void processContruir(ActionEvent event) {
-
-	}
-
-	@FXML
-	void processDesconstruir(ActionEvent event) {
-
-	}
-
-	@FXML
-	void processHipotecar(ActionEvent event) {
-
-	}
-
-	@FXML
-	void processDeshipotecar(ActionEvent event) {
-
-	}
-
-	@FXML
-	void processComerciar(ActionEvent event) {
-
-	}
-
+	/**
+	 * 
+	 * Éste método muestra el tablero y muestra un messagebox informando al
+	 * jugador que debe esperar a que se unan al juego otros oponentes.
+	 * 
+	 */
 	public void showBoard() {
+		currentStage.setFullScreen(true);
 		currentStage.show();
 		prevStage.close();
 		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -320,23 +292,56 @@ public class TableroController extends AnchorPane implements Serializable,
 		this.clockLabelTextProperty = lblStopwatch.textProperty();
 
 		createDigitalClock();
-		addHistoryGame(usuarioLogueado.getUserName(), "Juego Creado");
+		if (usuarioLogueado.equals(juego.getOwner()))
+			addHistoryGame(usuarioLogueado.getUserName(), "Juego Creado.");
+		else
+			addHistoryGame(usuarioLogueado.getUserName(), "Te uniste al Juego.");
 		esperarJugadores();
-
 	}
 
+	/**
+	 * Método que agrega un history al panel de información que se utilizará
+	 * para llevar un registro sobre jugadas o acciones que se realizan en el
+	 * juego.
+	 * 
+	 * @param usuario
+	 *            nombre que aparecerá en la primer columna informando quién fue
+	 *            el que realizó el evento.
+	 * @param mensaje
+	 *            mensaje que se mostrará, para informar a los jugadores sobre
+	 *            las acciones que se realizaró
+	 * 
+	 */
 	private void addHistoryGame(String usuario, String mensaje) {
 		History history = new History(StringUtils.getFechaActual(), usuario,
 				mensaje);
 		addHistoryGame(history);
 	}
 
+	/**
+	 * Método que agrega un history al panel de información que se utilizará
+	 * para llevar un registro sobre jugadas o acciones que se realizan en el
+	 * juego.
+	 * 
+	 * @param history
+	 *            objecto historia que contiene información sobre el usuario,
+	 *            descripción del mensaje, y fecha en el que se produjó el
+	 *            evento.
+	 */
 	public void addHistoryGame(History history) {
 		historyGameList.add(history);
 		oHistoryGameList = FXCollections.observableArrayList(historyGameList);
 		lvHistory.setItems(oHistoryGameList);
 	}
 
+	/**
+	 * 
+	 * Método que agrega un mensaje de chat
+	 * al panel de Chat.
+	 * 
+	 * @param usuario
+	 * @param mensaje
+	 */
 	@SuppressWarnings("unused")
 	private void addHistoryChat(String usuario, String mensaje) {
 		History history = new History(StringUtils.getFechaActual(), usuario,
@@ -344,12 +349,26 @@ public class TableroController extends AnchorPane implements Serializable,
 		addHistoryChat(history);
 	}
 
+	/**
+	 * 
+	 * Método que agrega un mensaje de chat
+	 * al panel de Chat.
+	 * 
+	 * @param history
+	 * 			objeto que contiene información
+	 * 			sobre el usuario que escribió el mensaje,
+	 * 			el mensaje y la fecha y hora.
+	 */
 	public void addHistoryChat(History history) {
 		historyChatList.add(history);
 		oHistoryChatList = FXCollections.observableArrayList(historyChatList);
 		lvHistoryChat.setItems(oHistoryChatList);
 	}
 
+	/**
+	 * Método que muestra un messagebox informando que el jugador debe esperar
+	 * por oponentes.
+	 */
 	private void esperarJugadores() {
 		preloaderStage = new Stage();
 
@@ -381,6 +400,9 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
+	/**
+	 * Inicializa el reloj del tablero.
+	 */
 	public void createDigitalClock() {
 		final Timeline timeline = new Timeline();
 
@@ -397,6 +419,10 @@ public class TableroController extends AnchorPane implements Serializable,
 		timeline.play();
 	}
 
+	/**
+	 * Método que muestra un messagebox para que el jugador tire los dados para
+	 * determinar el turno de inicio de juego.
+	 */
 	public void tirarDadosParaTurno() {
 		Platform.runLater(new Runnable() {
 			@Override
@@ -437,6 +463,14 @@ public class TableroController extends AnchorPane implements Serializable,
 		});
 	}
 
+	/**
+	 * Método que recibe la información sobre el orden de los turnos para
+	 * empezar a jugar el juego.
+	 * 
+	 * @param status
+	 *            objeto que contiene información sobre los turnos, estado del
+	 *            banco y jugador actual.
+	 */
 	public void empezarJuego(MonopolyGameStatus status) {
 		this.status = status;
 		showAccordionJugadores();
@@ -444,6 +478,10 @@ public class TableroController extends AnchorPane implements Serializable,
 		TirarDadosController.getInstance().getCurrentStage().close();
 	}
 
+	/**
+	 * Método que dibuja a los jugadores, mostrando el estado en el juego.
+	 * 
+	 */
 	private void showAccordionJugadores() {
 		List<Jugador> turnos = status.turnos;
 		tps = new TitledPane[turnos.size() + 1];
@@ -461,6 +499,9 @@ public class TableroController extends AnchorPane implements Serializable,
 		accordionPlayers.setExpandedPane(tps[0]);
 	}
 
+	/**
+	 * Método que dibuja las fichas en el tablero.
+	 */
 	private void displayFichas() {
 		List<Jugador> turnos = status.turnos;
 		// Tablero tablero = status.tablero;
@@ -688,6 +729,15 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
+	/**
+	 * 
+	 * Dibuje el TitledPane con la información
+	 * actual del jugador.
+	 * 
+	 * @param jugador
+	 * @param title
+	 * @return
+	 */
 	private TitledPane getPaneInfoPlayer(Jugador jugador, String title) {
 		AnchorPane root = new AnchorPane();
 		VBox vBox = new VBox();
@@ -1262,6 +1312,15 @@ public class TableroController extends AnchorPane implements Serializable,
 		return tp;
 	}
 
+	/**
+	 * 
+	 * Dibuja el TitledPan con la información
+	 * actual del banco.
+	 * 
+	 * @param banco
+	 * @param title
+	 * @return
+	 */
 	private TitledPane getPaneInfoBanco(Banco banco, String title) {
 		AnchorPane root = new AnchorPane();
 		VBox vBox = new VBox();
@@ -1790,6 +1849,13 @@ public class TableroController extends AnchorPane implements Serializable,
 		return tp;
 	}
 
+	/**
+	 * Método para agregar un tooltips a la imagen
+	 * de la propiedad con información sobre la misma.
+	 * 
+	 * @param propiedad
+	 * @return
+	 */
 	private String showToolTipsPropiedad(TarjetaPropiedad propiedad) {
 		return propiedad.getNombre()
 				+ " - "
@@ -1797,68 +1863,86 @@ public class TableroController extends AnchorPane implements Serializable,
 						.getValorPropiedad());
 	}
 
-	/**
-	 * @return the currentStage
-	 */
-	public Stage getCurrentStage() {
-		return currentStage;
-	}
+	
+	
+	//============================= Event Fx ==============================//
+	
+	@FXML
+    void processMenu(ActionEvent event) {
 
-	/**
-	 * @param currentStage
-	 *            the currentStage to set
-	 */
-	public void setCurrentStage(Stage currentStage) {
-		this.currentStage = currentStage;
-	}
+    }
 
-	/**
-	 * @return the prevStage
-	 */
-	public Stage getPrevStage() {
-		return prevStage;
-	}
+    @FXML
+    void processAcciones(ActionEvent event) {
 
-	/**
-	 * @param prevStage
-	 *            the prevStage to set
-	 */
-	public void setPrevStage(Stage prevStage) {
-		this.prevStage = prevStage;
-	}
+    }
+
+    @FXML
+    void processContruir(ActionEvent event) {
+
+    }
+
+    @FXML
+    void processVender(ActionEvent event) {
+
+    }
+
+    @FXML
+    void processHipotecar(ActionEvent event) {
+
+    }
+
+    @FXML
+    void processDeshipotecar(ActionEvent event) {
+
+    }
+
+    @FXML
+    void processComercializar(ActionEvent event) {
+
+    }
+
+    @FXML
+    void processSendMessage(ActionEvent event) {
+
+    }
+    
+    //============================== Getter & Setter ===========================//
 
 	public static TableroController getInstance() {
 		if (instance == null)
 			instance = new TableroController();
 		return instance;
 	}
+	
+	public Stage getCurrentStage() {
+		return currentStage;
+	}
 
-	/**
-	 * @return the juego
-	 */
+	public void setCurrentStage(Stage currentStage) {
+		this.currentStage = currentStage;
+	}
+
+	public Stage getPrevStage() {
+		return prevStage;
+	}
+
+	public void setPrevStage(Stage prevStage) {
+		this.prevStage = prevStage;
+	}
+
 	public Juego getJuego() {
 		return juego;
 	}
 
-	/**
-	 * @param juego
-	 *            the juego to set
-	 */
 	public void setJuego(Juego juego) {
 		this.juego = juego;
 	}
 
-	/**
-	 * @return the usuarioLogueado
-	 */
 	public Usuario getUsuarioLogueado() {
 		return usuarioLogueado;
 	}
 
-	/**
-	 * @param usuarioLogueado
-	 *            the usuarioLogueado to set
-	 */
 	public void setUsuarioLogueado(Usuario usuarioLogueado) {
 		this.usuarioLogueado = usuarioLogueado;
 	}

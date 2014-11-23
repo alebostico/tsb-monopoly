@@ -99,5 +99,20 @@ public class TarjetaSuerte extends Tarjeta implements Serializable {
 		return "TarjetaSuerte [idTarjeta=" + idTarjeta + ", objetivo="
 				+ objetivo + "]";
 	}
+	
+	@Override
+	public boolean equals(Object object) {
+		if (object == this)
+			return true;
+
+		if (object == null || getClass() != object.getClass())
+			return false;
+
+		TarjetaSuerte casillero = (TarjetaSuerte) object;
+		if (this.getIdTarjeta() != casillero.getIdTarjeta())
+			return false;
+
+		return true;
+	}
 
 }
