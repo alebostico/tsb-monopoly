@@ -22,8 +22,9 @@ import javafx.stage.Stage;
 import monopoly.client.connection.ConnectionController;
 import monopoly.model.Dado;
 import monopoly.model.History;
-import monopoly.model.MonopolyGameStatus;
 import monopoly.util.StringUtils;
+import monopoly.util.constantes.EnumsTirarDados;
+import monopoly.util.message.game.AdvanceInBoardMessage;
 import monopoly.util.message.game.StartGameMessage;
 
 /**
@@ -50,8 +51,6 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 
 	private Dado dados;
 
-	private MonopolyGameStatus status;
-
 	private static TirarDadosController instance;
 
 	/*
@@ -66,7 +65,8 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 		instance = this;
 	}
 
-	public void showEstablecerTurno(final String username) {
+	public void showTirarDados(final String username,
+			final EnumsTirarDados.TirarDados modo) {
 		Platform.runLater(new Runnable() {
 
 			@Override
@@ -74,35 +74,55 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 				if (lblNombre != null)
 					lblNombre.setText(username);
 				btnTirarDados = new Button("Tirar Dados");
-				btnTirarDados.setOnAction(new EventHandler<ActionEvent>() {
-					@Override
-					public void handle(ActionEvent e) {
-						// devolver el valor de los dados
-						TirarDadosController.getInstance()
-								.tirarDadoParaTurnos();
-					}
-				});
+				switch (modo) {
+				case TURNO_INICIO:
+					btnTirarDados.setOnAction(new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent e) {
+							// devolver el valor de los dados
+							TirarDadosController.getInstance()
+									.tirarDados(modo);
+						}
+					});
+					break;
+				case AVANZAR_CASILLERO:
+					btnTirarDados.setOnAction(new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent e) {
+							// avanzar de casillero
+							
+						}
+					});
+					break;
+				}
 				hbPanel.getChildren().add(btnTirarDados);
 				currentStage.show();
 			}
 		});
 	}
 
-	public void tirarDadoParaTurnos() {
+	public void tirarDados(final EnumsTirarDados.TirarDados modo) {
 		String path;
+		Image img;
+		ImageView imgDado1;
+		ImageView imgDado2;
+		History history;
+		int senderId;
+		String mensaje = "";
+		
 		dados = new Dado();
 		hbPanel.getChildren().clear();
 
 		path = Dado.getPathImageDado(dados.getValorDado(1));
-		Image img = new Image(
+		img = new Image(
 				TirarDadosController.class.getResourceAsStream(path), 50, 50,
 				true, true);
-		ImageView imgDado1 = new ImageView(img);
+		imgDado1 = new ImageView(img);
 
 		path = Dado.getPathImageDado(dados.getValorDado(2));
 		img = new Image(TirarDadosController.class.getResourceAsStream(path),
 				50, 50, true, true);
-		ImageView imgDado2 = new ImageView(img);
+		imgDado2 = new ImageView(img);
 
 		hbPanel.getChildren().add(imgDado1);
 		hbPanel.getChildren().add(new Label(" + "));
@@ -110,74 +130,51 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 		hbPanel.getChildren().add(new Label(" = "));
 		hbPanel.getChildren().add(new Label(" " + dados.getSuma() + " "));
 
-		History history = new History(StringUtils.getFechaActual(),
-				TableroController.getInstance().getUsuarioLogueado()
-						.getUserName(),
-				"El resultado de los dados para establecer su turno ha sido "
-						+ dados.getSuma());
-
-		TableroController.getInstance().addHistoryGame(history);
-
+		senderId = ConnectionController.getInstance().getIdPlayer();
 		btnAceptar = new Button("Aceptar");
 		btnAceptar.setDisable(true);
-		btnAceptar.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e) {
-				// devolver el valor de los dados
-				TableroController.getInstance().empezarJuego(
-						TirarDadosController.getInstance().getStatus());
-			}
-		});
+		
+		switch(modo)
+		{
+		case TURNO_INICIO:
+			mensaje = String.format("El resultado de los dados para establecer su turno fue %s.", dados.getSuma());
+			
+			btnAceptar.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent e) {
+					TableroController.getInstance().empezarJuego();
+				}
+			});
+			
+			ConnectionController.getInstance().send(
+					new StartGameMessage(senderId, TableroController.getInstance().getJuego().getUniqueID(), dados));
+			
+			break;
+			
+		case AVANZAR_CASILLERO:
+			mensaje = String.format("El resultado de los dados para avanzar de casillero fue %s.", dados.getSuma());
+			btnAceptar.setOnAction(new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent e) {
+					TableroController.getInstance().determinarAccionEnCasillero();
+				}
+			});
+			ConnectionController.getInstance().send(
+					new AdvanceInBoardMessage(senderId, dados));
+			
+			break;
+		}
+		
+		history = new History(StringUtils.getFechaActual(),
+				TableroController.getInstance().getUsuarioLogueado()
+						.getUserName(),mensaje);
+		TableroController.getInstance().addHistoryGame(history);
+		
 		vbPanel.getChildren().add(btnAceptar);
-		int senderId = ConnectionController.getInstance().getIdPlayer();
-		Object[] vDatos = new Object[3];
-		vDatos[0] = TableroController.getInstance().getJuego().getUniqueID();
-		vDatos[1] = dados;
-		ConnectionController.getInstance().send(
-				new StartGameMessage(senderId, vDatos));
+		
 	}
 
-	/**
-	 * @return the currentStage
-	 */
-	public Stage getCurrentStage() {
-		return currentStage;
-	}
-
-	/**
-	 * @param currentStage
-	 *            the currentStage to set
-	 */
-	public void setCurrentStage(Stage currentStage) {
-		this.currentStage = currentStage;
-	}
-
-	/**
-	 * @return the status
-	 */
-	public MonopolyGameStatus getStatus() {
-		return status;
-	}
-
-	/**
-	 * @param status
-	 *            the status to set
-	 */
-	public void setStatus(MonopolyGameStatus status) {
-		this.status = status;
-	}
-
-	/**
-	 * @return the instance
-	 */
-	public static TirarDadosController getInstance() {
-		if (instance == null)
-			instance = new TirarDadosController();
-		return instance;
-	}
-
-	public void habilitarBotonAceptar(MonopolyGameStatus status) {
-		this.status = status;
+	public void habilitarBotonAceptar() {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
@@ -187,4 +184,19 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 			}
 		});
 	}
+
+	public Stage getCurrentStage() {
+		return currentStage;
+	}
+
+	public void setCurrentStage(Stage currentStage) {
+		this.currentStage = currentStage;
+	}
+
+	public static TirarDadosController getInstance() {
+		if (instance == null)
+			instance = new TirarDadosController();
+		return instance;
+	}
+
 }

@@ -45,6 +45,7 @@ public class ConstantesMensaje {
 	 */
 	public final static String GET_PENDING_GAMES_MESSAGE = "GetPendingGamesMessage";
 	public final static String THROW_DICE_TURNS_MESSAGE = "ThrowDiceTurnsMessage";
+	public final static String THROW_DICE_ADVANCE_MESSAGE = "ThrowDiceAdvanceMessage";
 	
 	/*************************************************************************************/
 }

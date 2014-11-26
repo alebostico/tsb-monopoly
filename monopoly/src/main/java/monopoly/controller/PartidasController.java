@@ -42,6 +42,17 @@ public class PartidasController {
 		return instance;
 	}
 
+	/**
+	 * 
+	 * Método que toma los datos del juego establecido por el creador del juego.
+	 * Cómo ser cantidad de jugadores, jugadores virtuales, entre otros. Luego
+	 * crea los jugadores.
+	 * 
+	 * @param senderID
+	 *            . id de conexión del jugador creador
+	 * @param juego
+	 *            objecto juego, que posee los datos del juego
+	 */
 	public void loadGame(int senderID, Juego juego) {
 		// TODO Auto-generated method stub
 		JuegoController controller = juegosControllerList.get(juego
@@ -57,21 +68,30 @@ public class PartidasController {
 		}
 	}
 
-	public void StartGame(int senderId, Object message) {
+	public void establecerTurnoJugador(int senderId, Object message) {
 		// TODO Auto-generated method stub
 		Object[] vDatos = (Object[]) ((StartGameMessage) message).message;
 		String idJuego = vDatos[0].toString();
 		Dado dados = (Dado) vDatos[1];
 
 		JuegoController controller = juegosControllerList.get(idJuego);
-		controller.startGame(senderId, dados);
+		controller.establecerTurnoJugador(senderId, dados);
 	}
-	
-	public void joinPlayerGame(Jugador jugador){
-		JuegoController juegoController = buscarControladorJuego(jugador.getJuego());
+
+	/**
+	 * Método que agrega un jugador Humano al juego.
+	 * 
+	 * @param jugador
+	 */
+	public void joinPlayerGame(Jugador jugador) {
+		JuegoController juegoController = buscarControladorJuego(jugador
+				.getJuego());
+		GestorLogs.registrarLog(String.format(
+				"Agregando el jugador %s al juego %s..", jugador.getNombre(), juegoController
+						.getJuego().getUniqueID()));
 		juegoController.addPlayer(jugador);
 	}
-	
+
 	/**
 	 * Agrega un juego a la lista de juegos
 	 * 
@@ -81,11 +101,10 @@ public class PartidasController {
 	 */
 	private boolean addJuego(JuegoController jc) {
 		// TODO: verificar que el juego no exista en la bd
-
+		GestorLogs.registrarLog(String.format(
+				"Agregando el juego %s a la juegosControllerList..", jc
+						.getJuego().getUniqueID()));
 		if (!this.existeJuego(jc.getJuego())) {
-			GestorLogs.registrarLog("Agregado al GestorJuegos el juego "
-					+ jc.getJuego().getUniqueID());
-			GestorLogs.registrarDebug(jc.getJuego().toString());
 			if (juegosControllerList.put(jc.getJuego().getUniqueID(), jc) == null)
 				return true;
 		}
@@ -108,6 +127,7 @@ public class PartidasController {
 		JuegoController jc = new JuegoController(creador, nombre);
 		if (!this.addJuego(jc))
 			return null;
+		GestorLogs.registrarLog("Creando un nuevo juego...");
 		return jc.getJuego();
 	}
 
@@ -143,25 +163,25 @@ public class PartidasController {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Busca el controlador del juego a partir del key del juego
 	 * 
 	 * @param key
-	 * 			UniqueID del juego
+	 *            UniqueID del juego
 	 * @return
 	 */
-	public JuegoController buscarControladorJuego(String key){
+	public JuegoController buscarControladorJuego(String key) {
 		return this.juegosControllerList.get(key);
 	}
-	
+
 	/**
 	 * Busca el controlador del juego a partir del juego
 	 * 
 	 * @param juego
 	 * @return
 	 */
-	public JuegoController buscarControladorJuego(Juego juego){
+	public JuegoController buscarControladorJuego(Juego juego) {
 		return buscarControladorJuego(juego.getUniqueID());
 	}
 
@@ -234,8 +254,6 @@ public class PartidasController {
 	public Juego getJuego(String uniqueID) {
 		return buscarJuego(uniqueID);
 	}
-	
-	
 
 	public GameServer getMonopolyGame() {
 		return monopolyGame;

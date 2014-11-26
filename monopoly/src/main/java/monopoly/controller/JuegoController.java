@@ -12,7 +12,10 @@ import monopoly.model.JugadorHumano;
 import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
 import monopoly.model.tablero.Casillero;
+import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
+import monopoly.util.constantes.ConstantesMensaje;
+import monopoly.util.exception.IllegalJugadorException;
 import monopoly.util.message.game.HistoryGameMessage;
 
 /**
@@ -45,21 +48,43 @@ public class JuegoController {
 		this.gestorJugadores = new JugadorController();
 	}
 
+	/**
+	 * 
+	 * Método que agrega un jugador al juego, informa al resto de los jugadores
+	 * de qué jugador se unió al juego, valida de que se haya completado la
+	 * cantidad de jugadores especificados por el creador y establece los
+	 * turnos.
+	 * 
+	 * @param jugador
+	 */
 	public void addPlayer(Jugador jugador) {
 		this.gestorJugadores.addPlayer(jugador);
-		
-		History history = new History(StringUtils.getFechaActual(), jugador.getNombre(), "Se unió al juego."); 
+
+		History history = new History(StringUtils.getFechaActual(),
+				jugador.getNombre(), "Se unió al juego.");
 		HistoryGameMessage msg = new HistoryGameMessage(history);
-		if(jugador instanceof JugadorHumano)
-			sentToOther(msg, ((JugadorHumano)jugador).getSenderID());
+		if (jugador instanceof JugadorHumano)
+			sendToOther(msg, ((JugadorHumano) jugador).getSenderID());
 
 		if (this.gestorJugadores.cantJugadoresConectados() == cantJugadores) {
 			estadoJuego.actualizarEstadoJuego();
 			gestorJugadores.establecerTurnos();
 		}
 	}
-	
-	public void startGame(int key, Dado dados) {
+
+	/**
+	 * 
+	 * Método que establece la suma de dados obtenidos en la tirada inicial para
+	 * establecer el turno de inicio del juego. Luego valida de que todos los
+	 * participantes hayan arrojado sus dados para establecer el orden de
+	 * turnos.
+	 * 
+	 * @param key
+	 *            id de conexión del jugador humano conectado al juego.
+	 * @param dados
+	 *            objecto dado con los números obtenidos.
+	 */
+	public void establecerTurnoJugador(int key, Dado dados) {
 		// TODO Auto-generated method stub
 		JugadorHumano jugador = gestorJugadores.getJugadorHumano(key);
 		jugador.setTiradaInicial(dados);
@@ -73,10 +98,16 @@ public class JuegoController {
 		if (tiraronTodosDados) {
 			estadoJuego.actualizarEstadoJuego();
 			ordenarTurnos();
-			// quien es el primero?
+			tirarDadosJugador();
 		}
 	}
 
+	/**
+	 * 
+	 * Método para ordenar la lista cicular de jugadores para establecer el
+	 * turno de los mismos en base a los resultados de los dados arrojados. Una
+	 * vez ordenados informa a los jugadores el orden establecido.
+	 */
 	private void ordenarTurnos() {
 
 		this.gestorJugadores.ordenarTurnos();
@@ -96,27 +127,82 @@ public class JuegoController {
 				gestorBanco.getBanco(), gestorTablero.getTablero(),
 				MonopolyGameStatus.EMPEZAR, gestorJugadores.getCurrentPlayer());
 
-		sentToAll(status);
+		sendToAll(status);
 
 	}
 
-	private void sentToAll(Object message) {
+	/**
+	 * 
+	 * Método que envía un mensaje al jugador para arroje los dados para avanzar
+	 * de casilleros.
+	 * 
+	 */
+	private void tirarDadosJugador() {
+		History history = new History(StringUtils.getFechaActual(),
+				gestorJugadores.getCurrentPlayer().getNombre(),
+				"Turno para tirar los dados.");
+		sendToAll(history);
+		try {
+			if (gestorJugadores.isJugadorVirtualElJugadorActual()) {
+				
+				// IAController
+			} else {
+				int senderId = 0;
+
+				senderId = gestorJugadores.getSenderIdPlayer(gestorJugadores
+						.getCurrentPlayer());
+
+				sendToOne(senderId,
+						ConstantesMensaje.THROW_DICE_ADVANCE_MESSAGE);
+
+			}
+		} catch (IllegalJugadorException e) {
+			// TODO Auto-generated catch block
+			GestorLogs.registrarError(e.getMessage());
+		}
+	}
+
+	private void sendToOne(int key, Object message) {
+		PartidasController.getInstance().getMonopolyGame()
+				.sendToOne(key, message);
+	}
+
+	/**
+	 * 
+	 * Método que envía un determinado mensaje a todos los jugadores humanos del
+	 * juego.
+	 * 
+	 * @param message
+	 *            Objeto mensaje que recibirán los jugadores humanos.
+	 */
+	private void sendToAll(Object message) {
 		for (int key : gestorJugadores.getIdConnectionClient()) {
 			PartidasController.getInstance().getMonopolyGame()
 					.sendToOne(key, message);
 		}
 	}
 
-	private void sentToOther(Object message, int senderId) {
+	/**
+	 * 
+	 * Método que envía un determinado mensaje a todos los jugadores humanos del
+	 * juego excepto al que desencadena el mensaje.
+	 * 
+	 * @param message
+	 *            Objeto mensaje que recibirán los jugadores humanos.
+	 * @param senderId
+	 *            Jugador que envía mensaje al resto de los participantes.
+	 */
+	private void sendToOther(Object message, int senderId) {
 		for (int key : gestorJugadores.getIdConnectionClient()) {
 			if (key != senderId)
 				PartidasController.getInstance().getMonopolyGame()
 						.sendToOne(key, message);
 		}
 	}
-	
-	//============================= Getter & Setter ==========================//
-	
+
+	// ============================= Getter & Setter
+	// ==========================//
+
 	public Juego getJuego() {
 		return juego;
 	}
@@ -125,53 +211,30 @@ public class JuegoController {
 		this.juego = juego;
 	}
 
-	/**
-	 * @return the gestorBanco
-	 */
 	public BancoController getGestorBanco() {
 		return gestorBanco;
 	}
 
-	/**
-	 * @return the gestorTablero
-	 */
 	public TableroController getGestorTablero() {
 		return gestorTablero;
 	}
 
-	/**
-	 * @return the gestorJugadores
-	 */
 	public JugadorController getGestorJugadores() {
 		return gestorJugadores;
 	}
 
-	/**
-	 * @return the cantJugadores
-	 */
 	public int getCantJugadores() {
 		return cantJugadores;
 	}
 
-	/**
-	 * @param cantJugadores
-	 *            the cantJugadores to set
-	 */
 	public void setCantJugadores(int cantJugadores) {
 		this.cantJugadores = cantJugadores;
 	}
 
-	/**
-	 * @return the estadoJuego
-	 */
 	public Estado getEstadoJuego() {
 		return estadoJuego;
 	}
 
-	/**
-	 * @param estadoJuego
-	 *            the estadoJuego to set
-	 */
 	public void setEstadoJuego(Estado estadoJuego) {
 		this.estadoJuego = estadoJuego;
 	}

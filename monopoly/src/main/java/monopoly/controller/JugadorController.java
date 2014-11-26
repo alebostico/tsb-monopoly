@@ -10,6 +10,7 @@ import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.JugadorVirtual;
 import monopoly.util.constantes.ConstantesMensaje;
+import monopoly.util.exception.IllegalJugadorException;
 import monopoly.util.list.CircularList;
 import monopoly.util.list.Node;
 
@@ -133,4 +134,23 @@ public class JugadorController {
 		return vIdConnection;
 	}
 
+	public boolean isJugadorVirtual(Jugador jugador)
+	{
+		if(jugador instanceof JugadorVirtual)
+			return true;
+		return false;
+	}
+	
+	public boolean isJugadorVirtualElJugadorActual(){
+		if(getCurrentPlayer() instanceof JugadorVirtual)
+			return true;
+		return false;
+	}
+	
+	public int getSenderIdPlayer(Jugador jugador) throws IllegalJugadorException{
+		if(!(jugador instanceof JugadorHumano))
+			throw new IllegalJugadorException(String.format("El Jugador %s no es un jugador controlado por una persona. ", jugador.getNombre()));
+		return ((JugadorHumano) jugador).getSenderID();
+	}
+	
 }

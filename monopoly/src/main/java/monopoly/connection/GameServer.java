@@ -13,8 +13,6 @@ import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import monopoly.controller.JuegoController;
-import monopoly.controller.PartidasController;
 import monopoly.util.GestorLogs;
 import monopoly.util.LectorXML;
 import monopoly.util.message.DisconnectMessage;
