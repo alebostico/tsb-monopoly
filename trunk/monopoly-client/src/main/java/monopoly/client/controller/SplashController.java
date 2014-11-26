@@ -68,12 +68,5 @@ public class SplashController extends AnchorPane implements Initializable {
 	public void setCurrentStage(Stage currentStage) {
 		this.currentStage = currentStage;
 	}
-	public void toContinue(){
-		if(controller instanceof TableroController)
-		{
-			TableroController.getInstance().tirarDadosParaTurno();
-			currentStage.close();
-		}
-	}
 	
 }

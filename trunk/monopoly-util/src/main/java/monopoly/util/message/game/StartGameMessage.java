@@ -25,9 +25,12 @@ public class StartGameMessage implements Serializable {
 	 * @param message
 	 *            the original message.
 	 */
-	public StartGameMessage(int senderID, Object message) {
-		this.senderID = senderID;
-		this.message = message;
+	public StartGameMessage(int senderID, String UniqueIdJuego, Object dados) {
+		Object[] vDatos = new Object[2];
+		vDatos[0] = UniqueIdJuego;
+		vDatos[1] = dados;
+		this.senderID = senderID;		
+		this.message = vDatos;
 	}
 
 }

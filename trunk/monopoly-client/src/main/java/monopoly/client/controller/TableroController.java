@@ -56,6 +56,7 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.constantes.ConstantesFXML;
+import monopoly.util.constantes.EnumsTirarDados;
 
 /**
  * @author Bostico Alejandro
@@ -207,24 +208,24 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	@FXML
 	private MenuButton btnMenu;
-	
+
 	@FXML
-    private MenuButton btnAcciones;
-	
-    @FXML
-    private MenuItem btnHipotecar;
+	private MenuButton btnAcciones;
 
-    @FXML
-    private MenuItem btnVender;
-    
-    @FXML
-    private MenuItem btnDeshipotecar;
+	@FXML
+	private MenuItem btnHipotecar;
 
-    @FXML
-    private MenuItem btnComercializar;
+	@FXML
+	private MenuItem btnVender;
 
-    @FXML
-    private MenuItem btnConstruir;
+	@FXML
+	private MenuItem btnDeshipotecar;
+
+	@FXML
+	private MenuItem btnComercializar;
+
+	@FXML
+	private MenuItem btnConstruir;
 
 	@FXML
 	private ListView<History> lvHistoryChat;
@@ -336,8 +337,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	/**
 	 * 
-	 * Método que agrega un mensaje de chat
-	 * al panel de Chat.
+	 * Método que agrega un mensaje de chat al panel de Chat.
 	 * 
 	 * @param usuario
 	 * @param mensaje
@@ -351,13 +351,11 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	/**
 	 * 
-	 * Método que agrega un mensaje de chat
-	 * al panel de Chat.
+	 * Método que agrega un mensaje de chat al panel de Chat.
 	 * 
 	 * @param history
-	 * 			objeto que contiene información
-	 * 			sobre el usuario que escribió el mensaje,
-	 * 			el mensaje y la fecha y hora.
+	 *            objeto que contiene información sobre el usuario que escribió
+	 *            el mensaje, el mensaje y la fecha y hora.
 	 */
 	public void addHistoryChat(History history) {
 		historyChatList.add(history);
@@ -423,37 +421,55 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * Método que muestra un messagebox para que el jugador tire los dados para
 	 * determinar el turno de inicio de juego.
 	 */
-	public void tirarDadosParaTurno() {
+	public void tirarDados(final EnumsTirarDados.TirarDados modo) {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
+				String fxml;
+				Parent root;
+				FXMLLoader loader;
+				Stage tirarDadosStage;
+				Scene scene;
+				TirarDadosController controller;
+
 				try {
 
-					String fxml = ConstantesFXML.FXML_TIRAR_DADOS;
-					Parent root;
-					TirarDadosController controller;
-
-					Stage tirarDadosStage = new Stage();
-					FXMLLoader loader = ScreensFramework.getLoader(fxml);
+					fxml = ConstantesFXML.FXML_TIRAR_DADOS;
+					tirarDadosStage = new Stage();
+					loader = ScreensFramework.getLoader(fxml);
 
 					root = (Parent) loader.load();
 					controller = (TirarDadosController) loader.getController();
 
-					Scene scene = new Scene(root);
+					scene = new Scene(root);
 					tirarDadosStage.setScene(scene);
-					tirarDadosStage
-							.setTitle("Monopoly - Tirar Dados para establecer turnos");
-					tirarDadosStage.centerOnScreen();
 					tirarDadosStage.setResizable(false);
 					tirarDadosStage.initModality(Modality.APPLICATION_MODAL);
 					tirarDadosStage.initStyle(StageStyle.UNDECORATED);
-
-					SplashController.getInstance().getCurrentStage().close();
 					controller.setCurrentStage(tirarDadosStage);
+					tirarDadosStage.centerOnScreen();
 
-					controller.showEstablecerTurno(TableroController
-							.getInstance().getUsuarioLogueado().getNombre());
+					switch (modo) {
+					case TURNO_INICIO:
+						tirarDadosStage
+								.setTitle("Monopoly - Tirar Dados para establecer turnos");
+						SplashController.getInstance().getCurrentStage()
+								.close();
+
+						break;
+
+					case AVANZAR_CASILLERO:
+						tirarDadosStage
+								.setTitle("Monopoly - Tirar Dados para avanzar de casilleros");
+						break;
+
+					default:
+						break;
+					}
+
+					controller.showTirarDados(TableroController.getInstance()
+							.getUsuarioLogueado().getNombre(), modo);
 
 				} catch (Exception ex) {
 					// TODO Auto-generated catch block
@@ -471,11 +487,21 @@ public class TableroController extends AnchorPane implements Serializable,
 	 *            objeto que contiene información sobre los turnos, estado del
 	 *            banco y jugador actual.
 	 */
-	public void empezarJuego(MonopolyGameStatus status) {
-		this.status = status;
+	public void empezarJuego() {
 		showAccordionJugadores();
 		displayFichas();
 		TirarDadosController.getInstance().getCurrentStage().close();
+	}
+
+	public void determinarAccionEnCasillero() {
+		// TODO Auto-generated method stub
+		showAccordionJugadores();
+		displayFichas();
+		TirarDadosController.getInstance().getCurrentStage().close();
+		switch (status.status) {
+		default:
+			break;
+		}
 	}
 
 	/**
@@ -731,8 +757,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	/**
 	 * 
-	 * Dibuje el TitledPane con la información
-	 * actual del jugador.
+	 * Dibuje el TitledPane con la información actual del jugador.
 	 * 
 	 * @param jugador
 	 * @param title
@@ -1314,8 +1339,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	/**
 	 * 
-	 * Dibuja el TitledPan con la información
-	 * actual del banco.
+	 * Dibuja el TitledPan con la información actual del banco.
 	 * 
 	 * @param banco
 	 * @param title
@@ -1850,8 +1874,8 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	/**
-	 * Método para agregar un tooltips a la imagen
-	 * de la propiedad con información sobre la misma.
+	 * Método para agregar un tooltips a la imagen de la propiedad con
+	 * información sobre la misma.
 	 * 
 	 * @param propiedad
 	 * @return
@@ -1863,58 +1887,57 @@ public class TableroController extends AnchorPane implements Serializable,
 						.getValorPropiedad());
 	}
 
-	
-	
-	//============================= Event Fx ==============================//
-	
+	// ============================= Event Fx ==============================//
+
 	@FXML
-    void processMenu(ActionEvent event) {
+	void processMenu(ActionEvent event) {
 
-    }
+	}
 
-    @FXML
-    void processAcciones(ActionEvent event) {
+	@FXML
+	void processAcciones(ActionEvent event) {
 
-    }
+	}
 
-    @FXML
-    void processContruir(ActionEvent event) {
+	@FXML
+	void processContruir(ActionEvent event) {
 
-    }
+	}
 
-    @FXML
-    void processVender(ActionEvent event) {
+	@FXML
+	void processVender(ActionEvent event) {
 
-    }
+	}
 
-    @FXML
-    void processHipotecar(ActionEvent event) {
+	@FXML
+	void processHipotecar(ActionEvent event) {
 
-    }
+	}
 
-    @FXML
-    void processDeshipotecar(ActionEvent event) {
+	@FXML
+	void processDeshipotecar(ActionEvent event) {
 
-    }
+	}
 
-    @FXML
-    void processComercializar(ActionEvent event) {
+	@FXML
+	void processComercializar(ActionEvent event) {
 
-    }
+	}
 
-    @FXML
-    void processSendMessage(ActionEvent event) {
+	@FXML
+	void processSendMessage(ActionEvent event) {
 
-    }
-    
-    //============================== Getter & Setter ===========================//
+	}
+
+	// ============================== Getter & Setter
+	// ===========================//
 
 	public static TableroController getInstance() {
 		if (instance == null)
 			instance = new TableroController();
 		return instance;
 	}
-	
+
 	public Stage getCurrentStage() {
 		return currentStage;
 	}
@@ -1945,6 +1968,14 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	public void setUsuarioLogueado(Usuario usuarioLogueado) {
 		this.usuarioLogueado = usuarioLogueado;
+	}
+
+	public MonopolyGameStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(MonopolyGameStatus status) {
+		this.status = status;
 	}
 
 }
