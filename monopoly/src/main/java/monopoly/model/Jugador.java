@@ -18,6 +18,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import monopoly.model.Estado.EstadoJugador;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaPropiedad;
@@ -39,7 +40,7 @@ public abstract class Jugador implements Serializable {
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "jugadorID")
 	private int idJugador;
-	
+
 	@Transient
 	private String nombre;
 
@@ -57,18 +58,24 @@ public abstract class Jugador implements Serializable {
 
 	@Transient
 	private int dinero;
-	
+
 	@Transient
 	private Dado tiradaInicial;
 
 	@Transient
 	private List<Tarjeta> tarjetaCarcelList;
-	
+
 	@Transient
 	private int nroCasas;
-	
+
 	@Transient
 	private int nroHoteles;
+
+	@Transient
+	private int contTurnosCarcel;
+
+	@Transient
+	private EstadoJugador estadoJugador;
 
 	/**
 	 * Constructor por defecto. inicializa el arraylist tarjetaCarcelList, que
@@ -178,7 +185,8 @@ public abstract class Jugador implements Serializable {
 	}
 
 	/**
-	 * @param nombre the nombre to set
+	 * @param nombre
+	 *            the nombre to set
 	 */
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
@@ -197,6 +205,55 @@ public abstract class Jugador implements Serializable {
 	 */
 	public void setTarjetaCarcelList(List<Tarjeta> tarjetaCarcelList) {
 		this.tarjetaCarcelList = tarjetaCarcelList;
+	}
+
+	/**
+	 * @return the estadoJugador
+	 */
+	public EstadoJugador getEstadoJugador() {
+		return estadoJugador;
+	}
+
+	/**
+	 * @param estadoJugador
+	 *            the estadoJugador to set
+	 */
+	public void setEstadoJugador(EstadoJugador estadoJugador) {
+		this.estadoJugador = estadoJugador;
+	}
+
+	/**
+	 * Devuelve la cantidad de turnos que el jugador estuvo en la carcel.
+	 * 
+	 * @return Devuelve la cantidad de turnos que el jugador estuvo en la
+	 *         carcel.
+	 */
+	public int getContTurnosCarcel() {
+		return contTurnosCarcel;
+	}
+
+	/**
+	 * Suma uno al contador de turnos que el jugador está en la carcel.
+	 * 
+	 * @return Devuelve la cantidad de turnos que el jugador estuvo en la
+	 *         carcel.
+	 */
+	public int addTurnoCarcel() {
+		// TODO: verificar que no sea mas de tres y tirar una excepcion
+		this.contTurnosCarcel++;
+		return this.contTurnosCarcel;
+	}
+
+	/**
+	 * Pone en cero el contador de turnos en la carcel del jugador.
+	 * 
+	 * @return Devuelve la cantidad de turnos que el jugador estuvo en la
+	 *         carcel.
+	 */
+	public int resetTurnoCarcel() {
+		int tmpTurnos = this.contTurnosCarcel;
+		this.contTurnosCarcel = 0;
+		return tmpTurnos;
 	}
 
 	/**
@@ -234,16 +291,14 @@ public abstract class Jugador implements Serializable {
 		return nroCasas;
 	}
 
-
 	public int getNroHoteles() {
 		return nroHoteles;
 	}
-	
+
 	public int incrementNroCasas(int cantidad) {
 		nroCasas += cantidad;
 		return nroCasas;
 	}
-
 
 	public int incrementNroHoteles(int cantidad) {
 		nroHoteles += cantidad;
@@ -258,7 +313,8 @@ public abstract class Jugador implements Serializable {
 	}
 
 	/**
-	 * @param tiradaInicial the tiradaInicial to set
+	 * @param tiradaInicial
+	 *            the tiradaInicial to set
 	 */
 	public void setTiradaInicial(Dado tiradaInicial) {
 		this.tiradaInicial = tiradaInicial;
@@ -285,10 +341,12 @@ public abstract class Jugador implements Serializable {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{ Jugador [nombre: " + nombre);
-		sb.append((this.juego != null) ? ", " + this.juego.toString() : "<SIN JUEGO>");
-		sb.append((this.ficha != null) ? ", " + this.ficha.toString() : "<SIN FICHA>");
+		sb.append((this.juego != null) ? ", " + this.juego.toString()
+				: "<SIN JUEGO>");
+		sb.append((this.ficha != null) ? ", " + this.ficha.toString()
+				: "<SIN FICHA>");
 		sb.append("] }");
-		
+
 		return sb.toString();
 	}
 }

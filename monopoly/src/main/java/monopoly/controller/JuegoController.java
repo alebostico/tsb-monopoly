@@ -5,6 +5,7 @@ package monopoly.controller;
 
 import monopoly.model.Dado;
 import monopoly.model.Estado;
+import monopoly.model.Estado.EstadoJuego;
 import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
@@ -44,7 +45,7 @@ public class JuegoController {
 		this.gestorTablero = new TableroController();
 		this.juego = new Juego(creador, nombre);
 		this.juego.setTablero(gestorTablero.getTablero());
-		this.estadoJuego = new Estado();
+		this.estadoJuego = new Estado(EstadoJuego.CREADO);
 		this.gestorJugadores = new JugadorController();
 	}
 

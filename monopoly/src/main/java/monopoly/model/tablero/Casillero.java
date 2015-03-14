@@ -40,27 +40,17 @@ public class Casillero implements Serializable {
 	private List<Jugador> jugadores;
 	private int numeroCasillero;
 	private TipoCasillero tipoCasillero;
-
+														// cant casilleros
 	public final static String CASILLERO_CALLE = "casillero calle"; // 22
-																	// casilleros
 	public final static String CASILLERO_ESTACION = "casillero estación"; // 4
-																			// casilleros
 	public final static String CASILLERO_COMPANIA = "casillero compañia"; // 2
-																			// casilleros
 	public final static String CASILLERO_SUERTE = "casillero suerte"; // 3
-																		// casilleros
 	public final static String CASILLERO_COMUNIDAD = "casillero comunidad"; // 3
-																			// casilleros
 	public final static String CASILLERO_CARCEL = "casillero carcel"; // 1
-																		// casilleros
 	public final static String CASILLERO_IRACARCEL = "casillero ir a cárcel"; // 1
-																				// casilleros
 	public final static String CASILLERO_SALIDA = "casillero salida"; // 1
-																		// casilleros
 	public final static String CASILLERO_DESCANSO = "casillero descanso"; // 1
-																			// casilleros
 	public final static String CASILLERO_IMPUESTO = "casillero impuesto"; // 2
-																			// casilleros
 
 	public enum TipoCasillero {
 		C_CALLE("casillero calle"), C_ESTACION("casillero estación"), C_COMPANIA(
@@ -195,5 +185,5 @@ public class Casillero implements Serializable {
 		Casillero c = (Casillero) o;
 		return this.numeroCasillero == c.getNumeroCasillero();
 	}
-	
+
 }

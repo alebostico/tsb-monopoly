@@ -3,6 +3,9 @@
  */
 package monopoly.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import monopoly.model.Jugador;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tablero.Casillero.TipoCasillero;
@@ -10,6 +13,8 @@ import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tablero.CasilleroCompania;
 import monopoly.model.tablero.CasilleroEstacion;
 import monopoly.model.tablero.Tablero;
+import monopoly.model.tarjetas.TarjetaCalle;
+import monopoly.model.tarjetas.TarjetaCalle.Color;
 import monopoly.util.GestorLogs;
 
 /**
@@ -404,6 +409,127 @@ public class TableroController {
 			}
 		}
 		return casas;
+	}
+
+	/**
+	 * Devuelve todas las tarjetas de las calles que conforman un monopolio, es
+	 * decir que tienen el mismo color.
+	 * 
+	 * @param color
+	 *            El color del monopolio
+	 * @return Todas las tarjetas de las calles que tienen el mismo color
+	 */
+	public List<TarjetaCalle> getMonopolio(Color color) {
+
+		List<TarjetaCalle> monopolio = new ArrayList<TarjetaCalle>();
+		for (Casillero casillero : this.tablero.getCasillerosList()) {
+			if (casillero.getTipoCasillero() == TipoCasillero.C_CALLE) {
+				CasilleroCalle casilleroCalle = (CasilleroCalle) casillero;
+				TarjetaCalle tarjetaCalle = casilleroCalle.getTarjetaCalle();
+				if (tarjetaCalle.getColor() == color) {
+					monopolio.add(tarjetaCalle);
+				}
+
+			}
+		}
+		return monopolio;
+	}
+
+	/**
+	 * Devuelve todas las las tarjetas de las calles que conforman un monopolio,
+	 * es decir que tienen el mismo color de calle.
+	 * 
+	 * @param tarjeta
+	 *            Una de las tarjetas del mopolio
+	 * @return Todas las tarjetas de las calles que tienen el mismo color
+	 */
+	public List<TarjetaCalle> getMonopolio(TarjetaCalle tarjeta) {
+		return getMonopolio(tarjeta.getColor());
+	}
+
+	/**
+	 * Devuelve todas los casilleros de las calles que conforman un monopolio,
+	 * es decir que tienen el mismo color de calle.
+	 * 
+	 * @param color
+	 *            Un casillero del monopolio
+	 * @return Todas los casilleros de las calles que tienen el mismo color
+	 */
+	public List<CasilleroCalle> getMonopolio(CasilleroCalle casillero) {
+
+		List<CasilleroCalle> monopolio = new ArrayList<CasilleroCalle>();
+		for (Casillero c : this.tablero.getCasillerosList()) {
+			if (c.getTipoCasillero() == TipoCasillero.C_CALLE) {
+				CasilleroCalle casilleroCalle = (CasilleroCalle) c;
+				TarjetaCalle tarjetaCalle = (TarjetaCalle) casilleroCalle
+						.getTarjetaCalle();
+				if (tarjetaCalle.getColor() == casillero.getTarjetaCalle()
+						.getColor()) {
+					monopolio.add(casilleroCalle);
+				}
+
+			}
+		}
+		return monopolio;
+	}
+
+	/**
+	 * Comprueba que una calle es construible. Para ello se debe cumplir que no
+	 * haya llegado al límite de las edificaciones permitidas ( 1 hotel ), no
+	 * incumpla la norma de construcciones escalonadas ( máxima diferencia entre
+	 * la propiedad más construida y la menos construida debe ser 1 ) y además
+	 * tenga el permiso de construcción (true).
+	 */
+	public boolean esConstruible(CasilleroCalle casillero) {
+		List<CasilleroCalle> monopolio = this.getMonopolio(casillero);
+
+		int maxConstruido = 0;
+		int minConstruido = 5;
+		Jugador dueno = casillero.getTarjetaCalle().getJugador();
+
+		for (CasilleroCalle casilleroCalle : monopolio) {
+			if (casilleroCalle.getTarjetaCalle().isHipotecada())
+				return false;
+			if (casilleroCalle.getNroCasas() > maxConstruido)
+				maxConstruido = casilleroCalle.getNroCasas();
+			if (casilleroCalle.getNroCasas() < minConstruido)
+				minConstruido = casilleroCalle.getNroCasas();
+			if (!dueno.equals(casilleroCalle.getTarjetaCalle().getJugador()))
+				return false;
+
+		}
+		if (maxConstruido - minConstruido == 0)
+			return true;
+
+		if (casillero.getNroCasas() == maxConstruido)
+			return false;
+
+		return true;
+	}
+
+	/**
+	 * Una calle puede vender edificios siempre y cuando no incumpla la regla de
+	 * construcciones escalonadas (ver método construir)
+	 */
+	public boolean puedeVenderEdificio(CasilleroCalle casillero) {
+		List<CasilleroCalle> monopolio = this.getMonopolio(casillero);
+
+		int maxConstruido = 0;
+		int minConstruido = 5;
+
+		for (CasilleroCalle casilleroCalle : monopolio) {
+			if (casilleroCalle.getNroCasas() > maxConstruido)
+				maxConstruido = casilleroCalle.getNroCasas();
+			if (casilleroCalle.getNroCasas() < minConstruido)
+				minConstruido = casilleroCalle.getNroCasas();
+		}
+		if (maxConstruido - minConstruido == 0)
+			return true;
+
+		if (casillero.getNroCasas() == minConstruido)
+			return false;
+
+		return true;
 	}
 
 }
