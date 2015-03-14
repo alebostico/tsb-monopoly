@@ -15,9 +15,9 @@ public class JugadorVirtual extends Jugador implements Serializable{
 
 	private static final long serialVersionUID = -8121213780558221444L;
 	
-	public static final String TIPO_COMPRADOR_PRIMERIZO = "comprador primerizo";
-	public static final String TIPO_EMPRESARIO = "empresario";
-	public static final String TIPO_MAGNATE = "magnate";
+	public static final String TIPO_COMPRADOR_PRIMERIZO = "comprador primerizo"; // Todo random
+	public static final String TIPO_EMPRESARIO = "empresario"; // basado en estadísticas
+	public static final String TIPO_MAGNATE = "magnate"; // basado en reglas
 
 	public enum TipoJugador {
 		TJ_COMPRADOR_PRIMERIZO("comprador primerizo"), TJ_EMPRESARIO(

@@ -14,8 +14,10 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import monopoly.model.Jugador;
+import monopoly.model.tablero.Casillero;
 
 import org.hibernate.annotations.Type;
 
@@ -88,6 +90,9 @@ public abstract class TarjetaPropiedad implements Serializable {
 
 	@Column(name = "nombrePropiedad")
 	private String nombrePropiedad;
+	
+	@Transient
+	private Casillero casillero;
 
 	public TarjetaPropiedad() {
 
@@ -101,7 +106,7 @@ public abstract class TarjetaPropiedad implements Serializable {
 	 */
 	public TarjetaPropiedad(Jugador jugador, String nombre,
 			int valorHipotecario, String nombreImagen,
-			int valorPropiedad) {
+			int valorPropiedad, Casillero casillero) {
 		super();
 		this.jugador = jugador;
 		this.nombre = nombre;
@@ -109,6 +114,7 @@ public abstract class TarjetaPropiedad implements Serializable {
 		this.nombreImagen = nombreImagen;
 		this.hipotecada = false;
 		this.valorPropiedad = valorPropiedad;
+		this.casillero = casillero;
 	}
 
 	public Jugador getJugador() {
@@ -173,6 +179,20 @@ public abstract class TarjetaPropiedad implements Serializable {
 
 	public void setNombrePropiedad(String nombrePropiedad) {
 		this.nombrePropiedad = nombrePropiedad;
+	}
+
+	/**
+	 * @return the casillero
+	 */
+	public Casillero getCasillero() {
+		return casillero;
+	}
+
+	/**
+	 * @param casillero the casillero to set
+	 */
+	public void setCasillero(Casillero casillero) {
+		this.casillero = casillero;
 	}
 
 	/*

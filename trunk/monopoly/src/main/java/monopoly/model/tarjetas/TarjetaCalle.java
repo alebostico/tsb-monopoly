@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import monopoly.model.Jugador;
+import monopoly.model.tablero.Casillero;
 
 /**
  * @author Bostico Alejandro
@@ -101,8 +102,8 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 			int valorTresCasas, int valorCuatroCasas,
 			int valorHotel, int precioCadaCasa,
 			int precioCadaHotel, String nombreImagen,
-			int valorPropiedad, Color color) {
-		super(jugador, nombre, valorHipotecario, nombreImagen, valorPropiedad);
+			int valorPropiedad, Color color, Casillero casillero) {
+		super(jugador, nombre, valorHipotecario, nombreImagen, valorPropiedad, casillero);
 		this.precioAlquiler = precioAlquiler;
 		this.valorUnaCasa = valorUnaCasa;
 		this.valorDosCasas = valorDosCasas;

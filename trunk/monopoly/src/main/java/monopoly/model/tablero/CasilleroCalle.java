@@ -2,7 +2,7 @@ package monopoly.model.tablero;
 
 import java.io.Serializable;
 
-import monopoly.model.tarjetas.TarjetaPropiedad;
+import monopoly.model.tarjetas.TarjetaCalle;
 
 /**
  * 
@@ -20,20 +20,21 @@ public class CasilleroCalle extends Casillero implements Serializable {
 
 	private String nombreCalle;
 	private int nroCasas;
-	private TarjetaPropiedad tarjetaCalle;
+	private TarjetaCalle tarjetaCalle;
 
-	public CasilleroCalle(int numeroCasillero, String nombreCalle, TarjetaPropiedad tarjetaCalle) {
+	public CasilleroCalle(int numeroCasillero, String nombreCalle, TarjetaCalle tarjetaCalle) {
 		super(numeroCasillero, TipoCasillero.C_CALLE);
 		this.nombreCalle = nombreCalle;
 		this.tarjetaCalle = tarjetaCalle;
 		this.nroCasas = 0;
+		this.tarjetaCalle.setCasillero(this);
 	}
 
 	public String getNombreCalle() {
 		return nombreCalle;
 	}
 
-	public TarjetaPropiedad getTarjetaCalle() {
+	public TarjetaCalle getTarjetaCalle() {
 		return tarjetaCalle;
 	}
 

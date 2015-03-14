@@ -11,6 +11,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import monopoly.model.Jugador;
+import monopoly.model.tablero.Casillero;
 
 /**
  * @author Bostico Alejandro
@@ -45,10 +46,10 @@ public class TarjetaCompania extends TarjetaPropiedad implements Serializable {
 	 * @param vecesPorDosCartas
 	 */
 	public TarjetaCompania(Jugador jugador, String nombre,
-			int valorHipotecario, int vecesPorUnaCarta,
-			int vecesPorDosCartas, String nombreImagen,
-			int valorPropiedad) {
-		super(jugador, nombre, valorHipotecario, nombreImagen, valorPropiedad);
+			int valorHipotecario, int vecesPorUnaCarta, int vecesPorDosCartas,
+			String nombreImagen, int valorPropiedad, Casillero casillero) {
+		super(jugador, nombre, valorHipotecario, nombreImagen, valorPropiedad,
+				casillero);
 		this.vecesPorUnaCarta = vecesPorUnaCarta;
 		this.vecesPorDosCartas = vecesPorDosCartas;
 	}
@@ -82,20 +83,20 @@ public class TarjetaCompania extends TarjetaPropiedad implements Serializable {
 	public void setVecesPorDosCartas(int vecesPorDosCartas) {
 		this.vecesPorDosCartas = vecesPorDosCartas;
 	}
-	
+
 	@Override
 	public boolean equals(Object object) {
-        if (object == this)
-            return true;
-        if (object == null || getClass() != object.getClass())
-            return false;
+		if (object == this)
+			return true;
+		if (object == null || getClass() != object.getClass())
+			return false;
 
-        TarjetaCompania tp = (TarjetaCompania) object;
-        if (super.getIdTarjeta() != tp.getIdTarjeta())
-            return false;
+		TarjetaCompania tp = (TarjetaCompania) object;
+		if (super.getIdTarjeta() != tp.getIdTarjeta())
+			return false;
 
-        return true;
-    }
+		return true;
+	}
 
 	/*
 	 * (non-Javadoc)

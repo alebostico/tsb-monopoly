@@ -34,77 +34,85 @@ public class Estado implements Serializable {
 		}
 
 	}
+	
+	public enum EstadoJugador {
+		EJ_JUGANDO("jugando"), EJ_CARCEL("en la carcel"), EJ_BANCARROTA(
+				"en bancarrota");
+
+		private final String nombreEstado;
+
+		private EstadoJugador(String nombreEstado) {
+			this.nombreEstado = nombreEstado;
+		}
+
+		public String getNombreEstado() {
+			return nombreEstado;
+		}
+	}
 
 	private String nombre;
+	
+	private int idEstado;
 
-	private EstadoJuego estado;
+	private EstadoJuego estadoJuego;
+	
+	private EstadoJugador estadoJugador;
+	
 
 	/**
 	 * @param nombre
 	 */
 	public Estado(String nombre, EstadoJuego estado) {
-		super();
-		this.estado = estado;
-		this.nombre = nombre;
+
 	}
 
-	/**
-	 * 
-	 */
 	public Estado(EstadoJuego estado) {
-		this(estado.getNombreEstadoJuego(), estado);
+		super();
+		this.estadoJuego = estado;
+		this.nombre = estado.getNombreEstadoJuego();
 	}
 
-	/**
-	 * 
-	 */
-	public Estado() {
-		this(EstadoJuego.CREADO.getNombreEstadoJuego(), EstadoJuego.CREADO);
+	public Estado(EstadoJugador estado){
+		super();
+		this.estadoJugador = estado;
+		this.nombre = estado.getNombreEstado();
 	}
-
+	
 	/**
 	 * @return the nombre
 	 */
 	public String getNombre() {
 		return nombre;
 	}
-
-	/**
-	 * @param nombre
-	 *            the nombre to set
-	 */
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
+	
 	/**
 	 * @return the estado
 	 */
-	public EstadoJuego getEstado() {
-		return estado;
+	public EstadoJuego getEstadoJuego() {
+		return estadoJuego;
 	}
-
+	
 	/**
-	 * @param estado
-	 *            the estado to set
+	 * 
+	 * @return
 	 */
-	public void setEstado(EstadoJuego estado) {
-		this.estado = estado;
+	public EstadoJugador getEstadoJugador(){
+		return estadoJugador;
 	}
 
 	public void actualizarEstadoJuego() {
-		switch (estado) {
+		switch (estadoJuego) {
 		case CREADO:
-			estado = EstadoJuego.ESPERANDO_JUGADOR;
+			estadoJuego = EstadoJuego.ESPERANDO_JUGADOR;
 			break;
 		case ESPERANDO_JUGADOR:
-			estado = EstadoJuego.ESTABLECIENDO_TURNOS;
+			estadoJuego = EstadoJuego.ESTABLECIENDO_TURNOS;
 			break;
 		case ESTABLECIENDO_TURNOS:
-			estado = EstadoJuego.INICIADO;
+			estadoJuego = EstadoJuego.INICIADO;
 			break;
 		case INICIADO:
-			estado = EstadoJuego.FINALIZADO;
+			estadoJuego = EstadoJuego.FINALIZADO;
 			break;
 
 		default:
@@ -120,6 +128,15 @@ public class Estado implements Serializable {
 		if (o.getClass() != this.getClass())
 			return false;
 		Estado f = (Estado) o;
-		return this.getEstado().equals(f.getEstado());
+		return this.getNombre().equals(f.getNombre());
+//		if(this.getEstadoJuego()!=null){
+//			return this.getEstadoJuego().equals(f.getEstadoJuego());
+//		}else if(this.getEstadoJugador()!=null){
+//			return this.getEstadoJugador().equals(f.getEstadoJugador());
+//		}else{
+//			return false;
+//		}
+		
+		
 	}
 }

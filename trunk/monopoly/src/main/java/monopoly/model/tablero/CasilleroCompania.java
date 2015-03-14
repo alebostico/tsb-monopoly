@@ -26,6 +26,7 @@ public class CasilleroCompania extends Casillero implements Serializable {
 		super(numeroCasillero, TipoCasillero.C_COMPANIA);
 		this.nombreCompania = nombreCompania;
 		this.tarjetaCompania = tarjetaCompania;
+		this.tarjetaCompania.setCasillero(this);
 	}
 
 	public String getNombreCompania() {

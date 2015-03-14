@@ -239,7 +239,7 @@ public class PartidasController {
 		// TODO: Implementar método
 		List<Juego> juegos = new ArrayList<Juego>();
 		for (JuegoController jc : juegosControllerList.values()) {
-			if (jc.getEstadoJuego().getEstado().equals(estado))
+			if (jc.getEstadoJuego().getEstadoJuego().equals(estado))
 				juegos.add(jc.getJuego());
 		}
 		return juegos;
