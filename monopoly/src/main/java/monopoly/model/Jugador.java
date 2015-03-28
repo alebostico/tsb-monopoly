@@ -26,7 +26,6 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
  * 
  */
 @Entity
@@ -320,23 +319,38 @@ public abstract class Jugador implements Serializable {
 		this.tiradaInicial = tiradaInicial;
 	}
 
-	/**
-	 * Devuelve true si el jugador pasada por parametro es igual al que ejecuta
-	 * el metodo compara en funcion del nombre (string) de la ficha
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param c
-	 * @return
+	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
-	public boolean equals(Object o) {
-		if (o == null)
-			return false;
-		if (o.getClass() != this.getClass())
-			return false;
-		Jugador j = (Jugador) o;
-		return this.getNombre().equals(j.getNombre());
+	public int hashCode() {
+		return this.getNombre().toLowerCase().hashCode();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object object) {
+		if (object == this)
+			return true;
+
+		if (object == null || getClass() != object.getClass())
+			return false;
+
+		return this.getNombre().toLowerCase()
+				.equals(((Jugador) object).getNombre().toLowerCase());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

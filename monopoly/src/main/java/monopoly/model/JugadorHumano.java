@@ -8,7 +8,6 @@ import javax.persistence.Transient;
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
  *
  */
 public class JugadorHumano extends Jugador {
@@ -20,8 +19,8 @@ public class JugadorHumano extends Jugador {
 
 	@Transient
 	private Usuario usuario;
-	
-	@Transient 
+
+	@Transient
 	private int senderID;
 
 	public JugadorHumano(String nombre, Ficha ficha, Juego juego,
@@ -54,12 +53,18 @@ public class JugadorHumano extends Jugador {
 	}
 
 	/**
-	 * @param senderId the senderId to set
+	 * @param senderId
+	 *            the senderId to set
 	 */
 	public void setSenderID(int senderId) {
 		this.senderID = senderId;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see monopoly.model.Jugador#toString()
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -70,7 +75,12 @@ public class JugadorHumano extends Jugador {
 		sb.append("] }");
 		return sb.toString();
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see monopoly.model.Jugador#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object object) {
 		if (object == this)
@@ -79,10 +89,18 @@ public class JugadorHumano extends Jugador {
 		if (object == null || getClass() != object.getClass())
 			return false;
 
-		JugadorHumano jugador = (JugadorHumano) object;
-		if (this.getNombre() != jugador.getNombre())
-			return false;
-
-		return true;
+		return this.getNombre().toLowerCase()
+				.equals(((JugadorHumano) object).getNombre().toLowerCase());
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return this.getNombre().toLowerCase().hashCode();
+	}
+
 }
