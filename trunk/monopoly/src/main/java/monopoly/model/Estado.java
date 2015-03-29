@@ -16,9 +16,11 @@ public class Estado implements Serializable {
 	public static final String ESTADO_FINALIZADO = "finalizado";
 
 	public enum EstadoJuego {
-		CREADO("creado"), ESPERANDO_JUGADOR("esperando jugador"), ESTABLECIENDO_TURNOS(
-				"Estableciendo turnos"), INICIADO("iniciado"), FINALIZADO(
-				"finalizado");
+		CREADO("creado"),
+		ESPERANDO_JUGADOR("esperando jugador"), 
+		ESTABLECIENDO_TURNOS("Estableciendo turnos"), 
+		INICIADO("iniciado"), 
+		FINALIZADO("finalizado");
 
 		private final String nombreEstadoJuego;
 
@@ -52,7 +54,7 @@ public class Estado implements Serializable {
 
 	private String nombre;
 	
-	private int idEstado;
+	//private int idEstado;
 
 	private EstadoJuego estadoJuego;
 	
@@ -129,14 +131,34 @@ public class Estado implements Serializable {
 			return false;
 		Estado f = (Estado) o;
 		return this.getNombre().equals(f.getNombre());
-//		if(this.getEstadoJuego()!=null){
-//			return this.getEstadoJuego().equals(f.getEstadoJuego());
-//		}else if(this.getEstadoJugador()!=null){
-//			return this.getEstadoJugador().equals(f.getEstadoJugador());
-//		}else{
-//			return false;
-//		}
-		
-		
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return this.getNombre().hashCode();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		String tipo = new String();
+		if (this.estadoJuego != null)
+			tipo = "EstadoJuego";
+		else if (this.estadoJugador != null)
+			tipo = "EstadoJugador";
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("{ Estado [tipo: " + tipo + ", nombre: "
+				+ this.getNombre() + "] }");
+		return sb.toString();
+	}
+	
+	
+	
+	
 }

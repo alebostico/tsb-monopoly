@@ -185,5 +185,14 @@ public class Casillero implements Serializable {
 		Casillero c = (Casillero) o;
 		return this.numeroCasillero == c.getNumeroCasillero();
 	}
+	
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return this.numeroCasillero;
+	}
 
 }

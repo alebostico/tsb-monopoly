@@ -210,4 +210,14 @@ public class Ficha implements Serializable {
 		return sb.toString();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return this.getNombre().hashCode();
+	}
+	
+	
+
 }
