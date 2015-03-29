@@ -206,6 +206,10 @@ public class Usuario implements Serializable {
 				+ ", e-mail: " + this.getEmail() + " ]}";
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object object) {
 		if (object == this)
@@ -220,5 +224,15 @@ public class Usuario implements Serializable {
 
 		return true;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return this.getUserName().hashCode();
+	}
+	
+	
 
 }

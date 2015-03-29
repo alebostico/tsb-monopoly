@@ -96,14 +96,13 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	 * @param precioCadaCasa
 	 * @param precioCadaHotel
 	 */
-	public TarjetaCalle(Jugador jugador, String nombre,
-			int valorHipotecario, int precioAlquiler,
-			int valorUnaCasa, int valorDosCasas,
-			int valorTresCasas, int valorCuatroCasas,
-			int valorHotel, int precioCadaCasa,
-			int precioCadaHotel, String nombreImagen,
+	public TarjetaCalle(Jugador jugador, String nombre, int valorHipotecario,
+			int precioAlquiler, int valorUnaCasa, int valorDosCasas,
+			int valorTresCasas, int valorCuatroCasas, int valorHotel,
+			int precioCadaCasa, int precioCadaHotel, String nombreImagen,
 			int valorPropiedad, Color color, Casillero casillero) {
-		super(jugador, nombre, valorHipotecario, nombreImagen, valorPropiedad, casillero);
+		super(jugador, nombre, valorHipotecario, nombreImagen, valorPropiedad,
+				casillero);
 		this.precioAlquiler = precioAlquiler;
 		this.valorUnaCasa = valorUnaCasa;
 		this.valorDosCasas = valorDosCasas;
@@ -116,125 +115,200 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	}
 
 	/**
-	 * @return the precioAlquiler
+	 * Devuelve el precio que paga un jugador cuando cae en un casillero de otro
+	 * jugador que posee todas las propiedades del mismo color y el casillero no
+	 * est&aacute; edificado.
+	 * 
+	 * @return the El precio del alquiler
 	 */
 	public int getPrecioAlquiler() {
 		return precioAlquiler;
 	}
 
 	/**
+	 * Setea el precio que paga un jugador cuando cae en un casillero de otro
+	 * jugador que posee todas las propiedades del mismo color y el casillero no
+	 * est&aacute; edificado.
+	 * 
 	 * @param precioAlquiler
-	 *            the precioAlquiler to set
+	 *            El precio del alquiler
 	 */
 	public void setPrecioAlquiler(int precioAlquiler) {
 		this.precioAlquiler = precioAlquiler;
 	}
 
 	/**
-	 * @return the valorUnaCasa
+	 * Devuelve el precio que paga un jugador cuando cae en un casillero de otro
+	 * jugador que posee todas las propiedades del mismo color y el casillero
+	 * tiene <strong>una casa</strong> edificada.
+	 * 
+	 * @return El valor de alquiler con una casa edificada
 	 */
 	public int getValorUnaCasa() {
 		return valorUnaCasa;
 	}
 
 	/**
+	 * Setea el precio que paga un jugador cuando cae en un casillero de otro
+	 * jugador que posee todas las propiedades del mismo color y el casillero
+	 * tiene <strong>una casa</strong> edificada.
+	 * 
 	 * @param valorUnaCasa
-	 *            the valorUnaCasa to set
+	 *            El valor de alquiler con una casa edificada.
 	 */
 	public void setValorUnaCasa(int valorUnaCasa) {
 		this.valorUnaCasa = valorUnaCasa;
 	}
 
 	/**
-	 * @return the valorDosCasas
+	 * Devuelve el precio que paga un jugador cuando cae en un casillero de otro
+	 * jugador que posee todas las propiedades del mismo color y el casillero
+	 * tiene <strong>dos casas</strong> edificadas.
+	 * 
+	 * @return El valor de alquiler con dos casas edificadas
 	 */
 	public int getValorDosCasas() {
 		return valorDosCasas;
 	}
 
 	/**
+	 * Setea el precio que paga un jugador cuando cae en un casillero de otro
+	 * jugador que posee todas las propiedades del mismo color y el casillero
+	 * tiene <strong>dos casas</strong> edificadas.
+	 * 
 	 * @param valorDosCasas
-	 *            the valorDosCasas to set
+	 *            El valor de alquiler con dos casas edificadas
 	 */
 	public void setValorDosCasas(int valorDosCasas) {
 		this.valorDosCasas = valorDosCasas;
 	}
 
 	/**
-	 * @return the valorTresCasas
+	 * Devuelve el precio que paga un jugador cuando cae en un casillero de otro
+	 * jugador que posee todas las propiedades del mismo color y el casillero
+	 * tiene <strong>tres casas</strong> edificadas.
+	 * 
+	 * @return El valor de alquiler con tres casas edificadas
 	 */
 	public int getValorTresCasas() {
 		return valorTresCasas;
 	}
 
 	/**
+	 * Setea el precio que paga un jugador cuando cae en un casillero de otro
+	 * jugador que posee todas las propiedades del mismo color y el casillero
+	 * tiene <strong>tres casas</strong> edificada.
+	 * 
 	 * @param valorTresCasas
-	 *            the valorTresCasas to set
+	 *            El valor de alquiler con tres casas edificadas
 	 */
 	public void setValorTresCasas(int valorTresCasas) {
 		this.valorTresCasas = valorTresCasas;
 	}
 
 	/**
-	 * @return the valorCuatroCasas
+	 * Devuelve el precio que paga un jugador cuando cae en un casillero de otro
+	 * jugador que posee todas las propiedades del mismo color y el casillero
+	 * tiene <strong>cuatro casas</strong> edificadas.
+	 * 
+	 * @return El valor de alquiler con cuatro casas edificadas
 	 */
 	public int getValorCuatroCasas() {
 		return valorCuatroCasas;
 	}
 
 	/**
+	 * Devuelve el precio que paga un jugador cuando cae en un casillero de otro
+	 * jugador que posee todas las propiedades del mismo color y el casillero
+	 * tiene <strong>cuatro casas</strong> edificadas.
+	 * 
 	 * @param valorCuatroCasas
-	 *            the valorCuatroCasas to set
+	 *            El valor de alquiler con cuatro casas edificadas
 	 */
 	public void setValorCuatroCasas(int valorCuatroCasas) {
 		this.valorCuatroCasas = valorCuatroCasas;
 	}
 
 	/**
-	 * @return the valorHotel
+	 * Devuelve el precio que paga un jugador cuando cae en un casillero de otro
+	 * jugador que posee todas las propiedades del mismo color y el casillero
+	 * tiene <strong>un hotel</strong> edificado.
+	 * 
+	 * @return El valor de alquiler con un hotel edificado
 	 */
 	public int getValorHotel() {
 		return valorHotel;
 	}
 
 	/**
-	 * @param valorHotel
-	 *            the valorHotel to set
+	 * Devuelve el precio que paga un jugador cuando cae en un casillero de otro
+	 * jugador que posee todas las propiedades del mismo color y el casillero
+	 * tiene <strong>un hotel</strong> edificado.
+	 * 
+	 * @param valorCuatroCasas
+	 *            El valor de alquiler con un hotel edificado
 	 */
 	public void setValorHotel(int valorHotel) {
 		this.valorHotel = valorHotel;
 	}
 
 	/**
-	 * @return the precioCadaCasa
+	 * El precio que se paga por cada casa que se edifica en el casillero.
+	 * 
+	 * @return El precio de construir una casa
 	 */
 	public int getPrecioCadaCasa() {
 		return precioCadaCasa;
 	}
 
 	/**
+	 * El precio que se paga por cada casa que se edifica en el casillero.
+	 * 
 	 * @param precioCadaCasa
-	 *            the precioCadaCasa to set
+	 *            El precio de construir una casa
 	 */
 	public void setPrecioCadaCasa(int precioCadaCasa) {
 		this.precioCadaCasa = precioCadaCasa;
 	}
 
 	/**
-	 * @return the precioCadaHotel
+	 * El precio que se paga por un hotel que se edifica en el casillero.
+	 * 
+	 * @return El precio de construir una hotel
 	 */
 	public int getPrecioCadaHotel() {
 		return precioCadaHotel;
 	}
 
 	/**
+	 * El precio que se paga por un hotel que se edifica en el casillero.
+	 * 
 	 * @param precioCadaHotel
-	 *            the precioCadaHotel to set
+	 *            El precio de construir una hotel
 	 */
 	public void setPrecioCadaHotel(int precioCadaHotel) {
 		this.precioCadaHotel = precioCadaHotel;
 	}
 
+	/**
+	 * El precio que se paga por vender una casa del casillero.
+	 * 
+	 * @return El precio de venta de la casa
+	 */
+	public int getPrecioVentaCadaCasa(){
+		return (int)((double)getPrecioCadaCasa() / 2.0);
+	}
+	
+	/**
+	 * El precio que se paga por vender un hotel del casillero.
+	 * 
+	 * @return El precio de venta del hotel
+	 */
+	public int getPrecioVentaHotel(){
+		return (int)((double)getPrecioCadaHotel() / 2.0);
+	}
+	
+	
 	/**
 	 * @return the colorTarjeta
 	 */
@@ -296,4 +370,13 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 		return true;
 	}
 
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return super.getIdTarjeta();
+	}
+	
 }

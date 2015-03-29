@@ -115,4 +115,13 @@ public class TarjetaSuerte extends Tarjeta implements Serializable {
 		return true;
 	}
 
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return this.getIdTarjeta();
+	}
+	
 }
