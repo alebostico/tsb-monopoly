@@ -22,6 +22,7 @@ import monopoly.model.Estado.EstadoJugador;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaPropiedad;
+import monopoly.util.exception.SinDineroException;
 
 /**
  * @author Bostico Alejandro
@@ -256,6 +257,37 @@ public abstract class Jugador implements Serializable {
 	}
 
 	/**
+	 * Agrega una propiedad a la lista de propiedades del jugador y asigna el
+	 * jugador a la propiedad
+	 * 
+	 * @param tarjeta
+	 *            La propiedad que compra
+	 * @return true si se agrego correctamente
+	 */
+	public boolean adquirirPropiedad(TarjetaPropiedad tarjeta) {
+		tarjeta.setJugador(this);
+		return this.tarjPropiedadList.add(tarjeta);
+	}
+
+	/**
+	 * Le vende una propiedad a otro jugador.
+	 * 
+	 * @param tarjeta
+	 *            La tarjeta de la propiedad que se vende
+	 * @param jugador
+	 *            El jugamontodor al cual se le vende la propiedad
+	 * @return true si puede vender
+	 * @throws SinDineroException
+	 */
+	public boolean venderPropiedad(TarjetaPropiedad tarjeta, Jugador jugador,
+			int monto) throws SinDineroException {
+		jugador.pagarAJugador(this, monto);
+		this.getTarjPropiedadList().remove(tarjeta);
+		return jugador.adquirirPropiedad(tarjeta);
+
+	}
+
+	/**
 	 * devuelve true si el jugador puede pagar el monto indicado
 	 * 
 	 * @param monto
@@ -272,8 +304,13 @@ public abstract class Jugador implements Serializable {
 	 * @param monto
 	 *            el monto a pagar por el jugador
 	 */
-	public void pagar(int monto) {
-		this.setDinero(this.getDinero() - monto);
+	public boolean pagar(int monto) {
+		if (puedePagar(monto)) {
+			this.setDinero(this.getDinero() - monto);
+		} else {
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -284,6 +321,24 @@ public abstract class Jugador implements Serializable {
 	 */
 	public void cobrar(int monto) {
 		this.setDinero(this.getDinero() + monto);
+	}
+
+	/**
+	 * Paga un monto de dinero a un jugador
+	 * 
+	 * @param jugador
+	 * @param monto
+	 * @throws SinDineroException
+	 */
+	public void pagarAJugador(Jugador jugador, int monto)
+			throws SinDineroException {
+		if (this.pagar(monto))
+			jugador.cobrar(monto);
+		else
+			throw new SinDineroException(
+					String.format(
+							"El jugador {0} no posee dinero suficiente para pagar €{1} al jugador {2}",
+							this.getNombre(), monto, jugador.getNombre()));
 	}
 
 	public int getNroCasas() {

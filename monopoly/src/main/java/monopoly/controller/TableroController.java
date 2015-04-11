@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import monopoly.model.Banco;
+import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tablero.Casillero.TipoCasillero;
@@ -16,7 +17,10 @@ import monopoly.model.tablero.CasilleroEstacion;
 import monopoly.model.tablero.Tablero;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaCalle.Color;
+import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
+import monopoly.util.exception.CondicionInvalidaException;
+import monopoly.util.exception.SinDineroException;
 
 /**
  * @author Bostico Alejandro
@@ -741,4 +745,24 @@ public class TableroController {
 		}
 		return false;
 	}
+
+	public boolean comprarPropiedad(Jugador jugador, TarjetaPropiedad tarjeta)
+			throws SinDineroException, CondicionInvalidaException {
+
+		if (jugador.getDinero() < tarjeta.getValorPropiedad()) {
+			throw new SinDineroException("El jugador " + jugador.getNombre()
+					+ " no tiene dinero suficiente para comprar la propiedad "
+					+ tarjeta.getNombre());
+		}
+
+		this.getBancoController(jugador.getJuego()).venderPropiedad(jugador, tarjeta);
+		
+		return true;
+	}
+
+	private BancoController getBancoController(Juego juego) {
+		return PartidasController.getInstance()
+				.buscarControladorJuego(juego.getUniqueID()).getGestorBanco();
+	}
+
 }

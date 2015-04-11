@@ -4,6 +4,10 @@ import java.util.Random;
 
 import monopoly.model.Jugador;
 import monopoly.model.JugadorVirtual;
+import monopoly.model.tablero.Casillero;
+import monopoly.model.tablero.CasilleroCalle;
+import monopoly.model.tablero.CasilleroCompania;
+import monopoly.model.tablero.CasilleroEstacion;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 
@@ -45,8 +49,8 @@ public class JugadorVirtualController {
 	 * @param ganador
 	 * @return
 	 */
-	int pujar(TarjetaPropiedad propiedad, int maxActual, Jugador ganador,
-			JugadorVirtual jugadorActual) {
+	public int pujar(TarjetaPropiedad propiedad, int maxActual,
+			Jugador ganador, JugadorVirtual jugadorActual) {
 
 		// Si no tiene dinero no ofrece nada sin importar el tipo de jugador que
 		// sea
@@ -180,4 +184,81 @@ public class JugadorVirtualController {
 		}
 		return puja;
 	}
+
+	/**
+	 * El jugador decidirá al caer sobre una propiedad libre si quiere comprarla
+	 * o no. La decisión se tomará en función del tipo de agente de IA que se
+	 * trate.
+	 * 
+	 * @param casillero
+	 * @param jugadorActual
+	 * @return
+	 */
+	public boolean decidirComprar(Casillero casillero,
+			JugadorVirtual jugadorActual) {
+
+		switch (jugadorActual.getTipoJugador()) {
+		// Jugador basado en reglas
+		case TJ_MAGNATE:
+			switch (casillero.getTipoCasillero()) {
+			case C_CALLE:
+				CasilleroCalle casilleroCalle = (CasilleroCalle) casillero;
+				
+				break;
+			case C_COMPANIA:
+				CasilleroCompania casilleroCompania = (CasilleroCompania) casillero;
+				
+				break;
+				
+			case C_ESTACION:
+				CasilleroEstacion casilleroEstacion = (CasilleroEstacion) casillero;
+				
+				break;
+				
+			default:
+				return false;
+			}
+
+		case TJ_EMPRESARIO:
+			switch (casillero.getTipoCasillero()) {
+			case C_CALLE:
+				CasilleroCalle casilleroCalle = (CasilleroCalle) casillero;
+				
+				break;
+			case C_COMPANIA:
+				CasilleroCompania casilleroCompania = (CasilleroCompania) casillero;
+				
+				break;
+				
+			case C_ESTACION:
+				CasilleroEstacion casilleroEstacion = (CasilleroEstacion) casillero;
+				
+				break;
+				
+			default:
+				return false;
+			}
+		case TJ_COMPRADOR_PRIMERIZO:
+			switch (casillero.getTipoCasillero()) {
+			case C_CALLE:
+				CasilleroCalle casilleroCalle = (CasilleroCalle) casillero;
+				
+				break;
+			case C_COMPANIA:
+				CasilleroCompania casilleroCompania = (CasilleroCompania) casillero;
+				
+				break;
+				
+			case C_ESTACION:
+				CasilleroEstacion casilleroEstacion = (CasilleroEstacion) casillero;
+				
+				break;
+				
+			default:
+				return false;
+			}
+		}
+		return false;
+	}
+
 }
