@@ -102,5 +102,17 @@ public class Banco implements Serializable {
 
 		return true;
 	}
+	
+	/**
+     * @return the tarjetasPropiedadList
+     */
+    public TarjetaPropiedad getTarjetaPropiedad(String key) {
+    	for (TarjetaPropiedad tarjetaPropiedad : tarjPropiedadList) {
+			if(tarjetaPropiedad.getNombrePropiedad().equals(key))
+				return tarjetaPropiedad;
+		}
+    	return null;
+    }
+
 
 }

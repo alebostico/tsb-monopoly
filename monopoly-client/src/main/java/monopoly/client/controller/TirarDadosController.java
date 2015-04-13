@@ -90,7 +90,8 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 						@Override
 						public void handle(ActionEvent e) {
 							// avanzar de casillero
-							
+							TirarDadosController.getInstance()
+							.tirarDados(modo);
 						}
 					});
 					break;
@@ -139,13 +140,6 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 		case TURNO_INICIO:
 			mensaje = String.format("El resultado de los dados para establecer su turno fue %s.", dados.getSuma());
 			
-			btnAceptar.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent e) {
-					TableroController.getInstance().empezarJuego();
-				}
-			});
-			
 			ConnectionController.getInstance().send(
 					new StartGameMessage(senderId, TableroController.getInstance().getJuego().getUniqueID(), dados));
 			
@@ -153,14 +147,16 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 			
 		case AVANZAR_CASILLERO:
 			mensaje = String.format("El resultado de los dados para avanzar de casillero fue %s.", dados.getSuma());
-			btnAceptar.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent e) {
-					TableroController.getInstance().determinarAccionEnCasillero();
-				}
-			});
+//			btnAceptar.setOnAction(new EventHandler<ActionEvent>() {
+//				@Override
+//				public void handle(ActionEvent e) {
+//					TableroController.getInstance().determinarAccionEnCasillero();
+//				}
+//			});
 			ConnectionController.getInstance().send(
-					new AdvanceInBoardMessage(senderId, dados));
+					new AdvanceInBoardMessage(senderId, new Object[] {
+							TableroController.getInstance().getJuego()
+									.getUniqueID(), dados }));
 			
 			break;
 		}
@@ -174,11 +170,34 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 		
 	}
 
-	public void habilitarBotonAceptar() {
+	public void habilitarBtnAceptarCerrar() {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
 				if (btnAceptar != null) {
+					btnAceptar.setOnAction(new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent e) {
+							TableroController.getInstance().empezarJuego();
+						}
+					});
+					btnAceptar.setDisable(false);
+				}
+			}
+		});
+	}
+	
+	public void habilitarBtnAceptarTirarDados() {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				if (btnAceptar != null) {
+					btnAceptar.setOnAction(new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent e) {
+							TableroController.getInstance().tirarDados(EnumsTirarDados.TirarDados.AVANZAR_CASILLERO);
+						}
+					});
 					btnAceptar.setDisable(false);
 				}
 			}

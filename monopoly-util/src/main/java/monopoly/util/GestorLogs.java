@@ -76,6 +76,7 @@ public class GestorLogs {
 			}
 			GestorLogs.registrarLog("======================================");
 			GestorLogs.registrarLog("Logger iniciado");
+			GestorLogs.registrarLog("======================================");
 
 		} catch (IOException io) {
 			System.out.println(io.getMessage());
@@ -92,6 +93,18 @@ public class GestorLogs {
 	 */
 	public static void registrarError(String error) {
 		GestorLogs.registrar(GestorLogs.MSG_ERROR, error);
+	}
+
+	public static void registrarError(Exception error) {
+		StringBuilder sb = new StringBuilder();
+
+		if (!StringUtils.IsNullOrEmpty(error.getMessage()))
+			sb.append("Message Error: " + error.getMessage());
+		if (error.getStackTrace() != null) {
+			if (!StringUtils.IsNullOrEmpty(error.getStackTrace().toString()))
+				sb.append("Stack Trace: " + error.getStackTrace().toString());
+		}
+		GestorLogs.registrar(GestorLogs.MSG_ERROR, sb.toString());
 	}
 
 	/**
@@ -150,8 +163,8 @@ public class GestorLogs {
 	 */
 	public static void registrarExeption(Exception e) {
 		GestorLogs.registrar(GestorLogs.MSG_ERROR, "Exception: ");
-		//GestorLogs.registrar(GestorLogs.MSG_ERROR, e.toString());
-		//GestorLogs.registrar(GestorLogs.MSG_ERROR, e.getMessage());
+		// GestorLogs.registrar(GestorLogs.MSG_ERROR, e.toString());
+		// GestorLogs.registrar(GestorLogs.MSG_ERROR, e.getMessage());
 		e.printStackTrace(ps);
 		ps.flush();
 		if (GestorLogs.printToConsole) {

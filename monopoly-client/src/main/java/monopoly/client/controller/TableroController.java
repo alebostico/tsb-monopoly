@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Vector;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -46,17 +47,23 @@ import javafx.util.Duration;
 import monopoly.client.connection.ConnectionController;
 import monopoly.client.util.ScreensFramework;
 import monopoly.model.Banco;
+import monopoly.model.Estado.EstadoJuego;
 import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
+import monopoly.model.tarjetas.TarjetaCalle;
+import monopoly.model.tarjetas.TarjetaCompania;
+import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.constantes.ConstantesFXML;
 import monopoly.util.constantes.EnumsTirarDados;
+
+import org.controlsfx.dialog.Dialogs;
 
 /**
  * @author Bostico Alejandro
@@ -329,10 +336,16 @@ public class TableroController extends AnchorPane implements Serializable,
 	 *            descripción del mensaje, y fecha en el que se produjó el
 	 *            evento.
 	 */
-	public void addHistoryGame(History history) {
-		historyGameList.add(history);
-		oHistoryGameList = FXCollections.observableArrayList(historyGameList);
-		lvHistory.setItems(oHistoryGameList);
+	public void addHistoryGame(final History history) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				oHistoryGameList = FXCollections
+						.observableArrayList(historyGameList);
+				lvHistory.setItems(oHistoryGameList);
+			}
+		});
+
 	}
 
 	/**
@@ -487,28 +500,75 @@ public class TableroController extends AnchorPane implements Serializable,
 	 *            objeto que contiene información sobre los turnos, estado del
 	 *            banco y jugador actual.
 	 */
+	@SuppressWarnings("deprecation")
 	public void empezarJuego() {
-		showAccordionJugadores();
-		displayFichas();
-		TirarDadosController.getInstance().getCurrentStage().close();
-	}
-
-	public void determinarAccionEnCasillero() {
-		// TODO Auto-generated method stub
-		showAccordionJugadores();
-		displayFichas();
-		TirarDadosController.getInstance().getCurrentStage().close();
-		switch (status.status) {
-		default:
-			break;
+		try {
+			showAccordionJugadores();
+			displayFichas();
+			TirarDadosController.getInstance().getCurrentStage().close();
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
+			Dialogs.create()
+					.owner(currentStage)
+					.title("Error")
+					.masthead("Graficar")
+					.message(
+							"Se produjo un error mientras se dibujaban los graficos.")
+					.showError();
 		}
 	}
+
+	@SuppressWarnings("deprecation")
+	public void determinarAccionEnCasillero() {
+		// TODO Auto-generated method stub
+		try {
+			showAccordionJugadores();
+			displayFichas();
+			TirarDadosController.getInstance().getCurrentStage().close();
+			switch (status.status) {
+			default:
+				break;
+			}
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
+			Dialogs.create()
+					.owner(currentStage)
+					.title("Error")
+					.masthead("Graficar")
+					.message(
+							"Se produjo un error mientras se dibujaban los graficos.")
+					.showError();
+		}
+	}
+
+	public void actualizarEstadoJuego(MonopolyGameStatus status) {
+		this.status = status;
+
+		for (History history : status.hirtoryList) {
+			TableroController.getInstance().addHistoryGame(history);
+		}
+
+		if (status.status == EstadoJuego.TIRAR_DADO) {
+			if (status.currentPlayer.getNombre().toLowerCase()
+					.equals(usuarioLogueado.getNombre().toLowerCase())) {
+				TirarDadosController.getInstance()
+						.habilitarBtnAceptarTirarDados();
+			} else {
+				TirarDadosController.getInstance().habilitarBtnAceptarCerrar();
+			}
+		}
+	}
+
+	// ======================================================================================//
+	// =================== Métodos para dibujar componentes en la pantalla
+	// ==================//
+	// ======================================================================================//
 
 	/**
 	 * Método que dibuja a los jugadores, mostrando el estado en el juego.
 	 * 
 	 */
-	private void showAccordionJugadores() {
+	private void showAccordionJugadores() throws Exception {
 		List<Jugador> turnos = status.turnos;
 		tps = new TitledPane[turnos.size() + 1];
 		String title;
@@ -527,228 +587,142 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	/**
 	 * Método que dibuja las fichas en el tablero.
+	 * 
+	 * @throws Exception
 	 */
-	private void displayFichas() {
+	private void displayFichas() throws Exception {
 		List<Jugador> turnos = status.turnos;
 		// Tablero tablero = status.tablero;
 		Image img;
 
-		for (Jugador j : turnos) {
-			switch (j.getCasilleroActual().getNumeroCasillero()) {
+		for (Jugador jugadorTurno : turnos) {
+			img = new Image(
+					TableroController.class.getResourceAsStream(jugadorTurno
+							.getFicha().getPathImgSmall()), 25, 25, true, true);
+
+			switch (jugadorTurno.getCasilleroActual().getNumeroCasillero()) {
 			case 1:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero01.getChildren().add(new ImageView(img));
 				break;
-
 			case 2:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero02.getChildren().add(new ImageView(img));
 				break;
-
 			case 3:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero03.getChildren().add(new ImageView(img));
 				break;
-
 			case 4:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero04.getChildren().add(new ImageView(img));
 				break;
-
 			case 5:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero05.getChildren().add(new ImageView(img));
 				break;
-
 			case 6:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero06.getChildren().add(new ImageView(img));
 				break;
-
 			case 7:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero07.getChildren().add(new ImageView(img));
 				break;
-
 			case 8:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero08.getChildren().add(new ImageView(img));
 				break;
-
 			case 9:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero01.getChildren().add(new ImageView(img));
 				break;
-
 			case 10:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero10.getChildren().add(new ImageView(img));
 				break;
-
 			case 11:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero11.getChildren().add(new ImageView(img));
 				break;
-
 			case 12:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero12.getChildren().add(new ImageView(img));
 				break;
 			case 13:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero13.getChildren().add(new ImageView(img));
 				break;
 			case 14:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero14.getChildren().add(new ImageView(img));
 				break;
 			case 15:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero15.getChildren().add(new ImageView(img));
 				break;
 			case 16:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero16.getChildren().add(new ImageView(img));
 				break;
 			case 17:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero17.getChildren().add(new ImageView(img));
 				break;
 			case 18:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero18.getChildren().add(new ImageView(img));
 				break;
 			case 19:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero19.getChildren().add(new ImageView(img));
 				break;
 
 			case 20:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero20.getChildren().add(new ImageView(img));
 				break;
 			case 21:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero21.getChildren().add(new ImageView(img));
 				break;
 			case 22:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero22.getChildren().add(new ImageView(img));
 				break;
 			case 23:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero23.getChildren().add(new ImageView(img));
 				break;
 			case 24:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero24.getChildren().add(new ImageView(img));
 				break;
 			case 25:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero25.getChildren().add(new ImageView(img));
 				break;
 			case 26:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero26.getChildren().add(new ImageView(img));
 				break;
 			case 27:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero27.getChildren().add(new ImageView(img));
 				break;
 			case 28:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero28.getChildren().add(new ImageView(img));
 				break;
 			case 29:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero29.getChildren().add(new ImageView(img));
 				break;
 
 			case 30:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero30.getChildren().add(new ImageView(img));
 				break;
 			case 31:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero31.getChildren().add(new ImageView(img));
 				break;
 			case 32:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero32.getChildren().add(new ImageView(img));
 				break;
 			case 33:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero33.getChildren().add(new ImageView(img));
 				break;
 			case 34:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero34.getChildren().add(new ImageView(img));
 				break;
 			case 35:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero35.getChildren().add(new ImageView(img));
 				break;
 			case 36:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero36.getChildren().add(new ImageView(img));
 				break;
 			case 37:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero37.getChildren().add(new ImageView(img));
 				break;
 			case 38:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero38.getChildren().add(new ImageView(img));
 				break;
 			case 39:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero39.getChildren().add(new ImageView(img));
 				break;
 			case 40:
-				img = new Image(TableroController.class.getResourceAsStream(j
-						.getFicha().getPathImgSmall()), 25, 25, true, true);
 				pCasillero40.getChildren().add(new ImageView(img));
 				break;
-
 			default:
 				break;
 			}
@@ -763,17 +737,15 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * @param title
 	 * @return
 	 */
-	private TitledPane getPaneInfoPlayer(Jugador jugador, String title) {
+	private TitledPane getPaneInfoPlayer(Jugador jugador, String title)
+			throws Exception {
 		AnchorPane root = new AnchorPane();
 		VBox vBox = new VBox();
 		HBox hbInfoJugador = new HBox();
 		HBox hbPropiedades = new HBox();
 		HBox hbExtra = new HBox();
 
-		AnchorPane.setLeftAnchor(vBox, (double) 0);
-		AnchorPane.setRightAnchor(vBox, (double) 0);
-		AnchorPane.setTopAnchor(vBox, (double) 0);
-		AnchorPane.setBottomAnchor(vBox, (double) 0);
+		acoplarAContenedor(vBox, 0);
 		root.getStyleClass().add("bg_info_panel");
 		vBox.setAlignment(Pos.CENTER);
 		vBox.setSpacing(10);
@@ -793,10 +765,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		root.getChildren().add(vBox);
 
 		VBox pImgFicha = new VBox();
-		AnchorPane.setLeftAnchor(pImgFicha, (double) 0);
-		AnchorPane.setRightAnchor(pImgFicha, (double) 0);
-		AnchorPane.setTopAnchor(pImgFicha, (double) 0);
-		AnchorPane.setBottomAnchor(pImgFicha, (double) 0);
+		acoplarAContenedor(pImgFicha, 0);
 		pImgFicha.setAlignment(Pos.CENTER);
 
 		pImgFicha.getStyleClass().add("bg_info_ficha");
@@ -814,7 +783,7 @@ public class TableroController extends AnchorPane implements Serializable,
 				new Label(StringUtils.FORMATO_IMPORTE.format(jugador
 						.getDinero())));
 
-		if (status.currentPlayer.getNombre().equals(jugador.getNombre())) {
+		if (status.currentPlayer.equals(jugador)) {
 			img = new Image(
 					TableroController.class
 							.getResourceAsStream("/images/dados/dice.png"),
@@ -827,24 +796,20 @@ public class TableroController extends AnchorPane implements Serializable,
 		// ===================== HBox de propiedades =====================//
 
 		TarjetaPropiedad propiedad;
-		Image imgPropiedad;
-		HBox hBox_inner;
-		Tooltip tpImagen;
+		Banco banco = status.banco;
+		String rutaImagen = "";
+		String strStyle = "";
+		Boolean bCrearImagen = false;
+		String strToolTip = "";
 		double hbWidth = 35;
 		double hbHeight = 60;
+		List<String[]> vTarjetas = new ArrayList<String[]>();
 
 		GridPane gridPane1 = new GridPane();
 		GridPane gridPane2 = new GridPane();
 
-		AnchorPane.setLeftAnchor(gridPane1, (double) 0);
-		AnchorPane.setRightAnchor(gridPane1, (double) 0);
-		AnchorPane.setTopAnchor(gridPane1, (double) 0);
-		AnchorPane.setBottomAnchor(gridPane1, (double) 0);
-
-		AnchorPane.setLeftAnchor(gridPane2, (double) 0);
-		AnchorPane.setRightAnchor(gridPane2, (double) 0);
-		AnchorPane.setTopAnchor(gridPane2, (double) 0);
-		AnchorPane.setBottomAnchor(gridPane2, (double) 0);
+		acoplarAContenedor(gridPane1, 0);
+		acoplarAContenedor(gridPane2, 0);
 
 		gridPane1.setHgap(5);
 		gridPane1.setVgap(10);
@@ -852,453 +817,96 @@ public class TableroController extends AnchorPane implements Serializable,
 		gridPane2.setHgap(5);
 		gridPane2.setVgap(10);
 
-		// ----- tarjeta02 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_marron");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta02");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane1.add(hBox_inner, 0, 0);
+		// Tarjetas para el gridpane1
+		vTarjetas.add(new String[] { "tarjeta02", "0", "0" });
+		vTarjetas.add(new String[] { "tarjeta04", "1", "0" });
+		vTarjetas.add(new String[] { "tarjeta07", "0", "1", });
+		vTarjetas.add(new String[] { "tarjeta09", "1", "1", });
+		vTarjetas.add(new String[] { "tarjeta10", "2", "1", });
+		vTarjetas.add(new String[] { "tarjeta12", "0", "2", });
+		vTarjetas.add(new String[] { "tarjeta14", "1", "2", });
+		vTarjetas.add(new String[] { "tarjeta15", "2", "2", });
+		vTarjetas.add(new String[] { "tarjeta17", "0", "3", });
+		vTarjetas.add(new String[] { "tarjeta19", "1", "3", });
+		vTarjetas.add(new String[] { "tarjeta20", "2", "3", });
+		vTarjetas.add(new String[] { "tarjeta22", "0", "4", });
+		vTarjetas.add(new String[] { "tarjeta24", "1", "4", });
+		vTarjetas.add(new String[] { "tarjeta25", "2", "4", });
 
-		// ----- tarjeta04 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_marron");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta04");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
+		for (String[] vTarjeta : vTarjetas) {
+			propiedad = banco.getTarjetaPropiedad(vTarjeta[0]);
+			if (propiedad != null) {
+				if (propiedad instanceof TarjetaCalle) {
+					strStyle = ((TarjetaCalle) (propiedad)).getColorTarjeta();
+				} else {
+					if (propiedad instanceof TarjetaCompania)
+						strStyle = "blanco";
+					else
+						strStyle = "negro";
+				}
+				bCrearImagen = false;
+				if (jugador.getTarjPropiedadList().contains(propiedad)) {
+					bCrearImagen = true;
+					if (!propiedad.isHipotecada())
+						rutaImagen = propiedad.getNombreImagen();
+					else
+						rutaImagen = propiedad.getNombreImagen().replace(
+								"propiedades", "dorso");
+					strToolTip = showToolTipsPropiedad(propiedad);
+				}
+				gridPane1.add(
+						crearHBoxTarjetaPropiedad(strStyle, bCrearImagen,
+								rutaImagen, hbWidth, hbHeight, strToolTip),
+						Integer.parseInt(vTarjeta[1]), Integer
+								.parseInt(vTarjeta[2]));
+			}
 		}
-		gridPane1.add(hBox_inner, 1, 0);
 
-		// ----- tarjeta07 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_celeste");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta07");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane1.add(hBox_inner, 0, 1);
+		// Tarjetas para el gridpane2
+		vTarjetas = new ArrayList<String[]>();
+		vTarjetas.add(new String[] { "tarjeta27", "0", "0", });
+		vTarjetas.add(new String[] { "tarjeta28", "1", "0", });
+		vTarjetas.add(new String[] { "tarjeta30", "2", "0", });
+		vTarjetas.add(new String[] { "tarjeta32", "0", "1", });
+		vTarjetas.add(new String[] { "tarjeta33", "1", "1", });
+		vTarjetas.add(new String[] { "tarjeta35", "2", "1", });
+		vTarjetas.add(new String[] { "tarjeta38", "0", "2", });
+		vTarjetas.add(new String[] { "tarjeta40", "1", "2", });
+		vTarjetas.add(new String[] { "tarjeta13", "0", "3", });
+		vTarjetas.add(new String[] { "tarjeta29", "1", "3", });
+		vTarjetas.add(new String[] { "tarjeta06", "0", "4", });
+		vTarjetas.add(new String[] { "tarjeta16", "1", "4", });
+		vTarjetas.add(new String[] { "tarjeta26", "2", "4", });
+		vTarjetas.add(new String[] { "tarjeta36", "3", "4", });
 
-		// ----- tarjeta09 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_celeste");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta09");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
+		for (String[] vTarjeta : vTarjetas) {
+			propiedad = banco.getTarjetaPropiedad(vTarjeta[0]);
+			if (propiedad != null) {
+				if (propiedad instanceof TarjetaCalle) {
+					strStyle = ((TarjetaCalle) (propiedad)).getColorTarjeta();
+				} else {
+					if (propiedad instanceof TarjetaCompania)
+						strStyle = "blanco";
+					else
+						strStyle = "negro";
+				}
+				bCrearImagen = false;
+				if (jugador.getTarjPropiedadList().contains(propiedad)) {
+					bCrearImagen = true;
+					if (!propiedad.isHipotecada())
+						rutaImagen = propiedad.getNombreImagen();
+					else
+						rutaImagen = propiedad.getNombreImagen().replace(
+								"propiedades", "dorso");
+					strToolTip = showToolTipsPropiedad(propiedad);
+				}
+				gridPane2.add(
+						crearHBoxTarjetaPropiedad(strStyle, bCrearImagen,
+								rutaImagen, hbWidth, hbHeight, strToolTip),
+						Integer.parseInt(vTarjeta[1]), Integer
+								.parseInt(vTarjeta[2]));
+			}
 		}
-		gridPane1.add(hBox_inner, 1, 1);
-
-		// ----- tarjeta10 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_celeste");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta10");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane1.add(hBox_inner, 2, 1);
-
-		// ----- tarjeta12 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_fuczia");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta12");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane1.add(hBox_inner, 0, 2);
-
-		// ----- tarjeta14 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_fuczia");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta14");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane1.add(hBox_inner, 1, 2);
-
-		// ----- tarjeta15 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_fuczia");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta15");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane1.add(hBox_inner, 2, 2);
-
-		// ----- tarjeta17 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_naranja");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta17");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane1.add(hBox_inner, 0, 3);
-
-		// ----- tarjeta19 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_naranja");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta19");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane1.add(hBox_inner, 1, 3);
-
-		// ----- tarjeta20 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_naranja");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta20");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane1.add(hBox_inner, 2, 3);
-
-		// ----- tarjeta22 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_rojo");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta22");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane1.add(hBox_inner, 0, 4);
-
-		// ----- tarjeta24 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_rojo");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta24");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane1.add(hBox_inner, 1, 4);
-
-		// ----- tarjeta25 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_rojo");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta25");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane1.add(hBox_inner, 2, 4);
-
-		// ----- tarjeta27 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_amarillo");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta27");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane2.add(hBox_inner, 0, 0);
-
-		// ----- tarjeta28 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_amarillo");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta28");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane2.add(hBox_inner, 1, 0);
-
-		// ----- tarjeta30 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_amarillo");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta30");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane2.add(hBox_inner, 2, 0);
-
-		// ----- tarjeta32 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_verde");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta32");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane2.add(hBox_inner, 0, 1);
-
-		// ----- tarjeta33 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_verde");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta33");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane2.add(hBox_inner, 1, 1);
-
-		// ----- tarjeta35 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_verde");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta35");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane2.add(hBox_inner, 2, 1);
-
-		// ----- tarjeta38 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_azul");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta38");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane2.add(hBox_inner, 0, 2);
-
-		// ----- tarjeta40 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_azul");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta40");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane2.add(hBox_inner, 1, 2);
-
-		// ----- tarjeta13 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_blanco");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta13");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane2.add(hBox_inner, 0, 3);
-
-		// ----- tarjeta29 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_blanco");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta29");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane2.add(hBox_inner, 1, 3);
-
-		// ----- tarjeta06 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_negro");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta06");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane2.add(hBox_inner, 0, 4);
-
-		// ----- tarjeta16 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_negro");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta16");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane2.add(hBox_inner, 1, 4);
-
-		// ----- tarjeta26 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_negro");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta26");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane2.add(hBox_inner, 2, 4);
-
-		// ----- tarjeta36 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_negro");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta36");
-		if (jugador.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-		}
-		gridPane2.add(hBox_inner, 3, 4);
 
 		hbPropiedades.getChildren().add(gridPane1);
 		hbPropiedades.getChildren().add(gridPane2);
@@ -1351,10 +959,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		HBox hbPropiedades = new HBox();
 		HBox hbExtra = new HBox();
 
-		AnchorPane.setLeftAnchor(vBox, (double) 0);
-		AnchorPane.setRightAnchor(vBox, (double) 0);
-		AnchorPane.setTopAnchor(vBox, (double) 0);
-		AnchorPane.setBottomAnchor(vBox, (double) 0);
+		acoplarAContenedor(vBox, 0);
 		root.getStyleClass().add("bg_info_panel");
 		vBox.setAlignment(Pos.CENTER);
 		vBox.setSpacing(10);
@@ -1372,479 +977,109 @@ public class TableroController extends AnchorPane implements Serializable,
 		// ===================== HBox de propiedades =====================//
 
 		TarjetaPropiedad propiedad;
-		Image imgPropiedad;
-		HBox hBox_inner;
-		Tooltip tpImagen;
+		String rutaImagen = "";
+		String strStyle = "";
+		Boolean bCrearImagen = false;
+		String strToolTip = "";
 		double hbWidth = 35;
 		double hbHeight = 60;
 
 		GridPane gridPane1 = new GridPane();
 		GridPane gridPane2 = new GridPane();
 
-		AnchorPane.setLeftAnchor(gridPane1, (double) 0);
-		AnchorPane.setRightAnchor(gridPane1, (double) 0);
-		AnchorPane.setTopAnchor(gridPane1, (double) 0);
-		AnchorPane.setBottomAnchor(gridPane1, (double) 0);
-
-		AnchorPane.setLeftAnchor(gridPane2, (double) 0);
-		AnchorPane.setRightAnchor(gridPane2, (double) 0);
-		AnchorPane.setTopAnchor(gridPane2, (double) 0);
-		AnchorPane.setBottomAnchor(gridPane2, (double) 0);
+		acoplarAContenedor(gridPane1, 0);
+		acoplarAContenedor(gridPane2, 0);
 
 		gridPane1.setHgap(5);
 		gridPane1.setVgap(10);
 
 		gridPane2.setHgap(5);
 		gridPane2.setVgap(10);
+		
+		List<String[]> vTarjetas = new ArrayList<String[]>();
 
-		// ----- tarjeta02 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_marron");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta02");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane1.add(hBox_inner, 0, 0);
+		// Tarjetas para el gridpane1
+				vTarjetas.add(new String[] { "tarjeta02", "0", "0" });
+				vTarjetas.add(new String[] { "tarjeta04", "1", "0" });
+				vTarjetas.add(new String[] { "tarjeta07", "0", "1", });
+				vTarjetas.add(new String[] { "tarjeta09", "1", "1", });
+				vTarjetas.add(new String[] { "tarjeta10", "2", "1", });
+				vTarjetas.add(new String[] { "tarjeta12", "0", "2", });
+				vTarjetas.add(new String[] { "tarjeta14", "1", "2", });
+				vTarjetas.add(new String[] { "tarjeta15", "2", "2", });
+				vTarjetas.add(new String[] { "tarjeta17", "0", "3", });
+				vTarjetas.add(new String[] { "tarjeta19", "1", "3", });
+				vTarjetas.add(new String[] { "tarjeta20", "2", "3", });
+				vTarjetas.add(new String[] { "tarjeta22", "0", "4", });
+				vTarjetas.add(new String[] { "tarjeta24", "1", "4", });
+				vTarjetas.add(new String[] { "tarjeta25", "2", "4", });
 
-		// ----- tarjeta04 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_marron");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta04");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane1.add(hBox_inner, 1, 0);
-
-		// ----- tarjeta07 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_celeste");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta07");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane1.add(hBox_inner, 0, 1);
-
-		// ----- tarjeta09 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_celeste");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta09");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane1.add(hBox_inner, 1, 1);
-
-		// ----- tarjeta10 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_celeste");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta10");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane1.add(hBox_inner, 2, 1);
-
-		// ----- tarjeta12 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_fuczia");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta12");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane1.add(hBox_inner, 0, 2);
-
-		// ----- tarjeta14 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_fuczia");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta14");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane1.add(hBox_inner, 1, 2);
-
-		// ----- tarjeta15 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_fuczia");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta15");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane1.add(hBox_inner, 2, 2);
-
-		// ----- tarjeta17 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_naranja");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta17");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane1.add(hBox_inner, 0, 3);
-
-		// ----- tarjeta19 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_naranja");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta19");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane1.add(hBox_inner, 1, 3);
-
-		// ----- tarjeta20 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_naranja");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta20");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane1.add(hBox_inner, 2, 3);
-
-		// ----- tarjeta22 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_rojo");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta22");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane1.add(hBox_inner, 0, 4);
-
-		// ----- tarjeta24 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_rojo");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta24");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane1.add(hBox_inner, 1, 4);
-
-		// ----- tarjeta25 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_rojo");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta25");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane1.add(hBox_inner, 2, 4);
-
-		// ----- tarjeta27 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_amarillo");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta27");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane2.add(hBox_inner, 0, 0);
-
-		// ----- tarjeta28 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_amarillo");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta28");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane2.add(hBox_inner, 1, 0);
-
-		// ----- tarjeta30 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_amarillo");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta30");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane2.add(hBox_inner, 2, 0);
-
-		// ----- tarjeta32 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_verde");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta32");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane2.add(hBox_inner, 0, 1);
-
-		// ----- tarjeta33 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_verde");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta33");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane2.add(hBox_inner, 1, 1);
-
-		// ----- tarjeta35 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_verde");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta35");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane2.add(hBox_inner, 2, 1);
-
-		// ----- tarjeta38 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_azul");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta38");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane2.add(hBox_inner, 0, 2);
-
-		// ----- tarjeta40 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_azul");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta40");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane2.add(hBox_inner, 1, 2);
-
-		// ----- tarjeta13 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_blanco");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta13");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane2.add(hBox_inner, 0, 3);
-
-		// ----- tarjeta29 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_blanco");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta29");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane2.add(hBox_inner, 1, 3);
-
-		// ----- tarjeta06 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_negro");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta06");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane2.add(hBox_inner, 0, 4);
-
-		// ----- tarjeta16 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_negro");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta16");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane2.add(hBox_inner, 1, 4);
-
-		// ----- tarjeta26 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_negro");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta26");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane2.add(hBox_inner, 2, 4);
-
-		// ----- tarjeta36 --------//
-		hBox_inner = new HBox();
-		hBox_inner.getStyleClass().add("border_negro");
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
-		propiedad = juego.getTarjetasPropiedad("tarjeta36");
-		if (banco.getTarjPropiedadList().contains(propiedad)) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(propiedad
-							.getNombreImagen()), hbWidth, hbHeight, false,
-					false);
-			tpImagen = new Tooltip(showToolTipsPropiedad(propiedad));
-			Tooltip.install(hBox_inner, tpImagen);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-		}
-		gridPane2.add(hBox_inner, 3, 4);
-
+				for (String[] vTarjeta : vTarjetas) {
+					propiedad = banco.getTarjetaPropiedad(vTarjeta[0]);
+					if (propiedad != null) {
+						if (propiedad instanceof TarjetaCalle) {
+							strStyle = ((TarjetaCalle) (propiedad)).getColorTarjeta();
+						} else {
+							if (propiedad instanceof TarjetaCompania)
+								strStyle = "blanco";
+							else
+								strStyle = "negro";
+						}
+						bCrearImagen = false;
+						if (propiedad.getJugador() == null) {
+							bCrearImagen = true;
+								rutaImagen = propiedad.getNombreImagen();
+							strToolTip = showToolTipsPropiedad(propiedad);
+						}
+						gridPane1.add(
+								crearHBoxTarjetaPropiedad(strStyle, bCrearImagen,
+										rutaImagen, hbWidth, hbHeight, strToolTip),
+								Integer.parseInt(vTarjeta[1]), Integer
+										.parseInt(vTarjeta[2]));
+					}
+				}
+				
+				//Tarjetas para el gridpane2
+				vTarjetas = new ArrayList<String[]>();
+				vTarjetas.add(new String[] { "tarjeta27", "0", "0", });
+				vTarjetas.add(new String[] { "tarjeta28", "1", "0", });
+				vTarjetas.add(new String[] { "tarjeta30", "2", "0", });
+				vTarjetas.add(new String[] { "tarjeta32", "0", "1", });
+				vTarjetas.add(new String[] { "tarjeta33", "1", "1", });
+				vTarjetas.add(new String[] { "tarjeta35", "2", "1", });
+				vTarjetas.add(new String[] { "tarjeta38", "0", "2", });
+				vTarjetas.add(new String[] { "tarjeta40", "1", "2", });
+				vTarjetas.add(new String[] { "tarjeta13", "0", "3", });
+				vTarjetas.add(new String[] { "tarjeta29", "1", "3", });
+				vTarjetas.add(new String[] { "tarjeta06", "0", "4", });
+				vTarjetas.add(new String[] { "tarjeta16", "1", "4", });
+				vTarjetas.add(new String[] { "tarjeta26", "2", "4", });
+				vTarjetas.add(new String[] { "tarjeta36", "3", "4", });
+				
+				for (String[] vTarjeta : vTarjetas) {
+					propiedad = banco.getTarjetaPropiedad(vTarjeta[0]);
+					if (propiedad != null) {
+						if (propiedad instanceof TarjetaCalle) {
+							strStyle = ((TarjetaCalle) (propiedad)).getColorTarjeta();
+						} else {
+							if (propiedad instanceof TarjetaCompania)
+								strStyle = "blanco";
+							else
+								strStyle = "negro";
+						}
+						if (propiedad.getJugador() == null) {
+							bCrearImagen = true;
+								rutaImagen = propiedad.getNombreImagen();
+							strToolTip = showToolTipsPropiedad(propiedad);
+						}
+						gridPane2.add(
+								crearHBoxTarjetaPropiedad(strStyle, bCrearImagen,
+										rutaImagen, hbWidth, hbHeight, strToolTip),
+								Integer.parseInt(vTarjeta[1]), Integer
+										.parseInt(vTarjeta[2]));
+					}
+				}
+		
 		hbPropiedades.getChildren().add(gridPane1);
 		hbPropiedades.getChildren().add(gridPane2);
 
@@ -1873,6 +1108,33 @@ public class TableroController extends AnchorPane implements Serializable,
 		return tp;
 	}
 
+	private HBox crearHBoxTarjetaPropiedad(String style, boolean creaImagen,
+			String rutaImagen, Double hbWidth, Double hbHeight, String toolTips) {
+		HBox hBox_inner = new HBox();
+		Image imgPropiedad;
+		Tooltip tpImagen;
+
+		hBox_inner.getStyleClass().add("border_" + style.toLowerCase());
+		hBox_inner.setPrefSize(hbWidth, hbHeight);
+
+		if (creaImagen) {
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(rutaImagen),
+					hbWidth, hbHeight, false, false);
+			tpImagen = new Tooltip(toolTips);
+			Tooltip.install(hBox_inner, tpImagen);
+			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+		}
+		return hBox_inner;
+	}
+
+	private void acoplarAContenedor(javafx.scene.Node node, double valor) {
+		AnchorPane.setLeftAnchor(node, (double) 0);
+		AnchorPane.setRightAnchor(node, (double) 0);
+		AnchorPane.setTopAnchor(node, (double) 0);
+		AnchorPane.setBottomAnchor(node, (double) 0);
+	}
+
 	/**
 	 * Método para agregar un tooltips a la imagen de la propiedad con
 	 * información sobre la misma.
@@ -1881,13 +1143,18 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * @return
 	 */
 	private String showToolTipsPropiedad(TarjetaPropiedad propiedad) {
-		return propiedad.getNombre()
-				+ " - "
+		String tooltip = propiedad.getNombre();
+		if (propiedad.isHipotecada())
+			tooltip += "(Hipotecada)";
+		tooltip += " - "
 				+ StringUtils.FORMATO_IMPORTE.format(propiedad
 						.getValorPropiedad());
+		return tooltip;
 	}
 
-	// ============================= Event Fx ==============================//
+	// ======================================================================//
+	// ============================== Event Fx ==============================//
+	// ======================================================================//
 
 	@FXML
 	void processMenu(ActionEvent event) {
@@ -1929,8 +1196,9 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	}
 
-	// ============================== Getter & Setter
-	// ===========================//
+	// ======================================================================//
+	// ========================== Getter & Setter ===========================//
+	// ======================================================================//
 
 	public static TableroController getInstance() {
 		if (instance == null)
@@ -1972,10 +1240,6 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	public MonopolyGameStatus getStatus() {
 		return status;
-	}
-
-	public void setStatus(MonopolyGameStatus status) {
-		this.status = status;
 	}
 
 }

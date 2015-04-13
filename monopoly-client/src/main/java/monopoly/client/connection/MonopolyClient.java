@@ -123,11 +123,14 @@ public class MonopolyClient extends GameClient {
 		MonopolyGameStatus status = (MonopolyGameStatus) message;
 
 		switch (status.status) {
-		case MonopolyGameStatus.EMPEZAR:
-			TableroController.getInstance().setStatus(status);
-			TirarDadosController.getInstance().habilitarBotonAceptar();
+		case INICIADO:
+			TableroController.getInstance().actualizarEstadoJuego(status);
 			break;
 
+		case TIRAR_DADO:
+			TableroController.getInstance().actualizarEstadoJuego(status);
+			break;
+			
 		default:
 			break;
 

@@ -8,12 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.TreeMap;
 
 import monopoly.controller.FichasController;
-import monopoly.controller.TarjetaController;
 import monopoly.model.tablero.Tablero;
-import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 
 /**
@@ -51,8 +48,6 @@ public class Juego implements Serializable {
 
 	private int cantJugadores;
 
-	private TreeMap<String, TarjetaPropiedad> tarjetasPropiedadList;
-
 	private List<Ficha> fichasPlayerList;
 	
 	private Tablero tablero;
@@ -72,8 +67,8 @@ public class Juego implements Serializable {
 		this.fechaCreacion = new Date();
 		this.jugadoresList = new ArrayList<Jugador>();
 		this.fichasPlayerList = FichasController.getFichas();
-		this.tarjetasPropiedadList = TarjetaController
-				.getTarjetasPropiedadesTreeMap();
+//		this.tarjetasPropiedadList = TarjetaController
+//				.getTarjetasPropiedadesTreeMap();
 		this.generateUniqueID();
 		this.initJuego();
 	}
@@ -146,13 +141,6 @@ public class Juego implements Serializable {
 	 */
 	public List<Jugador> getJugadoresList() {
 		return jugadoresList;
-	}
-
-	/**
-	 * @return the tarjetasPropiedadList
-	 */
-	public TarjetaPropiedad getTarjetasPropiedad(String key) {
-		return tarjetasPropiedadList.get(key);
 	}
 
 	/**

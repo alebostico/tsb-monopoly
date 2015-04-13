@@ -91,7 +91,7 @@ public abstract class Jugador implements Serializable {
 		this.nroHoteles = 0;
 		tarjetaCarcelList = new ArrayList<>();
 		tarjPropiedadList = new ArrayList<>();
-		casilleroActual = juego.getTablero().getCasillerosList()[0];
+		casilleroActual = juego.getTablero().getCasillero(1);
 	}
 
 	/**

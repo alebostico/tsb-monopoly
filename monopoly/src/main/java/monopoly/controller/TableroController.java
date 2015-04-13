@@ -9,6 +9,7 @@ import java.util.List;
 import monopoly.model.Banco;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
+import monopoly.model.MonopolyGameStatus;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tablero.Casillero.TipoCasillero;
 import monopoly.model.tablero.CasilleroCalle;
@@ -716,6 +717,22 @@ public class TableroController {
 
 		return true;
 	}
+
+
+	public MonopolyGameStatus evaluarAccionEnCasillero(Banco pBanco, List<Jugador> pTurnosList, Jugador pJugador, MonopolyGameStatus pStatus){
+			boolean isComprado;
+			boolean isHipotecable;
+			boolean hasCasas;
+			boolean hasHoteles;
+			
+			
+		for (Jugador jugador : pTurnosList) {
+				//jugador.
+			}
+		
+		return null;
+	}
+	
 
 	/**
 	 * Método que elimina una edificación sin realizar ninguna comprobación
