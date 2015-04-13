@@ -151,5 +151,12 @@ public class StringUtils {
 		return dateFormat.format(calendar.getTime()); 
 	}
 	
+	public static boolean IsNullOrEmpty(String str)
+	{
+		if(str == null || str.trim().isEmpty())
+			return true;
+		return false;
+	}
+	
 	public static final NumberFormat FORMATO_IMPORTE = NumberFormat.getCurrencyInstance();
 }

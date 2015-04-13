@@ -9,18 +9,18 @@ public class Estado implements Serializable {
 	/**
 	 * Estados del Juego
 	 */
-	public static final String ESTADO_CREADO = "creado";
-	public static final String ESTADO_ESPERANDO_JUGADOR = "esperando jugador";
+	public static final String ESTADO_CREADO = "Creado";
+	public static final String ESTADO_ESPERANDO_JUGADOR = "Esperando jugador";
 	public static final String ESTADO_ESTABLECIENDO_TURNOS = "Estableciendo turnos";
-	public static final String ESTADO_INICIADO = "iniciado";
-	public static final String ESTADO_FINALIZADO = "finalizado";
+	public static final String ESTADO_INICIADO = "Iniciado";
+	public static final String ESTADO_TIRAR_DADO = "Tirando dado para avanzar de Casillero";
+	public static final String ESTADO_FINALIZADO = "Finalizado";
 
 	public enum EstadoJuego {
-		CREADO("creado"),
-		ESPERANDO_JUGADOR("esperando jugador"), 
-		ESTABLECIENDO_TURNOS("Estableciendo turnos"), 
-		INICIADO("iniciado"), 
-		FINALIZADO("finalizado");
+		CREADO("creado"), ESPERANDO_JUGADOR("esperando jugador"), ESTABLECIENDO_TURNOS(
+				"Estableciendo turnos"), INICIADO("iniciado"), TIRAR_DADO(
+				"Tirando dado para avanzar de Casillero"), FINALIZADO(
+				"finalizado");
 
 		private final String nombreEstadoJuego;
 
@@ -36,7 +36,7 @@ public class Estado implements Serializable {
 		}
 
 	}
-	
+
 	public enum EstadoJugador {
 		EJ_JUGANDO("jugando"), EJ_CARCEL("en la carcel"), EJ_BANCARROTA(
 				"en bancarrota");
@@ -53,13 +53,12 @@ public class Estado implements Serializable {
 	}
 
 	private String nombre;
-	
-	//private int idEstado;
+
+	// private int idEstado;
 
 	private EstadoJuego estadoJuego;
-	
+
 	private EstadoJugador estadoJugador;
-	
 
 	/**
 	 * @param nombre
@@ -74,31 +73,31 @@ public class Estado implements Serializable {
 		this.nombre = estado.getNombreEstadoJuego();
 	}
 
-	public Estado(EstadoJugador estado){
+	public Estado(EstadoJugador estado) {
 		super();
 		this.estadoJugador = estado;
 		this.nombre = estado.getNombreEstado();
 	}
-	
+
 	/**
 	 * @return the nombre
 	 */
 	public String getNombre() {
 		return nombre;
 	}
-	
+
 	/**
 	 * @return the estado
 	 */
 	public EstadoJuego getEstadoJuego() {
 		return estadoJuego;
 	}
-	
+
 	/**
 	 * 
 	 * @return
 	 */
-	public EstadoJugador getEstadoJugador(){
+	public EstadoJugador getEstadoJugador() {
 		return estadoJugador;
 	}
 
@@ -133,7 +132,9 @@ public class Estado implements Serializable {
 		return this.getNombre().equals(f.getNombre());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -141,7 +142,9 @@ public class Estado implements Serializable {
 		return this.getNombre().hashCode();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -153,12 +156,9 @@ public class Estado implements Serializable {
 			tipo = "EstadoJugador";
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("{ Estado [tipo: " + tipo + ", nombre: "
-				+ this.getNombre() + "] }");
+		sb.append("{ Estado [tipo: " + tipo + ", nombre: " + this.getNombre()
+				+ "] }");
 		return sb.toString();
 	}
-	
-	
-	
-	
+
 }

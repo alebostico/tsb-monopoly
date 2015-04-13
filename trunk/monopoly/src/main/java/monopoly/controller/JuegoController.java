@@ -3,6 +3,9 @@
  */
 package monopoly.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import monopoly.model.Dado;
 import monopoly.model.Estado;
 import monopoly.model.Estado.EstadoJuego;
@@ -13,10 +16,7 @@ import monopoly.model.JugadorHumano;
 import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
 import monopoly.model.tablero.Casillero;
-import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
-import monopoly.util.constantes.ConstantesMensaje;
-import monopoly.util.exception.IllegalJugadorException;
 import monopoly.util.message.game.HistoryGameMessage;
 
 /**
@@ -39,7 +39,7 @@ public class JuegoController {
 	private JugadorController gestorJugadores;
 
 	private MonopolyGameStatus status;
-
+	
 	public JuegoController(Usuario creador, String nombre) {
 		this.gestorBanco = new BancoController();
 		this.gestorTablero = new TableroController();
@@ -99,7 +99,21 @@ public class JuegoController {
 		if (tiraronTodosDados) {
 			estadoJuego.actualizarEstadoJuego();
 			ordenarTurnos();
-			tirarDadosJugador();
+
+			List<History> historyList = new ArrayList<History>();
+
+			History history = new History(StringUtils.getFechaActual(),
+					gestorJugadores.getCurrentPlayer().getNombre(),
+					"Turno para tirar los dados.");
+			historyList.add(history);
+
+			status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+					gestorBanco.getBanco(), gestorTablero.getTablero(),
+					EstadoJuego.TIRAR_DADO, gestorJugadores.getCurrentPlayer(),
+					historyList);
+			sendToAll(status);
+
+			// tirarDadosJugador();
 		}
 	}
 
@@ -110,7 +124,6 @@ public class JuegoController {
 	 * vez ordenados informa a los jugadores el orden establecido.
 	 */
 	private void ordenarTurnos() {
-
 		this.gestorJugadores.ordenarTurnos();
 
 		for (Jugador jug : gestorJugadores.getTurnoslist()) {
@@ -123,50 +136,23 @@ public class JuegoController {
 				}
 			}
 		}
-
-		status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
-				gestorBanco.getBanco(), gestorTablero.getTablero(),
-				MonopolyGameStatus.EMPEZAR, gestorJugadores.getCurrentPlayer());
-
-		sendToAll(status);
-
+	}
+	
+	public void avanzarDeCasillero(int key, Dado dados) throws Exception {
+		// TODO Auto-generated method stub
+		JugadorHumano jugador;
+		Casillero casillero;
+		
+		jugador = gestorJugadores.getJugadorHumano(key);
+		casillero = gestorTablero.moverAdelante(jugador, dados.getSuma(), true);
+		
+		//Debemos determinar que accion realiza sobre el casillero.
 	}
 
-	/**
-	 * 
-	 * Método que envía un mensaje al jugador para arroje los dados para avanzar
-	 * de casilleros.
-	 * 
-	 */
-	private void tirarDadosJugador() {
-		History history = new History(StringUtils.getFechaActual(),
-				gestorJugadores.getCurrentPlayer().getNombre(),
-				"Turno para tirar los dados.");
-		sendToAll(history);
-		try {
-			if (gestorJugadores.isJugadorVirtualElJugadorActual()) {
-				
-				// IAController
-			} else {
-				int senderId = 0;
-
-				senderId = gestorJugadores.getSenderIdPlayer(gestorJugadores
-						.getCurrentPlayer());
-
-				sendToOne(senderId,
-						ConstantesMensaje.THROW_DICE_ADVANCE_MESSAGE);
-
-			}
-		} catch (IllegalJugadorException e) {
-			// TODO Auto-generated catch block
-			GestorLogs.registrarError(e.getMessage());
-		}
-	}
-
-	private void sendToOne(int key, Object message) {
-		PartidasController.getInstance().getMonopolyGame()
-				.sendToOne(key, message);
-	}
+//	private void sendToOne(int key, Object message) {
+//		PartidasController.getInstance().getMonopolyGame()
+//				.sendToOne(key, message);
+//	}
 
 	/**
 	 * 
@@ -201,6 +187,8 @@ public class JuegoController {
 		}
 	}
 
+	
+	
 	// ============================= Getter & Setter
 	// ==========================//
 

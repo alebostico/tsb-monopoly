@@ -111,6 +111,10 @@ public class MonopolyGame extends GameServer {
 		case ConstantesMensaje.START_GAME_MESSAGE:
 			PartidasController.getInstance().establecerTurnoJugador(senderId, message);
 			break;
+			
+		case ConstantesMensaje.ADVANCE_IN_BOARD_MESSAGE:
+			
+		break;
 
 		case ConstantesMensaje.DISCONNECT_MESSAGE:
 

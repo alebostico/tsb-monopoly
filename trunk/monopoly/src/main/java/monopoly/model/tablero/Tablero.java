@@ -50,6 +50,15 @@ public class Tablero implements Serializable {
 	public void setCasillerosList(Casillero[] casillerosList) {
 		this.casillerosList = casillerosList;
 	}
+	
+	public Casillero getCasillero(int pNroCasillero)
+	{
+		for (Casillero casillero : casillerosList) {
+			if(casillero.getNumeroCasillero() == pNroCasillero)
+				return casillero;
+		}
+		return null;
+	}
 
 	public String toString() {
 

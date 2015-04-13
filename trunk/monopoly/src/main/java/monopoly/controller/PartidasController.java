@@ -79,6 +79,28 @@ public class PartidasController {
 	}
 
 	/**
+	 * Método para avanzar de casillero en base a los resultados de los dados.
+	 * 
+	 * @param senderId
+	 * @param message
+	 */
+	public void avanzarDeCasillero(int senderId, Object message) {
+		Object[] vDatos;
+		String idJuego;
+		Dado dados;
+		JuegoController controller;
+		try {
+			vDatos = (Object[]) ((StartGameMessage) message).message;
+			idJuego = vDatos[0].toString();
+			dados = (Dado) vDatos[1];
+			controller = juegosControllerList.get(idJuego);
+			controller.avanzarDeCasillero(senderId, dados);
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex.getMessage());
+		}
+	}
+
+	/**
 	 * Método que agrega un jugador Humano al juego.
 	 * 
 	 * @param jugador
@@ -87,8 +109,8 @@ public class PartidasController {
 		JuegoController juegoController = buscarControladorJuego(jugador
 				.getJuego());
 		GestorLogs.registrarLog(String.format(
-				"Agregando el jugador %s al juego %s..", jugador.getNombre(), juegoController
-						.getJuego().getUniqueID()));
+				"Agregando el jugador %s al juego %s..", jugador.getNombre(),
+				juegoController.getJuego().getUniqueID()));
 		juegoController.addPlayer(jugador);
 	}
 

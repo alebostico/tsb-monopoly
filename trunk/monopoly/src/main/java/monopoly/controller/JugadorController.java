@@ -10,7 +10,7 @@ import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.JugadorVirtual;
 import monopoly.util.constantes.ConstantesMensaje;
-import monopoly.util.exception.IllegalJugadorException;
+import monopoly.util.exception.IlegalJugadorException;
 import monopoly.util.list.CircularList;
 import monopoly.util.list.Node;
 
@@ -147,9 +147,9 @@ public class JugadorController {
 		return false;
 	}
 	
-	public int getSenderIdPlayer(Jugador jugador) throws IllegalJugadorException{
+	public int getSenderIdPlayer(Jugador jugador) throws IlegalJugadorException{
 		if(!(jugador instanceof JugadorHumano))
-			throw new IllegalJugadorException(String.format("El Jugador %s no es un jugador controlado por una persona. ", jugador.getNombre()));
+			throw new IlegalJugadorException(String.format("El Jugador %s no es un jugador controlado por una persona. ", jugador.getNombre()));
 		return ((JugadorHumano) jugador).getSenderID();
 	}
 	
