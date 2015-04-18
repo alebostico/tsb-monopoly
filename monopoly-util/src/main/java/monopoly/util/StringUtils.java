@@ -3,7 +3,7 @@ package monopoly.util;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
-import java.text.NumberFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -150,6 +150,10 @@ public class StringUtils {
 		Calendar calendar = GregorianCalendar.getInstance();
 		return dateFormat.format(calendar.getTime()); 
 	}
+
+	public final static DecimalFormat decimalFormat = new DecimalFormat( "'€'#,###,###,##0" );
+	
+	//public static final NumberFormat FORMATO_IMPORTE = NumberFormat.getCurrencyInstance();
 	
 	public static boolean IsNullOrEmpty(String str)
 	{
@@ -158,5 +162,4 @@ public class StringUtils {
 		return false;
 	}
 	
-	public static final NumberFormat FORMATO_IMPORTE = NumberFormat.getCurrencyInstance();
 }
