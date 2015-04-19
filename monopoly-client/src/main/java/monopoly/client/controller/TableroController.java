@@ -499,6 +499,9 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * Método que recibe la información sobre el orden de los turnos para
 	 * empezar a jugar el juego.
 	 * 
+	 * @param status
+	 *            objeto que contiene información sobre los turnos, estado del
+	 *            banco y jugador actual.
 	 */
 	@SuppressWarnings("deprecation")
 	public void empezarJuego() {
