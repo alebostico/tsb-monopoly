@@ -24,7 +24,7 @@ import org.hibernate.annotations.Type;
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
+ * 
  * 
  */
 @Entity
@@ -78,8 +78,14 @@ public abstract class TarjetaPropiedad implements Serializable {
 	@Column(name = "valorHipotecario")
 	private int valorHipotecario;
 
-	@Column(name = "nombreImagen")
-	private String nombreImagen;
+	@Column(name = "pathImagenPropiedad")
+	private String pathImagenPropiedad;
+	
+	@Column(name = "pathImagenFrente")
+	private String pathImagenFrente;
+	
+	@Column(name = "pathImagenDorso")
+	private String pathImagenDorso;
 
 	@Column(name = "isHipotecada", columnDefinition = "TINYINT")
 	@Type(type = "org.hibernate.type.NumericBooleanType")
@@ -111,7 +117,7 @@ public abstract class TarjetaPropiedad implements Serializable {
 		this.jugador = jugador;
 		this.nombre = nombre;
 		this.valorHipotecario = valorHipotecario;
-		this.nombreImagen = nombreImagen;
+		this.pathImagenPropiedad = nombreImagen;
 		this.hipotecada = false;
 		this.valorPropiedad = valorPropiedad;
 		this.casillero = casillero;
@@ -149,12 +155,12 @@ public abstract class TarjetaPropiedad implements Serializable {
 		this.valorHipotecario = valorHipotecario;
 	}
 
-	public String getNombreImagen() {
-		return nombreImagen;
+	public String getPathImagenPropiedad() {
+		return pathImagenPropiedad;
 	}
 
-	public void setNombreImagen(String nombreImagen) {
-		this.nombreImagen = nombreImagen;
+	public void setPathImagenPropiedad(String nombreImagen) {
+		this.pathImagenPropiedad = nombreImagen;
 	}
 
 	public int getValorPropiedad() {
@@ -181,18 +187,28 @@ public abstract class TarjetaPropiedad implements Serializable {
 		this.nombrePropiedad = nombrePropiedad;
 	}
 
-	/**
-	 * @return the casillero
-	 */
 	public Casillero getCasillero() {
 		return casillero;
 	}
 
-	/**
-	 * @param casillero the casillero to set
-	 */
 	public void setCasillero(Casillero casillero) {
 		this.casillero = casillero;
+	}
+
+	public String getPathImagenFrente() {
+		return pathImagenFrente;
+	}
+
+	public void setPathImagenFrente(String pathImagenFrente) {
+		this.pathImagenFrente = pathImagenFrente;
+	}
+
+	public String getPathImagenDorso() {
+		return pathImagenDorso;
+	}
+
+	public void setPathImagenDorso(String pathImagenDorso) {
+		this.pathImagenDorso = pathImagenDorso;
 	}
 
 	/*

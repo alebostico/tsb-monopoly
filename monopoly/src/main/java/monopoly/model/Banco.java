@@ -12,7 +12,7 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
+ * 
  * 
  */
 public class Banco implements Serializable {

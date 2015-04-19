@@ -21,7 +21,6 @@ import monopoly.util.StringUtils;
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
  * 
  */
 public class Main {
@@ -61,7 +60,7 @@ public class Main {
 
 		// creamos un segundo usuario que será solo jugador
 		Usuario usuario2 = new Usuario("testuser2");
-		Jugador jugadorH2 = new JugadorHumano("Jugador2", new Ficha(	
+		Jugador jugadorH2 = new JugadorHumano("Jugador2", new Ficha(
 				Ficha.TipoFicha.F_BOTA), juego, usuario2, 0);
 
 		juego.addJugador(jugadorH1);

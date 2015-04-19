@@ -71,8 +71,8 @@ public class History implements Serializable {
 	}
 
 	/**
-	 * @param mensage
-	 *            the mensage to set
+	 * @param mensaje
+	 *            the mensaje to set
 	 */
 	public void setMensaje(String mensaje) {
 		this.mensaje = mensaje;

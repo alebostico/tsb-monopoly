@@ -17,7 +17,7 @@ import monopoly.util.GestorLogs;
  * 
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
+ * 
  * 
  */
 public class Tablero implements Serializable {

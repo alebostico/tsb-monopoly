@@ -8,7 +8,7 @@ import monopoly.model.tarjetas.TarjetaEstacion;
  * 
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
+ * 
  * 
  */
 public class CasilleroEstacion extends Casillero implements Serializable {

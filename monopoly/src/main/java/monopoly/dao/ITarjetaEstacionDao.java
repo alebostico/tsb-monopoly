@@ -10,7 +10,7 @@ import monopoly.model.tarjetas.TarjetaEstacion;
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
+ * 
  *
  */
 public interface ITarjetaEstacionDao {

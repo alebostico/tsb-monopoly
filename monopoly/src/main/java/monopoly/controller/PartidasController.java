@@ -239,6 +239,7 @@ public class PartidasController {
 	 * Busca todos los juegos de un usuario creados en el período de fechas
 	 * pasados como parámetro.
 	 * 
+	 * @param nombreUsuarioCreador
 	 * @param fechaDesde
 	 * @param fechaHasta
 	 * @return
@@ -254,7 +255,7 @@ public class PartidasController {
 	 * Retorna todos los juegos cuyos nombres coinciden con un criterio de
 	 * búsqueda
 	 * 
-	 * @param likeNombre
+	 * @param estado
 	 * @return
 	 */
 	public List<Juego> buscarJuegos(EstadoJuego estado) {

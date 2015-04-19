@@ -7,7 +7,6 @@ import monopoly.util.GestorLogs;
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
  * 
  */
 public class Dado implements Serializable {

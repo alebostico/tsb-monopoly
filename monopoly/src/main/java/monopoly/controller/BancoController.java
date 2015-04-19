@@ -37,7 +37,6 @@ public class BancoController {
 	 *            el jugador al que se quiere cobrar
 	 * @param monto
 	 *            el monto que se quiere cobrar
-	 * @return true si puede cobrar el monto, false si no muede cobrar
 	 * @throws SinDineroException
 	 */
 	public void cobrar(Jugador jugador, int monto) throws SinDineroException {

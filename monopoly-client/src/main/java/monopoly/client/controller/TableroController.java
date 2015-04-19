@@ -8,12 +8,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Vector;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -21,6 +22,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -29,6 +31,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
@@ -56,7 +60,6 @@ import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaCompania;
-import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
@@ -496,9 +499,6 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * Método que recibe la información sobre el orden de los turnos para
 	 * empezar a jugar el juego.
 	 * 
-	 * @param status
-	 *            objeto que contiene información sobre los turnos, estado del
-	 *            banco y jugador actual.
 	 */
 	@SuppressWarnings("deprecation")
 	public void empezarJuego() {
@@ -569,18 +569,20 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * 
 	 */
 	private void showAccordionJugadores() throws Exception {
-		List<Jugador> turnos = status.turnos;
-		tps = new TitledPane[turnos.size() + 1];
+		List<Jugador> turnos = status.turnos;		
+		tps = new TitledPane[turnos.size() + 1];		
 		String title;
 
 		for (int i = 0; i < turnos.size(); i++) {
 			title = turnos.get(i).getNombre() + " - ";
+			title += StringUtils.decimalFormat.format(turnos.get(i)
+					.getDinero()) + " - ";
 			title += (turnos.get(i) instanceof JugadorHumano) ? "Jugador Humano"
 					: "Jugador Virtual";
 			tps[i] = getPaneInfoPlayer(turnos.get(i), title);
 		}
 		tps[turnos.size()] = getPaneInfoBanco(status.banco, "BANCO");
-
+		
 		accordionPlayers.getPanes().addAll(tps);
 		accordionPlayers.setExpandedPane(tps[0]);
 	}
@@ -741,17 +743,18 @@ public class TableroController extends AnchorPane implements Serializable,
 			throws Exception {
 		AnchorPane root = new AnchorPane();
 		VBox vBox = new VBox();
-		HBox hbInfoJugador = new HBox();
+		//HBox hbInfoJugador = new HBox();
 		HBox hbPropiedades = new HBox();
 		HBox hbExtra = new HBox();
+		ScrollPane scroll;
 
 		acoplarAContenedor(vBox, 0);
 		root.getStyleClass().add("bg_info_panel");
 		vBox.setAlignment(Pos.CENTER);
 		vBox.setSpacing(10);
 
-		hbInfoJugador.setAlignment(Pos.CENTER);
-		hbInfoJugador.setSpacing(25);
+		//hbInfoJugador.setAlignment(Pos.CENTER);
+		//hbInfoJugador.setSpacing(25);
 
 		hbPropiedades.setAlignment(Pos.CENTER);
 		hbPropiedades.setSpacing(20);
@@ -759,10 +762,12 @@ public class TableroController extends AnchorPane implements Serializable,
 		hbExtra.setAlignment(Pos.CENTER);
 		hbExtra.setSpacing(20);
 
-		vBox.getChildren().add(hbInfoJugador);
+		//vBox.getChildren().add(hbInfoJugador);
 		vBox.getChildren().add(hbPropiedades);
 		vBox.getChildren().add(hbExtra);
+				
 		root.getChildren().add(vBox);
+		scroll = makeScrollable(root);
 
 		VBox pImgFicha = new VBox();
 		acoplarAContenedor(pImgFicha, 0);
@@ -770,28 +775,25 @@ public class TableroController extends AnchorPane implements Serializable,
 
 		pImgFicha.getStyleClass().add("bg_info_ficha");
 		pImgFicha.setPrefSize((double) 60, (double) 60);
-		Image img = new Image(
-				TableroController.class.getResourceAsStream(jugador.getFicha()
-						.getPathImgBig()), 40, 40, true, true);
-		ImageView ivFicha = new ImageView(img);
+		
 
-		pImgFicha.getChildren().add(ivFicha);
+		//pImgFicha.getChildren().add(ivFicha);
 
-		hbInfoJugador.getChildren().add(pImgFicha);
-		hbInfoJugador.getChildren().add(new Label(jugador.getNombre()));
-		hbInfoJugador.getChildren().add(
-				new Label(StringUtils.FORMATO_IMPORTE.format(jugador
-						.getDinero())));
+//		hbInfoJugador.getChildren().add(pImgFicha);
+//		hbInfoJugador.getChildren().add(new Label(jugador.getNombre()));
+//		hbInfoJugador.getChildren().add(
+//				new Label(StringUtils.FORMATO_IMPORTE.format(jugador
+//						.getDinero())));
 
-		if (status.currentPlayer.equals(jugador)) {
-			img = new Image(
-					TableroController.class
-							.getResourceAsStream("/images/dados/dice.png"),
-					40, 40, true, true);
-			ivFicha = new ImageView(img);
-
-			hbInfoJugador.getChildren().add(ivFicha);
-		}
+//		if (status.currentPlayer.equals(jugador)) {
+//			img = new Image(
+//					TableroController.class
+//							.getResourceAsStream("/images/dados/dice.png"),
+//					40, 40, true, true);
+//			ivFicha = new ImageView(img);
+//
+//			hbInfoJugador.getChildren().add(ivFicha);
+//		}
 
 		// ===================== HBox de propiedades =====================//
 
@@ -848,9 +850,9 @@ public class TableroController extends AnchorPane implements Serializable,
 				if (jugador.getTarjPropiedadList().contains(propiedad)) {
 					bCrearImagen = true;
 					if (!propiedad.isHipotecada())
-						rutaImagen = propiedad.getNombreImagen();
+						rutaImagen = propiedad.getPathImagenPropiedad();
 					else
-						rutaImagen = propiedad.getNombreImagen().replace(
+						rutaImagen = propiedad.getPathImagenPropiedad().replace(
 								"propiedades", "dorso");
 					strToolTip = showToolTipsPropiedad(propiedad);
 				}
@@ -894,10 +896,9 @@ public class TableroController extends AnchorPane implements Serializable,
 				if (jugador.getTarjPropiedadList().contains(propiedad)) {
 					bCrearImagen = true;
 					if (!propiedad.isHipotecada())
-						rutaImagen = propiedad.getNombreImagen();
+						rutaImagen = propiedad.getPathImagenFrente();
 					else
-						rutaImagen = propiedad.getNombreImagen().replace(
-								"propiedades", "dorso");
+						rutaImagen = propiedad.getPathImagenDorso();
 					strToolTip = showToolTipsPropiedad(propiedad);
 				}
 				gridPane2.add(
@@ -939,10 +940,16 @@ public class TableroController extends AnchorPane implements Serializable,
 		hbExtra.getChildren().add(
 				new Label("x " + jugador.getTarjetaCarcelList().size()));
 
-		TitledPane tp = new TitledPane(title, root);
-		tp.setId("tp_" + jugador.getNombre());
-		tp.setCollapsible(true);
-		return tp;
+		TitledPane tpInfoPlayer = new TitledPane(title, scroll);
+		tpInfoPlayer.setId("tp_" + jugador.getNombre());
+		tpInfoPlayer.setCollapsible(true);
+		
+		Image img = new Image(
+				TableroController.class.getResourceAsStream(jugador.getFicha()
+						.getPathImgSmall()), 25d, 25d, true, true);
+		ImageView ivFicha = new ImageView(img);		
+		tpInfoPlayer.setGraphic(ivFicha);
+		return tpInfoPlayer;
 	}
 
 	/**
@@ -958,6 +965,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		VBox vBox = new VBox();
 		HBox hbPropiedades = new HBox();
 		HBox hbExtra = new HBox();
+		ScrollPane scroll;
 
 		acoplarAContenedor(vBox, 0);
 		root.getStyleClass().add("bg_info_panel");
@@ -972,7 +980,10 @@ public class TableroController extends AnchorPane implements Serializable,
 
 		vBox.getChildren().add(hbPropiedades);
 		vBox.getChildren().add(hbExtra);
-		root.getChildren().add(vBox);
+		
+		root.getChildren().add(vBox);		
+		scroll = makeScrollable(root);
+		scroll.autosize();
 
 		// ===================== HBox de propiedades =====================//
 
@@ -1028,7 +1039,7 @@ public class TableroController extends AnchorPane implements Serializable,
 						bCrearImagen = false;
 						if (propiedad.getJugador() == null) {
 							bCrearImagen = true;
-								rutaImagen = propiedad.getNombreImagen();
+								rutaImagen = propiedad.getPathImagenFrente();
 							strToolTip = showToolTipsPropiedad(propiedad);
 						}
 						gridPane1.add(
@@ -1069,7 +1080,7 @@ public class TableroController extends AnchorPane implements Serializable,
 						}
 						if (propiedad.getJugador() == null) {
 							bCrearImagen = true;
-								rutaImagen = propiedad.getNombreImagen();
+								rutaImagen = propiedad.getPathImagenFrente();
 							strToolTip = showToolTipsPropiedad(propiedad);
 						}
 						gridPane2.add(
@@ -1102,7 +1113,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		hbExtra.getChildren().add(new ImageView(imgHotel));
 		hbExtra.getChildren().add(new Label("x " + banco.getNroHoteles()));
 
-		TitledPane tp = new TitledPane(title, root);
+		TitledPane tp = new TitledPane(title, scroll);
 		tp.setId("tp_banco");
 		tp.setCollapsible(true);
 		return tp;
@@ -1121,9 +1132,14 @@ public class TableroController extends AnchorPane implements Serializable,
 			imgPropiedad = new Image(
 					TableroController.class.getResourceAsStream(rutaImagen),
 					hbWidth, hbHeight, false, false);
-			tpImagen = new Tooltip(toolTips);
-			Tooltip.install(hBox_inner, tpImagen);
 			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+			tpImagen = new Tooltip(toolTips);
+			imgPropiedad = new Image(
+					TableroController.class.getResourceAsStream(rutaImagen),
+					70, 120, false, false);
+			tpImagen.setGraphic(new ImageView(imgPropiedad));
+			
+			Tooltip.install(hBox_inner, tpImagen);			
 		}
 		return hBox_inner;
 	}
@@ -1147,11 +1163,21 @@ public class TableroController extends AnchorPane implements Serializable,
 		if (propiedad.isHipotecada())
 			tooltip += "(Hipotecada)";
 		tooltip += " - "
-				+ StringUtils.FORMATO_IMPORTE.format(propiedad
+				+ StringUtils.decimalFormat.format(propiedad
 						.getValorPropiedad());
 		return tooltip;
 	}
 
+	private ScrollPane makeScrollable(final AnchorPane node) {
+	    final ScrollPane scroll = new ScrollPane();
+	    scroll.setContent(node);
+	    scroll.viewportBoundsProperty().addListener(new ChangeListener<Bounds>() {
+	      @Override public void changed(ObservableValue<? extends Bounds> ov, Bounds oldBounds, Bounds bounds) {
+	        node.setPrefWidth(bounds.getWidth());
+	      }
+	    });
+	    return scroll;
+	  }
 	// ======================================================================//
 	// ============================== Event Fx ==============================//
 	// ======================================================================//

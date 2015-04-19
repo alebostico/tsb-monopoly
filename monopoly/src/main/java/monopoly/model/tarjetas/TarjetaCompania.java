@@ -38,13 +38,7 @@ public class TarjetaCompania extends TarjetaPropiedad implements Serializable {
 		super();
 	}
 
-	/**
-	 * @param jugador
-	 * @param nombre
-	 * @param valorHipotecario
-	 * @param vecesPorUnaCarta
-	 * @param vecesPorDosCartas
-	 */
+
 	public TarjetaCompania(Jugador jugador, String nombre,
 			int valorHipotecario, int vecesPorUnaCarta, int vecesPorDosCartas,
 			String nombreImagen, int valorPropiedad, Casillero casillero) {

@@ -571,6 +571,187 @@ public class TableroController {
 	}
 
 	/**
+	 * Determina si el monopolio est&aacute; libre. Es decir si todas las
+	 * propiedades que conforman el monopolio est&aacute;n disponibles para ser
+	 * comradas.
+	 * 
+	 * @param casillero
+	 *            el casillero que conforma el monopolio
+	 * @return {@code true} si el monopolio est&aacute; libre
+	 */
+	public boolean monopolioLibre(Casillero casillero) {
+
+		List<Casillero> monopolio = this.getMonopolio(casillero);
+
+		for (Casillero casi : monopolio) {
+
+			switch (casi.getTipoCasillero()) {
+			case C_CALLE:
+				if (((CasilleroCalle) casi).getTarjetaCalle().getJugador() != null)
+					return false;
+			case C_COMPANIA:
+				if (((CasilleroCompania) casi).getTarjetaCompania()
+						.getJugador() != null)
+					return false;
+			case C_ESTACION:
+				if (((CasilleroEstacion) casi).getTarjetaEstacion()
+						.getJugador() != null)
+					return false;
+			default:
+				return false;
+			}
+
+		}
+		return true;
+	}
+
+	/**
+	 * Devuelve true si la propiedad representada por el casillero es la
+	 * &uacute;ltima propiedad que le falta a otro jugador para completar un
+	 * monopolio
+	 * 
+	 * @param casillero
+	 *            La propiedad del monopolio
+	 * @param jugador
+	 *            El jugador actual. Se usa para saber si las propiedades
+	 *            pertenecen a otro jugador.
+	 * @return {@code true} si es la &uacute;ltima propiedad que le falta
+	 *         comprar a otro jugador para completar el monopolio
+	 */
+	public boolean ultimaPropiedadMonopolioOtroJugador(Casillero casillero,
+			Jugador jugador) {
+
+		Jugador propietario = null;
+		Jugador jug = null;
+
+		int propSinComprarMonopolio = 0;
+
+		List<Casillero> monopolio = this.getMonopolio(casillero);
+
+		for (Casillero casi : monopolio) {
+			switch (casi.getTipoCasillero()) {
+			case C_CALLE:
+				jug = ((CasilleroCalle) casi).getTarjetaCalle().getJugador();
+				break;
+			case C_COMPANIA:
+				jug = ((CasilleroCompania) casi).getTarjetaCompania()
+						.getJugador();
+				break;
+			case C_ESTACION:
+				jug = ((CasilleroEstacion) casi).getTarjetaEstacion()
+						.getJugador();
+				break;
+			default:
+				break;
+			}
+
+			if (jug != null) {
+				if (jug.equals(jugador))
+					return false;
+				else if (propietario == null)
+					propietario = jug;
+				else if (!jug.equals(propietario))
+					return false;
+			} else {
+				propSinComprarMonopolio++;
+			}
+
+		}
+
+		if (propSinComprarMonopolio == 1)
+			return true;
+		else
+			return false;
+	}
+
+	/**
+	 * Verifica si el {@code jugador} posee parte del monopolio del
+	 * {@code casillero}
+	 * 
+	 * @param casillero
+	 *            el casillero del monopolio
+	 * @param jugador
+	 *            el jugador
+	 * @return {@code true} si el jugador posee al menos una propiedad del
+	 *         monopolio
+	 */
+	public boolean poseeParteDelMonopolio(Casillero casillero, Jugador jugador) {
+		return (this.verificarPropietarios(casillero, jugador) > 0);
+	}
+
+	/**
+	 * Verifica los propietarios del monopolio. Informa si el {@code jugador}
+	 * tiene alguna propiedad del monopolio comprada y si hay alguien mas que
+	 * tenga propiedades compradas en el monopolio
+	 * 
+	 * @param casillero
+	 *            Un casillero del monopolio
+	 * @param jugador
+	 *            El jugador que se quiere verificar
+	 * @return <ul>
+	 *         <li>{@code 0}: Nadie compr&oacute; propiedades en el monopolio
+	 *         (el monopolio est&aacute; libre)</li>
+	 *         <li>{@code 1} : Solo el jugador tiene porpiedades adquiridas del
+	 *         monoplio</li>
+	 *         <li>{@code 2}: El jugador tiene propiedades en el monopolio pero
+	 *         también otros jugadores que adquirieron propiedades en ese
+	 *         monopolio</li>
+	 *         <li>{@code -1}: El jugador NO tiene propiedades en el monopolio
+	 *         pero hay otros jugadores que SI adquirieron propiedades en ese
+	 *         monopolio</li>
+	 *         </ul>
+	 */
+	private int verificarPropietarios(Casillero casillero, Jugador jugador) {
+
+		boolean hayOtroPropietario = false;
+		boolean jugadorEsPropietario = false;
+
+		Jugador jug = null;
+
+		List<Casillero> monopolio = this.getMonopolio(casillero);
+
+		for (Casillero casi : monopolio) {
+			switch (casi.getTipoCasillero()) {
+			case C_CALLE:
+				jug = ((CasilleroCalle) casi).getTarjetaCalle().getJugador();
+				break;
+
+			case C_COMPANIA:
+				jug = ((CasilleroCompania) casi).getTarjetaCompania()
+						.getJugador();
+				break;
+
+			case C_ESTACION:
+				jug = ((CasilleroEstacion) casi).getTarjetaEstacion()
+						.getJugador();
+				break;
+			default:
+				return -2;
+			}
+
+			if (jug != null) {
+				if (jug.equals(jugador))
+					jugadorEsPropietario = true;
+				else
+					hayOtroPropietario = true;
+			}
+
+		}
+
+		if (!hayOtroPropietario && jugadorEsPropietario)
+			return 1;
+
+		else if (hayOtroPropietario && jugadorEsPropietario)
+			return 2;
+
+		else if (hayOtroPropietario && !jugadorEsPropietario)
+			return -1;
+		else
+			// if(!hayOtroPropietario && !jugadorEsPropietario)
+			return 0;
+	}
+
+	/**
 	 * Determina si es la &uacute;ltima propiedad del monopolio que queda sin
 	 * comprar.
 	 * 
@@ -649,7 +830,80 @@ public class TableroController {
 	}
 
 	/**
-	 * Comprueba que una calle es construible. Para ello se debe cumplir que no
+	 * Devuelve la cantidad de propiedades de un monopolio que tiene el jugador
+	 * 
+	 * @param casillero
+	 *            El casillero del monopolio
+	 * @param jugador
+	 *            El jugador
+	 * @return La cantidad de propiedades del monopolio que tiene el jugador
+	 */
+	public int cantPropiedadesMonopolio(Casillero casillero, Jugador jugador) {
+		List<Casillero> monopolio = this.getMonopolio(casillero);
+		int cantPropCompradas = 0;
+
+		for (Casillero casi : monopolio) {
+
+			switch (casi.getTipoCasillero()) {
+			case C_CALLE:
+				if (((CasilleroCalle) casi).getTarjetaCalle().getJugador()
+						.equals(jugador))
+					cantPropCompradas++;
+
+			case C_COMPANIA:
+				if (((CasilleroCompania) casi).getTarjetaCompania()
+						.getJugador().equals(jugador))
+					cantPropCompradas++;
+
+			case C_ESTACION:
+				if (((CasilleroEstacion) casi).getTarjetaEstacion()
+						.getJugador().equals(jugador))
+					cantPropCompradas++;
+			default:
+				break;
+			}
+		}
+		return cantPropCompradas;
+	}
+
+	/**
+	 * Devuelve la cantidad de propiedades que no fueron compradas de un
+	 * monopolio.
+	 * 
+	 * @param casillero
+	 *            El casillero del monopolio
+	 * @return La cantidad de propiedades libres
+	 */
+	public int propiedadesLibresMonopolio(Casillero casillero) {
+		List<Casillero> monopolio = this.getMonopolio(casillero);
+		int cantPropNoCompradas = 0;
+
+		for (Casillero casi : monopolio) {
+
+			switch (casi.getTipoCasillero()) {
+			case C_CALLE:
+				if (((CasilleroCalle) casi).getTarjetaCalle().getJugador() == null)
+					cantPropNoCompradas++;
+
+			case C_COMPANIA:
+				if (((CasilleroCompania) casi).getTarjetaCompania()
+						.getJugador() == null)
+					cantPropNoCompradas++;
+
+			case C_ESTACION:
+				if (((CasilleroEstacion) casi).getTarjetaEstacion()
+						.getJugador() == null)
+					cantPropNoCompradas++;
+			default:
+				break;
+			}
+		}
+		return cantPropNoCompradas;
+
+	}
+
+	/**
+	 * Comprueba si una calle es construible. Para ello se debe cumplir que no
 	 * haya llegado al límite de las edificaciones permitidas ( 1 hotel ), no
 	 * incumpla la norma de construcciones escalonadas ( máxima diferencia entre
 	 * la propiedad más construida y la menos construida debe ser 1 ) y además
@@ -718,21 +972,20 @@ public class TableroController {
 		return true;
 	}
 
+	public MonopolyGameStatus evaluarAccionEnCasillero(Banco pBanco,
+			List<Jugador> pTurnosList, Jugador pJugador,
+			MonopolyGameStatus pStatus) {
+		boolean isComprado;
+		boolean isHipotecable;
+		boolean hasCasas;
+		boolean hasHoteles;
 
-	public MonopolyGameStatus evaluarAccionEnCasillero(Banco pBanco, List<Jugador> pTurnosList, Jugador pJugador, MonopolyGameStatus pStatus){
-			boolean isComprado;
-			boolean isHipotecable;
-			boolean hasCasas;
-			boolean hasHoteles;
-			
-			
 		for (Jugador jugador : pTurnosList) {
-				//jugador.
-			}
-		
+			// jugador.
+		}
+
 		return null;
 	}
-	
 
 	/**
 	 * Método que elimina una edificación sin realizar ninguna comprobación
@@ -772,8 +1025,9 @@ public class TableroController {
 					+ tarjeta.getNombre());
 		}
 
-		this.getBancoController(jugador.getJuego()).venderPropiedad(jugador, tarjeta);
-		
+		this.getBancoController(jugador.getJuego()).venderPropiedad(jugador,
+				tarjeta);
+
 		return true;
 	}
 

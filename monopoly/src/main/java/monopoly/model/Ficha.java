@@ -19,7 +19,7 @@ import monopoly.util.GestorLogs;
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
+ * 
  * 
  */
 @Entity
@@ -189,7 +189,7 @@ public class Ficha implements Serializable {
 	 * Devuelve true si la ficha pasada por parametro es igual a la que ejecuta
 	 * el metodo compara en funcion del nombre (string) de la ficha
 	 * 
-	 * @param c
+	 * @param o
 	 * @return
 	 */
 	@Override

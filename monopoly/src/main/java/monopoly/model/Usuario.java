@@ -178,6 +178,7 @@ public class Usuario implements Serializable {
 	 * @param email
 	 *            the email to set
 	 * @return true si el mail tiene un formato valido y se setea.
+	 * @throws EmailInvalidoException 
 	 */
 	public boolean setEmail(String email) throws EmailInvalidoException {
 		if (!StringUtils.validateEmail(email))
