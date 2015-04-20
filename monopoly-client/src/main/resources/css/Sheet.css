@@ -153,10 +153,12 @@
 }
 
 .bg_info_panel {
-    -fx-background-image: url("../images/background/bg_info_panel2.png");
-    -fx-background-position: left top, center;
-	-fx-background-repeat: no-repeat;
-	-fx-background-size: cover, auto;
+    -fx-background-image: url("../images/background/CoarseGrid.png");
+    -fx-background-repeat: repeat;
+    -fx-background-color:
+        linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+        linear-gradient(#20262b, #191d22),
+        radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
 }
 
 .bg_ficha {
@@ -215,7 +217,7 @@
 	-fx-background-color: #424242;
 }
 
-.border_fuczia{
+.border_fucsia{
 	-fx-border-color: #B4045F;
 	-fx-border-width: 2;
 	-fx-border-style: solid;

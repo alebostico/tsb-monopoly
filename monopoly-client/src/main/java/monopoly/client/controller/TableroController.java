@@ -23,6 +23,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -32,7 +33,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
@@ -73,6 +73,7 @@ import org.controlsfx.dialog.Dialogs;
  * @author Moreno Pablo
  *
  */
+@SuppressWarnings("deprecation")
 public class TableroController extends AnchorPane implements Serializable,
 		Initializable {
 
@@ -247,6 +248,18 @@ public class TableroController extends AnchorPane implements Serializable,
 	private List<History> historyGameList;
 	private ObservableList<History> oHistoryGameList;
 
+	@FXML
+	private HBox hboxTurnoDados;
+
+	@FXML
+	private Label lblTurnoDados;
+
+	@FXML
+	private ImageView imgDados;
+
+	@FXML
+	private Label lblTurnoJugador;
+
 	private static TableroController instance;
 
 	@FXML
@@ -348,7 +361,6 @@ public class TableroController extends AnchorPane implements Serializable,
 				lvHistory.setItems(oHistoryGameList);
 			}
 		});
-
 	}
 
 	/**
@@ -503,7 +515,6 @@ public class TableroController extends AnchorPane implements Serializable,
 	 *            objeto que contiene información sobre los turnos, estado del
 	 *            banco y jugador actual.
 	 */
-	@SuppressWarnings("deprecation")
 	public void empezarJuego() {
 		try {
 			showAccordionJugadores();
@@ -521,7 +532,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public void determinarAccionEnCasillero() {
 		// TODO Auto-generated method stub
 		try {
@@ -560,6 +570,18 @@ public class TableroController extends AnchorPane implements Serializable,
 				TirarDadosController.getInstance().habilitarBtnAceptarCerrar();
 			}
 		}
+		actualizarTurnoJugador();
+	}
+
+	private void actualizarTurnoJugador() {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				if (status != null) {
+					lblTurnoJugador.setText(status.currentPlayer.getNombre());
+				}
+			}
+		});
 	}
 
 	// ======================================================================================//
@@ -572,20 +594,20 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * 
 	 */
 	private void showAccordionJugadores() throws Exception {
-		List<Jugador> turnos = status.turnos;		
-		tps = new TitledPane[turnos.size() + 1];		
+		List<Jugador> turnos = status.turnos;
+		tps = new TitledPane[turnos.size() + 1];
 		String title;
 
 		for (int i = 0; i < turnos.size(); i++) {
 			title = turnos.get(i).getNombre() + " - ";
-			title += StringUtils.decimalFormat.format(turnos.get(i)
-					.getDinero()) + " - ";
+			title += StringUtils.decimalFormat
+					.format(turnos.get(i).getDinero()) + " - ";
 			title += (turnos.get(i) instanceof JugadorHumano) ? "Jugador Humano"
 					: "Jugador Virtual";
 			tps[i] = getPaneInfoPlayer(turnos.get(i), title);
 		}
 		tps[turnos.size()] = getPaneInfoBanco(status.banco, "BANCO");
-		
+
 		accordionPlayers.getPanes().addAll(tps);
 		accordionPlayers.setExpandedPane(tps[0]);
 	}
@@ -746,18 +768,19 @@ public class TableroController extends AnchorPane implements Serializable,
 			throws Exception {
 		AnchorPane root = new AnchorPane();
 		VBox vBox = new VBox();
-		//HBox hbInfoJugador = new HBox();
+		// HBox hbInfoJugador = new HBox();
 		HBox hbPropiedades = new HBox();
 		HBox hbExtra = new HBox();
 		ScrollPane scroll;
 
 		acoplarAContenedor(vBox, 0);
 		root.getStyleClass().add("bg_info_panel");
+		root.setPadding(new Insets(10));
 		vBox.setAlignment(Pos.CENTER);
 		vBox.setSpacing(10);
 
-		//hbInfoJugador.setAlignment(Pos.CENTER);
-		//hbInfoJugador.setSpacing(25);
+		// hbInfoJugador.setAlignment(Pos.CENTER);
+		// hbInfoJugador.setSpacing(25);
 
 		hbPropiedades.setAlignment(Pos.CENTER);
 		hbPropiedades.setSpacing(20);
@@ -765,10 +788,10 @@ public class TableroController extends AnchorPane implements Serializable,
 		hbExtra.setAlignment(Pos.CENTER);
 		hbExtra.setSpacing(20);
 
-		//vBox.getChildren().add(hbInfoJugador);
+		// vBox.getChildren().add(hbInfoJugador);
 		vBox.getChildren().add(hbPropiedades);
 		vBox.getChildren().add(hbExtra);
-				
+
 		root.getChildren().add(vBox);
 		scroll = makeScrollable(root);
 
@@ -778,25 +801,24 @@ public class TableroController extends AnchorPane implements Serializable,
 
 		pImgFicha.getStyleClass().add("bg_info_ficha");
 		pImgFicha.setPrefSize((double) 60, (double) 60);
-		
 
-		//pImgFicha.getChildren().add(ivFicha);
+		// pImgFicha.getChildren().add(ivFicha);
 
-//		hbInfoJugador.getChildren().add(pImgFicha);
-//		hbInfoJugador.getChildren().add(new Label(jugador.getNombre()));
-//		hbInfoJugador.getChildren().add(
-//				new Label(StringUtils.FORMATO_IMPORTE.format(jugador
-//						.getDinero())));
+		// hbInfoJugador.getChildren().add(pImgFicha);
+		// hbInfoJugador.getChildren().add(new Label(jugador.getNombre()));
+		// hbInfoJugador.getChildren().add(
+		// new Label(StringUtils.FORMATO_IMPORTE.format(jugador
+		// .getDinero())));
 
-//		if (status.currentPlayer.equals(jugador)) {
-//			img = new Image(
-//					TableroController.class
-//							.getResourceAsStream("/images/dados/dice.png"),
-//					40, 40, true, true);
-//			ivFicha = new ImageView(img);
-//
-//			hbInfoJugador.getChildren().add(ivFicha);
-//		}
+		// if (status.currentPlayer.equals(jugador)) {
+		// img = new Image(
+		// TableroController.class
+		// .getResourceAsStream("/images/dados/dice.png"),
+		// 40, 40, true, true);
+		// ivFicha = new ImageView(img);
+		//
+		// hbInfoJugador.getChildren().add(ivFicha);
+		// }
 
 		// ===================== HBox de propiedades =====================//
 
@@ -855,8 +877,8 @@ public class TableroController extends AnchorPane implements Serializable,
 					if (!propiedad.isHipotecada())
 						rutaImagen = propiedad.getPathImagenPropiedad();
 					else
-						rutaImagen = propiedad.getPathImagenPropiedad().replace(
-								"propiedades", "dorso");
+						rutaImagen = propiedad.getPathImagenPropiedad()
+								.replace("propiedades", "dorso");
 					strToolTip = showToolTipsPropiedad(propiedad);
 				}
 				gridPane1.add(
@@ -946,11 +968,11 @@ public class TableroController extends AnchorPane implements Serializable,
 		TitledPane tpInfoPlayer = new TitledPane(title, scroll);
 		tpInfoPlayer.setId("tp_" + jugador.getNombre());
 		tpInfoPlayer.setCollapsible(true);
-		
+
 		Image img = new Image(
 				TableroController.class.getResourceAsStream(jugador.getFicha()
 						.getPathImgSmall()), 25d, 25d, true, true);
-		ImageView ivFicha = new ImageView(img);		
+		ImageView ivFicha = new ImageView(img);
 		tpInfoPlayer.setGraphic(ivFicha);
 		return tpInfoPlayer;
 	}
@@ -970,8 +992,8 @@ public class TableroController extends AnchorPane implements Serializable,
 		HBox hbExtra = new HBox();
 		ScrollPane scroll;
 
-		acoplarAContenedor(vBox, 0);
 		root.getStyleClass().add("bg_info_panel");
+		root.setPadding(new Insets(10));
 		vBox.setAlignment(Pos.CENTER);
 		vBox.setSpacing(10);
 
@@ -981,10 +1003,11 @@ public class TableroController extends AnchorPane implements Serializable,
 		hbExtra.setAlignment(Pos.CENTER);
 		hbExtra.setSpacing(20);
 
+		acoplarAContenedor(vBox, 0);
 		vBox.getChildren().add(hbPropiedades);
 		vBox.getChildren().add(hbExtra);
-		
-		root.getChildren().add(vBox);		
+
+		root.getChildren().add(vBox);
 		scroll = makeScrollable(root);
 		scroll.autosize();
 
@@ -1009,91 +1032,91 @@ public class TableroController extends AnchorPane implements Serializable,
 
 		gridPane2.setHgap(5);
 		gridPane2.setVgap(10);
-		
+
 		List<String[]> vTarjetas = new ArrayList<String[]>();
 
 		// Tarjetas para el gridpane1
-				vTarjetas.add(new String[] { "tarjeta02", "0", "0" });
-				vTarjetas.add(new String[] { "tarjeta04", "1", "0" });
-				vTarjetas.add(new String[] { "tarjeta07", "0", "1", });
-				vTarjetas.add(new String[] { "tarjeta09", "1", "1", });
-				vTarjetas.add(new String[] { "tarjeta10", "2", "1", });
-				vTarjetas.add(new String[] { "tarjeta12", "0", "2", });
-				vTarjetas.add(new String[] { "tarjeta14", "1", "2", });
-				vTarjetas.add(new String[] { "tarjeta15", "2", "2", });
-				vTarjetas.add(new String[] { "tarjeta17", "0", "3", });
-				vTarjetas.add(new String[] { "tarjeta19", "1", "3", });
-				vTarjetas.add(new String[] { "tarjeta20", "2", "3", });
-				vTarjetas.add(new String[] { "tarjeta22", "0", "4", });
-				vTarjetas.add(new String[] { "tarjeta24", "1", "4", });
-				vTarjetas.add(new String[] { "tarjeta25", "2", "4", });
+		vTarjetas.add(new String[] { "tarjeta02", "0", "0" });
+		vTarjetas.add(new String[] { "tarjeta04", "1", "0" });
+		vTarjetas.add(new String[] { "tarjeta07", "0", "1", });
+		vTarjetas.add(new String[] { "tarjeta09", "1", "1", });
+		vTarjetas.add(new String[] { "tarjeta10", "2", "1", });
+		vTarjetas.add(new String[] { "tarjeta12", "0", "2", });
+		vTarjetas.add(new String[] { "tarjeta14", "1", "2", });
+		vTarjetas.add(new String[] { "tarjeta15", "2", "2", });
+		vTarjetas.add(new String[] { "tarjeta17", "0", "3", });
+		vTarjetas.add(new String[] { "tarjeta19", "1", "3", });
+		vTarjetas.add(new String[] { "tarjeta20", "2", "3", });
+		vTarjetas.add(new String[] { "tarjeta22", "0", "4", });
+		vTarjetas.add(new String[] { "tarjeta24", "1", "4", });
+		vTarjetas.add(new String[] { "tarjeta25", "2", "4", });
 
-				for (String[] vTarjeta : vTarjetas) {
-					propiedad = banco.getTarjetaPropiedad(vTarjeta[0]);
-					if (propiedad != null) {
-						if (propiedad instanceof TarjetaCalle) {
-							strStyle = ((TarjetaCalle) (propiedad)).getColorTarjeta();
-						} else {
-							if (propiedad instanceof TarjetaCompania)
-								strStyle = "blanco";
-							else
-								strStyle = "negro";
-						}
-						bCrearImagen = false;
-						if (propiedad.getJugador() == null) {
-							bCrearImagen = true;
-								rutaImagen = propiedad.getPathImagenFrente();
-							strToolTip = showToolTipsPropiedad(propiedad);
-						}
-						gridPane1.add(
-								crearHBoxTarjetaPropiedad(strStyle, bCrearImagen,
-										rutaImagen, hbWidth, hbHeight, strToolTip),
-								Integer.parseInt(vTarjeta[1]), Integer
-										.parseInt(vTarjeta[2]));
-					}
+		for (String[] vTarjeta : vTarjetas) {
+			propiedad = banco.getTarjetaPropiedad(vTarjeta[0]);
+			if (propiedad != null) {
+				if (propiedad instanceof TarjetaCalle) {
+					strStyle = ((TarjetaCalle) (propiedad)).getColorTarjeta();
+				} else {
+					if (propiedad instanceof TarjetaCompania)
+						strStyle = "blanco";
+					else
+						strStyle = "negro";
 				}
-				
-				//Tarjetas para el gridpane2
-				vTarjetas = new ArrayList<String[]>();
-				vTarjetas.add(new String[] { "tarjeta27", "0", "0", });
-				vTarjetas.add(new String[] { "tarjeta28", "1", "0", });
-				vTarjetas.add(new String[] { "tarjeta30", "2", "0", });
-				vTarjetas.add(new String[] { "tarjeta32", "0", "1", });
-				vTarjetas.add(new String[] { "tarjeta33", "1", "1", });
-				vTarjetas.add(new String[] { "tarjeta35", "2", "1", });
-				vTarjetas.add(new String[] { "tarjeta38", "0", "2", });
-				vTarjetas.add(new String[] { "tarjeta40", "1", "2", });
-				vTarjetas.add(new String[] { "tarjeta13", "0", "3", });
-				vTarjetas.add(new String[] { "tarjeta29", "1", "3", });
-				vTarjetas.add(new String[] { "tarjeta06", "0", "4", });
-				vTarjetas.add(new String[] { "tarjeta16", "1", "4", });
-				vTarjetas.add(new String[] { "tarjeta26", "2", "4", });
-				vTarjetas.add(new String[] { "tarjeta36", "3", "4", });
-				
-				for (String[] vTarjeta : vTarjetas) {
-					propiedad = banco.getTarjetaPropiedad(vTarjeta[0]);
-					if (propiedad != null) {
-						if (propiedad instanceof TarjetaCalle) {
-							strStyle = ((TarjetaCalle) (propiedad)).getColorTarjeta();
-						} else {
-							if (propiedad instanceof TarjetaCompania)
-								strStyle = "blanco";
-							else
-								strStyle = "negro";
-						}
-						if (propiedad.getJugador() == null) {
-							bCrearImagen = true;
-								rutaImagen = propiedad.getPathImagenFrente();
-							strToolTip = showToolTipsPropiedad(propiedad);
-						}
-						gridPane2.add(
-								crearHBoxTarjetaPropiedad(strStyle, bCrearImagen,
-										rutaImagen, hbWidth, hbHeight, strToolTip),
-								Integer.parseInt(vTarjeta[1]), Integer
-										.parseInt(vTarjeta[2]));
-					}
+				bCrearImagen = false;
+				if (propiedad.getJugador() == null) {
+					bCrearImagen = true;
+					rutaImagen = propiedad.getPathImagenFrente();
+					strToolTip = showToolTipsPropiedad(propiedad);
 				}
-		
+				gridPane1.add(
+						crearHBoxTarjetaPropiedad(strStyle, bCrearImagen,
+								rutaImagen, hbWidth, hbHeight, strToolTip),
+						Integer.parseInt(vTarjeta[1]), Integer
+								.parseInt(vTarjeta[2]));
+			}
+		}
+
+		// Tarjetas para el gridpane2
+		vTarjetas = new ArrayList<String[]>();
+		vTarjetas.add(new String[] { "tarjeta27", "0", "0", });
+		vTarjetas.add(new String[] { "tarjeta28", "1", "0", });
+		vTarjetas.add(new String[] { "tarjeta30", "2", "0", });
+		vTarjetas.add(new String[] { "tarjeta32", "0", "1", });
+		vTarjetas.add(new String[] { "tarjeta33", "1", "1", });
+		vTarjetas.add(new String[] { "tarjeta35", "2", "1", });
+		vTarjetas.add(new String[] { "tarjeta38", "0", "2", });
+		vTarjetas.add(new String[] { "tarjeta40", "1", "2", });
+		vTarjetas.add(new String[] { "tarjeta13", "0", "3", });
+		vTarjetas.add(new String[] { "tarjeta29", "1", "3", });
+		vTarjetas.add(new String[] { "tarjeta06", "0", "4", });
+		vTarjetas.add(new String[] { "tarjeta16", "1", "4", });
+		vTarjetas.add(new String[] { "tarjeta26", "2", "4", });
+		vTarjetas.add(new String[] { "tarjeta36", "3", "4", });
+
+		for (String[] vTarjeta : vTarjetas) {
+			propiedad = banco.getTarjetaPropiedad(vTarjeta[0]);
+			if (propiedad != null) {
+				if (propiedad instanceof TarjetaCalle) {
+					strStyle = ((TarjetaCalle) (propiedad)).getColorTarjeta();
+				} else {
+					if (propiedad instanceof TarjetaCompania)
+						strStyle = "blanco";
+					else
+						strStyle = "negro";
+				}
+				if (propiedad.getJugador() == null) {
+					bCrearImagen = true;
+					rutaImagen = propiedad.getPathImagenFrente();
+					strToolTip = showToolTipsPropiedad(propiedad);
+				}
+				gridPane2.add(
+						crearHBoxTarjetaPropiedad(strStyle, bCrearImagen,
+								rutaImagen, hbWidth, hbHeight, strToolTip),
+						Integer.parseInt(vTarjeta[1]), Integer
+								.parseInt(vTarjeta[2]));
+			}
+		}
+
 		hbPropiedades.getChildren().add(gridPane1);
 		hbPropiedades.getChildren().add(gridPane2);
 
@@ -1139,10 +1162,10 @@ public class TableroController extends AnchorPane implements Serializable,
 			tpImagen = new Tooltip(toolTips);
 			imgPropiedad = new Image(
 					TableroController.class.getResourceAsStream(rutaImagen),
-					70, 120, false, false);
+					170, 200, false, false);
 			tpImagen.setGraphic(new ImageView(imgPropiedad));
-			
-			Tooltip.install(hBox_inner, tpImagen);			
+
+			Tooltip.install(hBox_inner, tpImagen);
 		}
 		return hBox_inner;
 	}
@@ -1172,15 +1195,19 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	private ScrollPane makeScrollable(final AnchorPane node) {
-	    final ScrollPane scroll = new ScrollPane();
-	    scroll.setContent(node);
-	    scroll.viewportBoundsProperty().addListener(new ChangeListener<Bounds>() {
-	      @Override public void changed(ObservableValue<? extends Bounds> ov, Bounds oldBounds, Bounds bounds) {
-	        node.setPrefWidth(bounds.getWidth());
-	      }
-	    });
-	    return scroll;
-	  }
+		final ScrollPane scroll = new ScrollPane();
+		scroll.setContent(node);
+		scroll.viewportBoundsProperty().addListener(
+				new ChangeListener<Bounds>() {
+					@Override
+					public void changed(ObservableValue<? extends Bounds> ov,
+							Bounds oldBounds, Bounds bounds) {
+						node.setPrefWidth(bounds.getWidth());
+					}
+				});
+		return scroll;
+	}
+
 	// ======================================================================//
 	// ============================== Event Fx ==============================//
 	// ======================================================================//
