@@ -25,6 +25,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
@@ -44,6 +45,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
@@ -305,7 +307,13 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * 
 	 */
 	public void showBoard() {
-		currentStage.setFullScreen(true);
+		//currentStage.setFullScreen(true);
+		Screen screen = Screen.getPrimary();
+	    Rectangle2D bounds = screen.getVisualBounds();
+	    currentStage.setX(bounds.getMinX());
+	    currentStage.setY(bounds.getMinY());
+	    currentStage.setWidth(bounds.getWidth());
+	    currentStage.setHeight(bounds.getHeight());
 		currentStage.show();
 		prevStage.close();
 		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
