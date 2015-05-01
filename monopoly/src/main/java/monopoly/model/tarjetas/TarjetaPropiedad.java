@@ -30,7 +30,7 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "tarjeta_propiedad", catalog = "monopoly_db")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class TarjetaPropiedad implements Serializable {
+public abstract class TarjetaPropiedad extends Tarjeta implements Serializable {
 
 	private static final long serialVersionUID = -2385980028602703757L;
 

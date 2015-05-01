@@ -109,7 +109,7 @@ public class JuegoController {
 
 			status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
 					gestorBanco.getBanco(), gestorTablero.getTablero(),
-					EstadoJuego.TIRAR_DADO, gestorJugadores.getCurrentPlayer(),
+					EstadoJuego.TIRAR_DADO, null,gestorJugadores.getCurrentPlayer(),
 					historyList);
 			sendToAll(status);
 
