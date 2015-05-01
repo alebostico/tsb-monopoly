@@ -10,12 +10,14 @@ import monopoly.model.Banco;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.MonopolyGameStatus;
+import monopoly.model.MonopolyGameStatus.AccionEnCasillero;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tablero.Casillero.TipoCasillero;
 import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tablero.CasilleroCompania;
 import monopoly.model.tablero.CasilleroEstacion;
 import monopoly.model.tablero.Tablero;
+import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaCalle.Color;
 import monopoly.model.tarjetas.TarjetaPropiedad;
@@ -718,21 +720,56 @@ public class TableroController {
 		return true;
 	}
 
-
-	public MonopolyGameStatus evaluarAccionEnCasillero(Banco pBanco, List<Jugador> pTurnosList, Jugador pJugador, MonopolyGameStatus pStatus){
-			boolean isComprado;
-			boolean isHipotecable;
-			boolean hasCasas;
-			boolean hasHoteles;
-			
-			
-		for (Jugador jugador : pTurnosList) {
-				//jugador.
-			}
+	public MonopolyGameStatus evaluarAccionEnCasillero(Jugador pJugador,
+			Casillero pCasillero, boolean cobraSalida) throws CondicionInvalidaException {
+		boolean isComprado;
+		boolean isHipotecable;
+		boolean hasCasas;
+		boolean hasHoteles;
+		int montoAPagar=0; 
+		Banco banco;
+		Tarjeta tarjetaCasillero;
+		AccionEnCasillero accionEnCasillero;
+		MonopolyGameStatus monopolyGameStatus;
 		
+		
+		switch (pCasillero.getTipoCasillero().getNombreTipoCasillero())
+		{
+		case Casillero.CASILLERO_CALLE:
+		case Casillero.CASILLERO_COMPANIA:
+		case Casillero.CASILLERO_ESTACION:
+			banco = getBancoController(pJugador.getJuego()).getBanco();
+			tarjetaCasillero = banco.getTarjetaPropiedadByCasillero(pCasillero);
+			if(((TarjetaPropiedad)tarjetaCasillero).getJugador() == null){
+				
+			}
+			break;
+			
+		case Casillero.CASILLERO_CARCEL:
+		case Casillero.CASILLERO_IRACARCEL:
+			// ir a la carcel.
+			break;
+		case Casillero.CASILLERO_IMPUESTO:
+			//Cobrar impuesto.
+			break;
+		case Casillero.CASILLERO_SUERTE:
+			//Adjuntar tarjeta suerte
+			break;
+		case Casillero.CASILLERO_COMUNIDAD:
+			// Adjuntar tarjeta comunidad
+			break;
+		case Casillero.CASILLERO_DESCANSO:
+		case Casillero.CASILLERO_SALIDA:
+			break;
+			default:
+				throw new CondicionInvalidaException("Tipo de Casillero inexistente.");
+		}
+		
+		
+				
+
 		return null;
 	}
-	
 
 	/**
 	 * Método que elimina una edificación sin realizar ninguna comprobación
@@ -772,8 +809,9 @@ public class TableroController {
 					+ tarjeta.getNombre());
 		}
 
-		this.getBancoController(jugador.getJuego()).venderPropiedad(jugador, tarjeta);
-		
+		this.getBancoController(jugador.getJuego()).venderPropiedad(jugador,
+				tarjeta);
+
 		return true;
 	}
 

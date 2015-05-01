@@ -7,12 +7,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import monopoly.model.tablero.Casillero;
 import monopoly.model.tarjetas.TarjetaPropiedad;
+import monopoly.util.exception.CondicionInvalidaException;
 
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
+ * 
  * 
  */
 public class Banco implements Serializable {
@@ -79,7 +81,7 @@ public class Banco implements Serializable {
 	public void setNroHoteles(int nroHoteles) {
 		this.nroHoteles = nroHoteles;
 	}
-	
+
 	public int getIdBanco() {
 		return idBanco;
 	}
@@ -102,17 +104,34 @@ public class Banco implements Serializable {
 
 		return true;
 	}
-	
+
 	/**
-     * @return the tarjetasPropiedadList
-     */
-    public TarjetaPropiedad getTarjetaPropiedad(String key) {
-    	for (TarjetaPropiedad tarjetaPropiedad : tarjPropiedadList) {
-			if(tarjetaPropiedad.getNombrePropiedad().equals(key))
+	 * @return the tarjetasPropiedadList
+	 */
+	public TarjetaPropiedad getTarjetaPropiedad(String key) {
+		for (TarjetaPropiedad tarjetaPropiedad : tarjPropiedadList) {
+			if (tarjetaPropiedad.getNombrePropiedad().equals(key))
 				return tarjetaPropiedad;
 		}
-    	return null;
-    }
+		return null;
+	}
 
-
+	/**
+	 * Obtiene la tarjeta propiedad a partir del casillero.
+	 * 
+	 * @param pCasillero
+	 *            Casillero del tablero
+	 * @return Tarjeta de la propiedad a la cual pertenece el casillero.
+	 */
+	public TarjetaPropiedad getTarjetaPropiedadByCasillero(Casillero pCasillero)
+			throws CondicionInvalidaException {
+		for (TarjetaPropiedad tarjetaPropiedad : tarjPropiedadList) {
+			if (tarjetaPropiedad.getCasillero().getNumeroCasillero() == pCasillero
+					.getNumeroCasillero())
+				return tarjetaPropiedad;
+		}
+		throw new CondicionInvalidaException(String.format(
+				"No se encontró el casillero {0} en la lista de propiedades",
+				pCasillero.getNumeroCasillero()));
+	}
 }
