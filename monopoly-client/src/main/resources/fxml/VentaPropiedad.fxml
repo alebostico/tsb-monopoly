@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="492.0" prefWidth="403.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="VentaPropiedadController">
+   <children>
+      <Pane prefHeight="200.0" prefWidth="200.0" styleClass="background" stylesheets="@../css/Sheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <VBox alignment="CENTER" prefHeight="475.0" prefWidth="404.0" spacing="10.0">
+               <children>
+                  <Label graphicTextGap="15.0" style="-fx-font-size: 35; -fx-font-family: Arial; -fx-text-fill: linear-gradient(white, #d0d0d0);" text="EN VENTA" textFill="#15088c">
+                     <font>
+                        <Font size="45.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Pane prefHeight="70.0" prefWidth="80.0" styleClass="bg_precio_venta">
+                     <VBox.margin>
+                        <Insets left="60.0" right="60.0" />
+                     </VBox.margin>
+                     <children>
+                        <HBox alignment="CENTER" prefHeight="68.0" prefWidth="284.0">
+                           <children>
+                              <Label fx:id="lblPrecioPropiedad" style="-fx-font-size: 30; -fx-font-family: Arial; -fx-text-fill: linear-gradient(white, #d0d0d0); -fx-font-style: Italic;" text="PRECIO" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </Pane>
+                  <HBox alignment="CENTER" prefHeight="250.0" prefWidth="200.0" spacing="10.0">
+                     <children>
+                        <ImageView fx:id="imgTarjetaPropiedad" fitHeight="200.0" fitWidth="130.0" pickOnBounds="true">
+                           <effect>
+                              <InnerShadow />
+                           </effect>
+                        </ImageView>
+                        <ImageView fx:id="imgTarjetaDetalle" fitHeight="250.0" fitWidth="200.0" pickOnBounds="true">
+                           <effect>
+                              <InnerShadow />
+                           </effect>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" prefHeight="68.0" prefWidth="404.0" spacing="35.0">
+                     <children>
+                        <Button fx:id="btnComprar" mnemonicParsing="false" onAction="#processComprar" text="Comprar" />
+                        <Button fx:id="btnSubasta" mnemonicParsing="false" onAction="#processSubasta" text="Subasta" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </Pane>
+   </children>
+</AnchorPane>
