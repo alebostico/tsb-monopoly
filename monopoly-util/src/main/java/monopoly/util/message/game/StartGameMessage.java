@@ -20,10 +20,6 @@ public class StartGameMessage implements Serializable {
 	/**
 	 * Create a ForwadedMessage to wrap a message sent by a client.
 	 * 
-	 * @param senderID
-	 *            the ID number of the original sender.
-	 * @param message
-	 *            the original message.
 	 */
 	public StartGameMessage(int senderID, String UniqueIdJuego, Object dados) {
 		Object[] vDatos = new Object[2];

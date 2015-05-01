@@ -30,7 +30,7 @@ import monopoly.model.Jugador;
  * 
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
+ * 
  * 
  */
 public class Casillero implements Serializable {

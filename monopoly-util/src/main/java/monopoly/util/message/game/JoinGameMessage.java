@@ -19,8 +19,6 @@ public class JoinGameMessage implements Serializable {
 	/**
 	 * Create a ForwadedMessage to wrap a message sent by a client.
 	 * 
-	 * @param senderID
-	 *            the ID number of the original sender.
 	 * @param message
 	 *            the original message.
 	 */

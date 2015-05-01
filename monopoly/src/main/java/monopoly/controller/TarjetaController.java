@@ -26,7 +26,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
  * 
  */
 public class TarjetaController {
@@ -70,19 +69,26 @@ public class TarjetaController {
 	}
 
 	/**
-	 * Ejecuta la accion indicada en la tarjeta comunidad 1,PAGA POR TU POLIZA
-	 * DE SEGUROS 50 2,EN TU CUMPLEANIOOS RECIBES DE CADA JUGADOR 10 3,COLOCATE
-	 * EN LA CASILLA DE SALIDA 4,PAGA LA FACTURA DEL MEDICO 50 5,HAS GANADO EL
-	 * SEGUNDO PREMIO DE BELLEZA, RECIBE 10 6,ERROR DE LA BANCA A TU FAVOR,
-	 * RECIBE 200 7,VE A LA CARCEL, VE DIRECTAMENTE SIN PASAR POR LA CASILLA DE
-	 * SALIDA Y SIN COBRAR LOS 200 8,HACIENDA TE DEVUELVE 20 9,COBRAS UNA
-	 * HERENCIA DE 100 10,RECIBE 100 POR LOS INTERESES DE TU PLAZO FIJO 11,PAGA
-	 * AL HOSPITAL 100 12,RETROCEDE HASTA LA RONDA DE VALENCIA 13,QUEDAS LIBRE
-	 * DE LA CARCEL, ESTA TARJETA PUEDE VENDERSE O CONSERVARSE HASTA UTILIZARSE
-	 * 14,LA VENTA DE TUS ACCIONES TE PRODUCE 50
+	 * Ejecuta la accion indicada en la tarjeta comunidad:
+	 * <ol>
+	 * <li>PAGA POR TU PÓLIZA DE SEGURO 50 €.</li>
+	 * <li>EN TU CUMPLEAÑOS RECIBES DE CADA JUGADOR 10 €.</li>
+	 * <li>COLÓCATE EN LA CASILLA DE SALIDA.</li>
+	 * <li>PAGA LA FACTURA DEL MÉDICO 50 €.</li>
+	 * <li>HAS GANADO EL SEGUNDO PREMIO DE BELLEZA. RECIBE 10 €.</li>
+	 * <li>ERROR EN LA BANCA A TU FAVOR. RECIBE 200 €.</li>
+	 * <li>VE A LA CÁRCEL. VE DIRECTAMENTE SIN PASAR POR LA CASILLA DE SALIDA Y
+	 * SIN COBRAR LOS 200 €.</li>
+	 * <li>HACIENDA TE DEVUELVE 20 €.</li>
+	 * <li>COBRAS UNA HERENCIA DE 100 €.</li>
+	 * <li>RECIBE 100 € POR LOS INTERESES DE TU PLAZO FIJO.</li>
+	 * <li>PAGA AL HOSPITAL 100 €.</li>
+	 * <li>RETROCEDE HASTA RONDA DE VALENCIA.</li>
+	 * <li>QUEDAS LIBRE DE LA CÁRCEL. Esta carta puede venderse o conservarse
+	 * hasta que sea utilizada.</li>
+	 * <li>LA VENTA DE TUS ACCIONES TE PRODUCE 50 €.</li>
+	 * </ol>
 	 * 
-	 * @param juego
-	 *            el juego actual
 	 * @param jugador
 	 *            el jugador que tiene la tarjeta
 	 * @param tarjetaComunidad
@@ -116,25 +122,34 @@ public class TarjetaController {
 	}
 
 	/**
-	 * Ejecuta la accion indicada en la tarjeta suerte 1,VE AL PASEO DEL PRADO
-	 * 2,VE A LA GLORIETA DE BILBAO. SI PASAS POR LA CASILLA DE SALIDA COBRA 200
-	 * 3,LA BANCA TE PAGA 50 DE INTERESES 4,COLOCATE EN LA CASILLA DE SALIDA
-	 * 5,ADELANTATE HASTA LA CALLE CEA BERMUDEZ. SI PASAS POR LA CASILLA DE
-	 * SALIDA, COBRA 200 6,RECIBES EL RESCATE POR EL SEGURO DE TUS EDIFICIOS.
-	 * COBRA 150 7,VE A LA CARCEL. VE DIRECTAMENTE SIN PASAR POR LA CASILLA DE
-	 * SALIDA Y SIN COBRAR LOS 200 8,MULTA POR EMBRIAGUEZ 20 9,RETROCEDE TRES
-	 * CASILLAS 10,HAZ REPARACIONES EN TODOS TUS EDIFICIOS. PAGA POR CADA CASA
-	 * 25. PAGA POR CADA HOTEL 100 11,LA INSPECCION DE LA CALLE TE OBLIGA A
-	 * REPARACIONES. PAGA 40.POR CADA CASA. PAGA 115 POR HOTEL 12,QUEDAS LIBRE
-	 * DE LA CARCEL. Esta carta puede venderse o conservarse hasta que sea
-	 * utilizada 13,PAGA POR GASTOS ESCOLARES 150 14,VE A LA ESTACIoN DE LAS
-	 * DELICIAS. SI PASAS POR LA CASILLA DE SALIDA,COBRA 200
+	 * Ejecuta la accion indicada en la tarjeta suerte:
+	 * <ol>
+	 * <li>VE AL PASEO DEL PRADO.</li>
+	 * <li>VE A LA GLORIETA DE BILBAO. SI PASAS POR LA CASILLA DE SALIDA COBRA
+	 * 200 €.</li>
+	 * <li>LA BANCA TE PAGA 50 € DE INTERESES.</li>
+	 * <li>COLÓCATE EN LA CASILLA DE SALIDA.</li>
+	 * <li>ADELANTATE HASTA LA CALLE CEA BERMÚDEZ. SI PASAS POR LA CASILLA DE
+	 * SALIDA, COBRA 200 €.</li>
+	 * <li>RECIBES EL RESCATE POR EL SEGURO DE TUS EDIFICIOS. COBRA 150 €.</li>
+	 * <li>VE A LA CÁRCEL. VE DIRECTAMENTE SIN PASAR POR LA CASILLA DE SALIDA Y
+	 * SIN COBRAR LOS 200 €.</li>
+	 * <li>MULTA POR EMBRIAGUEZ 20 €.</li>
+	 * <li>RETROCEDE TRES CASILLAS.</li>
+	 * <li>HAZ REPARACIONES EN TODOS TUS EDIFICIOS. PAGA POR CADA CASA 25 €.
+	 * PAGA POR CADA HOTEL 100 €.</li>
+	 * <li>LA INSPECCIÓN DE LA CALLE TE OBLIGA A REPARACIONES. PAGA 40 € POR
+	 * CADA CASA. PAGA 115 € POR HOTEL.</li>
+	 * <li>QUEDAS LIBRE DE LA CÁRCEL. Esta carta puede venderse o conservarse
+	 * hasta que sea utilizada.</li>
+	 * <li>PAGA POR GASTOS ESCOLARES 150 €.</li>
+	 * <li>VE A LA ESTACIÓN DE LAS DELICIAS. SI PASAS POR LA CASILLA DE SALIDA,
+	 * COBRA 200 €.</li>
+	 * </ol>
 	 * 
-	 * @param juego
-	 *            el juego actual
 	 * @param jugador
 	 *            el jugador que tiene la tarjeta
-	 * @param tarjetaComunidad
+	 * @param tarjetaSuerte
 	 *            la tarjeta que tiene el jugador
 	 * @return true si se pudo ejecutar la accion
 	 */
@@ -225,13 +240,14 @@ public class TarjetaController {
 				"spring/config/BeanLocations.xml");
 		ITarjetaSuerteDao tarjetaSuerteDao = (ITarjetaSuerteDao) appContext
 				.getBean("tarjetaSuerteDao");
-		
+
 		GestorLogs.registrarLog("Tarjetas Suerte Cargadas..");
 		return tarjetaSuerteDao.getAll();
 	}
 
 	/**
-	 * devuelve todas las tarjetas de la caja de la comunidad de la base de datos.
+	 * devuelve todas las tarjetas de la caja de la comunidad de la base de
+	 * datos.
 	 * 
 	 * @return una lista detarjeta de la caja de la comunidad
 	 */
@@ -240,12 +256,14 @@ public class TarjetaController {
 				"spring/config/BeanLocations.xml");
 		ITarjetaComunidadDao tarjetaComunidadDao = (ITarjetaComunidadDao) appContext
 				.getBean("tarjetaComunidadDao");
-		
-		GestorLogs.registrarLog("Tarjetas de la Caja de la Comunidad Cargadas..");
+
+		GestorLogs
+				.registrarLog("Tarjetas de la Caja de la Comunidad Cargadas..");
 		return tarjetaComunidadDao.getAll();
 	}
-	
-	/* devuelve todas las tarjetas de propiedades de la base de datos.
+
+	/*
+	 * devuelve todas las tarjetas de propiedades de la base de datos.
 	 * 
 	 * @return una lista de tarjetas de propiedades.
 	 */
@@ -267,9 +285,10 @@ public class TarjetaController {
 
 		return list;
 	}
-	
+
 	/**
-	 * devuelve un TreeMap con key; nombre del a propiedad y value, la propiedad.
+	 * devuelve un TreeMap con key; nombre del a propiedad y value, la
+	 * propiedad.
 	 * 
 	 * @return un TreeMap de tarjetas de propiedades
 	 */

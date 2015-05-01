@@ -16,7 +16,7 @@ import monopoly.model.tablero.Casillero;
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
+ * 
  * 
  */
 @Entity
@@ -42,16 +42,7 @@ public class TarjetaEstacion extends TarjetaPropiedad implements Serializable {
 		super();
 	}
 
-	/**
-	 * @param jugador
-	 * @param nombre
-	 * @param valorHipotecario
-	 * @param precioAlquiler
-	 * @param valorUnaEstacion
-	 * @param valorDosEstacion
-	 * @param valorTresEstacion
-	 * @param valorCuatroEstacion
-	 */
+
 	public TarjetaEstacion(Jugador jugador, String nombre,
 			int valorHipotecario, int precioAlquiler, int valorDosEstacion,
 			int valorTresEstacion, int valorCuatroEstacion,

@@ -65,7 +65,7 @@ abstract public class GameClient {
 	 * @param serverHostName
 	 *            The host name (or IP address) of the computer where the Hub is
 	 *            running.
-	 * @param hubPort
+	 * @param serverPort
 	 *            The port number on which the Hub is listening for connection
 	 *            requests.
 	 * @throws IOException

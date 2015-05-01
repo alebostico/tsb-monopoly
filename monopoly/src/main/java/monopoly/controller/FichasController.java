@@ -67,8 +67,8 @@ public class FichasController {
 	 * <li>Ficha.TIPO_CANON</li>
 	 * </ul>
 	 * 
-	 * @param nombreFicha
-	 *            El nombre de la ficha
+	 * @param tipoFicha
+	 *            El tipo de la ficha
 	 * @return La instancia de la clase Ficha o null si no se encuentra una
 	 *         ficha con ese nombre.
 	 */

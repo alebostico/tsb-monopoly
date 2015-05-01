@@ -10,7 +10,7 @@ import monopoly.model.Usuario;
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
+ * 
  *
  */
 public interface IUsuarioDao {

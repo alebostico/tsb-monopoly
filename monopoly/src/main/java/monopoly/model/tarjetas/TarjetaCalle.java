@@ -17,7 +17,7 @@ import monopoly.model.tablero.Casillero;
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
+ * 
  * 
  */
 @Entity
@@ -86,16 +86,7 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 		super();
 	}
 
-	/**
-	 * @param precioAlquiler
-	 * @param valorUnaCasa
-	 * @param valorDosCasas
-	 * @param valorTresCasas
-	 * @param valorCuatroCasas
-	 * @param valorHotel
-	 * @param precioCadaCasa
-	 * @param precioCadaHotel
-	 */
+	
 	public TarjetaCalle(Jugador jugador, String nombre, int valorHipotecario,
 			int precioAlquiler, int valorUnaCasa, int valorDosCasas,
 			int valorTresCasas, int valorCuatroCasas, int valorHotel,
@@ -245,7 +236,7 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	 * jugador que posee todas las propiedades del mismo color y el casillero
 	 * tiene <strong>un hotel</strong> edificado.
 	 * 
-	 * @param valorCuatroCasas
+	 * @param valorHotel
 	 *            El valor de alquiler con un hotel edificado
 	 */
 	public void setValorHotel(int valorHotel) {

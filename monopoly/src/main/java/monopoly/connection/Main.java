@@ -11,7 +11,6 @@ import monopoly.controller.PartidasController;
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
  *
  */
 public class Main {

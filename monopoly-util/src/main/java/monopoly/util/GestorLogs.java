@@ -10,7 +10,7 @@ import java.util.Date;
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
+ * 
  * 
  */
 public class GestorLogs {

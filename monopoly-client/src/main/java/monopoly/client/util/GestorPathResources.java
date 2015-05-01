@@ -10,7 +10,6 @@ import monopoly.util.LectorXML;
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * @author Oliva Pablo
  * 
  */
 public class GestorPathResources {

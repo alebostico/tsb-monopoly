@@ -32,6 +32,12 @@
     -fx-effect: dropshadow( one-pass-box , rgb(0, 0, 0, 0.6), 0, 0.0 , 0 , 1 );
 }
 
+.labelJugador {
+	-fx-font: italic 13pt "Encode Sans Condensed";
+    -fx-text-fill: rgb(0,0,0);
+    -fx-effect: dropshadow( one-pass-box , rgb(42, 28, 174, 1.0), 0, 0.0 , 0 , 1 );
+}
+
 .labelError {
 	-fx-font-family: "Arial";
     -fx-font-size: 16;
@@ -143,6 +149,13 @@
     -fx-background-position: left top, center;
 	-fx-background-repeat: no-repeat;
 	-fx-background-size: cover, auto;
+}
+
+.bg_precio_venta{
+    -fx-background-image: url("../images/background/menu_button.png");
+    -fx-background-position: top, center;
+	-fx-background-repeat: no-repeat;
+	-fx-background-size: 280px 70px;
 }
 
 .bg_info_ficha {

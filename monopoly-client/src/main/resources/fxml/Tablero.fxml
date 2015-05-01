@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 <?import java.net.*?>
 <?import javafx.geometry.*?>
@@ -139,7 +141,7 @@
                                     </HBox>
                                  </top>
                               </BorderPane>
-                              <HBox alignment="CENTER" spacing="25.0">
+                              <HBox alignment="CENTER" prefHeight="70.0" prefWidth="644.0" spacing="15.0">
                                  <children>
                                     <MenuButton fx:id="btnMenu" minWidth="140.0" mnemonicParsing="false" onAction="#processMenu" styleClass="button" text="Menú">
                                       <items>
@@ -156,15 +158,18 @@
                                           <MenuItem fx:id="btnComercializar" mnemonicParsing="false" onAction="#processComercializar" text="Comercializar Propiedad" />
                                        </items>
                                     </MenuButton>
-                                    <HBox fx:id="hboxTurnoDados" alignment="CENTER_RIGHT" minWidth="280.0" prefHeight="100.0" prefWidth="280.0">
+                                    <HBox fx:id="hboxTurnoDados" alignment="CENTER_RIGHT" minWidth="290.0" prefHeight="100.0" prefWidth="290.0">
                                        <children>
                                           <ImageView fx:id="imgDados" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@../images/dados/dice.png" />
                                              </image>
                                           </ImageView>
-                                          <Label fx:id="lblTurnoDados" minWidth="135.0" text="Turno del Jugador:" />
-                                          <Label fx:id="lblTurnoJugador" minWidth="110.0" text="" />
+                                          <Label fx:id="lblTurnoDados" minWidth="135.0" styleClass="labelJugador" text="Turno del Jugador:" textFill="#2b1cae">
+                                             <font>
+                                                <Font name="Liberation Serif Bold Italic" size="22.0" />
+                                             </font></Label>
+                                          <Label fx:id="lblTurnoJugador" minWidth="110.0" styleClass="labelJugador" text="" />
                                        </children>
                                     </HBox>
                                  </children>
