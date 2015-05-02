@@ -22,9 +22,9 @@ public class CasilleroCalle extends Casillero implements Serializable {
 	private int nroCasas;
 	private TarjetaCalle tarjetaCalle;
 
-	public CasilleroCalle(int numeroCasillero, String nombreCalle, TarjetaCalle tarjetaCalle) {
-		super(numeroCasillero, TipoCasillero.C_CALLE);
-		this.nombreCalle = nombreCalle;
+	public CasilleroCalle(int numeroCasillero, TarjetaCalle tarjetaCalle) {
+		super(numeroCasillero,tarjetaCalle.getNombre(), TipoCasillero.C_CALLE);
+		this.nombreCalle = tarjetaCalle.getNombre();
 		this.tarjetaCalle = tarjetaCalle;
 		this.nroCasas = 0;
 		this.tarjetaCalle.setCasillero(this);

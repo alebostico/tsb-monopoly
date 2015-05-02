@@ -38,7 +38,6 @@ public class TarjetaCompania extends TarjetaPropiedad implements Serializable {
 		super();
 	}
 
-
 	public TarjetaCompania(Jugador jugador, String nombre,
 			int valorHipotecario, int vecesPorUnaCarta, int vecesPorDosCartas,
 			String nombreImagen, int valorPropiedad, Casillero casillero) {
@@ -78,6 +77,25 @@ public class TarjetaCompania extends TarjetaPropiedad implements Serializable {
 		this.vecesPorDosCartas = vecesPorDosCartas;
 	}
 
+	public int calcularAlquiler(int nroCompania, int resultadosDados) {
+		int monto = 0;
+		switch (nroCompania) {
+		case 0:
+			monto = this.vecesPorUnaCarta * resultadosDados;
+			break;
+		case 1:
+			monto = this.vecesPorUnaCarta * resultadosDados;
+			break;
+		case 2:
+			monto = this.vecesPorDosCartas * resultadosDados;
+			break;
+		default:
+			monto = 0;
+			break;
+		}
+		return monto;
+	}
+
 	@Override
 	public boolean equals(Object object) {
 		if (object == this)
@@ -92,9 +110,9 @@ public class TarjetaCompania extends TarjetaPropiedad implements Serializable {
 		return true;
 	}
 
-	
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

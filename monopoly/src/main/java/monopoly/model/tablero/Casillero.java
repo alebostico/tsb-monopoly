@@ -40,6 +40,7 @@ public class Casillero implements Serializable {
 	private List<Jugador> jugadores;
 	private int numeroCasillero;
 	private TipoCasillero tipoCasillero;
+	private String nombreCasillero;
 														// cant casilleros
 	public final static String CASILLERO_CALLE = "casillero calle"; // 22
 	public final static String CASILLERO_ESTACION = "casillero estación"; // 4
@@ -83,10 +84,11 @@ public class Casillero implements Serializable {
 	 * @param tipoCasillero
 	 *            El tipo de casillero.
 	 */
-	public Casillero(int numeroCasillero, TipoCasillero tipoCasillero) {
+	public Casillero(int numeroCasillero, String nombre, TipoCasillero tipoCasillero) {
 		super();
 		this.numeroCasillero = numeroCasillero;
 		this.tipoCasillero = tipoCasillero;
+		this.nombreCasillero = nombre;
 		this.jugadores = new ArrayList<Jugador>();
 	}
 
@@ -163,6 +165,14 @@ public class Casillero implements Serializable {
 	 */
 	public void setJugadores(List<Jugador> jugadores) {
 		this.jugadores = jugadores;
+	}
+
+	public String getNombreCasillero() {
+		return nombreCasillero;
+	}
+
+	public void setNombreCasillero(String nombreCasillero) {
+		this.nombreCasillero = nombreCasillero;
 	}
 
 	@Override

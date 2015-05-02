@@ -48,76 +48,80 @@ public class CasillerosController {
 		ITarjetaEstacionDao tarjetaEstacionDao = (ITarjetaEstacionDao) appContext
 				.getBean("tarjetaEstacionDao");
 
-		vCasilleros[0] = new Casillero(1, TipoCasillero.C_SALIDA);
-		vCasilleros[1] = new CasilleroCalle(2, "Ronda de Valencia",
+		vCasilleros[0] = new Casillero(1, "SALIDA", TipoCasillero.C_SALIDA);
+		vCasilleros[1] = new CasilleroCalle(2,
 				tarjetaCalleDao.findByNombre("RONDA DE VALENCIA"));
-		vCasilleros[2] = new Casillero(3, TipoCasillero.C_COMUNIDAD);
-		vCasilleros[3] = new CasilleroCalle(4, "Plaza Lavapiés",
+		vCasilleros[2] = new Casillero(3, "CAJA DE COMUNIDAD",
+				TipoCasillero.C_COMUNIDAD);
+		vCasilleros[3] = new CasilleroCalle(4,
 				tarjetaCalleDao.findByNombre("PLAZA DE LAVAPIÉS"));
-		vCasilleros[4] = new Casillero(5, TipoCasillero.C_IMPUESTO);
-		vCasilleros[5] = new CasilleroEstacion(6, "Estación de Goya",
+		vCasilleros[4] = new Casillero(5, "IMPUESTO SOBRE EL CAPITAL",
+				TipoCasillero.C_IMPUESTO);
+		vCasilleros[5] = new CasilleroEstacion(6,
 				tarjetaEstacionDao.findByNombre("ESTACIÓN DE GOYA"));
-		vCasilleros[6] = new CasilleroCalle(7, "Glorieta Cuatro Caminos",
+		vCasilleros[6] = new CasilleroCalle(7,
 				tarjetaCalleDao.findByNombre("GLORIETA CUATRO CAMINOS"));
-		vCasilleros[7] = new Casillero(8, TipoCasillero.C_SUERTE);
-		vCasilleros[8] = new CasilleroCalle(9, "Avenida Reina Victoria",
+		vCasilleros[7] = new Casillero(8, "SUERTE", TipoCasillero.C_SUERTE);
+		vCasilleros[8] = new CasilleroCalle(9,
 				tarjetaCalleDao.findByNombre("AVENIDA REINA VICTORIA"));
-		vCasilleros[9] = new CasilleroCalle(10, "Calle Bravo Murillo",
+		vCasilleros[9] = new CasilleroCalle(10,
 				tarjetaCalleDao.findByNombre("CALLE BRAVO MURILLO"));
-		vCasilleros[10] = new Casillero(11, TipoCasillero.C_CARCEL);
-		vCasilleros[11] = new CasilleroCalle(12, "Glorieta de Biblbao",
+		vCasilleros[10] = new Casillero(11, "EN CÁRCEL", TipoCasillero.C_CARCEL);
+		vCasilleros[11] = new CasilleroCalle(12,
 				tarjetaCalleDao.findByNombre("GLORIETA DE BILBAO"));
-		vCasilleros[12] = new CasilleroCompania(13, "Compañia de Electricidad",
+		vCasilleros[12] = new CasilleroCompania(13,
 				tarjetaCompaniaDao.findByNombre("COMPAÑIA DE ELECTRICIDAD"));
-		vCasilleros[13] = new CasilleroCalle(14, "Calle Alberto Aguilera",
+		vCasilleros[13] = new CasilleroCalle(14,
 				tarjetaCalleDao.findByNombre("CALLE ALBERTO AGUILERA"));
-		vCasilleros[14] = new CasilleroCalle(15, "Calle Fuencarral",
+		vCasilleros[14] = new CasilleroCalle(15,
 				tarjetaCalleDao.findByNombre("CALLE FUENCARRAL"));
-		vCasilleros[15] = new CasilleroEstacion(16, "Estación de las Delicias",
+		vCasilleros[15] = new CasilleroEstacion(16,
 				tarjetaEstacionDao.findByNombre("ESTACIÓN DE LAS DELICIAS"));
-		vCasilleros[16] = new CasilleroCalle(17, "Avenida Felipe II",
+		vCasilleros[16] = new CasilleroCalle(17,
 				tarjetaCalleDao.findByNombre("AVENIDA FELIPE II"));
-		vCasilleros[17] = new Casillero(18, TipoCasillero.C_COMUNIDAD);
-		vCasilleros[18] = new CasilleroCalle(19, "Calle Velázquez",
+		vCasilleros[17] = new Casillero(18, "CAJA DE COMUNIDAD",
+				TipoCasillero.C_COMUNIDAD);
+		vCasilleros[18] = new CasilleroCalle(19,
 				tarjetaCalleDao.findByNombre("CALLE VELÁZQUEZ"));
-		vCasilleros[19] = new CasilleroCalle(20, "Calle Serrano",
+		vCasilleros[19] = new CasilleroCalle(20,
 				tarjetaCalleDao.findByNombre("CALLE SERRANO"));
 
-		vCasilleros[20] = new Casillero(21, TipoCasillero.C_DESCANSO);
-		vCasilleros[21] = new CasilleroCalle(22, "Avenida de América",
+		vCasilleros[20] = new Casillero(21, "PARKING GRATUITO",
+				TipoCasillero.C_DESCANSO);
+		vCasilleros[21] = new CasilleroCalle(22,
 				tarjetaCalleDao.findByNombre("AVENIDA AMÉRICA"));
-		vCasilleros[22] = new Casillero(23, TipoCasillero.C_SUERTE);
-		vCasilleros[23] = new CasilleroCalle(24, "Calle María de Molina",
+		vCasilleros[22] = new Casillero(23, "SUERTE", TipoCasillero.C_SUERTE);
+		vCasilleros[23] = new CasilleroCalle(24,
 				tarjetaCalleDao.findByNombre("CALLE MARÍA DE MOLINA"));
-		vCasilleros[24] = new CasilleroCalle(25, "Calle Cea Bermúdez",
+		vCasilleros[24] = new CasilleroCalle(25,
 				tarjetaCalleDao.findByNombre("CALLE CEA BERMÚDEZ"));
-		vCasilleros[25] = new CasilleroEstacion(26, "Estación del Mediodí­a",
+		vCasilleros[25] = new CasilleroEstacion(26,
 				tarjetaEstacionDao.findByNombre("ESTACIÓN DEL MEDIODÍA"));
 		vCasilleros[26] = new CasilleroCalle(27,
-				"Avenida de los Reyes Católicos",
 				tarjetaCalleDao.findByNombre("AVENIDA DE LOS REYES CATÓLICOS"));
-		vCasilleros[27] = new CasilleroCalle(28, "Calle Bailén",
+		vCasilleros[27] = new CasilleroCalle(28,
 				tarjetaCalleDao.findByNombre("CALLE BAILÉN"));
-		vCasilleros[28] = new CasilleroCompania(29, "Compañia de Aguas",
+		vCasilleros[28] = new CasilleroCompania(29,
 				tarjetaCompaniaDao.findByNombre("COMPAÑIA DE AGUAS"));
-		vCasilleros[29] = new CasilleroCalle(30, "Plaza de España",
+		vCasilleros[29] = new CasilleroCalle(30,
 				tarjetaCalleDao.findByNombre("PLAZA ESPAÑA"));
 
-		vCasilleros[30] = new Casillero(31, TipoCasillero.C_IRACARCEL);
-		vCasilleros[31] = new CasilleroCalle(32, "Puerta del Sol",
+		vCasilleros[30] = new Casillero(31, "IR A LA CÁRCEL",
+				TipoCasillero.C_IRACARCEL);
+		vCasilleros[31] = new CasilleroCalle(32,
 				tarjetaCalleDao.findByNombre("PUERTA DEL SOL"));
-		vCasilleros[32] = new CasilleroCalle(33, "Calle Alcalá",
+		vCasilleros[32] = new CasilleroCalle(33,
 				tarjetaCalleDao.findByNombre("CALLE ALCALÁ"));
-		vCasilleros[33] = new Casillero(34, TipoCasillero.C_COMUNIDAD);
-		vCasilleros[34] = new CasilleroCalle(35, "Gran Ví­a",
+		vCasilleros[33] = new Casillero(34, "CAJA DE LA COMUNIDAD",TipoCasillero.C_COMUNIDAD);
+		vCasilleros[34] = new CasilleroCalle(35,
 				tarjetaCalleDao.findByNombre("GRAN VÍA"));
-		vCasilleros[35] = new CasilleroEstacion(36, "Estación del Norte",
+		vCasilleros[35] = new CasilleroEstacion(36,
 				tarjetaEstacionDao.findByNombre("ESTACIÓN DEL NORTE"));
-		vCasilleros[36] = new Casillero(37, TipoCasillero.C_SUERTE);
-		vCasilleros[37] = new CasilleroCalle(38, "Paseo de la Castellana",
+		vCasilleros[36] = new Casillero(37, "SUERTE", TipoCasillero.C_SUERTE);
+		vCasilleros[37] = new CasilleroCalle(38,
 				tarjetaCalleDao.findByNombre("PASEO DE LA CASTELLANA"));
-		vCasilleros[38] = new Casillero(39, TipoCasillero.C_IMPUESTO);
-		vCasilleros[39] = new CasilleroCalle(40, "Paseo del Prado",
+		vCasilleros[38] = new Casillero(39, "IMPUESTO DE LUJO",TipoCasillero.C_IMPUESTO);
+		vCasilleros[39] = new CasilleroCalle(40,
 				tarjetaCalleDao.findByNombre("PASEO DEL PRADO"));
 
 		GestorLogs.registrarLog("Casilleros cargados");
@@ -274,5 +278,5 @@ public class CasillerosController {
 		}
 		return vCasilleros;
 	}
-	
+
 }

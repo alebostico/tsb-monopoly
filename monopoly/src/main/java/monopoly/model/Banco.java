@@ -9,7 +9,6 @@ import java.util.List;
 
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tarjetas.TarjetaPropiedad;
-import monopoly.util.exception.CondicionInvalidaException;
 
 /**
  * @author Bostico Alejandro
@@ -123,15 +122,12 @@ public class Banco implements Serializable {
 	 *            Casillero del tablero
 	 * @return Tarjeta de la propiedad a la cual pertenece el casillero.
 	 */
-	public TarjetaPropiedad getTarjetaPropiedadByCasillero(Casillero pCasillero)
-			throws CondicionInvalidaException {
+	public TarjetaPropiedad getTarjetaPropiedadByCasillero(Casillero pCasillero) {
 		for (TarjetaPropiedad tarjetaPropiedad : tarjPropiedadList) {
 			if (tarjetaPropiedad.getCasillero().getNumeroCasillero() == pCasillero
 					.getNumeroCasillero())
 				return tarjetaPropiedad;
 		}
-		throw new CondicionInvalidaException(String.format(
-				"No se encontró el casillero {0} en la lista de propiedades",
-				pCasillero.getNumeroCasillero()));
+		return null;
 	}
 }
