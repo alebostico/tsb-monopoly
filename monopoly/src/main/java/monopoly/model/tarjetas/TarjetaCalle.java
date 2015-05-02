@@ -86,7 +86,6 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 		super();
 	}
 
-	
 	public TarjetaCalle(Jugador jugador, String nombre, int valorHipotecario,
 			int precioAlquiler, int valorUnaCasa, int valorDosCasas,
 			int valorTresCasas, int valorCuatroCasas, int valorHotel,
@@ -286,20 +285,19 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	 * 
 	 * @return El precio de venta de la casa
 	 */
-	public int getPrecioVentaCadaCasa(){
-		return (int)((double)getPrecioCadaCasa() / 2.0);
+	public int getPrecioVentaCadaCasa() {
+		return (int) ((double) getPrecioCadaCasa() / 2.0);
 	}
-	
+
 	/**
 	 * El precio que se paga por vender un hotel del casillero.
 	 * 
 	 * @return El precio de venta del hotel
 	 */
-	public int getPrecioVentaHotel(){
-		return (int)((double)getPrecioCadaHotel() / 2.0);
+	public int getPrecioVentaHotel() {
+		return (int) ((double) getPrecioCadaHotel() / 2.0);
 	}
-	
-	
+
 	/**
 	 * @return the colorTarjeta
 	 */
@@ -329,6 +327,34 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	 */
 	public Color getColor() {
 		return color;
+	}
+
+	public int calcularAlquiler(int nroCasas) {
+		int monto = 0;
+		switch (nroCasas) {
+		case 0:
+			monto = this.precioAlquiler;
+			break;
+		case 1:
+			monto = this.valorUnaCasa;
+			break;
+		case 2:
+			monto = this.valorDosCasas;
+			break;
+		case 3:
+			monto = this.valorTresCasas;
+			break;
+		case 4:
+			monto = this.valorCuatroCasas;
+			break;
+		case 5:
+			monto = this.valorHotel;
+			break;
+		default:
+			monto = 0;
+			break;
+		}
+		return monto;
 	}
 
 	/*
@@ -361,13 +387,14 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 		return true;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		return super.getIdTarjeta();
 	}
-	
+
 }

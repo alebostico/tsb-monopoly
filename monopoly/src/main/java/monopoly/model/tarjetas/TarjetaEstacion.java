@@ -114,6 +114,38 @@ public class TarjetaEstacion extends TarjetaPropiedad implements Serializable {
 	public void setValorCuatroEstacion(int valorCuatroEstacion) {
 		this.valorCuatroEstacion = valorCuatroEstacion;
 	}
+	
+	/**
+	 * Método que calcula el valor del alquiler.
+	 * 
+	 * @param nroEstaciones cantidad  de estaciones que posee
+	 * el jugador.
+	 * @return el monto a cobrar  por el alquiler de la propiedad.
+	 */
+	public int calcularAlquiler(int nroEstaciones) {
+		int monto = 0;
+		switch (nroEstaciones) {
+		case 0:
+			monto = this.precioAlquiler;
+			break;
+		case 1:
+			monto = this.precioAlquiler;
+			break;
+		case 2:
+			monto = this.valorDosEstacion;
+			break;
+		case 3:
+			monto = this.valorTresEstacion;
+			break;
+		case 4:
+			monto = this.valorCuatroEstacion;
+			break;
+		default:
+			monto = 0;
+			break;
+		}
+		return monto;
+	}
 
 	@Override
 	public boolean equals(Object object) {

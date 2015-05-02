@@ -21,10 +21,10 @@ public class CasilleroCompania extends Casillero implements Serializable {
 	private String nombreCompania;
 	private TarjetaCompania tarjetaCompania;
 
-	public CasilleroCompania(int numeroCasillero, String nombreCompania,
+	public CasilleroCompania(int numeroCasillero,
 			TarjetaCompania tarjetaCompania) {
-		super(numeroCasillero, TipoCasillero.C_COMPANIA);
-		this.nombreCompania = nombreCompania;
+		super(numeroCasillero,tarjetaCompania.getNombre(), TipoCasillero.C_COMPANIA);
+		this.nombreCompania = tarjetaCompania.getNombre();
 		this.tarjetaCompania = tarjetaCompania;
 		this.tarjetaCompania.setCasillero(this);
 	}

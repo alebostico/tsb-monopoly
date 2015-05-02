@@ -18,10 +18,9 @@ public class CasilleroEstacion extends Casillero implements Serializable {
 	private String nombreEstacion;
 	private TarjetaEstacion tarjetaEstacion;
 
-	public CasilleroEstacion(int numeroCasillero, String nombreEstacion,
-			TarjetaEstacion tarjetaEstacion) {
-		super(numeroCasillero, TipoCasillero.C_ESTACION);
-		this.nombreEstacion = nombreEstacion;
+	public CasilleroEstacion(int numeroCasillero, TarjetaEstacion tarjetaEstacion) {
+		super(numeroCasillero, tarjetaEstacion.getNombre(), TipoCasillero.C_ESTACION);
+		this.nombreEstacion = tarjetaEstacion.getNombre();
 		this.tarjetaEstacion = tarjetaEstacion;
 		this.tarjetaEstacion.setCasillero(this);
 	}

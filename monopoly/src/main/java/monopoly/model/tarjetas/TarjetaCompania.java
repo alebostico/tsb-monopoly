@@ -77,7 +77,7 @@ public class TarjetaCompania extends TarjetaPropiedad implements Serializable {
 	public void setVecesPorDosCartas(int vecesPorDosCartas) {
 		this.vecesPorDosCartas = vecesPorDosCartas;
 	}
-
+	
 	@Override
 	public boolean equals(Object object) {
 		if (object == this)
@@ -91,8 +91,6 @@ public class TarjetaCompania extends TarjetaPropiedad implements Serializable {
 
 		return true;
 	}
-
-	
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()

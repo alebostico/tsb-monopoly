@@ -6,6 +6,10 @@ package monopoly.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.antlr.grammar.v3.ANTLRParser.defaultNodeOption_return;
+
+import com.sun.javafx.scene.layout.region.Margins.Converter;
+
 import monopoly.model.Banco;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
@@ -20,6 +24,8 @@ import monopoly.model.tablero.Tablero;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaCalle.Color;
+import monopoly.model.tarjetas.TarjetaCompania;
+import monopoly.model.tarjetas.TarjetaEstacion;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.exception.CondicionInvalidaException;
@@ -442,8 +448,7 @@ public class TableroController {
 	 *            El color del monopolio
 	 * @return Todas las tarjetas de las calles que tienen el mismo color
 	 */
-	public List<TarjetaCalle> getMonopolio(Color color) {
-
+	public List<TarjetaCalle> getGrupoDeSolaresByColor(Color color) {
 		List<TarjetaCalle> monopolio = new ArrayList<TarjetaCalle>();
 		for (Casillero casillero : this.tablero.getCasillerosList()) {
 			if (casillero.getTipoCasillero() == TipoCasillero.C_CALLE) {
@@ -452,7 +457,6 @@ public class TableroController {
 				if (tarjetaCalle.getColor() == color) {
 					monopolio.add(tarjetaCalle);
 				}
-
 			}
 		}
 		return monopolio;
@@ -466,8 +470,8 @@ public class TableroController {
 	 *            Una de las tarjetas del mopolio
 	 * @return Todas las tarjetas de las calles que tienen el mismo color
 	 */
-	public List<TarjetaCalle> getMonopolio(TarjetaCalle tarjeta) {
-		return getMonopolio(tarjeta.getColor());
+	public List<TarjetaCalle> getGrupoDeSolaresByCalle(TarjetaCalle tarjeta) {
+		return getGrupoDeSolaresByColor(tarjeta.getColor());
 	}
 
 	/**
@@ -478,22 +482,15 @@ public class TableroController {
 	 *            Un casillero del monopolio
 	 * @return Todas los casilleros de las calles que tienen el mismo color
 	 */
-	public List<CasilleroCalle> getMonopolio(CasilleroCalle casillero) {
-
-		List<CasilleroCalle> monopolio = new ArrayList<CasilleroCalle>();
-		for (Casillero c : this.tablero.getCasillerosList()) {
-			if (c.getTipoCasillero() == TipoCasillero.C_CALLE) {
-				CasilleroCalle casilleroCalle = (CasilleroCalle) c;
-				TarjetaCalle tarjetaCalle = (TarjetaCalle) casilleroCalle
-						.getTarjetaCalle();
-				if (tarjetaCalle.getColor() == casillero.getTarjetaCalle()
-						.getColor()) {
-					monopolio.add(casilleroCalle);
-				}
-
-			}
+	public List<CasilleroCalle> getGrupoDeCasillerosCalleByCasillero(
+			CasilleroCalle casillero) {
+		List<TarjetaCalle> callesList = getGrupoDeSolaresByColor(casillero
+				.getTarjetaCalle().getColor());
+		List<CasilleroCalle> casillerosList = new ArrayList<CasilleroCalle>();
+		for (TarjetaCalle tarjeta : callesList) {
+			casillerosList.add((CasilleroCalle) tarjeta.getCasillero());
 		}
-		return monopolio;
+		return casillerosList;
 	}
 
 	/**
@@ -520,7 +517,7 @@ public class TableroController {
 	 *            monopolio es (calle, estaci&oacute;n o comunidad)
 	 * @return El listado de todas las propiedades que conforman el monopolio
 	 */
-	public List<Casillero> getMonopolio(Casillero casillero) {
+	public List<Casillero> getGrupoCasilleroByCasillero(Casillero casillero) {
 
 		List<Casillero> casilleros = new ArrayList<Casillero>();
 		switch (casillero.getTipoCasillero()) {
@@ -528,7 +525,7 @@ public class TableroController {
 		// si es del tipo calle, llamamos al ótro método implementado.
 		case C_CALLE:
 			List<CasilleroCalle> casilleroCalles = this
-					.getMonopolio((CasilleroCalle) casillero);
+					.getGrupoDeCasillerosCalleByCasillero((CasilleroCalle) casillero);
 			casilleros.addAll(casilleroCalles);
 			break;
 
@@ -583,7 +580,8 @@ public class TableroController {
 	 */
 	public boolean monopolioLibre(Casillero casillero) {
 
-		List<Casillero> monopolio = this.getMonopolio(casillero);
+		List<Casillero> monopolio = this
+				.getGrupoCasilleroByCasillero(casillero);
 
 		for (Casillero casi : monopolio) {
 
@@ -628,7 +626,8 @@ public class TableroController {
 
 		int propSinComprarMonopolio = 0;
 
-		List<Casillero> monopolio = this.getMonopolio(casillero);
+		List<Casillero> monopolio = this
+				.getGrupoCasilleroByCasillero(casillero);
 
 		for (Casillero casi : monopolio) {
 			switch (casi.getTipoCasillero()) {
@@ -710,7 +709,8 @@ public class TableroController {
 
 		Jugador jug = null;
 
-		List<Casillero> monopolio = this.getMonopolio(casillero);
+		List<Casillero> monopolio = this
+				.getGrupoCasilleroByCasillero(casillero);
 
 		for (Casillero casi : monopolio) {
 			switch (casi.getTipoCasillero()) {
@@ -795,7 +795,8 @@ public class TableroController {
 
 		int cantPropNoCompradas = 0;
 
-		List<Casillero> monopolio = this.getMonopolio(casillero);
+		List<Casillero> monopolio = this
+				.getGrupoCasilleroByCasillero(casillero);
 
 		for (Casillero casi : monopolio) {
 
@@ -841,7 +842,8 @@ public class TableroController {
 	 * @return La cantidad de propiedades del monopolio que tiene el jugador
 	 */
 	public int cantPropiedadesMonopolio(Casillero casillero, Jugador jugador) {
-		List<Casillero> monopolio = this.getMonopolio(casillero);
+		List<Casillero> monopolio = this
+				.getGrupoCasilleroByCasillero(casillero);
 		int cantPropCompradas = 0;
 
 		for (Casillero casi : monopolio) {
@@ -877,7 +879,8 @@ public class TableroController {
 	 * @return La cantidad de propiedades libres
 	 */
 	public int propiedadesLibresMonopolio(Casillero casillero) {
-		List<Casillero> monopolio = this.getMonopolio(casillero);
+		List<Casillero> monopolio = this
+				.getGrupoCasilleroByCasillero(casillero);
 		int cantPropNoCompradas = 0;
 
 		for (Casillero casi : monopolio) {
@@ -916,7 +919,8 @@ public class TableroController {
 	 * @return true si se puede construir.
 	 */
 	public boolean esConstruible(CasilleroCalle casillero) {
-		List<CasilleroCalle> monopolio = this.getMonopolio(casillero);
+		List<CasilleroCalle> monopolio = this
+				.getGrupoDeCasillerosCalleByCasillero(casillero);
 
 		int maxConstruido = 0;
 		int minConstruido = 5;
@@ -942,6 +946,33 @@ public class TableroController {
 		return true;
 	}
 
+	private int calcularAlquilerCalle(CasilleroCalle pCasillero) {
+		int nroCasas = 0;
+		int monto = 0;
+
+		nroCasas = pCasillero.getNroCasas();
+		monto = pCasillero.getTarjetaCalle().calcularAlquiler(nroCasas);
+
+		if (esUnicoPoseedorMonopolio(pCasillero, pCasillero.getTarjetaCalle()
+				.getJugador()))
+			monto = monto * 2;
+		return monto;
+	}
+
+	private int calcularAlquilerEstación(CasilleroEstacion pCasillero) {
+		int nroEstaciones = 0;
+		int monto = 0;
+
+		nroEstaciones = cantPropiedadesMonopolio(pCasillero, pCasillero
+				.getTarjetaEstacion().getJugador());
+		monto = pCasillero.getTarjetaEstacion().calcularAlquiler(nroEstaciones);
+		return monto;
+	}
+
+	// private int calcularAlquilerCompania(CasilleroCompania pCasillero){
+	//
+	// }
+
 	/**
 	 * Una calle puede vender edificios siempre y cuando no incumpla la regla de
 	 * construcciones escalonadas (ver método construir)
@@ -951,7 +982,8 @@ public class TableroController {
 	 * @return true si se puede vender un edificio
 	 */
 	public boolean puedeVenderEdificio(CasilleroCalle casillero) {
-		List<CasilleroCalle> monopolio = this.getMonopolio(casillero);
+		List<CasilleroCalle> monopolio = this
+				.getGrupoDeCasillerosCalleByCasillero(casillero);
 
 		int maxConstruido = 0;
 		int minConstruido = 5;
@@ -975,50 +1007,92 @@ public class TableroController {
 	}
 
 	public MonopolyGameStatus evaluarAccionEnCasillero(Jugador pJugador,
-			Casillero pCasillero, boolean cobraSalida) throws CondicionInvalidaException {
-		boolean isComprado;
-		boolean isHipotecable;
-		boolean hasCasas;
-		boolean hasHoteles;
-		int montoAPagar=0; 
+			Casillero pCasillero, boolean cobraSalida)
+			throws CondicionInvalidaException {
+		int montoAPagar = 0;
+		String nombreJugadorActual;
+		String nombreJugadorPropietario;
 		Banco banco;
 		Tarjeta tarjetaCasillero;
+		TarjetaPropiedad tarjetaPropiedad;
 		AccionEnCasillero accionEnCasillero;
 		MonopolyGameStatus monopolyGameStatus;
-		
-		
-		switch (pCasillero.getTipoCasillero().getNombreTipoCasillero())
-		{
+
+		switch (pCasillero.getTipoCasillero().getNombreTipoCasillero()) {
 		case Casillero.CASILLERO_CALLE:
 		case Casillero.CASILLERO_COMPANIA:
 		case Casillero.CASILLERO_ESTACION:
 			banco = getBancoController(pJugador.getJuego()).getBanco();
 			tarjetaCasillero = banco.getTarjetaPropiedadByCasillero(pCasillero);
-			if(((TarjetaPropiedad)tarjetaCasillero).getJugador() == null){
-				
+			tarjetaPropiedad = (TarjetaPropiedad) tarjetaCasillero;
+			// Nadie es propietario de la tarjeta.
+			if (tarjetaPropiedad.getJugador() == null) {
+				accionEnCasillero = AccionEnCasillero.DISPONIBLE_PARA_VENDER;
+			} else {
+				nombreJugadorActual = pJugador.getNombre().toLowerCase();
+				nombreJugadorPropietario = tarjetaPropiedad.getJugador()
+						.getNombre().toLowerCase();
+
+				// Si la propiedad pertenece al Jugador actual no hago nada.
+				if (nombreJugadorPropietario.equals(nombreJugadorActual)) {
+					accionEnCasillero = AccionEnCasillero.MI_PROPIEDAD;
+				} else // Si la propiedad pertenece a otro jugador
+				{
+					// Si está hipotecada
+					if (tarjetaPropiedad.isHipotecada())
+						accionEnCasillero = AccionEnCasillero.HIPOTECADA;
+					else // calculo el alquiler
+					{
+						accionEnCasillero = AccionEnCasillero.PAGAR_ALQUILER;
+						switch (pCasillero.getTipoCasillero()
+								.getNombreTipoCasillero()) {
+						case Casillero.CASILLERO_CALLE:
+							montoAPagar = calcularAlquilerCalle((CasilleroCalle) pCasillero);
+							accionEnCasillero.setAcciones(new String[] {
+									String.format(
+											accionEnCasillero.getAcciones()[0],
+											montoAPagar, pJugador.getNombre()),
+									String.valueOf(montoAPagar) });
+							break;
+						case Casillero.CASILLERO_COMPANIA:
+							break;
+						case Casillero.CASILLERO_ESTACION:
+							montoAPagar = calcularAlquilerEstación((CasilleroEstacion) pCasillero);
+							break;
+						default:
+							montoAPagar = 0;
+							break;
+						}
+					}
+				}
+
 			}
 			break;
-			
-		case Casillero.CASILLERO_CARCEL:
+
 		case Casillero.CASILLERO_IRACARCEL:
 			// ir a la carcel.
+			accionEnCasillero = AccionEnCasillero.IR_A_LA_CARCEL;
 			break;
 		case Casillero.CASILLERO_IMPUESTO:
-			//Cobrar impuesto.
+			accionEnCasillero = AccionEnCasillero.IMPUESTO;
+			// Cobrar impuesto.
 			break;
 		case Casillero.CASILLERO_SUERTE:
-			//Adjuntar tarjeta suerte
+			// Adjuntar tarjeta suerte
+			//banco.
 			break;
 		case Casillero.CASILLERO_COMUNIDAD:
 			// Adjuntar tarjeta comunidad
 			break;
+		case Casillero.CASILLERO_CARCEL:
 		case Casillero.CASILLERO_DESCANSO:
 		case Casillero.CASILLERO_SALIDA:
 			break;
-			default:
-				throw new CondicionInvalidaException("Tipo de Casillero inexistente.");
+		default:
+			throw new CondicionInvalidaException(
+					"Tipo de Casillero inexistente.");
 		}
-		
+
 		return null;
 	}
 
