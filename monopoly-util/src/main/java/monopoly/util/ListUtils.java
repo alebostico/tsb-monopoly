@@ -7,8 +7,8 @@ import java.util.Random;
 public class ListUtils {
 
 	/**
-	 * Método para deordenar listas. También se puede usar
-	 * java.utils.Collections.shuffle()
+	 * Método para desordenar listas. También se puede usar
+	 * java.util.Collections.shuffle()
 	 * 
 	 * @param lista
 	 *            La lista que se quiere desordenar
@@ -18,15 +18,9 @@ public class ListUtils {
 
 		List<T> tmpList = new ArrayList<T>();
 		Random rRandom = new Random();
-		int iRandom;
-		int low = 0;
-		int high;
 
 		while (!lista.isEmpty()) {
-			high = lista.size();
-			iRandom = rRandom.nextInt(high - low) + low;
-
-			tmpList.add(lista.remove(iRandom));
+			tmpList.add(lista.remove(rRandom.nextInt(lista.size())));
 		}
 
 		return tmpList;
