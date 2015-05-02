@@ -40,9 +40,14 @@ public class JugadorVirtualController {
 	private static final int AUMENTO_PUJA = 10;
 
 	/**
-	 * El jugador decidir&aacute; la nueva cantidad a pujar, si lo considera oportuno.
-	 * El jugador basado en reglas lo hara en funci&oacute;n de su razonamiento, y el
-	 * aleatorio por puro azar.
+	 * Cuanto tiene que pagar el Jugador para salir de la carcel
+	 */
+	private static final int MULTA_CARCEL = 50;
+
+	/**
+	 * El jugador decidir&aacute; la nueva cantidad a pujar, si lo considera
+	 * oportuno. El jugador basado en reglas lo hara en funci&oacute;n de su
+	 * razonamiento, y el aleatorio por puro azar.
 	 * 
 	 * @param propiedad
 	 * @param maxActual
@@ -187,9 +192,9 @@ public class JugadorVirtualController {
 	}
 
 	/**
-	 * El jugador decidir&aacute; al caer sobre una propiedad libre si quiere comprarla
-	 * o no. La decisi&oacute;n se tomar&aacute; en funci&oacute;n del tipo de agente de IA que se
-	 * trate.
+	 * El jugador decidir&aacute; al caer sobre una propiedad libre si quiere
+	 * comprarla o no. La decisi&oacute;n se tomar&aacute; en funci&oacute;n del
+	 * tipo de agente de IA que se trate.
 	 * 
 	 * @param casillero
 	 * @param jugadorActual
@@ -486,4 +491,187 @@ public class JugadorVirtualController {
 		}
 		return false;
 	}
+
+	public boolean decidirSalirPagando(JugadorVirtual jugadorActual) {
+
+		Random rnd = new Random();
+		JuegoController juegoController = PartidasController.getInstance()
+				.buscarControladorJuego(jugadorActual.getJuego().getUniqueID());
+		TableroController tableroController = juegoController
+				.getGestorTablero();
+
+		switch (jugadorActual.getTipoJugador()) {
+		// Jugador basado en reglas
+		case TJ_MAGNATE:
+
+			// Si quedan menos del x % de propiedades libres para comprar, no se
+			// sale de la cárcel porque es más seguro para no pagar. Además debe
+			// tener dinero
+			// suficiente para salir.
+			// Se ha establecido una escala en función de las propiedades que
+			// queden libres.
+			// También deberé tener dinero para poder comprar y que sea rentable
+			// moverse( >50000)
+			if ((tableroController.porcPropiedadesLibres() == 100)
+					&& jugadorActual.getDinero() > MULTA_CARCEL
+					&& (jugadorActual.getDinero() > 50000)) {
+				GestorLogs.registrarDebug("El jugador "
+						+ jugadorActual.getNombre()
+						+ " sale de la cárcel pagando porque es necesario"
+						+ " comprar propiedades y están todas libres");
+				return true;
+			}
+			if ((tableroController.porcPropiedadesLibres() >= 50)
+					&& jugadorActual.getDinero() > (MULTA_CARCEL * 3)
+					&& (jugadorActual.getDinero() > 50000)) {
+				GestorLogs.registrarDebug("El jugador "
+						+ jugadorActual.getNombre()
+						+ " sale de la cárcel pagando porque"
+						+ " aún quedan algunas propiedades libres");
+				return true;
+			}
+
+			if ((tableroController.porcPropiedadesLibres() >= 20)
+					&& jugadorActual.getDinero() > (MULTA_CARCEL * 5)
+					&& (jugadorActual.getDinero() > 50000)) {
+				GestorLogs.registrarDebug("El jugador "
+						+ jugadorActual.getNombre()
+						+ " sale de la cárcel pagando porque"
+						+ " aún quedan algunas propiedades libres");
+				return true;
+			}
+
+			GestorLogs.registrarDebug("El jugador " + jugadorActual.getNombre()
+					+ " no quiere salir de la cárcel pagando"
+					+ " porque no lo considera rentable");
+			return false;
+
+		case TJ_EMPRESARIO:
+
+			if (jugadorActual.getDinero() > MULTA_CARCEL) {
+				// Saldrá con una probabilidad dada por la formula que se aplica
+				// a contiinuacion
+				// Si el valor aleatorio con M.Twister es menor que el numero
+				// sale.
+				int probabilidad = (jugadorActual.getCantPropiedades()) * 100
+						/ tableroController.getCantPropiedades();
+				int resultado = rnd.nextInt() % 100;
+				if (resultado < probabilidad) {
+					GestorLogs.registrarDebug("El jugador "
+							+ jugadorActual.getNombre()
+							+ " sale de la cárcel pagando porque"
+							+ " aún quedan algunas propiedades libres");
+					return true;
+				}
+				GestorLogs.registrarDebug("El jugador "
+						+ jugadorActual.getNombre()
+						+ " no quiere salir de la cárcel pagando"
+						+ " porque no lo considera rentable");
+				return false;
+			}
+		case TJ_COMPRADOR_PRIMERIZO:
+			if (jugadorActual.getDinero() > MULTA_CARCEL) {
+				// Saldrá con una probabilidad dada por la formula que se aplica
+				// a contiinuacion
+				// Si el valor aleatorio con M.Twister es menor que el numero
+				// sale.
+				int probabilidad = 50;
+				int resultado = rnd.nextInt() % 100;
+				if (resultado < probabilidad) {
+					GestorLogs.registrarDebug("El jugador "
+							+ jugadorActual.getNombre()
+							+ " sale de la cárcel pagando porque"
+							+ " aún quedan algunas propiedades libres");
+					return true;
+				}
+				GestorLogs.registrarDebug("El jugador "
+						+ jugadorActual.getNombre()
+						+ " no quiere salir de la cárcel pagando"
+						+ " porque no lo considera rentable");
+				return false;
+			}
+
+		}
+
+		return false;
+	}
+
+	public boolean decidirSalirTarjeta(JugadorVirtual jugadorActual) {
+
+		Random rnd = new Random();
+		JuegoController juegoController = PartidasController.getInstance()
+				.buscarControladorJuego(jugadorActual.getJuego().getUniqueID());
+		TableroController tableroController = juegoController
+				.getGestorTablero();
+
+		switch (jugadorActual.getTipoJugador()) {
+		// Jugador basado en reglas
+		case TJ_MAGNATE:
+
+			// Sólo sale si quedan muchas casillas libres ( >20% )
+			// Debo tener mas de 50000 para que sea rentable al poder comprar
+			// otras propiedades
+			if ((tableroController.porcPropiedadesLibres() >= 20)
+					&& (jugadorActual.getDinero() > 50000)) {
+				GestorLogs.registrarDebug("El jugador "
+						+ jugadorActual.getNombre()
+						+ " sale de la cárcel pagando porque"
+						+ " aún quedan algunas propiedades libres");
+				return true;
+			}
+			GestorLogs.registrarDebug("El jugador " + jugadorActual.getNombre()
+					+ " no quiere salir de la cárcel pagando"
+					+ " porque no lo considera rentable");
+			return false;
+
+		case TJ_EMPRESARIO:
+
+			if (jugadorActual.getDinero() > MULTA_CARCEL) {
+				// Saldrá con una probabilidad dada por la formula que se aplica
+				// a contiinuacion
+				// Si el valor aleatorio con M.Twister es menor que el numero
+				// sale.
+				int probabilidad = (jugadorActual.getCantPropiedades()) * 100
+						/ tableroController.getCantPropiedades();
+				int resultado = rnd.nextInt() % 100;
+				if (resultado < probabilidad) {
+					GestorLogs.registrarDebug("El jugador "
+							+ jugadorActual.getNombre()
+							+ " sale de la cárcel pagando porque"
+							+ " aún quedan algunas propiedades libres");
+					return true;
+				}
+				GestorLogs.registrarDebug("El jugador "
+						+ jugadorActual.getNombre()
+						+ " no quiere salir de la cárcel pagando"
+						+ " porque no lo considera rentable");
+				return false;
+			}
+		case TJ_COMPRADOR_PRIMERIZO:
+			if (jugadorActual.getDinero() > MULTA_CARCEL) {
+				// Saldrá con una probabilidad dada por la formula que se aplica
+				// a contiinuacion
+				// Si el valor aleatorio con M.Twister es menor que el numero
+				// sale.
+				int probabilidad = 50;
+				int resultado = rnd.nextInt() % 100;
+				if (resultado < probabilidad) {
+					GestorLogs.registrarDebug("El jugador "
+							+ jugadorActual.getNombre()
+							+ " sale de la cárcel pagando porque"
+							+ " aún quedan algunas propiedades libres");
+					return true;
+				}
+				GestorLogs.registrarDebug("El jugador "
+						+ jugadorActual.getNombre()
+						+ " no quiere salir de la cárcel pagando"
+						+ " porque no lo considera rentable");
+				return false;
+			}
+
+		}
+
+		return false;
+	}
+
 }

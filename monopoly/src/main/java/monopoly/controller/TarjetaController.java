@@ -51,7 +51,7 @@ public class TarjetaController {
 	}
 
 	private void mezclarTarjetasSuerte() {
-		ListUtils.randomizeList(this.tarjetasSuerteList);
+		this.tarjetasSuerteList = ListUtils.randomizeList(this.tarjetasSuerteList);
 		GestorLogs.registrarLog("Tarjetas Suerte Mezcladas");
 
 		for (TarjetaSuerte tarjetaSuerte : tarjetasSuerteList) {
@@ -60,7 +60,7 @@ public class TarjetaController {
 	}
 
 	private void mezclarTarjetasComunidad() {
-		ListUtils.randomizeList(this.tarjetasComunidadList);
+		this.tarjetasComunidadList = ListUtils.randomizeList(this.tarjetasComunidadList);
 		GestorLogs.registrarLog("Tarjetas Comunidad Mezcladas");
 
 		for (TarjetaComunidad tarjetaComunidad : tarjetasComunidadList) {

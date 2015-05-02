@@ -35,6 +35,14 @@ public class TableroController {
 
 	private int cantCasilleros;
 
+	/**
+	 * Cantidad total de propiedades del tablero: <br />
+	 * + 22 calles <br />
+	 * + 4 estaciones <br />
+	 * + 2 compañías <br />
+	 */
+	private final int CANT_PROPIEDADES = 22 + 4 + 2;
+
 	private TarjetaController gestorTarjetas;
 
 	public TableroController() {
@@ -155,6 +163,15 @@ public class TableroController {
 	}
 
 	/**
+	 * Devuelve la cantidad de propiedades del tablero
+	 * 
+	 * @return la cantidad de propiedades (calles + estaciones + compañías)
+	 */
+	public int getCantPropiedades() {
+		return this.CANT_PROPIEDADES;
+	}
+
+	/**
 	 * Mueve a un Jugador 'cantCasilleros' casilleros hacia adelante (o hacia
 	 * atrÃ¡s si 'cantCasilleros' es negativo) y devuelve el Casillero en el que
 	 * cayo. Si el movimiento es hacia adelante, el jugador pasa por la salida y
@@ -165,11 +182,11 @@ public class TableroController {
 	 * @param cantCasilleros
 	 *            La cantidad de casilleros a mover el jugador. Si es positivo
 	 *            mueve hacia adelante. Si es negativo hacia atras (es lo mismo
-	 *            que llamar al mÃ©todo 'moverAtras').
+	 *            que llamar al método 'moverAtras').
 	 * @param cobraSalida
 	 *            true en el caso que el jugador deba cobrar los $200 si pasa
 	 *            por la salida. false si no los cobra.
-	 * @return El casillero al cual se moviÃ³ el jugador.
+	 * @return El casillero al cual se movió el jugador.
 	 */
 	public Casillero moverAdelante(Jugador jugador, int cantCasilleros,
 			boolean cobraSalida) {
@@ -227,9 +244,9 @@ public class TableroController {
 	 *            El jugador que se quiere mover.
 	 * @param cantCasilleros
 	 *            La cantidad de casilleros a mover el jugador (Es lo mismo que
-	 *            llamar al mÃ©todo 'moverAdelante' con 'cantCasilleros'
+	 *            llamar al método 'moverAdelante' con 'cantCasilleros'
 	 *            negativa).
-	 * @return El casillero al cual se moviÃ³ el jugador.
+	 * @return El casillero al cual se movió el jugador.
 	 */
 	public Casillero moverAtras(Jugador jugador, int cantCasilleros) {
 		return this.moverAdelante(jugador, (cantCasilleros * (-1)), false);
@@ -898,6 +915,39 @@ public class TableroController {
 		}
 		return cantPropNoCompradas;
 
+	}
+
+	public int porcPropiedadesLibres() {
+
+		int cantPropiedades = 0;
+		int cantPropiedadesLibres = 0;
+
+		for (Casillero casi : this.getTablero().getCasillerosList()) {
+			switch (casi.getTipoCasillero()) {
+			case C_CALLE:
+				if (((CasilleroCalle) casi).getTarjetaCalle().getJugador() != null)
+					cantPropiedadesLibres++;
+				cantPropiedades++;
+				break;
+
+			case C_COMPANIA:
+				if (((CasilleroCompania) casi).getTarjetaCompania()
+						.getJugador() != null)
+					cantPropiedadesLibres++;
+				cantPropiedades++;
+				break;
+
+			case C_ESTACION:
+				if (((CasilleroEstacion) casi).getTarjetaEstacion()
+						.getJugador() != null)
+					cantPropiedadesLibres++;
+				cantPropiedades++;
+				break;
+			default:
+				break;
+			}
+		}
+		return (int) ((double) cantPropiedadesLibres / (double) cantPropiedades) * 100;
 	}
 
 	/**

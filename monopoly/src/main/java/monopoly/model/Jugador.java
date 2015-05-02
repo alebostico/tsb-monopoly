@@ -348,6 +348,10 @@ public abstract class Jugador implements Serializable {
 	public int getNroHoteles() {
 		return nroHoteles;
 	}
+	
+	public int getCantPropiedades(){
+		return this.tarjPropiedadList.size();
+	}
 
 	public int incrementNroCasas(int cantidad) {
 		nroCasas += cantidad;
