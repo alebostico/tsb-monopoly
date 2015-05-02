@@ -186,8 +186,10 @@ public class TarjetaController {
 
 		this.proximaTarjetaSuerte++;
 
-		if (this.proximaTarjetaSuerte >= this.tarjetasSuerteList.size())
+		if (this.proximaTarjetaSuerte >= this.tarjetasSuerteList.size()){
+			this.tarjetasSuerteList = ListUtils.randomizeList(this.tarjetasSuerteList);
 			this.proximaTarjetaSuerte = 0;
+		}
 
 		return tmpTarjetaSuerte;
 	}
@@ -198,8 +200,10 @@ public class TarjetaController {
 
 		this.proximaTarjetaComunidad++;
 
-		if (this.proximaTarjetaComunidad >= this.tarjetasComunidadList.size())
+		if (this.proximaTarjetaComunidad >= this.tarjetasComunidadList.size()){
+			this.tarjetasComunidadList = ListUtils.randomizeList(this.tarjetasComunidadList);
 			this.proximaTarjetaComunidad = 0;
+		}
 
 		return tmpTarjetaComunidad;
 	}

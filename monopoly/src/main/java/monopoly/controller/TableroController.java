@@ -6,14 +6,9 @@ package monopoly.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.antlr.grammar.v3.ANTLRParser.defaultNodeOption_return;
-
-import com.sun.javafx.scene.layout.region.Margins.Converter;
-
 import monopoly.model.Banco;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
-import monopoly.model.MonopolyGameStatus;
 import monopoly.model.MonopolyGameStatus.AccionEnCasillero;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tablero.Casillero.TipoCasillero;
@@ -24,8 +19,6 @@ import monopoly.model.tablero.Tablero;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaCalle.Color;
-import monopoly.model.tarjetas.TarjetaCompania;
-import monopoly.model.tarjetas.TarjetaEstacion;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.exception.CondicionInvalidaException;
@@ -950,6 +943,9 @@ public class TableroController {
 		int nroCasas = 0;
 		int monto = 0;
 
+		if (pCasillero.getTarjetaCalle().isHipotecada())
+			return 0;
+
 		nroCasas = pCasillero.getNroCasas();
 		monto = pCasillero.getTarjetaCalle().calcularAlquiler(nroCasas);
 
@@ -963,15 +959,29 @@ public class TableroController {
 		int nroEstaciones = 0;
 		int monto = 0;
 
+		if (pCasillero.getTarjetaEstacion().isHipotecada())
+			return 0;
+
 		nroEstaciones = cantPropiedadesMonopolio(pCasillero, pCasillero
 				.getTarjetaEstacion().getJugador());
 		monto = pCasillero.getTarjetaEstacion().calcularAlquiler(nroEstaciones);
 		return monto;
 	}
 
-	// private int calcularAlquilerCompania(CasilleroCompania pCasillero){
-	//
-	// }
+	private int calcularAlquilerCompania(CasilleroCompania pCasillero,
+			int resultadoDados) {
+		int nroCompanias = 0;
+		int monto = 0;
+
+		if (pCasillero.getTarjetaCompania().isHipotecada())
+			return 0;
+
+		nroCompanias = cantPropiedadesMonopolio(pCasillero, pCasillero
+				.getTarjetaCompania().getJugador());
+		monto = pCasillero.getTarjetaCompania().calcularAlquiler(nroCompanias,
+				resultadoDados);
+		return monto;
+	}
 
 	/**
 	 * Una calle puede vender edificios siempre y cuando no incumpla la regla de
@@ -1006,8 +1016,22 @@ public class TableroController {
 		return true;
 	}
 
-	public MonopolyGameStatus evaluarAccionEnCasillero(Jugador pJugador,
-			Casillero pCasillero, boolean cobraSalida)
+	/**
+	 * Determina la acción que se debe realizar en base al casillero que avanzó.
+	 * 
+	 * @param pJugador
+	 *            Jugador de turno.
+	 * @param pCasillero
+	 *            Casillero al cual avanzó
+	 * @param resultadoDados
+	 *            la suma de los dados arrojados que provocó que avance a
+	 *            {@code pCasillero}
+	 * @return retorna la Accion que se debe hacer para {@code pJugador}
+	 * @throws CondicionInvalidaException
+	 *             excepción para un tipo de casillero no definido.
+	 */
+	public AccionEnCasillero getAccionEnCasillero(Jugador pJugador,
+			Casillero pCasillero, int resultadoDados)
 			throws CondicionInvalidaException {
 		int montoAPagar = 0;
 		String nombreJugadorActual;
@@ -1016,7 +1040,6 @@ public class TableroController {
 		Tarjeta tarjetaCasillero;
 		TarjetaPropiedad tarjetaPropiedad;
 		AccionEnCasillero accionEnCasillero;
-		MonopolyGameStatus monopolyGameStatus;
 
 		switch (pCasillero.getTipoCasillero().getNombreTipoCasillero()) {
 		case Casillero.CASILLERO_CALLE:
@@ -1055,6 +1078,9 @@ public class TableroController {
 									String.valueOf(montoAPagar) });
 							break;
 						case Casillero.CASILLERO_COMPANIA:
+							montoAPagar = calcularAlquilerCompania(
+									(CasilleroCompania) pCasillero,
+									resultadoDados);
 							break;
 						case Casillero.CASILLERO_ESTACION:
 							montoAPagar = calcularAlquilerEstación((CasilleroEstacion) pCasillero);
@@ -1065,7 +1091,6 @@ public class TableroController {
 						}
 					}
 				}
-
 			}
 			break;
 
@@ -1075,25 +1100,29 @@ public class TableroController {
 			break;
 		case Casillero.CASILLERO_IMPUESTO:
 			accionEnCasillero = AccionEnCasillero.IMPUESTO;
-			// Cobrar impuesto.
+			accionEnCasillero.setAcciones(new String[] { pCasillero
+					.getNombreCasillero() });
 			break;
 		case Casillero.CASILLERO_SUERTE:
-			// Adjuntar tarjeta suerte
-			//banco.
+			accionEnCasillero = AccionEnCasillero.TARJETA_SUERTE;
 			break;
 		case Casillero.CASILLERO_COMUNIDAD:
 			// Adjuntar tarjeta comunidad
+			accionEnCasillero = AccionEnCasillero.TARJETA_COMUNIDAD;
 			break;
 		case Casillero.CASILLERO_CARCEL:
 		case Casillero.CASILLERO_DESCANSO:
 		case Casillero.CASILLERO_SALIDA:
+			accionEnCasillero = AccionEnCasillero.DESCANSO;
+			accionEnCasillero.setAcciones(new String[] { pCasillero
+					.getNombreCasillero() });
 			break;
 		default:
 			throw new CondicionInvalidaException(
 					"Tipo de Casillero inexistente.");
 		}
 
-		return null;
+		return accionEnCasillero;
 	}
 
 	/**

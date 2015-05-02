@@ -14,6 +14,7 @@ import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.MonopolyGameStatus;
+import monopoly.model.MonopolyGameStatus.AccionEnCasillero;
 import monopoly.model.Usuario;
 import monopoly.model.tablero.Casillero;
 import monopoly.util.StringUtils;
@@ -39,7 +40,7 @@ public class JuegoController {
 	private JugadorController gestorJugadores;
 
 	private MonopolyGameStatus status;
-	
+
 	public JuegoController(Usuario creador, String nombre) {
 		this.gestorBanco = new BancoController();
 		this.gestorTablero = new TableroController();
@@ -109,8 +110,8 @@ public class JuegoController {
 
 			status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
 					gestorBanco.getBanco(), gestorTablero.getTablero(),
-					EstadoJuego.TIRAR_DADO, null,gestorJugadores.getCurrentPlayer(),
-					historyList);
+					EstadoJuego.TIRAR_DADO, null,
+					gestorJugadores.getCurrentPlayer(), historyList, null);
 			sendToAll(status);
 
 			// tirarDadosJugador();
@@ -137,22 +138,35 @@ public class JuegoController {
 			}
 		}
 	}
-	
-	public void avanzarDeCasillero(int key, Dado dados) throws Exception {
+
+	public void avanzarDeCasillero(int senderId, Dado dados) throws Exception {
 		// TODO Auto-generated method stub
 		JugadorHumano jugador;
 		Casillero casillero;
+		boolean cobraSalida = true;
+		AccionEnCasillero accion;
+		MonopolyGameStatus status;
+		List<History> historyList = new ArrayList<History>();
+
+		jugador = gestorJugadores.getJugadorHumano(senderId);
+		casillero = gestorTablero.moverAdelante(jugador, dados.getSuma(),
+				cobraSalida);
+
+		accion = gestorTablero.getAccionEnCasillero(jugador, casillero,
+				dados.getSuma());
 		
-		jugador = gestorJugadores.getJugadorHumano(key);
-		casillero = gestorTablero.moverAdelante(jugador, dados.getSuma(), true);
 		
-		//Debemos determinar que accion realiza sobre el casillero.
+		
+		status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+				gestorBanco.getBanco(), gestorTablero.getTablero(),
+				EstadoJuego.JUGANDO, accion,
+				gestorJugadores.getCurrentPlayer(), historyList, null);
 	}
 
-//	private void sendToOne(int key, Object message) {
-//		PartidasController.getInstance().getMonopolyGame()
-//				.sendToOne(key, message);
-//	}
+	private void sendToOne(int recipientID, Object message) {
+		PartidasController.getInstance().getMonopolyGame()
+				.sendToOne(recipientID, message);
+	}
 
 	/**
 	 * 
@@ -187,10 +201,7 @@ public class JuegoController {
 		}
 	}
 
-	
-	
-	// ============================= Getter & Setter
-	// ==========================//
+	// ======================= Getter & Setter =======================//
 
 	public Juego getJuego() {
 		return juego;

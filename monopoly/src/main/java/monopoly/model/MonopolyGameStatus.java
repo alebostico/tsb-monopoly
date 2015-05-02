@@ -8,6 +8,7 @@ import java.util.List;
 
 import monopoly.model.Estado.EstadoJuego;
 import monopoly.model.tablero.Tablero;
+import monopoly.model.tarjetas.Tarjeta;
 
 /**
  * @author Bostico Alejandro
@@ -22,7 +23,6 @@ public class MonopolyGameStatus implements Serializable {
 	 * Enumerador para determinar que es lo que se debe realizar cuando el
 	 * jugador cae en un determinado casillero.
 	 **/
-
 	public enum AccionEnCasillero {
 		/**
 		 * Cuando una propiedad es libre para ser comprada String[descripción]
@@ -92,8 +92,6 @@ public class MonopolyGameStatus implements Serializable {
 		}
 	}
 
-	// public final
-
 	public final List<Jugador> turnos;
 
 	public final EstadoJuego status;
@@ -107,10 +105,12 @@ public class MonopolyGameStatus implements Serializable {
 	public Jugador currentPlayer;
 
 	public final List<History> hirtoryList;
+	
+	public final Tarjeta tarjeta;
 
 	public MonopolyGameStatus(List<Jugador> turnos, Banco banco,
 			Tablero tablero, EstadoJuego status, AccionEnCasillero accion,
-			Jugador currentPlayer, List<History> hirtoryList) {
+			Jugador currentPlayer, List<History> hirtoryList, Tarjeta tarjeta) {
 		this.turnos = turnos;
 		this.status = status;
 		this.accionCasillero = accion;
@@ -118,6 +118,7 @@ public class MonopolyGameStatus implements Serializable {
 		this.banco = banco;
 		this.tablero = tablero;
 		this.hirtoryList = hirtoryList;
+		this.tarjeta = tarjeta;
 	}
 
 }

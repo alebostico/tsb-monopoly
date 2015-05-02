@@ -19,7 +19,9 @@ public class Estado implements Serializable {
 	public enum EstadoJuego {
 		CREADO("creado"), ESPERANDO_JUGADOR("esperando jugador"), ESTABLECIENDO_TURNOS(
 				"Estableciendo turnos"), INICIADO("iniciado"), TIRAR_DADO(
-				"Tirando dado para avanzar de Casillero"), FINALIZADO(
+				"Tirando dado para avanzar de Casillero"), JUGANDO(
+				"Jugador Jugando"), ESPERANDO_TURNO(
+				"Esperando que el jugador termine su turno"), FINALIZADO(
 				"finalizado");
 
 		private final String nombreEstadoJuego;
