@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="260.0" prefWidth="405.0" styleClass="background_tarjeta" stylesheets="@../css/Images_Background.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="TarjetaComunidadController">
+   <children>
+      <VBox alignment="CENTER" layoutX="103.0" layoutY="7.0" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label alignment="CENTER" text="CAJA DE COMUNIDAD" textAlignment="CENTER" textFill="#0072cfe3">
+               <font>
+                  <Font name="Purisa Bold" size="28.0" />
+               </font>
+               <effect>
+                  <Glow />
+               </effect>
+            </Label>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+               <children>
+                  <Label fx:id="lblMensaje" text="LA INSPECCIÓN DE LA CALLE TE OBLIGA\nA REPARACIONES.\nPAGA 40 € POR CADA CASA.\nPAGA 115 € POR HOTEL." wrapText="true" />
+                  <ImageView fitHeight="116.0" fitWidth="85.0" pickOnBounds="true">
+                     <image>
+                        <Image url="@../images/logos/monopoly_community_chest.gif" />
+                     </image>
+                  </ImageView>
+               </children>
+               <VBox.margin>
+                  <Insets left="25.0" right="25.0" />
+               </VBox.margin>
+            </HBox>
+            <Button fx:id="btnAceptar" mnemonicParsing="false" onAction="#processAceptar" text="Aceptar" />
+         </children>
+      </VBox>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="5.0" right="5.0" />
+   </padding>
+</AnchorPane>

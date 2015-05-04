@@ -248,6 +248,7 @@
    </children>
    <stylesheets>
       <URL value="@../css/Sheet.css" />
+      <URL value="@../css/Images_Background.css" />
       <URL value="@../css/Casilleros.css" />
    </stylesheets>
 </StackPane>
