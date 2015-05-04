@@ -13,10 +13,14 @@ import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
+import monopoly.model.JugadorVirtual;
 import monopoly.model.MonopolyGameStatus;
 import monopoly.model.MonopolyGameStatus.AccionEnCasillero;
 import monopoly.model.Usuario;
 import monopoly.model.tablero.Casillero;
+import monopoly.model.tarjetas.Tarjeta;
+import monopoly.model.tarjetas.TarjetaComunidad;
+import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.StringUtils;
 import monopoly.util.message.game.HistoryGameMessage;
 
@@ -114,8 +118,15 @@ public class JuegoController {
 					gestorJugadores.getCurrentPlayer(), historyList, null);
 			sendToAll(status);
 
-			// tirarDadosJugador();
+			if(gestorJugadores.getCurrentPlayer() instanceof JugadorVirtual)
+			{
+				tirarDadosJugadorVirtual();
+			}
 		}
+	}
+	
+	public void tirarDadosJugadorVirtual(){
+		
 	}
 
 	/**
@@ -145,7 +156,11 @@ public class JuegoController {
 		Casillero casillero;
 		boolean cobraSalida = true;
 		AccionEnCasillero accion;
+		EstadoJuego estadoJuegoJugadorActual= EstadoJuego.TIRAR_DADO;;
+		EstadoJuego estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.TIRAR_DADO;
 		MonopolyGameStatus status;
+		Tarjeta tarjetaSelected = null;
+		String mensaje;
 		List<History> historyList = new ArrayList<History>();
 
 		jugador = gestorJugadores.getJugadorHumano(senderId);
@@ -154,13 +169,58 @@ public class JuegoController {
 
 		accion = gestorTablero.getAccionEnCasillero(jugador, casillero,
 				dados.getSuma());
-		
-		
+
+		switch (accion) {
+		case TARJETA_SUERTE:
+			tarjetaSelected = gestorTablero.getTarjetaSuerte();
+			accion.getAcciones()[1]= String.valueOf(((TarjetaSuerte)tarjetaSelected).getIdTarjeta());
+			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
+			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.TIRAR_DADO;
+			break;
+		case TARJETA_COMUNIDAD:
+			tarjetaSelected = gestorTablero.getTarjetaComunidad();
+			accion.getAcciones()[1]= String.valueOf(((TarjetaComunidad)tarjetaSelected).getIdTarjeta());
+			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
+			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.TIRAR_DADO;
+			break;
+		case DISPONIBLE_PARA_VENDER:
+		case IMPUESTO:
+		case IR_A_LA_CARCEL:
+		case PAGAR_ALQUILER:
+			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
+			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.TIRAR_DADO;
+			break;
+		case DESCANSO:
+		case HIPOTECADA:
+		case MI_PROPIEDAD:
+			estadoJuegoJugadorActual = Estado.EstadoJuego.TIRAR_DADO;
+			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.TIRAR_DADO;
+		break;
+		default:
+			break;
+		}
+
+		mensaje = String.format("Avanzaste al casillero {0}, {1}",
+				casillero.getNombreCasillero(), accion.getAcciones()[0]);
+
+		historyList.add(new History(StringUtils.getFechaActual(), jugador
+				.getNombre(), mensaje));
+		if (estadoJuegoJugadorActual != EstadoJuego.JUGANDO)
+			gestorJugadores.siguienteTurno();
 		
 		status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
 				gestorBanco.getBanco(), gestorTablero.getTablero(),
-				EstadoJuego.JUGANDO, accion,
-				gestorJugadores.getCurrentPlayer(), historyList, null);
+				estadoJuegoJugadorActual, accion,
+				gestorJugadores.getCurrentPlayer(), historyList,
+				tarjetaSelected);
+
+		sendToOne(senderId, status);
+
+		mensaje = String.format("Avanzó al casillero {1}.", casillero.getNombreCasillero());
+		
+		historyList = new ArrayList<History>();
+		historyList.add(new History(StringUtils.getFechaActual(), jugador
+				.getNombre(), mensaje));
 	}
 
 	private void sendToOne(int recipientID, Object message) {

@@ -27,55 +27,55 @@ public class MonopolyGameStatus implements Serializable {
 		/**
 		 * Cuando una propiedad es libre para ser comprada String[descripción]
 		 */
-		DISPONIBLE_PARA_VENDER(new String[] { "Disponible para la Venta" }),
+		DISPONIBLE_PARA_VENDER(new String[] { "disponible para la venta." }),
 
 		/**
 		 * Cuando otro jugador compró la propiedad, entonces hay que pagar
 		 * alquiler. String[descripción + monto + nombre jugador][monto a pagar]
 		 */
 		PAGAR_ALQUILER(new String[] {
-				"Debes pagar €{0} de alquiler al Jugador {0} ", "€" }),
+				"debes pagar €{0} de alquiler al Jugador {0}.", "€" }),
 
 		/**
 		 * Cuando el casillero al que avanzó corresponde a una tarjeta de la
 		 * suerte. String[descripción][Id Tarjeta de la Suerte]
 		 */
-		TARJETA_SUERTE(new String[] { "Tarjeta Suerte", "IdTarjeta" }),
+		TARJETA_SUERTE(new String[] { "sacaste una tarjeta de la suerte.", "IdTarjeta" }),
 
 		/**
 		 * Cuando el casillero al que avanzó corresponde a una tarjeta de
 		 * comunidad. String[descripción][Id Tarjeta de Comunidad]
 		 */
-		TARJETA_COMUNIDAD(new String[] { "Tarjeta Comunidad", "IdTarjeta" }),
+		TARJETA_COMUNIDAD(new String[] { "sacaste una tarjeta comunidad.", "IdTarjeta" }),
 
 		/**
 		 * Cuando el casillero corresponde a Ir a la Cárcel. String[descripción]
 		 */
-		IR_A_LA_CARCEL(new String[] { "Marche Preso" }),
+		IR_A_LA_CARCEL(new String[] { "debes ir a la cárcel." }),
 
 		/**
 		 * Cuándo el casillero corresponde a un descanso (Salida, Parking, En la
 		 * Cárcel de visita) String[descripción]
 		 */
-		DESCANSO(new String[] { "Descanso" }),
+		DESCANSO(new String[] { "debes descansar." }),
 
 		/**
 		 * Cuándo el casillero corresponde a Impuesto al Capital o lujo
 		 * String[Descripción][Monto]
 		 */
-		IMPUESTO(new String[] { "Pargar Impuesto", "Monto" }),
+		IMPUESTO(new String[] { "debes pargar impuestos.", "Monto" }),
 
 		/**
 		 * Cuándo el casillero corresponde a una propiedad comprada
 		 * anteriormente. String[descripción]
 		 */
-		MI_PROPIEDAD(new String[] { "Mi propia propiedad" }),
+		MI_PROPIEDAD(new String[] { "ya adquiriste esta propiedad." }),
 
 		/*
 		 * Cuándo el casillero corresponde a propiedad de otros jugador que se
 		 * encuentra hipotecada. String[descripción]
 		 */
-		HIPOTECADA(new String[] { "Propiedad Hipotecada" });
+		HIPOTECADA(new String[] { "esta propiedad está hipotecada" });
 
 		private String[] acciones;
 

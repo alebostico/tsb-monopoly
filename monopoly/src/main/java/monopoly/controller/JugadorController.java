@@ -95,6 +95,11 @@ public class JugadorController {
 
 	}
 
+	public Jugador siguienteTurno(){
+		currentPlayer = currentPlayer.getNext();
+		return currentPlayer.getKey();
+	}
+	
 	public int cantJugadoresConectados() {
 		return this.jugadoresList.size();
 	}

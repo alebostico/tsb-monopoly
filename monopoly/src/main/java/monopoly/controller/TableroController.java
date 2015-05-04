@@ -19,7 +19,9 @@ import monopoly.model.tablero.Tablero;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaCalle.Color;
+import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaPropiedad;
+import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
 import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.exception.SinDineroException;
@@ -1219,6 +1221,14 @@ public class TableroController {
 		return true;
 	}
 
+	public TarjetaSuerte getTarjetaSuerte(){
+		return gestorTarjetas.getNextTarjetaSuerte();
+	}
+	
+	public TarjetaComunidad getTarjetaComunidad(){
+		return gestorTarjetas.getNextTarjetaComunidad();
+	}
+	
 	private BancoController getBancoController(Juego juego) {
 		return PartidasController.getInstance()
 				.buscarControladorJuego(juego.getUniqueID()).getGestorBanco();
