@@ -20,7 +20,9 @@ import javax.persistence.Transient;
 
 import monopoly.model.Estado.EstadoJugador;
 import monopoly.model.tablero.Casillero;
+import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tarjetas.Tarjeta;
+import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.exception.SinDineroException;
 
@@ -288,14 +290,32 @@ public abstract class Jugador implements Serializable {
 	}
 
 	/**
-	 * devuelve true si el jugador puede pagar el monto indicado
+	 * devuelve true si el jugador puede pagar el monto indicado. Para el
+	 * cálculo se tiene en cuenta el dinero en efectivo, el dinero que se puede
+	 * obtener de la venta de casas/hoteles de sus propiedades y el valor de la
+	 * hipoteca de todas sus propiedades. Si el Jugador no puede pagar el monto
+	 * se debe declarar en bancarrota.
 	 * 
 	 * @param monto
 	 *            el monto que se quiere consultar
 	 * @return true si el jugador puede pagar ese monto
 	 */
 	public boolean puedePagar(int monto) {
-		return (this.getDinero() >= monto);
+		return (this.cuantoPuedePagar() >= monto);
+	}
+
+	/**
+	 * Devuelve true si el jugador puede pagar el monto indicado solo con
+	 * efectivo.
+	 * 
+	 * @param monto
+	 *            el monto que se quiere consultar
+	 * @return true si el jugador puede pagar ese monto
+	 */
+	public boolean puedePagarConEfectivo(int monto) {
+		if (this.getDinero() >= monto)
+			return true;
+		return false;
 	}
 
 	/**
@@ -305,7 +325,7 @@ public abstract class Jugador implements Serializable {
 	 *            el monto a pagar por el jugador
 	 */
 	public boolean pagar(int monto) {
-		if (puedePagar(monto)) {
+		if (puedePagarConEfectivo(monto)) {
 			this.setDinero(this.getDinero() - monto);
 		} else {
 			return false;
@@ -348,8 +368,8 @@ public abstract class Jugador implements Serializable {
 	public int getNroHoteles() {
 		return nroHoteles;
 	}
-	
-	public int getCantPropiedades(){
+
+	public int getCantPropiedades() {
 		return this.tarjPropiedadList.size();
 	}
 
@@ -376,6 +396,66 @@ public abstract class Jugador implements Serializable {
 	 */
 	public void setTiradaInicial(Dado tiradaInicial) {
 		this.tiradaInicial = tiradaInicial;
+	}
+
+	/**
+	 * Calcula el capital total del jugador. Se calcula como la sumatoria de:
+	 * <ul>
+	 * <li>el valor de todas las propiedades que posea,</li>
+	 * <li>el valor de las casas/hoteles que posea en sus propiedades y</li>
+	 * <li>el dinero en efectivo.</li>
+	 * </ul>
+	 * 
+	 * @return El capital total del jugador
+	 */
+	public int getCapital() {
+
+		int tmpCapital = 0;
+		CasilleroCalle tmpCasillero;
+		TarjetaCalle tmpTarjeta;
+
+		for (TarjetaPropiedad tarjetaPropiedad : tarjPropiedadList) {
+			tmpCapital += tarjetaPropiedad.getValorPropiedad();
+
+			if (tarjetaPropiedad.getCasillero().getTipoCasillero()
+					.equals(Casillero.CASILLERO_CALLE)) {
+				tmpTarjeta = (TarjetaCalle) tarjetaPropiedad;
+				tmpCasillero = (CasilleroCalle) tarjetaPropiedad.getCasillero();
+				tmpCapital += tmpCasillero.getNroCasas()
+						* tmpTarjeta.getPrecioCadaCasa();
+			}
+
+		}
+		tmpCapital += this.getDinero();
+		return tmpCapital;
+	}
+
+	/**
+	 * Calcula cual es el monto total que puede pagar el jugador. El método
+	 * tiene en cuenta el dinero en efectivo, la venta de casas/hoteles y la
+	 * hipoteca de propiedades
+	 * 
+	 * @return El monto total que el jugador puede pagar
+	 */
+	public int cuantoPuedePagar() {
+		int tmpCapitalVenta = 0;
+		CasilleroCalle tmpCasillero;
+		TarjetaCalle tmpTarjeta;
+
+		for (TarjetaPropiedad tarjetaPropiedad : tarjPropiedadList) {
+			tmpCapitalVenta += tarjetaPropiedad.getValorHipotecario();
+
+			if (tarjetaPropiedad.getCasillero().getTipoCasillero()
+					.equals(Casillero.CASILLERO_CALLE)) {
+				tmpTarjeta = (TarjetaCalle) tarjetaPropiedad;
+				tmpCasillero = (CasilleroCalle) tarjetaPropiedad.getCasillero();
+				tmpCapitalVenta += tmpCasillero.getNroCasas()
+						* tmpTarjeta.getPrecioCadaCasa() / 2;
+			}
+
+		}
+		tmpCapitalVenta += this.getDinero();
+		return tmpCapitalVenta;
 	}
 
 	/*

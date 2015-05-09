@@ -45,6 +45,16 @@ public class JugadorVirtualController {
 	private static final int MULTA_CARCEL = 50;
 
 	/**
+	 * Cuando el jugador cae en el casillero 05 "Impuesto sobre el capital"
+	 * puede estimar su capital en $200 y pagar ese monto o bien pagar el 10%
+	 * del capital real, calculado como la sumatoria de: el valor de todas las
+	 * propiedades que posea, el valor de las casas/hoteles que posea en sus
+	 * propiedades y el dinero en efectivo.
+	 */
+	private static final int IMP_ESP_MONTO = 200;
+	private static final int IMP_ESP_PORC = 10;
+
+	/**
 	 * El jugador decidir&aacute; la nueva cantidad a pujar, si lo considera
 	 * oportuno. El jugador basado en reglas lo hara en funci&oacute;n de su
 	 * razonamiento, y el aleatorio por puro azar.
@@ -674,4 +684,37 @@ public class JugadorVirtualController {
 		return false;
 	}
 
+	/**
+	 * <p>
+	 * Cuando el jugador cae en el casillero 05 "Impuesto sobre el capital"
+	 * puede estimar su capital en $200 y pagar ese monto o bien pagar el 10%
+	 * del capital real, calculado como la sumatoria de:
+	 * <ul>
+	 * <li>el valor de todas las propiedades que posea,</li>
+	 * <li>el valor de las casas/hoteles que posea en sus propiedades y</li>
+	 * <li>el dinero en efectivo.</li>
+	 * </ul>
+	 * <p>
+	 * El jugador decidirá tomar la opción a pagar que menor gasto suponga
+	 * 
+	 * @param jugadorActual
+	 *            El jugador que va a pagar el impuesto
+	 * @return El monto a pagar
+	 * 
+	 */
+	public int decidirImpuestoEspecial(Jugador jugadorActual) {
+		int capitalJugador = jugadorActual.getCapital();
+		int aPagar = ((capitalJugador * IMP_ESP_PORC) / 100);
+
+		if (IMP_ESP_MONTO <= aPagar) {
+			GestorLogs.registrarDebug("El jugador " + jugadorActual.getNombre()
+					+ " decide pagar el monto fijo de $200");
+			return IMP_ESP_MONTO;
+		}
+		GestorLogs.registrarDebug("El jugador " + jugadorActual.getNombre()
+				+ " decide pagar el 10% de su capital: $" + aPagar);
+		return aPagar;
+	}
+	
+	
 }
