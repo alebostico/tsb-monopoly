@@ -1,15 +1,20 @@
 package monopoly.controller;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 import monopoly.model.Jugador;
 import monopoly.model.JugadorVirtual;
 import monopoly.model.tablero.Casillero;
+import monopoly.model.tablero.Casillero.TipoCasillero;
 import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tablero.CasilleroCompania;
 import monopoly.model.tablero.CasilleroEstacion;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
+import monopoly.util.TarjetaPropiedadComparator;
 
 /**
  * Clase est&aacute;tica para el manejo de la inteligencia de los jugadores
@@ -702,7 +707,7 @@ public class JugadorVirtualController {
 	 * @return El monto a pagar
 	 * 
 	 */
-	public int decidirImpuestoEspecial(Jugador jugadorActual) {
+	public int decidirImpuestoEspecial(JugadorVirtual jugadorActual) {
 		int capitalJugador = jugadorActual.getCapital();
 		int aPagar = ((capitalJugador * IMP_ESP_PORC) / 100);
 
@@ -715,6 +720,58 @@ public class JugadorVirtualController {
 				+ " decide pagar el 10% de su capital: $" + aPagar);
 		return aPagar;
 	}
-	
-	
+
+	/**
+	 * Método que hipoteca una serie de propiedades del jugador con
+	 * comportamiento aleatorio. Hipotecará todas las propiedades desde la más
+	 * cara hasta la más barata hasta que cubra la deuda.
+	 */
+	@SuppressWarnings("unused")
+	private static void hipotecarAleatorio(int cantidad,
+			JugadorVirtual jugadorActual) {
+
+		// 1- Copiar ordenadamente las propiedades hipotecables
+		List<TarjetaPropiedad> propiedadesHipotecables = new LinkedList<>();
+
+		for (TarjetaPropiedad tarjetaPropiedad : jugadorActual
+				.getTarjPropiedadList()) {
+
+			if (!tarjetaPropiedad.isHipotecada()) {
+				if (tarjetaPropiedad.getCasillero().getTipoCasillero() == TipoCasillero.C_CALLE
+						&& ((CasilleroCalle) tarjetaPropiedad.getCasillero())
+								.getNroCasas() != 0)
+					continue;
+				propiedadesHipotecables.add(tarjetaPropiedad);
+			}
+
+		}
+
+		// Ordenamos la lista por precio de mayor a menor
+		Collections.sort(propiedadesHipotecables,
+				Collections.reverseOrder(new TarjetaPropiedadComparator()));
+
+		// 2- Hipotecar desde la más cara hasta alcanzar el dinero necesario.
+
+		for (TarjetaPropiedad tarjetaPropiedad : propiedadesHipotecables) {
+			int valorHipoteca = jugadorActual
+					.hipotecarPropiedad(tarjetaPropiedad);
+			if (valorHipoteca > 0) {
+				cantidad -= valorHipoteca;
+			}
+			
+			// llegamos al monto necesario...
+			if (cantidad <= 0) break;
+
+		}
+
+		// int i = 0;
+		// while ( cantidad > 0 && i != propiedadesHipotecables.size () )
+		// {
+		// cout << get_nombre() << " ha hipotecado " <<
+		// propiedadesHipotecables[i]->get_nombre() << endl;
+		// propiedadesHipotecables[i]->hipotecar();
+		// cantidad -= propiedadesHipotecables[i]->get_hipoteca();
+		// i++;
+		// }
+	}
 }

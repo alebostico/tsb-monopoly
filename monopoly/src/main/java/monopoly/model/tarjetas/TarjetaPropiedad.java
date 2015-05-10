@@ -210,7 +210,7 @@ public abstract class TarjetaPropiedad extends Tarjeta implements Serializable {
 	public void setPathImagenDorso(String pathImagenDorso) {
 		this.pathImagenDorso = pathImagenDorso;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -222,6 +222,10 @@ public abstract class TarjetaPropiedad extends Tarjeta implements Serializable {
 				+ valorHipotecario + ",valoPropiedadr=" + valorPropiedad + " ]";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object object) {
 		if (object == this)

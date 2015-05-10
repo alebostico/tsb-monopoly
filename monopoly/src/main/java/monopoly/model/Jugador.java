@@ -21,9 +21,11 @@ import javax.persistence.Transient;
 import monopoly.model.Estado.EstadoJugador;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tablero.CasilleroCalle;
+import monopoly.model.tablero.Casillero.TipoCasillero;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
+import monopoly.util.GestorLogs;
 import monopoly.util.exception.SinDineroException;
 
 /**
@@ -268,6 +270,8 @@ public abstract class Jugador implements Serializable {
 	 */
 	public boolean adquirirPropiedad(TarjetaPropiedad tarjeta) {
 		tarjeta.setJugador(this);
+		GestorLogs.registrarDebug("El jugador " + this.getNombre() + " compró "
+				+ tarjeta.getNombre());
 		return this.tarjPropiedadList.add(tarjeta);
 	}
 
@@ -285,8 +289,78 @@ public abstract class Jugador implements Serializable {
 			int monto) throws SinDineroException {
 		jugador.pagarAJugador(this, monto);
 		this.getTarjPropiedadList().remove(tarjeta);
+		GestorLogs.registrarDebug("El jugador " + this.getNombre() + " vendió "
+				+ tarjeta.getNombre());
 		return jugador.adquirirPropiedad(tarjeta);
 
+	}
+
+	/**
+	 * Hipoteca una propiedad del jugador y cobra el monto de la hipoteca. Se
+	 * verifica que la propiedad no esté ya hipotecada y que no tenga edificios
+	 * en el caso de que sea una calle.
+	 * 
+	 * @param tarjeta
+	 *            La propiedad que se quiere hipotecar.
+	 * @return el valor hipotecario (o sea, lo que cobró el jugador por la
+	 *         hipoteca) o 0 si no se hipoteca (porque la propiedad no es del
+	 *         jugador, porque ya está hipotecada o porque tiene edificios).
+	 */
+	public int hipotecarPropiedad(TarjetaPropiedad tarjeta) {
+		for (TarjetaPropiedad tarjetaPropiedad : tarjPropiedadList) {
+			if (tarjetaPropiedad.equals(tarjeta)) {
+				if (!tarjetaPropiedad.isHipotecada()) {
+					if (tarjetaPropiedad.getCasillero().getTipoCasillero() == TipoCasillero.C_CALLE
+							&& ((CasilleroCalle) tarjetaPropiedad
+									.getCasillero()).getNroCasas() != 0)
+						return 0;
+
+					tarjetaPropiedad.setHipotecada(true);
+					this.cobrar(tarjetaPropiedad.getValorHipotecario());
+					GestorLogs.registrarDebug("El jugador " + this.getNombre()
+							+ " ha hipotecado " + tarjetaPropiedad.getNombre());
+					return tarjetaPropiedad.getValorHipotecario();
+				}
+				return 0;
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * Deshipoteca una propiedad del jugador y paga el monto de la deshipoteca
+	 * (valorhipoteca + 10% de interés). Se verifica que la propiedad esté
+	 * hipotecada.
+	 * 
+	 * @param tarjeta
+	 *            La propiedad que se quiere deshipotecar.
+	 * @return el valor de la deshipotecario (o sea, lo que pagó el jugador para
+	 *         deshipotecar) o 0 si no se deshipoteca (porque la propiedad no es
+	 *         del jugador o porque no está hipotecada).
+	 */
+	public int dehipotecarPropiedad(TarjetaPropiedad tarjeta) {
+		for (TarjetaPropiedad tarjetaPropiedad : tarjPropiedadList) {
+			if (tarjetaPropiedad.equals(tarjeta)) {
+				if (tarjetaPropiedad.isHipotecada()) {
+
+					// valorDeshipoteca = valorhipoteca + 10%
+					int valorDeshipoteca = (int) (tarjetaPropiedad
+							.getValorHipotecario() * 1.10);
+
+					if (this.getCapital() < valorDeshipoteca)
+						return 0;
+
+					tarjetaPropiedad.setHipotecada(false);
+					this.pagar(valorDeshipoteca);
+					GestorLogs.registrarDebug("El jugador " + this.getNombre()
+							+ " ha deshipotecado "
+							+ tarjetaPropiedad.getNombre());
+					return valorDeshipoteca;
+				}
+				return 0;
+			}
+		}
+		return 0;
 	}
 
 	/**
@@ -326,6 +400,8 @@ public abstract class Jugador implements Serializable {
 	 */
 	public boolean pagar(int monto) {
 		if (puedePagarConEfectivo(monto)) {
+			GestorLogs.registrarDebug("El jugador " + this.getNombre()
+					+ " pagó $" + monto);
 			this.setDinero(this.getDinero() - monto);
 		} else {
 			return false;
@@ -340,6 +416,8 @@ public abstract class Jugador implements Serializable {
 	 *            el monto a cobrar por el jugador
 	 */
 	public void cobrar(int monto) {
+		GestorLogs.registrarDebug("El jugador " + this.getNombre() + " cobró $"
+				+ monto);
 		this.setDinero(this.getDinero() + monto);
 	}
 
@@ -352,12 +430,14 @@ public abstract class Jugador implements Serializable {
 	 */
 	public void pagarAJugador(Jugador jugador, int monto)
 			throws SinDineroException {
-		if (this.pagar(monto))
+		if (this.pagar(monto)) {
+			GestorLogs.registrarDebug("El jugador " + this.getNombre()
+					+ " pagó $" + monto + " al jugador " + jugador.getNombre());
 			jugador.cobrar(monto);
-		else
+		} else
 			throw new SinDineroException(
 					String.format(
-							"El jugador {0} no posee dinero suficiente para pagar €{1} al jugador {2}",
+							"El jugador {0} no posee dinero suficiente para pagar ${1} al jugador {2}",
 							this.getNombre(), monto, jugador.getNombre()));
 	}
 
