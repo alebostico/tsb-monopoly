@@ -150,6 +150,10 @@ public abstract class TarjetaPropiedad extends Tarjeta implements Serializable {
 	public int getValorHipotecario() {
 		return valorHipotecario;
 	}
+	
+	public int getValorDeshipotecario(){
+		return (int)((double)valorHipotecario * 1.10);
+	}
 
 	public void setValorHipotecario(int valorHipotecario) {
 		this.valorHipotecario = valorHipotecario;
