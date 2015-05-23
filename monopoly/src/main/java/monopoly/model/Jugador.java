@@ -269,10 +269,12 @@ public abstract class Jugador implements Serializable {
 	 * @return true si se agrego correctamente
 	 */
 	public boolean adquirirPropiedad(TarjetaPropiedad tarjeta) {
+		if (!this.tarjPropiedadList.add(tarjeta))
+			return false;
 		tarjeta.setJugador(this);
 		GestorLogs.registrarDebug("El jugador " + this.getNombre() + " compró "
 				+ tarjeta.getNombre());
-		return this.tarjPropiedadList.add(tarjeta);
+		return true;
 	}
 
 	/**
@@ -364,7 +366,7 @@ public abstract class Jugador implements Serializable {
 	}
 
 	/**
-	 * devuelve true si el jugador puede pagar el monto indicado. Para el
+	 * Devuelve true si el jugador puede pagar el monto indicado. Para el
 	 * cálculo se tiene en cuenta el dinero en efectivo, el dinero que se puede
 	 * obtener de la venta de casas/hoteles de sus propiedades y el valor de la
 	 * hipoteca de todas sus propiedades. Si el Jugador no puede pagar el monto
