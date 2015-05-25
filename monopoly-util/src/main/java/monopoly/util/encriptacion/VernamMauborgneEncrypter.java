@@ -2,13 +2,13 @@ package monopoly.util.encriptacion;
 
 
 /**
- * Encripta una cadena en base a la t�cnica de Vernam - Mauborgne. El alfabeto base de los mensajes 
- * a encriptar viene dado por la constante Encriptador.ALFABETO. La tabla de transposici�n es creada 
+ * Encripta una cadena en base a la técnica de Vernam - Mauborgne. El alfabeto base de los mensajes 
+ * a encriptar viene dado por la constante Encriptador.ALFABETO. La tabla de transposición es creada 
  * y almacenada internamente por la misma clase. La clave de desplazamiento es creada por la propia 
  * clase, del mismo largo que el mensaje a encriptar (de acuerdo a la idea de Vernam), y cada uno de
- * los caracteres de esa clave se elige en forma aleatoria desde los s�mbolos de alfabeto base (de 
+ * los caracteres de esa clave se elige en forma aleatoria desde los símbolos de alfabeto base (de 
  * acuerdo a la idea de Mauborgne).
- * Patr�n aplicado: Strategy.
+ * Patrón aplicado: Strategy.
  * 
  * @author Ing. Valerio Frittelli
  * @version Julio de 2009
@@ -16,8 +16,8 @@ package monopoly.util.encriptacion;
 public class VernamMauborgneEncrypter extends VigenereEncrypter
 {
        /**
-        *  Inicia un encriptador con t�cnica de Vernam-Mauborgne. El mensaje a encriptar ser� inicializado 
-        *  como la cadena vac�a ("") y el programador deber� cambiar luego ese valor mediante setOpenMessage(). 
+        *  Inicia un encriptador con técnica de Vernam-Mauborgne. El mensaje a encriptar será inicializado 
+        *  como la cadena vacía ("") y el programador deberá cambiar luego ese valor mediante setOpenMessage(). 
         */
        public VernamMauborgneEncrypter( )
        {
@@ -25,10 +25,10 @@ public class VernamMauborgneEncrypter extends VigenereEncrypter
        }
                     
        /**
-        *  Inicia un encriptador con t�cnica de Vernam-Mauborgne. El mensaje a encriptar se inicializa 
-        *  con el valor del par�metro mens. Si ese par�metro es null, el mensaje a encriptar se inicia como 
-        *  la cadena vac�a ("") y luego el programador deber� cambiar ese valor con setOpenMessage().
-        *  @param mens el mensaje abierto que ser� encriptado.
+        *  Inicia un encriptador con técnica de Vernam-Mauborgne. El mensaje a encriptar se inicializa 
+        *  con el valor del parámetro mens. Si ese parámetro es null, el mensaje a encriptar se inicia como 
+        *  la cadena vacía ("") y luego el programador deberá cambiar ese valor con setOpenMessage().
+        *  @param mens el mensaje abierto que será encriptado.
         */
        public VernamMauborgneEncrypter( String mens )
        {
@@ -40,9 +40,9 @@ public class VernamMauborgneEncrypter extends VigenereEncrypter
        
     /**
      *  Cambia el mensaje a encriptar. Si el nuevo mensaje es null, el mensaje a encriptar se inicia como cadena 
-     *  vac�a (""), lo que deber�a provocar que una invocaci�n a code() retorne null. En todos los casos, tambi�n 
-     *  se inicia como cadena vac�a el mensaje encriptado, lo que deber�a provocar que una nueva invocaci�n a decode() 
-     *  retorne null. La clave de desplazamiento a usar, se vuelve a crear en forma aleatoria, y se ajusta al tama�o
+     *  vacía (""), lo que debería provocar que una invocación a code() retorne null. En todos los casos, también 
+     *  se inicia como cadena vacía el mensaje encriptado, lo que debería provocar que una nueva invocación a decode() 
+     *  retorne null. La clave de desplazamiento a usar, se vuelve a crear en forma aleatoria, y se ajusta al tamaño
      *  del nuevo mensaje.
      *  @param mens el nuevo mensaje a encriptar.
      */
@@ -53,16 +53,16 @@ public class VernamMauborgneEncrypter extends VigenereEncrypter
     }
        
        /**
-        * Retorna una cadena con informaci�n general sobre el encriptador.
-        * @return un cadena con informaci�n del encriptador.
+        * Retorna una cadena con información general sobre el encriptador.
+        * @return un cadena con información del encriptador.
         */
        public String toString()
        {
-           String res = "Ultimo mensaje abierto: " + mensaje + "  -  Ultima encriptaci�n conocida: " + encriptado;
-           return res + "\nT�cnica: Cifrado de Vernam - Mauborgne" + "\nTabla usada: " + transposicion + "\nClave: " + clave;
+           String res = "Ultimo mensaje abierto: " + mensaje + "  -  Ultima encriptación conocida: " + encriptado;
+           return res + "\nTécnica: Cifrado de Vernam - Mauborgne" + "\nTabla usada: " + transposicion + "\nClave: " + clave;
        }
 
-       // crea una clave del mismo largo que el mensaje, combinando n s�mbolos aleatoriamente 
+       // crea una clave del mismo largo que el mensaje, combinando n símbolos aleatoriamente 
        // elegidos del alfabeto base.
        private void createKey ()
        {
