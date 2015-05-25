@@ -9,13 +9,13 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="492.0" prefWidth="403.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="VentaPropiedadController">
+<StackPane maxHeight="492.0" maxWidth="403.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="492.0" prefWidth="403.0" stylesheets="@../css/Images_Background.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.VentaPropiedadController">
    <children>
-      <Pane prefHeight="200.0" prefWidth="200.0" styleClass="background" stylesheets="@../css/Sheet.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="background" stylesheets="@../css/Sheet.css">
          <children>
-            <VBox alignment="CENTER" prefHeight="475.0" prefWidth="404.0" spacing="10.0">
+            <VBox alignment="CENTER" prefHeight="475.0" prefWidth="404.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Label graphicTextGap="15.0" style="-fx-font-size: 35; -fx-font-family: Arial; -fx-text-fill: linear-gradient(white, #d0d0d0);" text="EN VENTA" textFill="#15088c">
+                  <Label graphicTextGap="15.0" style="-fx-font-size: 35; -fx-font-family: Arial; -fx-text-fill: linear-gradient(white, #d0d0d0);" text="EN VENTA">
                      <font>
                         <Font size="45.0" />
                      </font>
@@ -51,16 +51,13 @@
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="68.0" prefWidth="404.0" spacing="35.0">
                      <children>
-                        <Button fx:id="btnComprar" mnemonicParsing="false" onAction="#processComprar" text="Comprar" />
-                        <Button fx:id="btnSubasta" mnemonicParsing="false" onAction="#processSubasta" text="Subasta" />
+                        <Button fx:id="btnSubasta" cancelButton="true" mnemonicParsing="false" onAction="#processSubasta" text="Subastar" />
+                        <Button fx:id="btnComprar" defaultButton="true" mnemonicParsing="false" onAction="#processComprar" text="Comprar" />
                      </children>
                   </HBox>
                </children>
             </VBox>
          </children>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
-      </Pane>
+      </AnchorPane>
    </children>
-</AnchorPane>
+</StackPane>

@@ -3,19 +3,20 @@
  */
 package monopoly.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Transient;
+
+import monopoly.model.tablero.Casillero;
 
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
  *
  */
-public class JugadorHumano extends Jugador {
+public class JugadorHumano extends Jugador implements Serializable{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -6192046659268955353L;
 
 	@Transient
 	private Usuario usuario;
@@ -23,9 +24,9 @@ public class JugadorHumano extends Jugador {
 	@Transient
 	private int senderID;
 
-	public JugadorHumano(String nombre, Ficha ficha, Juego juego,
+	public JugadorHumano(String nombre, Ficha ficha, Juego juego, Casillero casilleroActual,
 			Usuario usuario, int senderID) {
-		super(nombre, ficha, juego);
+		super(nombre, ficha, juego, casilleroActual);
 		this.usuario = usuario;
 		this.senderID = senderID;
 	}

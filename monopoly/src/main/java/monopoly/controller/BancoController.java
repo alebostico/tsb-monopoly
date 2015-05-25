@@ -3,8 +3,15 @@
  */
 package monopoly.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import monopoly.model.Banco;
 import monopoly.model.Jugador;
+import monopoly.model.tablero.Casillero;
+import monopoly.model.tablero.CasilleroCalle;
+import monopoly.model.tablero.CasilleroCompania;
+import monopoly.model.tablero.CasilleroEstacion;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.exception.SinDineroException;
 
@@ -17,8 +24,25 @@ public class BancoController {
 
 	private Banco banco;
 
-	public BancoController() {
-		this.banco = new Banco(TarjetaController.tarjetasPropiedadesList(), 32,
+	public BancoController(Casillero[] casilleros) {
+		List<TarjetaPropiedad> tarjetasList = new ArrayList<TarjetaPropiedad>();
+		for (Casillero casillero : casilleros) {
+			switch (casillero.getTipoCasillero()) {
+			case C_CALLE:
+				tarjetasList.add(((CasilleroCalle)casillero).getTarjetaCalle());
+				break;
+			case C_ESTACION:
+				tarjetasList.add(((CasilleroEstacion)casillero).getTarjetaEstacion());
+				break;
+			case C_COMPANIA:
+				tarjetasList.add(((CasilleroCompania)casillero).getTarjetaCompania());
+				break;
+			default:
+				break;
+			}
+		}
+
+		this.banco = new Banco(tarjetasList, 32,
 				12);
 	}
 
@@ -43,7 +67,7 @@ public class BancoController {
 		if (!jugador.pagar(monto)) {
 			throw new SinDineroException(
 					String.format(
-							"El jugador {0} no posee dinero suficiente para pagar €{1}",
+							"El jugador %s no posee dinero suficiente para pagar %s €",
 							jugador.getNombre(), monto));
 		}
 	}

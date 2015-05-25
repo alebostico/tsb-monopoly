@@ -151,7 +151,7 @@ public class StringUtils {
 		return dateFormat.format(calendar.getTime()); 
 	}
 
-	public final static DecimalFormat decimalFormat = new DecimalFormat( "'€'#,###,###,##0" );
+	public final static DecimalFormat decimalFormat = new DecimalFormat( "#,###,###,##0' €'" );
 	
 	//public static final NumberFormat FORMATO_IMPORTE = NumberFormat.getCurrencyInstance();
 	

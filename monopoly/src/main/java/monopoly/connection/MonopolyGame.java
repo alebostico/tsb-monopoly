@@ -29,7 +29,7 @@ public class MonopolyGame extends GameServer {
 	private Usuario usuario;
 	private Juego juego;
 	private List<Juego> juegosList;
-	
+
 	/**
 	 * Creates a MonopolyGame listening on a specified port.
 	 */
@@ -74,7 +74,8 @@ public class MonopolyGame extends GameServer {
 	 * as a message to be displayed to that player.
 	 */
 	protected void messageReceived(int senderId, Object message) {
-		
+		try
+		{
 		switch (message.getClass().getSimpleName()) {
 		case ConstantesMensaje.LOGIN_MESSAGE:
 			usuario = (Usuario) ((LoginMessage) message).message;
@@ -113,7 +114,7 @@ public class MonopolyGame extends GameServer {
 			break;
 			
 		case ConstantesMensaje.ADVANCE_IN_BOARD_MESSAGE:
-			
+			PartidasController.getInstance().avanzarDeCasillero(senderId, message);
 		break;
 
 		case ConstantesMensaje.DISCONNECT_MESSAGE:
@@ -128,22 +129,27 @@ public class MonopolyGame extends GameServer {
 			System.out.print(message.getClass().getSimpleName());
 			break;
 		}
+		}catch (Exception ex){
+			
+		}
+		
 	}
-	
-	private void messageString(int senderId, Object message){
-		switch((String) message){
+
+	private void messageString(int senderId, Object message) {
+		switch ((String) message) {
 		case ConstantesMensaje.GET_PENDING_GAMES_MESSAGE:
-			juegosList = PartidasController.getInstance().buscarJuegos(EstadoJuego.ESPERANDO_JUGADOR);
+			juegosList = PartidasController.getInstance().buscarJuegos(
+					EstadoJuego.ESPERANDO_JUGADOR);
 			sendToOne(senderId, new JoinGameMessage(juegosList));
 			break;
-			
+
 		case ConstantesMensaje.THROW_DICE_TURNS_MESSAGE:
-			
+
 			break;
-			
-			default:
-				break;
-		
+
+		default:
+			break;
+
 		}
 	}
 

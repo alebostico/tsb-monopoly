@@ -7,7 +7,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="550.0" minWidth="800.0" styleClass="background" stylesheets="@../css/Sheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.UnirmeJuegoController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="550.0" minWidth="800.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.UnirmeJuegoController">
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="200.0">
          <children>
@@ -68,4 +68,8 @@
          </children>
       </AnchorPane>
    </children>
+   <stylesheets>
+      <URL value="@../css/Sheet.css" />
+      <URL value="@../css/Images_Background.css" />
+   </stylesheets>
 </StackPane>

@@ -5,6 +5,8 @@ package monopoly.model;
 
 import java.io.Serializable;
 
+import monopoly.model.tablero.Casillero;
+
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
@@ -37,9 +39,9 @@ public class JugadorVirtual extends Jugador implements Serializable {
 
 	private TipoJugador tipoJugador;
 
-	public JugadorVirtual(String nombre, Ficha ficha, Juego juego,
+	public JugadorVirtual(String nombre, Ficha ficha, Juego juego, Casillero casillero,
 			TipoJugador tipoJugador) {
-		super(nombre, ficha, juego);
+		super(nombre, ficha, juego, casillero);
 		this.tipoJugador = tipoJugador;
 	}
 

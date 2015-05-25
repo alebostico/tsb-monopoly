@@ -130,8 +130,7 @@ public class Juego implements Serializable {
 
 		GestorLogs.registrarLog("Agregado jugador '"
 				+ jugador.getFicha().getNombre() + "' al juego '"
-				+ this.getUniqueID() + "' en el casillero #"
-				+ jugador.getCasilleroActual().getNumeroCasillero());
+				+ this.getUniqueID() );
 
 		return returnValue;
 	}

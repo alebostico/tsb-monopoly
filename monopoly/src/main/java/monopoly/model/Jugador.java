@@ -34,7 +34,7 @@ import monopoly.util.exception.SinDineroException;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Jugador implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -3652571253408007334L;
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -82,16 +82,16 @@ public abstract class Jugador implements Serializable {
 	 * será utilizado para almacenar las tarjetas de comunidad y suerte que
 	 * permiten salir de la cárcel.
 	 */
-	public Jugador(String nombre, Ficha ficha, Juego juego) {
+	public Jugador(String nombre, Ficha ficha, Juego juego, Casillero casilleroActual) {
 		this.nombre = nombre;
 		this.ficha = ficha;
 		this.juego = juego;
 		this.dinero = 1500;
 		this.nroCasas = 0;
 		this.nroHoteles = 0;
+		this.casilleroActual = casilleroActual;
 		tarjetaCarcelList = new ArrayList<>();
 		tarjPropiedadList = new ArrayList<>();
-		casilleroActual = juego.getTablero().getCasillero(1);
 	}
 
 	/**
@@ -337,7 +337,7 @@ public abstract class Jugador implements Serializable {
 		else
 			throw new SinDineroException(
 					String.format(
-							"El jugador {0} no posee dinero suficiente para pagar €{1} al jugador {2}",
+							"El jugador %s no posee dinero suficiente para pagar %s € al jugador %s",
 							this.getNombre(), monto, jugador.getNombre()));
 	}
 
