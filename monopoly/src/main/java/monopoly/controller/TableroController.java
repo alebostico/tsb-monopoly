@@ -4,6 +4,7 @@
 package monopoly.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import monopoly.model.Banco;
@@ -22,9 +23,11 @@ import monopoly.model.tarjetas.TarjetaCalle.Color;
 import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
+import monopoly.util.CasilleroComparator;
 import monopoly.util.GestorLogs;
 import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.exception.SinDineroException;
+import monopoly.util.exception.SinEdificiosException;
 
 /**
  * @author Bostico Alejandro
@@ -1180,8 +1183,19 @@ public class TableroController {
 	/**
 	 * Método que elimina una edificación sin realizar ninguna comprobación
 	 * previa
+	 * 
+	 * @param casillero
+	 *            El casillero de donde se vende la propiedad
+	 * @param jugador
+	 *            El Jugador que vende la propiedad
+	 * @return true si se puede vender.
+	 * @throws SinEdificiosException
+	 *             Si no se disponen de suficientes edificios
 	 */
-	boolean venderSinComprobar(CasilleroCalle casillero, Jugador jugador) {
+	@SuppressWarnings("unused")
+	private boolean venderSinComprobar(CasilleroCalle casillero)
+			throws SinEdificiosException {
+		Jugador jugador = casillero.getTarjetaCalle().getJugador();
 		JuegoController juegoController = PartidasController.getInstance()
 				.buscarControladorJuego(jugador.getJuego().getUniqueID());
 		Banco banco = juegoController.getGestorBanco().getBanco();
@@ -1190,7 +1204,9 @@ public class TableroController {
 			// si el casillero tiene un hotel
 			if (casillero.getNroCasas() == 5) {
 				if (banco.getNroCasas() < 4)
-					return false;
+					throw new SinEdificiosException(
+							"El banco no dispone de las casas necesarias.");
+
 				banco.setNroHoteles(banco.getNroHoteles() + 1);
 				banco.setNroCasas(banco.getNroCasas() - 4);
 				jugador.cobrar(casillero.getTarjetaCalle()
@@ -1206,10 +1222,199 @@ public class TableroController {
 		return false;
 	}
 
-	public boolean comprarPropiedad(Jugador jugador, TarjetaPropiedad tarjeta)
-			throws SinDineroException, CondicionInvalidaException {
+	/**
+	 * Agrega una propiedad a un casillero sin realizar ninguna comprobación
+	 * sobre el monopolio. Solo verifica que existan casas/hoteles disponibles
+	 * para la compra en el banco.
+	 * 
+	 * @param casillero
+	 *            El Caillero en donde agregar la propiedad
+	 * @param jugador
+	 *            El jugador que compra la propiedad
+	 * @return true si compra la propiedad, false en caso contrario.
+	 * @throws SinEdificiosException
+	 *             Si no se disponen de suficientes edificios
+	 */
+	@SuppressWarnings("unused")
+	private boolean comprarSinComprobar(CasilleroCalle casillero)
+			throws SinEdificiosException {
+		Jugador jugador = casillero.getTarjetaCalle().getJugador();
+		JuegoController juegoController = PartidasController.getInstance()
+				.buscarControladorJuego(jugador.getJuego().getUniqueID());
+		Banco banco = juegoController.getGestorBanco().getBanco();
 
-		if (jugador.getDinero() < tarjeta.getValorPropiedad()) {
+		// Si ya tiene un hotel, no se puede poner mas nada
+		if (casillero.getNroCasas() < 5) {
+			// si se va a comprar un hotel
+			if (casillero.getNroCasas() == 4) {
+				// verifico que haya hoteles disponibles en el
+				// banco, si hay compra, sino retorna false.
+				if (banco.getNroHoteles() == 0)
+					throw new SinEdificiosException(
+							"El banco no dispone de los hoteles necesarios.");
+
+				banco.setNroHoteles(banco.getNroHoteles() - 1);
+				banco.setNroCasas(banco.getNroCasas() + 4);
+				jugador.pagar(casillero.getTarjetaCalle().getPrecioCadaHotel());
+
+			} else { // si se va a comprar una casa...
+				if (banco.getNroCasas() == 0)
+					throw new SinEdificiosException(
+							"El banco no dispone de las casas necesarias.");
+
+				banco.setNroCasas(banco.getNroCasas() - 1);
+				jugador.pagar(casillero.getTarjetaCalle()
+						.getPrecioVentaCadaCasa());
+
+			}
+			casillero.setNroCasas(casillero.getNroCasas() + 1);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Compra {@code 'cantidad'} edificaciones (casas u hoteles) para el
+	 * monopolio al que pertenece el {@code 'casillero'}. Los edificios a
+	 * comprar se deben distribuír de forma que no quede una diferencia mayor a
+	 * uno entre cualquiera de los casilleros del monopolio. Ej: si voy a
+	 * comprar 10 casas y el monopolio está integrado por 3 calles, se deben
+	 * colocar 4 casas en la calle más cara (la de nro más alto) y tres en las
+	 * otras dos. Además verifica que en el banco exista la cantidad de
+	 * casas/hoteles que se quiere comprar y que el jugador disponga del dinero
+	 * necesario.
+	 * 
+	 * @param cantidad
+	 *            La cantidad de edificios que se quieren colocar. Los edificios
+	 *            se van a ditribuir de forma que no quede más de uno de
+	 *            diferencia entre las calles. Si la cantidad de edificios
+	 *            supera los 5 edificios (o sea, un hotel) en alguna de las
+	 *            calles, lanza una {@code IllegalArgumentException}. Es
+	 *            decir, si el monopolio consta de 3 calles, la {@code cantidad}
+	 *            no puede ser mayor a 15 (menos las propiedades que ya existan
+	 *            en el monopolio)
+	 * 
+	 * @param casillero
+	 *            El casillero del monopolio en el que se quieren colocar
+	 * @return true si compra las casas
+	 * @throws SinEdificiosException
+	 *             Si no se disponen de los edificios necesarios.
+	 * @throws SinDineroException
+	 *             Si el Jugador no tiene dinero suficiente para comprar los
+	 *             edificios.
+	 */
+	public boolean comprarEdificio(int cantidad, CasilleroCalle casillero)
+			throws SinEdificiosException, SinDineroException {
+
+		Jugador jugador = casillero.getTarjetaCalle().getJugador();
+		JuegoController juegoController = PartidasController.getInstance()
+				.buscarControladorJuego(jugador.getJuego().getUniqueID());
+		Banco banco = juegoController.getGestorBanco().getBanco();
+
+		List<CasilleroCalle> monopolio = this
+				.getGrupoDeCasillerosCalleByCasillero(casillero);
+
+		Collections.sort(monopolio,
+				Collections.reverseOrder(new CasilleroComparator()));
+
+		int cantCalles = monopolio.size();
+		int cantEdificiosActuales[] = new int[cantCalles];
+		int cantEdificiosNuevos[] = new int[cantCalles];
+		int cantEdificiosTotal = cantidad;
+		int cantCasas = 0;
+		int cantHoteles = 0;
+
+		int i = 0;
+
+		// Si el jugador no puede pagar con dinero las casas que quiere poner,
+		// no hacemos
+		// mas nada y lanzamos una exception....
+		if (!jugador.puedePagarConEfectivo((cantidad)
+				* casillero.getTarjetaCalle().getPrecioCadaCasa()))
+			throw new SinDineroException("El jugador " + jugador.getNombre()
+					+ " no tiene dinero para pagar " + cantidad + " casas.");
+
+		for (CasilleroCalle casilleroCalle : monopolio) {
+			cantEdificiosActuales[i] = casilleroCalle.getNroCasas();
+			cantEdificiosTotal += casilleroCalle.getNroCasas();
+			i++;
+		}
+
+		if (((double) cantEdificiosTotal / (double) cantCalles) > 5.0)
+			throw new IllegalArgumentException(
+					"No se puede poner más de un hotel por calle.");
+
+		// Distribuímos los edificios de forma que no queden
+		// con más de una porpiedad de diferencia
+		for (i = 0; i < cantCalles; i++)
+			cantEdificiosNuevos[i] = cantEdificiosTotal / cantCalles;
+
+		if ((cantEdificiosTotal % cantCalles) > 0)
+			cantEdificiosNuevos[0]++;
+
+		if ((cantEdificiosTotal % cantCalles) > 1)
+			cantEdificiosNuevos[1]++;
+
+		// Contamos la cantidad de casas y hoteles
+		// que se van a comprar para verificar que el
+		// banco disponga de todo
+		for (i = 0; i < cantCalles; i++) {
+			// si la cantidad de casas es 5...
+			if (cantEdificiosNuevos[i] == 5) {
+				// ...pongo un hotel y "devuelvo" las casas si tenia...
+				cantHoteles++;
+				cantCasas -= cantEdificiosActuales[i];
+			} else {
+				// sino, agrego las casas nuevas al listado de necesarias....
+				cantCasas += cantEdificiosNuevos[i] - cantEdificiosActuales[i];
+			}
+
+		}
+
+		if (cantHoteles > banco.getNroHoteles())
+			throw new SinEdificiosException(
+					"El banco no dispone de los hoteles necesarios."
+							+ " Requeridos=" + cantHoteles + ", disponibles="
+							+ banco.getNroHoteles());
+
+		if (cantCasas > banco.getNroCasas())
+			throw new SinEdificiosException(
+					"El banco no dispone de los hoteles necesarios."
+							+ " Requeridos=" + cantHoteles + ", disponibles="
+							+ banco.getNroHoteles());
+
+		if (!jugador.pagar(cantidad
+				* casillero.getTarjetaCalle().getPrecioCadaCasa()))
+			return false;
+
+		i = 0;
+		for (CasilleroCalle casilleroCalle : monopolio) {
+			casilleroCalle.setNroCasas(cantEdificiosNuevos[i]);
+			i++;
+		}
+
+		return true;
+	}
+
+	public boolean venderEdificio(int cantidad, CasilleroCalle casillero) {
+		return true;
+	}
+
+	/**
+	 * Le permite a un jugador adquirir una propiedad.
+	 * 
+	 * @param jugador
+	 *            El jugador que quiere comprar.
+	 * @param tarjeta
+	 *            La tarjeta de la propiedad que quiere comprar.
+	 * @return true si la compra se realiza.
+	 * @throws SinDineroException
+	 *             Si el jugador no tiene dinero para pagar la propiedad.
+	 */
+	public boolean comprarPropiedad(Jugador jugador, TarjetaPropiedad tarjeta)
+			throws SinDineroException {
+
+		if (!jugador.puedePagarConEfectivo(tarjeta.getValorPropiedad())) {
 			throw new SinDineroException("El jugador " + jugador.getNombre()
 					+ " no tiene dinero suficiente para comprar la propiedad "
 					+ tarjeta.getNombre());
@@ -1221,14 +1426,24 @@ public class TableroController {
 		return true;
 	}
 
-	public TarjetaSuerte getTarjetaSuerte(){
+	/**
+	 * Extrae una Tarjeta Suerte del mazo.
+	 * 
+	 * @return La siguiente TarjetaSuerte del mazo.
+	 */
+	public TarjetaSuerte getTarjetaSuerte() {
 		return gestorTarjetas.getNextTarjetaSuerte();
 	}
-	
-	public TarjetaComunidad getTarjetaComunidad(){
+
+	/**
+	 * Extrae una Tarjeta Comunidad del mazo.
+	 * 
+	 * @return La siguiente TarjetaComunidad del mazo.
+	 */
+	public TarjetaComunidad getTarjetaComunidad() {
 		return gestorTarjetas.getNextTarjetaComunidad();
 	}
-	
+
 	private BancoController getBancoController(Juego juego) {
 		return PartidasController.getInstance()
 				.buscarControladorJuego(juego.getUniqueID()).getGestorBanco();

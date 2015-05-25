@@ -1,15 +1,21 @@
 package monopoly.controller;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 import monopoly.model.Jugador;
 import monopoly.model.JugadorVirtual;
 import monopoly.model.tablero.Casillero;
+import monopoly.model.tablero.Casillero.TipoCasillero;
 import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tablero.CasilleroCompania;
 import monopoly.model.tablero.CasilleroEstacion;
+import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
+import monopoly.util.TarjetaPropiedadComparator;
 
 /**
  * Clase est&aacute;tica para el manejo de la inteligencia de los jugadores
@@ -43,6 +49,16 @@ public class JugadorVirtualController {
 	 * Cuanto tiene que pagar el Jugador para salir de la carcel
 	 */
 	private static final int MULTA_CARCEL = 50;
+
+	/**
+	 * Cuando el jugador cae en el casillero 05 "Impuesto sobre el capital"
+	 * puede estimar su capital en $200 y pagar ese monto o bien pagar el 10%
+	 * del capital real, calculado como la sumatoria de: el valor de todas las
+	 * propiedades que posea, el valor de las casas/hoteles que posea en sus
+	 * propiedades y el dinero en efectivo.
+	 */
+	private static final int IMP_ESP_MONTO = 200;
+	private static final int IMP_ESP_PORC = 10;
 
 	/**
 	 * El jugador decidir&aacute; la nueva cantidad a pujar, si lo considera
@@ -672,6 +688,233 @@ public class JugadorVirtualController {
 		}
 
 		return false;
+	}
+
+	/**
+	 * <p>
+	 * Cuando el jugador cae en el casillero 05 "Impuesto sobre el capital"
+	 * puede estimar su capital en $200 y pagar ese monto o bien pagar el 10%
+	 * del capital real, calculado como la sumatoria de:
+	 * <ul>
+	 * <li>el valor de todas las propiedades que posea,</li>
+	 * <li>el valor de las casas/hoteles que posea en sus propiedades y</li>
+	 * <li>el dinero en efectivo.</li>
+	 * </ul>
+	 * <p>
+	 * El jugador decidirá tomar la opción a pagar que menor gasto suponga
+	 * 
+	 * @param jugadorActual
+	 *            El jugador que va a pagar el impuesto
+	 * @return El monto a pagar
+	 * 
+	 */
+	public int decidirImpuestoEspecial(JugadorVirtual jugadorActual) {
+		int capitalJugador = jugadorActual.getCapital();
+		int aPagar = ((capitalJugador * IMP_ESP_PORC) / 100);
+
+		if (IMP_ESP_MONTO <= aPagar) {
+			GestorLogs.registrarDebug("El jugador " + jugadorActual.getNombre()
+					+ " decide pagar el monto fijo de $200");
+			return IMP_ESP_MONTO;
+		}
+		GestorLogs.registrarDebug("El jugador " + jugadorActual.getNombre()
+				+ " decide pagar el 10% de su capital: $" + aPagar);
+		return aPagar;
+	}
+
+	/**
+	 * Método que hipoteca una serie de propiedades del jugador con
+	 * comportamiento aleatorio. Hipotecará todas las propiedades desde la más
+	 * cara hasta la más barata hasta que cubra la deuda.
+	 * 
+	 * @param cantidad
+	 *            La cantidad que necesita obtener de la hipoteca
+	 * @param jugadorActual
+	 *            El jugador que quiere hipotecar
+	 */
+	@SuppressWarnings("unused")
+	private static void hipotecarAleatorio(int cantidad,
+			JugadorVirtual jugadorActual) {
+
+		// 1- Copiar ordenadamente las propiedades hipotecables
+		List<TarjetaPropiedad> propiedadesHipotecables = new LinkedList<>();
+
+		for (TarjetaPropiedad tarjetaPropiedad : jugadorActual
+				.getTarjPropiedadList()) {
+
+			if (!tarjetaPropiedad.isHipotecada()) {
+				if (tarjetaPropiedad.getCasillero().getTipoCasillero() == TipoCasillero.C_CALLE
+						&& ((CasilleroCalle) tarjetaPropiedad.getCasillero())
+								.getNroCasas() != 0)
+					continue;
+				propiedadesHipotecables.add(tarjetaPropiedad);
+			}
+
+		}
+
+		// Ordenamos la lista por precio de mayor a menor
+		Collections.sort(propiedadesHipotecables,
+				Collections.reverseOrder(new TarjetaPropiedadComparator()));
+
+		// 2- Hipotecar desde la más cara hasta alcanzar el dinero necesario.
+
+		for (TarjetaPropiedad tarjetaPropiedad : propiedadesHipotecables) {
+			int valorHipoteca = jugadorActual
+					.hipotecarPropiedad(tarjetaPropiedad);
+			if (valorHipoteca > 0) {
+				cantidad -= valorHipoteca;
+			}
+
+			// llegamos al monto necesario...
+			if (cantidad <= 0)
+				break;
+
+		}
+
+	}
+
+	/**
+	 * Deshipoteca las cantidades de una forma aleatoria en funci�n de unas
+	 * probabilidades dadas
+	 * 
+	 * @param jugadorActual
+	 *            El Jugador que va a deshipotecar
+	 */
+	@SuppressWarnings("unused")
+	private static void deshipotecarAleatorio(JugadorVirtual jugadorActual) {
+		Random rnd = new Random();
+
+		// 1- Copiar ordenadamente las propiedades hipotecables
+		List<TarjetaPropiedad> propiedadesHipotecadas = new LinkedList<>();
+
+		for (TarjetaPropiedad tarjetaPropiedad : jugadorActual
+				.getTarjPropiedadList()) {
+
+			if (tarjetaPropiedad.isHipotecada()) {
+				propiedadesHipotecadas.add(tarjetaPropiedad);
+			}
+
+		}
+		// Ordenamos la lista por precio de mayor a menor
+		Collections.sort(propiedadesHipotecadas,
+				Collections.reverseOrder(new TarjetaPropiedadComparator()));
+
+		for (TarjetaPropiedad tarjetaPropiedad : propiedadesHipotecadas) {
+			if (jugadorActual.getDinero() > tarjetaPropiedad
+					.getValorDeshipotecario()) {
+
+				int probabilidad = (jugadorActual.getDinero() - tarjetaPropiedad
+						.getValorDeshipotecario())
+						* 100
+						/ jugadorActual.getDinero();
+				int resultado = rnd.nextInt() % 100;
+				// Si el resultado esta dentro de la probabilidad, deshipoteca
+				if (resultado < probabilidad) {
+					jugadorActual.dehipotecarPropiedad(tarjetaPropiedad);
+
+				}
+
+			}
+		}
+
+	}
+
+	/**
+	 * Método para vender casas del jugador aleatorio. Venderá todas las casas
+	 * desde la propiedad más cara hasta la más barata hasta superar la cantidad
+	 * necesaria. Así se asegura alcanzar el máximo dinero posible.
+	 * 
+	 * @param cantidad
+	 * @param jugadorActual
+	 */
+	@SuppressWarnings("unused")
+	private static void venderAleatorio(int cantidad,
+			JugadorVirtual jugadorActual) {
+
+		// 1- Selecciono el monopolio a construir entre todos los posibles.
+		// Para ello busco todas las calles con permiso de construcción y las
+		// ordeno en una lista
+		// Creare otra para meter las calles que ya se han comprobado y no
+		// repetir sobre el mismo
+		List<TarjetaCalle> propiedadesEdificadas = new LinkedList<>();
+
+		for (TarjetaPropiedad tarjetaPropiedad : jugadorActual
+				.getTarjPropiedadList()) {
+			if (tarjetaPropiedad.getCasillero().getTipoCasillero() == TipoCasillero.C_CALLE) {
+				propiedadesEdificadas.add((TarjetaCalle) tarjetaPropiedad);
+			}
+		}
+
+		// Ordenamos la lista por precio de mayor a menor
+				Collections.sort(propiedadesEdificadas,
+						Collections.reverseOrder(new TarjetaPropiedadComparator()));
+				
+		// Selecciono el monopolio a vender -> El primero, si no hay dinero suficiente, el segundo...		
+				
+				
+				
+		/*		
+				
+				  int i = 0;
+				  vector <calle*> callesTestadas;
+				  set <propiedad*> vender;
+				  bool posible = true;
+				  // Mientras siga haciendo falta dinero y no haya llegado al final de la lista de calles edificadas.
+				  while ( cantidad > get_dinero_total() && i != propiedadesEdificadas.size() )
+				    {      
+				      int j = 0;
+				      while ( j != callesTestadas.size() && posible )
+					{
+					  if ( propiedadesEdificadas[i] == callesTestadas[j] )
+					    posible = false;
+					  j++;
+					}
+				      //Si se ha encontrado un monopolio vendible.
+				      //Se marca para no volver a venderle y se venden sus casas hasta acabar con el dinero
+				      if ( posible )
+					{
+					  vender = propiedadesEdificadas[i]->get_monopolioCompleto ( propiedadesEdificadas[i] );
+					  set <propiedad*>::iterator test;
+					  for ( test = vender.begin(); test != vender.end(); test ++ )
+					    if ( calle *c = dynamic_cast <calle*> (*test) )
+					      callesTestadas.push_back( c );
+					  bool existenEdificios = true;
+					  while ( cantidad > get_dinero_total() && existenEdificios )
+					    {
+					      set <propiedad*>::iterator iterVender = vender.begin();
+					      //Vender de una calle
+					      existenEdificios = false;
+					      if ( iterVender != vender.end() )
+						if ( calle *calleV = dynamic_cast <calle*> (*iterVender) )
+						  if ( calleV->puedeVenderEdificio() && ( calleV->get_numHoteles() > 0 || calleV->get_numCasas() > 0 ) )
+						    {		    
+						      if ( calleV->get_numHoteles() == 1 && tablero::obtenerCasasDisponibles () >= 4 )
+							{
+							  cout << get_nombre() << " vende un hotel de " << calleV->get_nombre() << endl;
+							  calleV->venderSinComprobar();
+							  existenEdificios = true;
+							}
+						      else if ( calleV->get_numCasas() > 0 )
+							{
+							  cout << get_nombre() << " vende una casa de " << calleV->get_nombre() << endl;
+							  existenEdificios = true;
+							  calleV->venderSinComprobar();
+							}
+						    }
+					      iterVender ++; 	 
+					    }
+					}
+				      i++;
+				    }  		
+				*/
+				
+				
+				
+				
+				
+				
+				
+
 	}
 
 }

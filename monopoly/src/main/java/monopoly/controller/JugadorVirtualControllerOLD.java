@@ -249,7 +249,7 @@
 //	  vector <propiedad*> propiedadesHipotecables;
 //	  list <propiedad*>::iterator p; 
 //	  for ( p = _posee.begin(); p != _posee.end(); p++ )
-//	    {elado2
+//	    {
 //	      if ( (*p)->get_hipotecable() )
 //		//Insertar ordenado de mayor a menor hipoteca
 //		{

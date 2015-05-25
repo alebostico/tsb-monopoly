@@ -20,8 +20,12 @@ import javax.persistence.Transient;
 
 import monopoly.model.Estado.EstadoJugador;
 import monopoly.model.tablero.Casillero;
+import monopoly.model.tablero.CasilleroCalle;
+import monopoly.model.tablero.Casillero.TipoCasillero;
 import monopoly.model.tarjetas.Tarjeta;
+import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
+import monopoly.util.GestorLogs;
 import monopoly.util.exception.SinDineroException;
 
 /**
@@ -265,8 +269,12 @@ public abstract class Jugador implements Serializable {
 	 * @return true si se agrego correctamente
 	 */
 	public boolean adquirirPropiedad(TarjetaPropiedad tarjeta) {
+		if (!this.tarjPropiedadList.add(tarjeta))
+			return false;
 		tarjeta.setJugador(this);
-		return this.tarjPropiedadList.add(tarjeta);
+		GestorLogs.registrarDebug("El jugador " + this.getNombre() + " compró "
+				+ tarjeta.getNombre());
+		return true;
 	}
 
 	/**
@@ -283,19 +291,107 @@ public abstract class Jugador implements Serializable {
 			int monto) throws SinDineroException {
 		jugador.pagarAJugador(this, monto);
 		this.getTarjPropiedadList().remove(tarjeta);
+		GestorLogs.registrarDebug("El jugador " + this.getNombre() + " vendió "
+				+ tarjeta.getNombre());
 		return jugador.adquirirPropiedad(tarjeta);
 
 	}
 
 	/**
-	 * devuelve true si el jugador puede pagar el monto indicado
+	 * Hipoteca una propiedad del jugador y cobra el monto de la hipoteca. Se
+	 * verifica que la propiedad no esté ya hipotecada y que no tenga edificios
+	 * en el caso de que sea una calle.
+	 * 
+	 * @param tarjeta
+	 *            La propiedad que se quiere hipotecar.
+	 * @return el valor hipotecario (o sea, lo que cobró el jugador por la
+	 *         hipoteca) o 0 si no se hipoteca (porque la propiedad no es del
+	 *         jugador, porque ya está hipotecada o porque tiene edificios).
+	 */
+	public int hipotecarPropiedad(TarjetaPropiedad tarjeta) {
+		for (TarjetaPropiedad tarjetaPropiedad : tarjPropiedadList) {
+			if (tarjetaPropiedad.equals(tarjeta)) {
+				if (!tarjetaPropiedad.isHipotecada()) {
+					if (tarjetaPropiedad.getCasillero().getTipoCasillero() == TipoCasillero.C_CALLE
+							&& ((CasilleroCalle) tarjetaPropiedad
+									.getCasillero()).getNroCasas() != 0)
+						return 0;
+
+					tarjetaPropiedad.setHipotecada(true);
+					this.cobrar(tarjetaPropiedad.getValorHipotecario());
+					GestorLogs.registrarDebug("El jugador " + this.getNombre()
+							+ " ha hipotecado " + tarjetaPropiedad.getNombre());
+					return tarjetaPropiedad.getValorHipotecario();
+				}
+				return 0;
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * Deshipoteca una propiedad del jugador y paga el monto de la deshipoteca
+	 * (valorhipoteca + 10% de interés). Se verifica que la propiedad esté
+	 * hipotecada.
+	 * 
+	 * @param tarjeta
+	 *            La propiedad que se quiere deshipotecar.
+	 * @return el valor de la deshipotecario (o sea, lo que pagó el jugador para
+	 *         deshipotecar) o 0 si no se deshipoteca (porque la propiedad no es
+	 *         del jugador o porque no está hipotecada).
+	 */
+	public int dehipotecarPropiedad(TarjetaPropiedad tarjeta) {
+		for (TarjetaPropiedad tarjetaPropiedad : tarjPropiedadList) {
+			if (tarjetaPropiedad.equals(tarjeta)) {
+				if (tarjetaPropiedad.isHipotecada()) {
+
+					// valorDeshipoteca = valorhipoteca + 10%
+					int valorDeshipoteca = (int) (tarjetaPropiedad
+							.getValorHipotecario() * 1.10);
+
+					if (this.getCapital() < valorDeshipoteca)
+						return 0;
+
+					tarjetaPropiedad.setHipotecada(false);
+					this.pagar(valorDeshipoteca);
+					GestorLogs.registrarDebug("El jugador " + this.getNombre()
+							+ " ha deshipotecado "
+							+ tarjetaPropiedad.getNombre());
+					return valorDeshipoteca;
+				}
+				return 0;
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * Devuelve true si el jugador puede pagar el monto indicado. Para el
+	 * cálculo se tiene en cuenta el dinero en efectivo, el dinero que se puede
+	 * obtener de la venta de casas/hoteles de sus propiedades y el valor de la
+	 * hipoteca de todas sus propiedades. Si el Jugador no puede pagar el monto
+	 * se debe declarar en bancarrota.
 	 * 
 	 * @param monto
 	 *            el monto que se quiere consultar
 	 * @return true si el jugador puede pagar ese monto
 	 */
 	public boolean puedePagar(int monto) {
-		return (this.getDinero() >= monto);
+		return (this.cuantoPuedePagar() >= monto);
+	}
+
+	/**
+	 * Devuelve true si el jugador puede pagar el monto indicado solo con
+	 * efectivo.
+	 * 
+	 * @param monto
+	 *            el monto que se quiere consultar
+	 * @return true si el jugador puede pagar ese monto
+	 */
+	public boolean puedePagarConEfectivo(int monto) {
+		if (this.getDinero() >= monto)
+			return true;
+		return false;
 	}
 
 	/**
@@ -305,7 +401,9 @@ public abstract class Jugador implements Serializable {
 	 *            el monto a pagar por el jugador
 	 */
 	public boolean pagar(int monto) {
-		if (puedePagar(monto)) {
+		if (puedePagarConEfectivo(monto)) {
+			GestorLogs.registrarDebug("El jugador " + this.getNombre()
+					+ " pagó $" + monto);
 			this.setDinero(this.getDinero() - monto);
 		} else {
 			return false;
@@ -320,6 +418,8 @@ public abstract class Jugador implements Serializable {
 	 *            el monto a cobrar por el jugador
 	 */
 	public void cobrar(int monto) {
+		GestorLogs.registrarDebug("El jugador " + this.getNombre() + " cobró $"
+				+ monto);
 		this.setDinero(this.getDinero() + monto);
 	}
 
@@ -332,9 +432,11 @@ public abstract class Jugador implements Serializable {
 	 */
 	public void pagarAJugador(Jugador jugador, int monto)
 			throws SinDineroException {
-		if (this.pagar(monto))
+		if (this.pagar(monto)) {
+			GestorLogs.registrarDebug("El jugador " + this.getNombre()
+					+ " pagó $" + monto + " al jugador " + jugador.getNombre());
 			jugador.cobrar(monto);
-		else
+		} else
 			throw new SinDineroException(
 					String.format(
 							"El jugador %s no posee dinero suficiente para pagar %s € al jugador %s",
@@ -348,8 +450,8 @@ public abstract class Jugador implements Serializable {
 	public int getNroHoteles() {
 		return nroHoteles;
 	}
-	
-	public int getCantPropiedades(){
+
+	public int getCantPropiedades() {
 		return this.tarjPropiedadList.size();
 	}
 
@@ -376,6 +478,66 @@ public abstract class Jugador implements Serializable {
 	 */
 	public void setTiradaInicial(Dado tiradaInicial) {
 		this.tiradaInicial = tiradaInicial;
+	}
+
+	/**
+	 * Calcula el capital total del jugador. Se calcula como la sumatoria de:
+	 * <ul>
+	 * <li>el valor de todas las propiedades que posea,</li>
+	 * <li>el valor de las casas/hoteles que posea en sus propiedades y</li>
+	 * <li>el dinero en efectivo.</li>
+	 * </ul>
+	 * 
+	 * @return El capital total del jugador
+	 */
+	public int getCapital() {
+
+		int tmpCapital = 0;
+		CasilleroCalle tmpCasillero;
+		TarjetaCalle tmpTarjeta;
+
+		for (TarjetaPropiedad tarjetaPropiedad : tarjPropiedadList) {
+			tmpCapital += tarjetaPropiedad.getValorPropiedad();
+
+			if (tarjetaPropiedad.getCasillero().getTipoCasillero()
+					.equals(Casillero.CASILLERO_CALLE)) {
+				tmpTarjeta = (TarjetaCalle) tarjetaPropiedad;
+				tmpCasillero = (CasilleroCalle) tarjetaPropiedad.getCasillero();
+				tmpCapital += tmpCasillero.getNroCasas()
+						* tmpTarjeta.getPrecioCadaCasa();
+			}
+
+		}
+		tmpCapital += this.getDinero();
+		return tmpCapital;
+	}
+
+	/**
+	 * Calcula cual es el monto total que puede pagar el jugador. El método
+	 * tiene en cuenta el dinero en efectivo, la venta de casas/hoteles y la
+	 * hipoteca de propiedades
+	 * 
+	 * @return El monto total que el jugador puede pagar
+	 */
+	public int cuantoPuedePagar() {
+		int tmpCapitalVenta = 0;
+		CasilleroCalle tmpCasillero;
+		TarjetaCalle tmpTarjeta;
+
+		for (TarjetaPropiedad tarjetaPropiedad : tarjPropiedadList) {
+			tmpCapitalVenta += tarjetaPropiedad.getValorHipotecario();
+
+			if (tarjetaPropiedad.getCasillero().getTipoCasillero()
+					.equals(Casillero.CASILLERO_CALLE)) {
+				tmpTarjeta = (TarjetaCalle) tarjetaPropiedad;
+				tmpCasillero = (CasilleroCalle) tarjetaPropiedad.getCasillero();
+				tmpCapitalVenta += tmpCasillero.getNroCasas()
+						* tmpTarjeta.getPrecioCadaCasa() / 2;
+			}
+
+		}
+		tmpCapitalVenta += this.getDinero();
+		return tmpCapitalVenta;
 	}
 
 	/*
