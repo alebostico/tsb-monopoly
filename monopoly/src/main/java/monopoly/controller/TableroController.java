@@ -1289,10 +1289,10 @@ public class TableroController {
 	 *            se van a ditribuir de forma que no quede más de uno de
 	 *            diferencia entre las calles. Si la cantidad de edificios
 	 *            supera los 5 edificios (o sea, un hotel) en alguna de las
-	 *            calles, lanza una {@code IllegalArgumentException}. Es
-	 *            decir, si el monopolio consta de 3 calles, la {@code cantidad}
-	 *            no puede ser mayor a 15 (menos las propiedades que ya existan
-	 *            en el monopolio)
+	 *            calles, lanza una {@code IllegalArgumentException}. Es decir,
+	 *            si el monopolio consta de 3 calles, la {@code cantidad} no
+	 *            puede ser mayor a 15 (menos las propiedades que ya existan en
+	 *            el monopolio)
 	 * 
 	 * @param casillero
 	 *            El casillero del monopolio en el que se quieren colocar
@@ -1305,6 +1305,12 @@ public class TableroController {
 	 */
 	public boolean comprarEdificio(int cantidad, CasilleroCalle casillero)
 			throws SinEdificiosException, SinDineroException {
+
+		// Si estamos poniendo casas, sabemos que en ningún caso vamos a
+		// colocar más de 15 o menos de 1...
+		if (cantidad < 1 || cantidad > 15)
+			throw new IllegalArgumentException("No se pueden colocar '"
+					+ cantidad + "' edificios");
 
 		Jugador jugador = casillero.getTarjetaCalle().getJugador();
 		JuegoController juegoController = PartidasController.getInstance()
@@ -1344,7 +1350,7 @@ public class TableroController {
 			throw new IllegalArgumentException(
 					"No se puede poner más de un hotel por calle.");
 
-		// Distribuímos los edificios de forma que no queden
+		// Distribuímos los edificios de forma tal que no queden
 		// con más de una porpiedad de diferencia
 		for (i = 0; i < cantCalles; i++)
 			cantEdificiosNuevos[i] = cantEdificiosTotal / cantCalles;
@@ -1355,9 +1361,8 @@ public class TableroController {
 		if ((cantEdificiosTotal % cantCalles) > 1)
 			cantEdificiosNuevos[1]++;
 
-		// Contamos la cantidad de casas y hoteles
-		// que se van a comprar para verificar que el
-		// banco disponga de todo
+		// Contamos la cantidad de casas y hoteles que se van a comprar
+		// para verificar que el banco disponga de todo
 		for (i = 0; i < cantCalles; i++) {
 			// si la cantidad de casas es 5...
 			if (cantEdificiosNuevos[i] == 5) {
@@ -1371,6 +1376,8 @@ public class TableroController {
 
 		}
 
+		// Si el banco no tiene las casas o lo hoteles que hacen falta
+		// lanzamos excepciones...
 		if (cantHoteles > banco.getNroHoteles())
 			throw new SinEdificiosException(
 					"El banco no dispone de los hoteles necesarios."
@@ -1383,6 +1390,7 @@ public class TableroController {
 							+ " Requeridos=" + cantHoteles + ", disponibles="
 							+ banco.getNroHoteles());
 
+		// Verificamos que el jugador tenga dinero suficiente para pagar...
 		if (!jugador.pagar(cantidad
 				* casillero.getTarjetaCalle().getPrecioCadaCasa()))
 			return false;
@@ -1393,11 +1401,200 @@ public class TableroController {
 			i++;
 		}
 
+		/*
+		 * cantCasas y cantHoteles indican la cantidad de casas y hoteles que
+		 * estamos comprando. Si cantCasas o cantHoteles es positivo, indica la
+		 * cantidad de edificios que estamos sacando del banco para poner en el
+		 * monopolio. Si por el contrario es negativo, indica la cantidad de
+		 * edificios que estamos "devolviendo" al banco. Por lo tanto, restar un
+		 * nro positivo, saca los edificios del banco, restar un negativo,
+		 * agrega las casas al stock del banco
+		 */
+		banco.setNroCasas(banco.getNroCasas() - cantCasas);
+		banco.setNroHoteles(banco.getNroHoteles() - cantHoteles);
+
+		// Registramos la información en los logs y salimos.
+		GestorLogs.registrarDebug("El jugador " + jugador.getNombre()
+				+ " agregó " + cantCasas + " casas " + " y " + cantHoteles
+				+ " hoteles al monopolio de color "
+				+ casillero.getTarjetaCalle().getColorTarjeta());
+
+		StringBuffer sf = new StringBuffer(
+				"La calles quedaron de la siguiente manera:\n");
+		for (CasilleroCalle calle : monopolio) {
+			sf.append(calle.getNombreCalle());
+			sf.append(": ");
+			sf.append(calle.getNroCasas() == 5 ? "1 hotel" : calle
+					.getNroCasas() + " casas");
+			sf.append("\n");
+		}
+		GestorLogs.registrarDebugDetail(sf.toString());
 		return true;
 	}
 
-	public boolean venderEdificio(int cantidad, CasilleroCalle casillero) {
-		return true;
+	/**
+	 * Vende del monopolio del color del {@code casillero} la cantidad de
+	 * casas/hoteles pasada por parámetro. Si el número de edificios disponible
+	 * en el monopolio es menor o igual a los que se quiere vender, se vende
+	 * todo.
+	 * 
+	 * @param cantidad
+	 *            La cantidad de edificios que se quieren vender
+	 * @param casillero
+	 *            Algún casillero del color del monopolio
+	 * @return La cantidad de edificios que se vendieron.<br />
+	 *         Si {@code edificios < cantidad}, retorna {@code edificios}.<br />
+	 *         Si {@code edificios >= cantidad}, retorna {@code cantidad}.
+	 * @throws SinEdificiosException
+	 *             Si se vende algún hotel y quedan casas en algún casillero, si
+	 *             el banco no dispone de esas casas, se lanza
+	 *             {@code SinEdificiosException}.
+	 */
+	public int venderEdificio(int cantidad, CasilleroCalle casillero)
+			throws SinEdificiosException {
+
+		if (cantidad < 1)
+			throw new IllegalArgumentException("No se pueden vender '"
+					+ cantidad + "' edificios");
+
+		Jugador jugador = casillero.getTarjetaCalle().getJugador();
+		JuegoController juegoController = PartidasController.getInstance()
+				.buscarControladorJuego(jugador.getJuego().getUniqueID());
+		Banco banco = juegoController.getGestorBanco().getBanco();
+
+		List<CasilleroCalle> monopolio = this
+				.getGrupoDeCasillerosCalleByCasillero(casillero);
+
+		Collections.sort(monopolio,
+				Collections.reverseOrder(new CasilleroComparator()));
+
+		int cantCalles = monopolio.size();
+		int cantEdificiosActuales[] = new int[cantCalles];
+		int cantEdificiosNuevos[] = new int[cantCalles];
+		int cantEdificiosTotal = cantidad;
+		int cantCasas = 0;
+		int cantHoteles = 0;
+
+		int i = 0;
+
+		for (CasilleroCalle casilleroCalle : monopolio) {
+			cantEdificiosActuales[i] = casilleroCalle.getNroCasas();
+			cantEdificiosTotal += casilleroCalle.getNroCasas();
+			i++;
+		}
+
+		// Si lo que se quiere vender es mas de los edificios disponibles,
+		// vendemos todo...
+		if (cantEdificiosTotal <= cantidad)
+			return venderTodosLosEdificios(casillero);
+
+		// Sino...
+		// Distribuímos los edificios de forma tal que no queden
+		// con más de una porpiedad de diferencia
+		for (i = 0; i < cantCalles; i++)
+			cantEdificiosNuevos[i] = (cantEdificiosTotal - cantidad)
+					/ cantCalles;
+
+		if (((cantEdificiosTotal - cantidad) % cantCalles) > 0)
+			cantEdificiosNuevos[0]++;
+
+		if (((cantEdificiosTotal - cantidad) % cantCalles) > 1)
+			cantEdificiosNuevos[1]++;
+
+		// Si se vende algún hotel y quedan casas en el casillero, el banco
+		// debe tener esa cantidad de casas para poner en el casillero...
+		for (i = 0; i < cantCalles; i++) {
+			// si tenía un hotel y quedan casas...
+			if (cantEdificiosActuales[i] == 5 && cantEdificiosNuevos[i] > 0) {
+				cantCasas += cantEdificiosNuevos[i];
+				cantHoteles--;
+			} else {
+				cantCasas -= cantEdificiosActuales[i] - cantEdificiosNuevos[i];
+			}
+
+		}
+
+		if (cantCasas > banco.getNroCasas())
+			throw new SinEdificiosException(
+					"El banco no dispone de los hoteles necesarios."
+							+ " Requeridos=" + cantHoteles + ", disponibles="
+							+ banco.getNroHoteles());
+
+		jugador.cobrar(cantEdificiosTotal
+				* casillero.getTarjetaCalle().getPrecioVentaCadaCasa());
+
+		// Actualizamos la cantidad de casas en los casilleros...
+		i = 0;
+		for (CasilleroCalle casilleroCalle : monopolio) {
+			casilleroCalle.setNroCasas(cantEdificiosNuevos[i]);
+			i++;
+		}
+
+		/*
+		 * cantCasas y cantHoteles indican la cantidad de casas y hoteles que
+		 * estamos comprando. Si cantCasas o cantHoteles es positivo, indica la
+		 * cantidad de edificios que estamos sacando del banco para poner en el
+		 * monopolio. Si por el contrario es negativo, indica la cantidad de
+		 * edificios que estamos "devolviendo" al banco. Por lo tanto, restar un
+		 * nro positivo, saca los edificios del banco, restar un negativo,
+		 * agrega las casas al stock del banco
+		 */
+		banco.setNroCasas(banco.getNroCasas() - cantCasas);
+		banco.setNroHoteles(banco.getNroHoteles() - cantHoteles);
+
+		// Registramos la información en los logs y salimos.
+		GestorLogs.registrarDebug("El jugador " + jugador.getNombre()
+				+ " vendió " + cantCasas + " casas " + " y " + cantHoteles
+				+ " hoteles del monopolio de color "
+				+ casillero.getTarjetaCalle().getColorTarjeta());
+
+		StringBuffer sf = new StringBuffer(
+				"La calles quedaron de la siguiente manera:\n");
+		for (CasilleroCalle calle : monopolio) {
+			sf.append(calle.getNombreCalle());
+			sf.append(": ");
+			sf.append(calle.getNroCasas() == 5 ? "1 hotel" : calle
+					.getNroCasas() + " casas");
+			sf.append("\n");
+		}
+		GestorLogs.registrarDebugDetail(sf.toString());
+		return cantEdificiosTotal;
+	}
+
+	/**
+	 * Vende todos los edificios de un monopolio
+	 * 
+	 * @param casillero
+	 *            Un casillero del monopolio
+	 * @return la cantidad de edificios que vendió
+	 */
+	public int venderTodosLosEdificios(CasilleroCalle casillero) {
+
+		int cantEdificiosVendidos = 0;
+
+		Jugador jugador = casillero.getTarjetaCalle().getJugador();
+		JuegoController juegoController = PartidasController.getInstance()
+				.buscarControladorJuego(jugador.getJuego().getUniqueID());
+		Banco banco = juegoController.getGestorBanco().getBanco();
+
+		List<CasilleroCalle> monopolio = this
+				.getGrupoDeCasillerosCalleByCasillero(casillero);
+
+		for (CasilleroCalle calle : monopolio) {
+			jugador.cobrar(calle.getNroCasas()
+					* calle.getTarjetaCalle().getPrecioVentaCadaCasa());
+
+			cantEdificiosVendidos += calle.getNroCasas();
+
+			if (calle.getNroCasas() == 5)
+				banco.addHoteles(1);
+			else
+				banco.addCasas(calle.getNroCasas());
+
+			calle.setNroCasas(0);
+		}
+
+		return cantEdificiosVendidos;
 	}
 
 	/**

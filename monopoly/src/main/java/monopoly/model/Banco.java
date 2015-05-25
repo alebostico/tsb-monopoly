@@ -18,9 +18,6 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
  */
 public class Banco implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3371251147808213945L;
 
 	private List<TarjetaPropiedad> tarjPropiedadList;
@@ -81,6 +78,50 @@ public class Banco implements Serializable {
 		this.nroHoteles = nroHoteles;
 	}
 
+	/**
+	 * Agrega {@code nroHoteles} hoteles al banco
+	 * 
+	 * @param nroHoteles
+	 *            La cantidad de hoteles a agregar (si es negativo se restan)
+	 * @return La nueva cantidad de hoteles disponibles
+	 */
+	public int addHoteles(int nroHoteles) {
+		return this.nroHoteles += nroHoteles;
+	}
+
+	/**
+	 * Elimina {@code nroHoteles} hoteles del banco
+	 * 
+	 * @param nroHoteles
+	 *            La cantidad de hoteles a eliminar (si es negativo se agregan)
+	 * @return La nueva cantidad de hoteles disponibles
+	 */
+	public int removeHoteles(int nroHoteles) {
+		return this.nroHoteles -= nroHoteles;
+	}
+
+	/**
+	 * Agrega {@code nroCasas} casas al banco
+	 * 
+	 * @param nroCasas
+	 *            La cantidad de casas a agregar (si es negativo se restan)
+	 * @return La nueva cantidad de casas disponibles
+	 */
+	public int addCasas(int nroCasas) {
+		return this.nroCasas += nroCasas;
+	}
+
+	/**
+	 * Elimina {@code nroCasas} casas del banco
+	 * 
+	 * @param nroCasas
+	 *            La cantidad de casas a eliminar (si es negativo se agregan)
+	 * @return La nueva cantidad de casas disponibles
+	 */
+	public int removeCasas(int nroCasas){
+		return this.nroCasas -= nroCasas;
+	}
+	
 	public int getIdBanco() {
 		return idBanco;
 	}

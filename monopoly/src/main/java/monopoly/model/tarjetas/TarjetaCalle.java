@@ -286,7 +286,7 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	 * @return El precio de venta de la casa
 	 */
 	public int getPrecioVentaCadaCasa() {
-		return (int) ((double) getPrecioCadaCasa() / 2.0);
+		return (getPrecioCadaCasa() / 2);
 	}
 
 	/**
@@ -295,7 +295,7 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	 * @return El precio de venta del hotel
 	 */
 	public int getPrecioVentaHotel() {
-		return (int) ((double) getPrecioCadaHotel() / 2.0);
+		return (getPrecioCadaHotel() / 2);
 	}
 
 	/**
