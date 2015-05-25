@@ -13,6 +13,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
+import monopoly.model.tarjetas.TarjetaSuerte;
 
 /**
  * @author Bostico Alejandro
@@ -30,15 +32,51 @@ public class TarjetaSuerteController extends AnchorPane implements
     @FXML
     private Button btnAceptar;
     
+    @FXML
+	private Stage currentStage;
+    
+    private TarjetaSuerte tarjetaSeleccionada;
+    
+    private static TarjetaSuerteController instance;
+    
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		// TODO Auto-generated method stub
-		
+		instance= this;
 	}
 	
 	@FXML
     void processAceptar(ActionEvent event) {
-
+		// enviar datos a servidor para procesar tarjeta.
+		currentStage.close();
     }
+	
+	public void mostrarTarjeta(TarjetaSuerte tarjeta){
+		this.tarjetaSeleccionada = tarjeta;
+		if(lblMensaje != null){
+			lblMensaje.setText(tarjetaSeleccionada.getObjetivo());
+		}
+	}
 
+	public Stage getCurrentStage() {
+		return currentStage;
+	}
+
+	public void setCurrentStage(Stage currentStage) {
+		this.currentStage = currentStage;
+	}
+
+	public TarjetaSuerte getTarjetaSeleccionada() {
+		return tarjetaSeleccionada;
+	}
+
+	public void setTarjetaSeleccionada(TarjetaSuerte tarjetaSeleccionada) {
+		this.tarjetaSeleccionada = tarjetaSeleccionada;
+	}
+	
+	public static TarjetaSuerteController getInstance() {
+		if (instance == null)
+			instance = new TarjetaSuerteController();
+		return instance;
+	}
 }

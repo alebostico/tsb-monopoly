@@ -24,6 +24,7 @@ public class Main {
 		gs = null;
 		try {
 			gs = new MonopolyGame();
+			gs.setAutoreset(true);
 			PartidasController.getInstance().setMonopolyGame(gs);
 
 		} catch (IOException e) {

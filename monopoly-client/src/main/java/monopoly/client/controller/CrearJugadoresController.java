@@ -196,7 +196,7 @@ public class CrearJugadoresController extends AnchorPane implements
 	@FXML
 	void processStartGame(ActionEvent event) {
 		String nombre = juego.getOwner().getUserName();
-		Jugador playerOwner = new JugadorHumano(nombre, fichaPlayer, juego,
+		Jugador playerOwner = new JugadorHumano(nombre, fichaPlayer, juego, null,
 				juego.getOwner(), ConnectionController.getInstance().getIdPlayer());
 		juego.addJugador(playerOwner);
 		int cantSldJugadores = !txtNroJugadores.getText().isEmpty() ? Integer
@@ -207,7 +207,7 @@ public class CrearJugadoresController extends AnchorPane implements
 					+ jugadoresVirtualesList.size());
 			for (VirtualPlayer j : jugadoresVirtualesList) {
 				juego.addJugador(new JugadorVirtual(j.name.get().getNombre(),
-						j.nameFicha.get(), juego, j.nameTipo.get()));
+						j.nameFicha.get(), juego, null,j.nameTipo.get()));
 			}
 
 			String fxml = ConstantesFXML.FXML_MOSTRAR_TABLERO;
@@ -229,7 +229,7 @@ public class CrearJugadoresController extends AnchorPane implements
 				stage.setTitle("Monopoly - Tablero");
 				stage.centerOnScreen();
 				controller.setCurrentStage(stage);
-				controller.showBoard();
+				controller.showTableroDeJuego();
 				
 				int senderId = ConnectionController.getInstance().getIdPlayer();
 				ConnectionController.getInstance().send(
@@ -464,7 +464,7 @@ public class CrearJugadoresController extends AnchorPane implements
 
 						if (!fichaPlayerVirtual.isSelected()) {
 							Jugador jv = new JugadorVirtual(txtNombreVirtual
-									.getText(), fichaPlayerVirtual, juego,
+									.getText(), fichaPlayerVirtual, juego, null,
 									tipoJugador);
 							VirtualPlayer vp = new VirtualPlayer(jv);
 							jugadoresVirtualesList.add(vp);

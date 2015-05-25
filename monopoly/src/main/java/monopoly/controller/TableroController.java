@@ -82,7 +82,7 @@ public class TableroController {
 	public void resetCasilleros() {
 		tablero.setCasillerosList(CasillerosController.getCasilleros());
 	}
-
+	
 	/**
 	 * Devuelve el casillero pasado por par&aacute;metro. El par&aacute;metro es
 	 * el N&uacute;mero de casillero [1-40], NO el indice del vector. Si el

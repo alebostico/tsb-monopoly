@@ -53,7 +53,7 @@ public class MonopolyClient extends GameClient {
 	 * SwingUtilities.invokeLater() so that it will run in the GUI event thread.
 	 */
 	protected void messageReceived(final Object message) {
-
+		
 		switch (message.getClass().getSimpleName()) {
 		case ConstantesMensaje.LOGIN_MESSAGE:
 			usuario = (Usuario) ((LoginMessage) message).message;
@@ -122,12 +122,14 @@ public class MonopolyClient extends GameClient {
 	private void determinarAccion(Object message) {
 		MonopolyGameStatus status = (MonopolyGameStatus) message;
 
-		switch (status.status) {
+		switch (status.getStatus()) {
 		case INICIADO:
 			TableroController.getInstance().actualizarEstadoJuego(status);
 			break;
 
 		case TIRAR_DADO:
+		case ESPERANDO_TURNO:
+		case JUGANDO:
 			TableroController.getInstance().actualizarEstadoJuego(status);
 			break;
 			

@@ -15,6 +15,7 @@ import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
+import monopoly.util.message.game.AdvanceInBoardMessage;
 import monopoly.util.message.game.StartGameMessage;
 
 /**
@@ -68,7 +69,7 @@ public class PartidasController {
 		}
 	}
 
-	public void establecerTurnoJugador(int senderId, Object message) {
+	public void establecerTurnoJugador(int senderId, Object message) throws Exception {
 		// TODO Auto-generated method stub
 		Object[] vDatos = (Object[]) ((StartGameMessage) message).message;
 		String idJuego = vDatos[0].toString();
@@ -90,7 +91,7 @@ public class PartidasController {
 		Dado dados;
 		JuegoController controller;
 		try {
-			vDatos = (Object[]) ((StartGameMessage) message).message;
+			vDatos = (Object[]) ((AdvanceInBoardMessage) message).message;
 			idJuego = vDatos[0].toString();
 			dados = (Dado) vDatos[1];
 			controller = juegosControllerList.get(idJuego);

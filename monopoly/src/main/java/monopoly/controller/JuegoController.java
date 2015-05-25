@@ -22,6 +22,7 @@ import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.StringUtils;
+import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.message.game.HistoryGameMessage;
 
 /**
@@ -46,8 +47,8 @@ public class JuegoController {
 	private MonopolyGameStatus status;
 
 	public JuegoController(Usuario creador, String nombre) {
-		this.gestorBanco = new BancoController();
 		this.gestorTablero = new TableroController();
+		this.gestorBanco = new BancoController(gestorTablero.getTablero().getCasillerosList());
 		this.juego = new Juego(creador, nombre);
 		this.juego.setTablero(gestorTablero.getTablero());
 		this.estadoJuego = new Estado(EstadoJuego.CREADO);
@@ -65,12 +66,13 @@ public class JuegoController {
 	 */
 	public void addPlayer(Jugador jugador) {
 		this.gestorJugadores.addPlayer(jugador);
+		jugador.setCasilleroActual(gestorTablero.getCasillero(1));
 
 		History history = new History(StringUtils.getFechaActual(),
 				jugador.getNombre(), "Se unió al juego.");
 		HistoryGameMessage msg = new HistoryGameMessage(history);
 		if (jugador instanceof JugadorHumano)
-			sendToOther(msg, ((JugadorHumano) jugador).getSenderID());
+			sendToOther(((JugadorHumano) jugador).getSenderID(),msg);
 
 		if (this.gestorJugadores.cantJugadoresConectados() == cantJugadores) {
 			estadoJuego.actualizarEstadoJuego();
@@ -90,7 +92,7 @@ public class JuegoController {
 	 * @param dados
 	 *            objecto dado con los números obtenidos.
 	 */
-	public void establecerTurnoJugador(int key, Dado dados) {
+	public void establecerTurnoJugador(int key, Dado dados) throws Exception {
 		// TODO Auto-generated method stub
 		JugadorHumano jugador = gestorJugadores.getJugadorHumano(key);
 		jugador.setTiradaInicial(dados);
@@ -150,7 +152,7 @@ public class JuegoController {
 		}
 	}
 
-	public void avanzarDeCasillero(int senderId, Dado dados) throws Exception {
+	public void avanzarDeCasillero(int senderId, Dado dados) throws CondicionInvalidaException, Exception {
 		// TODO Auto-generated method stub
 		JugadorHumano jugador;
 		Casillero casillero;
@@ -175,32 +177,32 @@ public class JuegoController {
 			tarjetaSelected = gestorTablero.getTarjetaSuerte();
 			accion.getAcciones()[1]= String.valueOf(((TarjetaSuerte)tarjetaSelected).getIdTarjeta());
 			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
-			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.TIRAR_DADO;
+			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.ESPERANDO_TURNO;
 			break;
 		case TARJETA_COMUNIDAD:
 			tarjetaSelected = gestorTablero.getTarjetaComunidad();
 			accion.getAcciones()[1]= String.valueOf(((TarjetaComunidad)tarjetaSelected).getIdTarjeta());
 			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
-			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.TIRAR_DADO;
+			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.ESPERANDO_TURNO;
 			break;
 		case DISPONIBLE_PARA_VENDER:
 		case IMPUESTO:
 		case IR_A_LA_CARCEL:
 		case PAGAR_ALQUILER:
 			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
-			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.TIRAR_DADO;
+			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.ESPERANDO_TURNO;
 			break;
 		case DESCANSO:
 		case HIPOTECADA:
 		case MI_PROPIEDAD:
-			estadoJuegoJugadorActual = Estado.EstadoJuego.TIRAR_DADO;
+			estadoJuegoJugadorActual = Estado.EstadoJuego.ESPERANDO_TURNO;
 			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.TIRAR_DADO;
 		break;
 		default:
-			break;
+			throw new CondicionInvalidaException(String.format("La acción %s es inválida.", accion.toString()));
 		}
 
-		mensaje = String.format("Avanzaste al casillero {0}, {1}",
+		mensaje = String.format("Avanzaste al casillero %s, %s",
 				casillero.getNombreCasillero(), accion.getAcciones()[0]);
 
 		historyList.add(new History(StringUtils.getFechaActual(), jugador
@@ -221,6 +223,14 @@ public class JuegoController {
 		historyList = new ArrayList<History>();
 		historyList.add(new History(StringUtils.getFechaActual(), jugador
 				.getNombre(), mensaje));
+		
+		status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+				gestorBanco.getBanco(), gestorTablero.getTablero(),
+				estadoJuegoRestoJugadoresEstadoJuego, accion,
+				gestorJugadores.getCurrentPlayer(), historyList,
+				tarjetaSelected);
+
+		sendToOther(senderId, status);
 	}
 
 	private void sendToOne(int recipientID, Object message) {
@@ -253,7 +263,7 @@ public class JuegoController {
 	 * @param senderId
 	 *            Jugador que envía mensaje al resto de los participantes.
 	 */
-	private void sendToOther(Object message, int senderId) {
+	private void sendToOther(int senderId,Object message) {
 		for (int key : gestorJugadores.getIdConnectionClient()) {
 			if (key != senderId)
 				PartidasController.getInstance().getMonopolyGame()

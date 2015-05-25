@@ -147,12 +147,6 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 			
 		case AVANZAR_CASILLERO:
 			mensaje = String.format("El resultado de los dados para avanzar de casillero fue %s.", dados.getSuma());
-//			btnAceptar.setOnAction(new EventHandler<ActionEvent>() {
-//				@Override
-//				public void handle(ActionEvent e) {
-//					TableroController.getInstance().determinarAccionEnCasillero();
-//				}
-//			});
 			ConnectionController.getInstance().send(
 					new AdvanceInBoardMessage(senderId, new Object[] {
 							TableroController.getInstance().getJuego()

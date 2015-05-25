@@ -89,7 +89,7 @@ public class UnirJugadorController extends AnchorPane implements Initializable {
 	void processJoinPlayer(ActionEvent event) {
 		int senderID = ConnectionController.getInstance().getIdPlayer();
 		Jugador jugador = new  JugadorHumano(usuarioLogueado.getUserName(),
-											fichaPlayer, juegoSelected, usuarioLogueado, senderID);
+											fichaPlayer, juegoSelected, null, usuarioLogueado, senderID);
 		
 		String fxml = ConstantesFXML.FXML_MOSTRAR_TABLERO;
 
@@ -110,7 +110,7 @@ public class UnirJugadorController extends AnchorPane implements Initializable {
 			stage.setTitle("Monopoly - Tablero");
 			stage.centerOnScreen();
 			controller.setCurrentStage(stage);
-			controller.showBoard();
+			controller.showTableroDeJuego();
 			
 			JoinGameMessage msg = new JoinGameMessage(jugador);
 			ConnectionController.getInstance().send(msg);

@@ -23,7 +23,7 @@ public class MonopolyGameStatus implements Serializable {
 	 * Enumerador para determinar que es lo que se debe realizar cuando el
 	 * jugador cae en un determinado casillero.
 	 **/
-	public enum AccionEnCasillero {
+	public static enum AccionEnCasillero {
 		/**
 		 * Cuando una propiedad es libre para ser comprada String[descripción]
 		 */
@@ -34,7 +34,7 @@ public class MonopolyGameStatus implements Serializable {
 		 * alquiler. String[descripción + monto + nombre jugador][monto a pagar]
 		 */
 		PAGAR_ALQUILER(new String[] {
-				"debes pagar €{0} de alquiler al Jugador {0}.", "€" }),
+				"debes pagar %s € de alquiler al Jugador %s.", "€" }),
 
 		/**
 		 * Cuando el casillero al que avanzó corresponde a una tarjeta de la
@@ -92,21 +92,21 @@ public class MonopolyGameStatus implements Serializable {
 		}
 	}
 
-	public final List<Jugador> turnos;
+	private List<Jugador> turnos;
 
-	public final EstadoJuego status;
+	private EstadoJuego status;
 
-	public final AccionEnCasillero accionCasillero;
+	private AccionEnCasillero accionCasillero;
 
-	public final Banco banco;
+	private Banco banco;
 
-	public final Tablero tablero;
+	private Tablero tablero;
 
-	public Jugador currentPlayer;
+	private Jugador currentPlayer;
 
-	public final List<History> hirtoryList;
+	private List<History> hirtoryList;
 	
-	public final Tarjeta tarjeta;
+	private Tarjeta tarjeta;
 
 	public MonopolyGameStatus(List<Jugador> turnos, Banco banco,
 			Tablero tablero, EstadoJuego status, AccionEnCasillero accion,
@@ -118,6 +118,70 @@ public class MonopolyGameStatus implements Serializable {
 		this.banco = banco;
 		this.tablero = tablero;
 		this.hirtoryList = hirtoryList;
+		this.tarjeta = tarjeta;
+	}
+
+	public List<Jugador> getTurnos() {
+		return turnos;
+	}
+
+	public void setTurnos(List<Jugador> turnos) {
+		this.turnos = turnos;
+	}
+
+	public EstadoJuego getStatus() {
+		return status;
+	}
+
+	public void setStatus(EstadoJuego status) {
+		this.status = status;
+	}
+
+	public AccionEnCasillero getAccionCasillero() {
+		return accionCasillero;
+	}
+
+	public void setAccionCasillero(AccionEnCasillero accionCasillero) {
+		this.accionCasillero = accionCasillero;
+	}
+
+	public Banco getBanco() {
+		return banco;
+	}
+
+	public void setBanco(Banco banco) {
+		this.banco = banco;
+	}
+
+	public Tablero getTablero() {
+		return tablero;
+	}
+
+	public void setTablero(Tablero tablero) {
+		this.tablero = tablero;
+	}
+
+	public Jugador getCurrentPlayer() {
+		return currentPlayer;
+	}
+
+	public void setCurrentPlayer(Jugador currentPlayer) {
+		this.currentPlayer = currentPlayer;
+	}
+
+	public List<History> getHirtoryList() {
+		return hirtoryList;
+	}
+
+	public void setHirtoryList(List<History> hirtoryList) {
+		this.hirtoryList = hirtoryList;
+	}
+
+	public Tarjeta getTarjeta() {
+		return tarjeta;
+	}
+
+	public void setTarjeta(Tarjeta tarjeta) {
 		this.tarjeta = tarjeta;
 	}
 

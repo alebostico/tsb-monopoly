@@ -51,18 +51,23 @@ import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import monopoly.client.connection.ConnectionController;
+import monopoly.client.util.FXUtils;
 import monopoly.client.util.ScreensFramework;
 import monopoly.model.Banco;
-import monopoly.model.Estado.EstadoJuego;
 import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
+import monopoly.model.tablero.CasilleroCalle;
+import monopoly.model.tablero.CasilleroCompania;
+import monopoly.model.tablero.CasilleroEstacion;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaCompania;
+import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaPropiedad;
+import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.constantes.ConstantesFXML;
@@ -306,14 +311,14 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * jugador que debe esperar a que se unan al juego otros oponentes.
 	 * 
 	 */
-	public void showBoard() {
-		//currentStage.setFullScreen(true);
+	public void showTableroDeJuego() {
+		// currentStage.setFullScreen(true);
 		Screen screen = Screen.getPrimary();
-	    Rectangle2D bounds = screen.getVisualBounds();
-	    currentStage.setX(bounds.getMinX());
-	    currentStage.setY(bounds.getMinY());
-	    currentStage.setWidth(bounds.getWidth());
-	    currentStage.setHeight(bounds.getHeight());
+		Rectangle2D bounds = screen.getVisualBounds();
+		currentStage.setX(bounds.getMinX());
+		currentStage.setY(bounds.getMinY());
+		currentStage.setWidth(bounds.getWidth());
+		currentStage.setHeight(bounds.getHeight());
 		currentStage.show();
 		prevStage.close();
 		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -459,32 +464,21 @@ public class TableroController extends AnchorPane implements Serializable,
 	 */
 	public void tirarDados(final EnumsTirarDados.TirarDados modo) {
 		Platform.runLater(new Runnable() {
+			private Stage tirarDadosStage;
+
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
 				String fxml;
-				Parent root;
-				FXMLLoader loader;
-				Stage tirarDadosStage;
-				Scene scene;
 				TirarDadosController controller;
 
 				try {
-
 					fxml = ConstantesFXML.FXML_TIRAR_DADOS;
 					tirarDadosStage = new Stage();
-					loader = ScreensFramework.getLoader(fxml);
-
-					root = (Parent) loader.load();
-					controller = (TirarDadosController) loader.getController();
-
-					scene = new Scene(root);
-					tirarDadosStage.setScene(scene);
-					tirarDadosStage.setResizable(false);
-					tirarDadosStage.initModality(Modality.APPLICATION_MODAL);
-					tirarDadosStage.initStyle(StageStyle.UNDECORATED);
+					controller = (TirarDadosController) FXUtils.cargarStage(
+							tirarDadosStage, fxml, "", false, false,
+							Modality.APPLICATION_MODAL, StageStyle.UNDECORATED);
 					controller.setCurrentStage(tirarDadosStage);
-					tirarDadosStage.centerOnScreen();
 
 					switch (modo) {
 					case TURNO_INICIO:
@@ -492,18 +486,15 @@ public class TableroController extends AnchorPane implements Serializable,
 								.setTitle("Monopoly - Tirar Dados para establecer turnos");
 						SplashController.getInstance().getCurrentStage()
 								.close();
-
 						break;
 
 					case AVANZAR_CASILLERO:
 						tirarDadosStage
 								.setTitle("Monopoly - Tirar Dados para avanzar de casilleros");
 						break;
-
 					default:
 						break;
 					}
-
 					controller.showTirarDados(TableroController.getInstance()
 							.getUsuarioLogueado().getNombre(), modo);
 
@@ -525,8 +516,7 @@ public class TableroController extends AnchorPane implements Serializable,
 	 */
 	public void empezarJuego() {
 		try {
-			showAccordionJugadores();
-			displayFichas();
+			actualizarGraficoEnElTablero();
 			TirarDadosController.getInstance().getCurrentStage().close();
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
@@ -540,45 +530,119 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
-	public void determinarAccionEnCasillero() {
-		// TODO Auto-generated method stub
-		try {
-			showAccordionJugadores();
-			displayFichas();
-			TirarDadosController.getInstance().getCurrentStage().close();
-			switch (status.status) {
-			default:
-				break;
-			}
-		} catch (Exception ex) {
-			GestorLogs.registrarError(ex);
-			Dialogs.create()
-					.owner(currentStage)
-					.title("Error")
-					.masthead("Graficar")
-					.message(
-							"Se produjo un error mientras se dibujaban los graficos.")
-					.showError();
-		}
-	}
-
-	public void actualizarEstadoJuego(MonopolyGameStatus status) {
+	/**
+	 * Realiza las diferentes acciones que se puede realizar en el juego en base
+	 * al casillero al cual avanzó en el caso de que haya sido su turno. Si no
+	 * lo fue informa al usuario las direntes estrategias realizada por los
+	 * contrincantes.
+	 * 
+	 * @param status
+	 *            Toda las información del juego.
+	 */
+	public void actualizarEstadoJuego(final MonopolyGameStatus status) {
 		this.status = status;
+		Platform.runLater(new Runnable() {
 
-		for (History history : status.hirtoryList) {
-			TableroController.getInstance().addHistoryGame(history);
-		}
+			@Override
+			public void run() {
+				try {
+					for (History history : status.getHirtoryList()) {
+						TableroController.getInstance().addHistoryGame(history);
+					}
 
-		if (status.status == EstadoJuego.TIRAR_DADO) {
-			if (status.currentPlayer.getNombre().toLowerCase()
-					.equals(usuarioLogueado.getNombre().toLowerCase())) {
-				TirarDadosController.getInstance()
-						.habilitarBtnAceptarTirarDados();
-			} else {
-				TirarDadosController.getInstance().habilitarBtnAceptarCerrar();
+					switch (status.getStatus()) {
+					case TIRAR_DADO:
+						if (status
+								.getCurrentPlayer()
+								.getNombre()
+								.toLowerCase()
+								.equals(usuarioLogueado.getNombre()
+										.toLowerCase())) {
+							TirarDadosController.getInstance()
+									.habilitarBtnAceptarTirarDados();
+						} else {
+							TirarDadosController.getInstance()
+									.habilitarBtnAceptarCerrar();
+						}
+						break;
+					case JUGANDO:
+						switch (status.getAccionCasillero()) {
+						case DESCANSO:
+							break;
+						case DISPONIBLE_PARA_VENDER:
+							if (TirarDadosController.getInstance()
+									.getCurrentStage() != null) {
+								TirarDadosController.getInstance()
+										.getCurrentStage().close();
+							}
+
+							actualizarGraficoEnElTablero();
+
+							Dialogs.create()
+									.owner(currentStage)
+									.title("Compra de propiedad dispobible...")
+									.masthead(
+											String.format(
+													"Casillero %s",
+													status.getCurrentPlayer()
+															.getCasilleroActual()
+															.getNombreCasillero()))
+									.message(
+											status.getAccionCasillero()
+													.getAcciones()[0])
+									.showInformation();
+
+							switch (status.getCurrentPlayer()
+									.getCasilleroActual().getTipoCasillero()) {
+							case C_CALLE:
+								showVentaPropiedad(((CasilleroCalle) status
+										.getCurrentPlayer()
+										.getCasilleroActual())
+										.getTarjetaCalle());
+								break;
+							case C_COMPANIA:
+								showVentaPropiedad(((CasilleroCompania) status
+										.getCurrentPlayer()
+										.getCasilleroActual())
+										.getTarjetaCompania());
+								break;
+
+							case C_ESTACION:
+								showVentaPropiedad(((CasilleroEstacion) status
+										.getCurrentPlayer()
+										.getCasilleroActual())
+										.getTarjetaEstacion());
+								break;
+							default:
+								break;
+							}
+
+							break;
+
+						case TARJETA_SUERTE:							
+							showTarjetaSuerte((TarjetaSuerte)status.getTarjeta());
+							break;
+
+						case TARJETA_COMUNIDAD:
+							showTarjetaComunidad((TarjetaComunidad) status.getTarjeta());
+							break;
+						default:
+							break;
+						}
+						break;
+					case ESPERANDO_TURNO:
+						break;
+					default:
+						break;
+					}
+
+					actualizarTurnoJugador();
+
+				} catch (Exception ex) {
+					GestorLogs.registrarError(ex);
+				}
 			}
-		}
-		actualizarTurnoJugador();
+		});
 	}
 
 	private void actualizarTurnoJugador() {
@@ -586,23 +650,118 @@ public class TableroController extends AnchorPane implements Serializable,
 			@Override
 			public void run() {
 				if (status != null) {
-					lblTurnoJugador.setText(status.currentPlayer.getNombre());
+					lblTurnoJugador.setText(status.getCurrentPlayer()
+							.getNombre());
 				}
 			}
 		});
 	}
 
-	// ======================================================================================//
-	// =================== Métodos para dibujar componentes en la pantalla
-	// ==================//
-	// ======================================================================================//
+	private void showVentaPropiedad(final TarjetaPropiedad tarjeta) {
+		Platform.runLater(new Runnable() {
+			private Stage ventaPropiedadStage = null;
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				String fxml;
+				VentaPropiedadController controller;
+
+				try {
+
+					fxml = ConstantesFXML.FXML_VENTA_PROPIEDAD;
+					ventaPropiedadStage = new Stage();
+					controller = (VentaPropiedadController) FXUtils
+							.cargarStage(ventaPropiedadStage, fxml,
+									"Monopoly - Comprar Propiedad", false,
+									false, Modality.APPLICATION_MODAL,
+									StageStyle.TRANSPARENT);
+					controller.setCurrentStage(ventaPropiedadStage);
+					controller.cargarPropiedad(tarjeta);
+					ventaPropiedadStage.show();
+				} catch (Exception ex) {
+					// TODO Auto-generated catch block
+					GestorLogs.registrarError(ex.getMessage());
+				}
+			}
+		});
+	}
+
+	private void showTarjetaComunidad(final TarjetaComunidad tarjeta) {
+		Platform.runLater(new Runnable() {
+			private Stage tarjetaComunidadStage = null;
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				String fxml;
+				TarjetaComunidadController controller;
+
+				try {
+
+					fxml = ConstantesFXML.FXML_TARJETA_COMUNIDAD;
+					tarjetaComunidadStage = new Stage();
+					controller = (TarjetaComunidadController) FXUtils
+							.cargarStage(tarjetaComunidadStage, fxml,
+									"Monopoly - Tarjeta Comunidad", false,
+									false, Modality.APPLICATION_MODAL,
+									StageStyle.TRANSPARENT);
+					controller.setCurrentStage(tarjetaComunidadStage);
+					controller.mostrarTarjeta(tarjeta);
+					tarjetaComunidadStage.show();
+				} catch (Exception ex) {
+					// TODO Auto-generated catch block
+					GestorLogs.registrarError(ex);
+				}
+			}
+		});
+	}
+
+	private void showTarjetaSuerte(final TarjetaSuerte tarjeta) {
+		Platform.runLater(new Runnable() {
+			private Stage TarjetaSuerteStage = null;
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				String fxml;
+				TarjetaSuerteController controller;
+
+				try {
+
+					fxml = ConstantesFXML.FXML_TARJETA_SUERTE;
+					TarjetaSuerteStage = new Stage();
+					controller = (TarjetaSuerteController) FXUtils
+							.cargarStage(TarjetaSuerteStage, fxml,
+									"Monopoly - Tarjeta Suerte", false,
+									false, Modality.APPLICATION_MODAL,
+									StageStyle.TRANSPARENT);
+					controller.setCurrentStage(TarjetaSuerteStage);
+					controller.mostrarTarjeta(tarjeta);
+					TarjetaSuerteStage.show();
+				} catch (Exception ex) {
+					// TODO Auto-generated catch block
+					GestorLogs.registrarError(ex.getMessage());
+				}
+			}
+		});
+	}
+
+	// =======================================================================//
+	// =========== Métodos para dibujar componentes en la pantalla ===========//
+	// =======================================================================//
+
+	private void actualizarGraficoEnElTablero() throws Exception {
+		displayFichas();
+		showAccordionJugadores();
+	}
 
 	/**
 	 * Método que dibuja a los jugadores, mostrando el estado en el juego.
 	 * 
 	 */
 	private void showAccordionJugadores() throws Exception {
-		List<Jugador> turnos = status.turnos;
+		List<Jugador> turnos = status.getTurnos();
 		tps = new TitledPane[turnos.size() + 1];
 		String title;
 
@@ -614,7 +773,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					: "Jugador Virtual";
 			tps[i] = getPaneInfoPlayer(turnos.get(i), title);
 		}
-		tps[turnos.size()] = getPaneInfoBanco(status.banco, "BANCO");
+		tps[turnos.size()] = getPaneInfoBanco(status.getBanco(), "BANCO");
 
 		accordionPlayers.getPanes().addAll(tps);
 		accordionPlayers.setExpandedPane(tps[0]);
@@ -626,9 +785,11 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * @throws Exception
 	 */
 	private void displayFichas() throws Exception {
-		List<Jugador> turnos = status.turnos;
+		List<Jugador> turnos = status.getTurnos();
 		// Tablero tablero = status.tablero;
 		Image img;
+
+		limpiarCasilleros();
 
 		for (Jugador jugadorTurno : turnos) {
 			img = new Image(
@@ -810,28 +971,10 @@ public class TableroController extends AnchorPane implements Serializable,
 		pImgFicha.getStyleClass().add("bg_info_ficha");
 		pImgFicha.setPrefSize((double) 60, (double) 60);
 
-		// pImgFicha.getChildren().add(ivFicha);
-
-		// hbInfoJugador.getChildren().add(pImgFicha);
-		// hbInfoJugador.getChildren().add(new Label(jugador.getNombre()));
-		// hbInfoJugador.getChildren().add(
-		// new Label(StringUtils.FORMATO_IMPORTE.format(jugador
-		// .getDinero())));
-
-		// if (status.currentPlayer.equals(jugador)) {
-		// img = new Image(
-		// TableroController.class
-		// .getResourceAsStream("/images/dados/dice.png"),
-		// 40, 40, true, true);
-		// ivFicha = new ImageView(img);
-		//
-		// hbInfoJugador.getChildren().add(ivFicha);
-		// }
-
 		// ===================== HBox de propiedades =====================//
 
 		TarjetaPropiedad propiedad;
-		Banco banco = status.banco;
+		Banco banco = status.getBanco();
 		String rutaImagen = "";
 		String strStyle = "";
 		Boolean bCrearImagen = false;
@@ -1202,6 +1345,14 @@ public class TableroController extends AnchorPane implements Serializable,
 		return tooltip;
 	}
 
+	/**
+	 * Crea la barra de desplazamiento a un componente.
+	 * 
+	 * @param node
+	 *            componente para el cual se agregará la barra de
+	 *            desplazamiento.
+	 * @return el objeto scrolleable.
+	 */
 	private ScrollPane makeScrollable(final AnchorPane node) {
 		final ScrollPane scroll = new ScrollPane();
 		scroll.setContent(node);
@@ -1214,6 +1365,53 @@ public class TableroController extends AnchorPane implements Serializable,
 					}
 				});
 		return scroll;
+	}
+
+	/**
+	 * Borra todos los elementos que estan dibujados en todos los casillero del
+	 * tablero.
+	 */
+	private void limpiarCasilleros() {
+		pCasillero01.getChildren().clear();
+		pCasillero02.getChildren().clear();
+		pCasillero03.getChildren().clear();
+		pCasillero04.getChildren().clear();
+		pCasillero05.getChildren().clear();
+		pCasillero06.getChildren().clear();
+		pCasillero07.getChildren().clear();
+		pCasillero08.getChildren().clear();
+		pCasillero01.getChildren().clear();
+		pCasillero10.getChildren().clear();
+		pCasillero11.getChildren().clear();
+		pCasillero12.getChildren().clear();
+		pCasillero13.getChildren().clear();
+		pCasillero14.getChildren().clear();
+		pCasillero15.getChildren().clear();
+		pCasillero16.getChildren().clear();
+		pCasillero17.getChildren().clear();
+		pCasillero18.getChildren().clear();
+		pCasillero19.getChildren().clear();
+		pCasillero20.getChildren().clear();
+		pCasillero21.getChildren().clear();
+		pCasillero22.getChildren().clear();
+		pCasillero23.getChildren().clear();
+		pCasillero24.getChildren().clear();
+		pCasillero25.getChildren().clear();
+		pCasillero26.getChildren().clear();
+		pCasillero27.getChildren().clear();
+		pCasillero28.getChildren().clear();
+		pCasillero29.getChildren().clear();
+		pCasillero30.getChildren().clear();
+		pCasillero31.getChildren().clear();
+		pCasillero32.getChildren().clear();
+		pCasillero33.getChildren().clear();
+		pCasillero34.getChildren().clear();
+		pCasillero35.getChildren().clear();
+		pCasillero36.getChildren().clear();
+		pCasillero37.getChildren().clear();
+		pCasillero38.getChildren().clear();
+		pCasillero39.getChildren().clear();
+		pCasillero40.getChildren().clear();
 	}
 
 	// ======================================================================//
