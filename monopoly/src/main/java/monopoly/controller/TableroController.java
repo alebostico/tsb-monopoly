@@ -82,7 +82,7 @@ public class TableroController {
 	public void resetCasilleros() {
 		tablero.setCasillerosList(CasillerosController.getCasilleros());
 	}
-	
+
 	/**
 	 * Devuelve el casillero pasado por par&aacute;metro. El par&aacute;metro es
 	 * el N&uacute;mero de casillero [1-40], NO el indice del vector. Si el
@@ -580,7 +580,7 @@ public class TableroController {
 	 *         del monopolio.
 	 */
 	public boolean esUnicoPoseedorMonopolio(Casillero casillero, Jugador jugador) {
-		return (this.propNoCompradasmonopolio(casillero, jugador) > 0) ? true
+		return (this.propNoCompradasMonopolio(casillero, jugador) > 0) ? true
 				: false;
 	}
 
@@ -781,7 +781,7 @@ public class TableroController {
 	 */
 	public boolean esUltimaPropiedadMonopolio(Casillero casillero,
 			Jugador jugador) {
-		if (this.propNoCompradasmonopolio(casillero, jugador) == 1) {
+		if (this.propNoCompradasMonopolio(casillero, jugador) == 1) {
 			return true;
 		} else {
 			return false;
@@ -806,7 +806,7 @@ public class TableroController {
 	 *         las propiedades</li>
 	 *         </ul>
 	 */
-	private int propNoCompradasmonopolio(Casillero casillero, Jugador jugador) {
+	private int propNoCompradasMonopolio(Casillero casillero, Jugador jugador) {
 
 		int cantPropNoCompradas = 0;
 
@@ -886,6 +886,21 @@ public class TableroController {
 	}
 
 	/**
+	 * Devuelve la cantidad total de propiedades de un monopolio. 2 o 3 si es
+	 * una calle, 2 si es compañía y 4 si es estación.
+	 * 
+	 * @param casillero
+	 *            El casillero del monopolio
+	 * @return La cantidad total de propiedades del monopolio
+	 */
+	public int cantPropiedadesMonopolio(Casillero casillero) {
+		List<Casillero> monopolio = this
+				.getGrupoCasilleroByCasillero(casillero);
+		
+		return monopolio.size();
+	}
+
+	/**
 	 * Devuelve la cantidad de propiedades que no fueron compradas de un
 	 * monopolio.
 	 * 
@@ -956,11 +971,11 @@ public class TableroController {
 	}
 
 	/**
-	 * Comprueba si una calle es construible. Para ello se debe cumplir que no
-	 * haya llegado al límite de las edificaciones permitidas ( 1 hotel ), no
+	 * Comprueba si un monopolio es construible. Para ello se debe cumplir que
+	 * no haya llegado al límite de las edificaciones permitidas ( 1 hotel ), no
 	 * incumpla la norma de construcciones escalonadas ( máxima diferencia entre
 	 * la propiedad más construida y la menos construida debe ser 1 ) y además
-	 * tenga el permiso de construcción (true).
+	 * que no tenga ninguna porpiedad hipotecada.
 	 * 
 	 * @param casillero
 	 *            El CasilleroCalle que se quiere comprobar
@@ -983,13 +998,20 @@ public class TableroController {
 				minConstruido = casilleroCalle.getNroCasas();
 			if (!dueno.equals(casilleroCalle.getTarjetaCalle().getJugador()))
 				return false;
-
 		}
-		if (maxConstruido - minConstruido == 0)
-			return true;
 
-		if (casillero.getNroCasas() == maxConstruido)
+		// la diferencia entre la propiedad que mas casas tiene
+		// y la que menos tiene es mayor a 1, hay algún error,
+		// no debería pasar nunca...
+		if (maxConstruido - minConstruido > 1)
 			return false;
+
+		// Todas las propiedades tienen un hotel...
+		if (minConstruido == 5)
+			return false;
+
+		// if (casillero.getNroCasas() == maxConstruido)
+		// return false;
 
 		return true;
 	}
@@ -1106,6 +1128,9 @@ public class TableroController {
 			// Nadie es propietario de la tarjeta.
 			if (tarjetaPropiedad.getJugador() == null) {
 				accionEnCasillero = AccionEnCasillero.DISPONIBLE_PARA_VENDER;
+				accionEnCasillero.getAcciones()[0] = String.format(
+						accionEnCasillero.getAcciones()[0],
+						pCasillero.getNombreCasillero());
 			} else {
 				nombreJugadorActual = pJugador.getNombre().toLowerCase();
 				nombreJugadorPropietario = tarjetaPropiedad.getJugador()
@@ -1117,9 +1142,15 @@ public class TableroController {
 				} else // Si la propiedad pertenece a otro jugador
 				{
 					// Si está hipotecada
-					if (tarjetaPropiedad.isHipotecada())
+					if (tarjetaPropiedad.isHipotecada()) {
 						accionEnCasillero = AccionEnCasillero.HIPOTECADA;
-					else // calculo el alquiler
+						accionEnCasillero.getAcciones()[0] = String.format(
+								accionEnCasillero.getAcciones()[0],
+								nombreJugadorPropietario);
+						accionEnCasillero.getAcciones()[1] = String.format(
+								accionEnCasillero.getAcciones()[1],
+								pCasillero.getNombreCasillero());
+					} else // calculo el alquiler
 					{
 						accionEnCasillero = AccionEnCasillero.PAGAR_ALQUILER;
 						switch (pCasillero.getTipoCasillero()
@@ -1154,9 +1185,11 @@ public class TableroController {
 			accionEnCasillero = AccionEnCasillero.IR_A_LA_CARCEL;
 			break;
 		case Casillero.CASILLERO_IMPUESTO:
-			accionEnCasillero = AccionEnCasillero.IMPUESTO;
-			accionEnCasillero.setAcciones(new String[] { pCasillero
-					.getNombreCasillero() });
+			if (pCasillero.getNumeroCasillero() == 5) {
+				accionEnCasillero = AccionEnCasillero.IMPUESTO_SOBRE_CAPITAL;
+			} else {
+				accionEnCasillero = AccionEnCasillero.IMPUESTO_DE_LUJO;
+			}
 			break;
 		case Casillero.CASILLERO_SUERTE:
 			accionEnCasillero = AccionEnCasillero.TARJETA_SUERTE;
@@ -1169,8 +1202,9 @@ public class TableroController {
 		case Casillero.CASILLERO_DESCANSO:
 		case Casillero.CASILLERO_SALIDA:
 			accionEnCasillero = AccionEnCasillero.DESCANSO;
-			accionEnCasillero.setAcciones(new String[] { pCasillero
-					.getNombreCasillero() });
+			accionEnCasillero.getAcciones()[0] = String.format(
+					accionEnCasillero.getAcciones()[0],
+					pCasillero.getNombreCasillero());
 			break;
 		default:
 			throw new CondicionInvalidaException(
@@ -1191,7 +1225,11 @@ public class TableroController {
 	 * @return true si se puede vender.
 	 * @throws SinEdificiosException
 	 *             Si no se disponen de suficientes edificios
+	 * @deprecated Usar
+	 *             {@link TableroController#venderEdificio(int, CasilleroCalle)}
+	 *             que hace todos los controles necesarios
 	 */
+	@Deprecated
 	@SuppressWarnings("unused")
 	private boolean venderSinComprobar(CasilleroCalle casillero)
 			throws SinEdificiosException {
@@ -1234,7 +1272,11 @@ public class TableroController {
 	 * @return true si compra la propiedad, false en caso contrario.
 	 * @throws SinEdificiosException
 	 *             Si no se disponen de suficientes edificios
+	 * @deprecated Usar
+	 *             {@link TableroController#comprarEdificio(int, CasilleroCalle)}
+	 *             que hace todos los controles necesarios
 	 */
+	@Deprecated 
 	@SuppressWarnings("unused")
 	private boolean comprarSinComprobar(CasilleroCalle casillero)
 			throws SinEdificiosException {
@@ -1271,6 +1313,26 @@ public class TableroController {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Devuelve la cantidad de edificios que tiene un Grupo de solares del mismo
+	 * color.
+	 * 
+	 * @param tarjeta
+	 *            Una de las tarjetas del grupo de solares
+	 * @return La cantidad de edificios
+	 */
+	public int cantEdificiosMonopolio(TarjetaCalle tarjeta) {
+		List<TarjetaCalle> monopolio = this.getGrupoDeSolaresByCalle(tarjeta);
+		int cantEdificios = 0;
+
+		for (TarjetaCalle tarjetaCalle : monopolio) {
+			cantEdificios += ((CasilleroCalle) tarjetaCalle.getCasillero())
+					.getNroCasas();
+		}
+
+		return cantEdificios;
 	}
 
 	/**
