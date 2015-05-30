@@ -160,6 +160,35 @@
     -fx-padding: 10 20 10 20;
 }
 
+.context-menu {
+	-fx-text-fill: #e4f3fc;
+	-fx-text-fill: linear-gradient(white, #d0d0d0);
+    -fx-font: 15pt "Tahoma Bold";
+    -fx-padding: 2;
+    -fx-background-color: #2d4b8e
+}
+
+.context-menu:hover {
+	-fx-base: #395bae;
+}
+
+.menu-item .label {
+  	-fx-text-fill: White;
+	-fx-text-fill: #e4f3fc;
+}
+
+.menu-item:focused .label {
+  	-fx-text-fill: white;
+}
+
+.boton_finalizar{
+-fx-text-fill: #e4f3fc;
+	-fx-text-fill: linear-gradient(white, #d0d0d0);
+    -fx-font: 15pt "Tahoma Bold";
+    -fx-padding: 5;
+    -fx-base: #2d4b8e
+}
+
 .border_marron{
 	-fx-border-color: #61210B;
 	-fx-border-width: 2;
@@ -229,5 +258,4 @@
 	-fx-border-style: solid;
 	-fx-background-color: #424242;
 }
-
 

@@ -81,3 +81,22 @@
     -fx-text-fill: linear-gradient(white, #d0d0d0);
     -fx-padding: 10 20 10 20;
 }
+.titled-pane > .title 
+{
+	-fx-text-fill: #e4f3fc;
+	-fx-text-fill: linear-gradient(white, #d0d0d0);
+    	-fx-font: 11pt "Tahoma Bold";
+    	-fx-padding: 2;
+    	-fx-background-color: #2d4b8e;
+	-fx-background-insets: 0, 1, 2;
+	
+}
+.titled-pane > *.content 
+{
+	-fx-background-image: url("../images/background/CoarseGrid.png");
+    	-fx-background-repeat: repeat;
+	-fx-background-color:
+        linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+        linear-gradient(#20262b, #191d22),
+        radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+ }

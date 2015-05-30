@@ -14,12 +14,12 @@ public class AdvanceInBoardMessage implements Serializable{
 
 	private static final long serialVersionUID = 3160318744864280110L;
 	
-	public final Object message; // Original message from a client.
-	public final int senderID; // The ID of the client who sent that message.
+	public final Object dados; // Original message from a client.
+	public final String idJuego; // The ID of the client who sent that message.
 	
-	public AdvanceInBoardMessage(int senderID, Object message) {
-		this.senderID = senderID;
-		this.message = message;
+	public AdvanceInBoardMessage(String idJuego, Object message) {
+		this.idJuego = idJuego;
+		this.dados = message;
 	}
 	
 }
