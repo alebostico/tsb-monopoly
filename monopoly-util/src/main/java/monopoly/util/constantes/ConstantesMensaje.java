@@ -24,7 +24,11 @@ public class ConstantesMensaje {
 	public final static String HISTORY_GAME_MESSAGE = "HistoryGameMessage";
 	public final static String ADVANCE_IN_BOARD_MESSAGE = "AdvanceInBoardMessage";
 	
-	
+	public final static String AUCTION_PROPERTY_MESSAGE = "AuctionPropertyMessage";
+	public final static String BUY_PROPERTY_MESSAGE="BuyPropertyMessage";
+	public final static String CHANCE_CARD_MESSAGE="ChanceCardMessage";
+	public final static String COMMUNITY_CARD_MESSAGE="CommunityCardMessage";
+	public final static String PAY_TO_BANK_MESSAGE="PayToBankMessage";
 	/*************************************************************************************/
 
 	
@@ -35,6 +39,7 @@ public class ConstantesMensaje {
 	 */
 	public final static String DISCONNECT_MESSAGE = "DisconnectMessage";
 	public final static String RESET_SIGNAL_MESSAGE = "ResetSignal";
+	public final static String ERROR_MESSAGE = "ERROR";
 
 	/*************************************************************************************/
 	

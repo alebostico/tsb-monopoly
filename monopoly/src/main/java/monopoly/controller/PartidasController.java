@@ -14,9 +14,8 @@ import monopoly.model.Estado.EstadoJuego;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.Usuario;
+import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
-import monopoly.util.message.game.AdvanceInBoardMessage;
-import monopoly.util.message.game.StartGameMessage;
 
 /**
  * @author Bostico Alejandro
@@ -54,7 +53,7 @@ public class PartidasController {
 	 * @param juego
 	 *            objecto juego, que posee los datos del juego
 	 */
-	public void loadGame(int senderID, Juego juego) {
+	public void loadGame(int senderID, Juego juego) throws Exception {
 		// TODO Auto-generated method stub
 		JuegoController controller = juegosControllerList.get(juego
 				.getUniqueID());
@@ -69,12 +68,9 @@ public class PartidasController {
 		}
 	}
 
-	public void establecerTurnoJugador(int senderId, Object message) throws Exception {
+	public void establecerTurnoJugador(int senderId, String idJuego, Dado dados)
+			throws Exception {
 		// TODO Auto-generated method stub
-		Object[] vDatos = (Object[]) ((StartGameMessage) message).message;
-		String idJuego = vDatos[0].toString();
-		Dado dados = (Dado) vDatos[1];
-
 		JuegoController controller = juegosControllerList.get(idJuego);
 		controller.establecerTurnoJugador(senderId, dados);
 	}
@@ -85,20 +81,11 @@ public class PartidasController {
 	 * @param senderId
 	 * @param message
 	 */
-	public void avanzarDeCasillero(int senderId, Object message) {
-		Object[] vDatos;
-		String idJuego;
-		Dado dados;
+	public void avanzarDeCasillero(int senderId, String idJuego, Dado dados)
+			throws Exception {
 		JuegoController controller;
-		try {
-			vDatos = (Object[]) ((AdvanceInBoardMessage) message).message;
-			idJuego = vDatos[0].toString();
-			dados = (Dado) vDatos[1];
-			controller = juegosControllerList.get(idJuego);
-			controller.avanzarDeCasillero(senderId, dados);
-		} catch (Exception ex) {
-			GestorLogs.registrarError(ex.getMessage());
-		}
+		controller = juegosControllerList.get(idJuego);
+		controller.avanzarDeCasillero(senderId, dados);
 	}
 
 	/**
@@ -106,13 +93,26 @@ public class PartidasController {
 	 * 
 	 * @param jugador
 	 */
-	public void joinPlayerGame(Jugador jugador) {
+	public void joinPlayerGame(Jugador jugador) throws Exception {
 		JuegoController juegoController = buscarControladorJuego(jugador
 				.getJuego());
 		GestorLogs.registrarLog(String.format(
 				"Agregando el jugador %s al juego %s..", jugador.getNombre(),
 				juegoController.getJuego().getUniqueID()));
 		juegoController.addPlayer(jugador);
+	}
+
+	/**
+	 * Método solicitado por un jugador para comprar una propiedad.
+	 * 
+	 * @param senderId
+	 *            , id de conexión del jugador que desea comprar la propiedad.
+	 * @param tarjeta
+	 *            , tarjeta de la propiedad que desea comprar el jugador.
+	 */
+	public void comprarPropiedad(String idJuego, int senderId,
+			TarjetaPropiedad tarjeta) throws Exception {
+
 	}
 
 	/**

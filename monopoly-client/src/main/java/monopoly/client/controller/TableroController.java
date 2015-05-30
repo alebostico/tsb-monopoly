@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javafx.animation.KeyFrame;
@@ -29,6 +30,10 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
@@ -44,6 +49,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -73,14 +80,11 @@ import monopoly.util.StringUtils;
 import monopoly.util.constantes.ConstantesFXML;
 import monopoly.util.constantes.EnumsTirarDados;
 
-import org.controlsfx.dialog.Dialogs;
-
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
  *
  */
-@SuppressWarnings("deprecation")
 public class TableroController extends AnchorPane implements Serializable,
 		Initializable {
 
@@ -267,6 +271,9 @@ public class TableroController extends AnchorPane implements Serializable,
 	@FXML
 	private Label lblTurnoJugador;
 
+    @FXML
+    private Button btnFinalizarTurno;
+
 	private static TableroController instance;
 
 	@FXML
@@ -277,6 +284,9 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	@FXML
 	private Stage preloaderStage;
+	
+	@FXML
+	private final Rectangle bloquearPantalla = new Rectangle();
 
 	private TitledPane[] tps;
 
@@ -333,6 +343,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			addHistoryGame(usuarioLogueado.getUserName(), "Juego Creado.");
 		else
 			addHistoryGame(usuarioLogueado.getUserName(), "Te uniste al Juego.");
+		
 		esperarJugadores();
 	}
 
@@ -520,13 +531,11 @@ public class TableroController extends AnchorPane implements Serializable,
 			TirarDadosController.getInstance().getCurrentStage().close();
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
-			Dialogs.create()
-					.owner(currentStage)
-					.title("Error")
-					.masthead("Graficar")
-					.message(
-							"Se produjo un error mientras se dibujaban los graficos.")
-					.showError();
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText("Graficar");
+			alert.setContentText("Se produjo un error mientras se dibujaban los graficos.");
+			alert.showAndWait();
 		}
 	}
 
@@ -542,9 +551,9 @@ public class TableroController extends AnchorPane implements Serializable,
 	public void actualizarEstadoJuego(final MonopolyGameStatus status) {
 		this.status = status;
 		Platform.runLater(new Runnable() {
-
 			@Override
 			public void run() {
+				Alert alert = null;
 				try {
 					for (History history : status.getHirtoryList()) {
 						TableroController.getInstance().addHistoryGame(history);
@@ -566,31 +575,33 @@ public class TableroController extends AnchorPane implements Serializable,
 						}
 						break;
 					case JUGANDO:
+						if (TirarDadosController.getInstance()
+								.getCurrentStage() != null) {
+							TirarDadosController.getInstance()
+									.getCurrentStage().close();
+						}
+						actualizarGraficoEnElTablero();
+						
 						switch (status.getAccionCasillero()) {
 						case DESCANSO:
+							alert = new Alert(AlertType.INFORMATION);
+							alert.setTitle("Descanso...");
+							alert.setHeaderText(null);
+							alert.setContentText(status.getAccionCasillero()
+									.getAcciones()[0]);
+							alert.showAndWait();
 							break;
+							
 						case DISPONIBLE_PARA_VENDER:
-							if (TirarDadosController.getInstance()
-									.getCurrentStage() != null) {
-								TirarDadosController.getInstance()
-										.getCurrentStage().close();
-							}
-
-							actualizarGraficoEnElTablero();
-
-							Dialogs.create()
-									.owner(currentStage)
-									.title("Compra de propiedad dispobible...")
-									.masthead(
-											String.format(
-													"Casillero %s",
-													status.getCurrentPlayer()
-															.getCasilleroActual()
-															.getNombreCasillero()))
-									.message(
-											status.getAccionCasillero()
-													.getAcciones()[0])
-									.showInformation();
+							alert = new Alert(AlertType.INFORMATION);
+							alert.setTitle("Compra de propiedad dispobible...");
+							alert.setHeaderText(String.format("Propiedad %s",
+									status.getCurrentPlayer()
+											.getCasilleroActual()
+											.getNombreCasillero()));
+							alert.setContentText(status.getAccionCasillero()
+									.getAcciones()[0]);
+							alert.showAndWait();
 
 							switch (status.getCurrentPlayer()
 									.getCasilleroActual().getTipoCasillero()) {
@@ -619,17 +630,89 @@ public class TableroController extends AnchorPane implements Serializable,
 
 							break;
 
-						case TARJETA_SUERTE:							
-							showTarjetaSuerte((TarjetaSuerte)status.getTarjeta());
+						case TARJETA_SUERTE:
+							showTarjetaSuerte((TarjetaSuerte) status
+									.getTarjeta());
 							break;
 
 						case TARJETA_COMUNIDAD:
-							showTarjetaComunidad((TarjetaComunidad) status.getTarjeta());
+							showTarjetaComunidad((TarjetaComunidad) status
+									.getTarjeta());
 							break;
+
+						case HIPOTECADA:
+							alert = new Alert(AlertType.INFORMATION);
+							alert.setTitle("Propiedad hipotecada...");
+							alert.setHeaderText(status.getAccionCasillero()
+									.getAcciones()[0]);
+							alert.setContentText(status.getAccionCasillero()
+									.getAcciones()[1]);
+							alert.showAndWait();
+							break;
+
+						case IMPUESTO_DE_LUJO:
+							alert = new Alert(AlertType.INFORMATION);
+							alert.setTitle("Impuesto de lujo...");
+							alert.setHeaderText("Debes pagar el impuesto.");
+							alert.setContentText(status.getAccionCasillero()
+									.getAcciones()[0]);
+							alert.showAndWait();
+							break;
+
+						case IMPUESTO_SOBRE_CAPITAL:
+							ButtonType buttonPorcentaje = new ButtonType(
+									"Pagar 10%");
+							ButtonType buttonMonto = new ButtonType(
+									"Pagar 200 €");
+
+							alert = new Alert(AlertType.CONFIRMATION);
+							alert.setTitle("Impuesto sobre el capital...");
+							alert.setHeaderText("Debes pagar el impuesto.");
+							alert.setContentText(status.getAccionCasillero()
+									.getAcciones()[0]);
+							alert.getButtonTypes().setAll(buttonPorcentaje,
+									buttonMonto);
+
+							Optional<ButtonType> result = alert.showAndWait();
+							if (result.get() == buttonPorcentaje) {
+
+							} else {
+
+							}
+
+							break;
+						case MI_PROPIEDAD:
+							alert = new Alert(AlertType.INFORMATION);
+							alert.setTitle("Propiedad...");
+							alert.setHeaderText(null);
+							alert.setContentText(status.getAccionCasillero()
+									.getAcciones()[0]);
+							alert.showAndWait();
+							break;
+							
+						case PAGAR_ALQUILER:
+							alert = new Alert(AlertType.INFORMATION);
+							alert.setTitle("Pagar...");
+							alert.setHeaderText("Pagar alquiler.");
+							alert.setContentText(status.getAccionCasillero()
+									.getAcciones()[0]);
+							alert.showAndWait();
+							break;
+							
+						case IR_A_LA_CARCEL:
+							alert = new Alert(AlertType.INFORMATION);
+							alert.setTitle("Marche preso...");
+							alert.setHeaderText(null);
+							alert.setContentText(status.getAccionCasillero()
+									.getAcciones()[0]);
+							alert.showAndWait();
+							break;
+							
 						default:
 							break;
 						}
 						break;
+					
 					case ESPERANDO_TURNO:
 						break;
 					default:
@@ -731,11 +814,10 @@ public class TableroController extends AnchorPane implements Serializable,
 
 					fxml = ConstantesFXML.FXML_TARJETA_SUERTE;
 					TarjetaSuerteStage = new Stage();
-					controller = (TarjetaSuerteController) FXUtils
-							.cargarStage(TarjetaSuerteStage, fxml,
-									"Monopoly - Tarjeta Suerte", false,
-									false, Modality.APPLICATION_MODAL,
-									StageStyle.TRANSPARENT);
+					controller = (TarjetaSuerteController) FXUtils.cargarStage(
+							TarjetaSuerteStage, fxml,
+							"Monopoly - Tarjeta Suerte", false, false,
+							Modality.APPLICATION_MODAL, StageStyle.TRANSPARENT);
 					controller.setCurrentStage(TarjetaSuerteStage);
 					controller.mostrarTarjeta(tarjeta);
 					TarjetaSuerteStage.show();
@@ -925,6 +1007,16 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
+	public void bloquearTablero(boolean bloquear){
+		bloquearPantalla.setFill(Color.TRANSPARENT);  
+		bloquearPantalla.setMouseTransparent(false);  
+		bloquearPantalla.setX(0);  
+		bloquearPantalla.setY(0);  
+	    bloquearPantalla.widthProperty().bind(currentStage.widthProperty());  
+	    bloquearPantalla.heightProperty().bind(currentStage.heightProperty());  
+	    bloquearPantalla.setVisible(bloquear);
+	}
+	
 	/**
 	 * 
 	 * Dibuje el TitledPane con la información actual del jugador.

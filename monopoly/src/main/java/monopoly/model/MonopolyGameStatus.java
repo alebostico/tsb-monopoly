@@ -27,55 +27,61 @@ public class MonopolyGameStatus implements Serializable {
 		/**
 		 * Cuando una propiedad es libre para ser comprada String[descripción]
 		 */
-		DISPONIBLE_PARA_VENDER(new String[] { "disponible para la venta." }),
+		DISPONIBLE_PARA_VENDER(new String[] { "La propiedad %s está disponible para la venta." }),
 
 		/**
 		 * Cuando otro jugador compró la propiedad, entonces hay que pagar
 		 * alquiler. String[descripción + monto + nombre jugador][monto a pagar]
 		 */
 		PAGAR_ALQUILER(new String[] {
-				"debes pagar %s € de alquiler al Jugador %s.", "€" }),
+				"Debes pagar %s € de alquiler al jugador %s.", "Monto" }),
 
 		/**
 		 * Cuando el casillero al que avanzó corresponde a una tarjeta de la
 		 * suerte. String[descripción][Id Tarjeta de la Suerte]
 		 */
-		TARJETA_SUERTE(new String[] { "sacaste una tarjeta de la suerte.", "IdTarjeta" }),
+		TARJETA_SUERTE(new String[] { "Sacaste una tarjeta de la suerte.", "IdTarjeta" }),
 
 		/**
 		 * Cuando el casillero al que avanzó corresponde a una tarjeta de
 		 * comunidad. String[descripción][Id Tarjeta de Comunidad]
 		 */
-		TARJETA_COMUNIDAD(new String[] { "sacaste una tarjeta comunidad.", "IdTarjeta" }),
+		TARJETA_COMUNIDAD(new String[] { "Sacaste una tarjeta comunidad.", "IdTarjeta" }),
 
 		/**
 		 * Cuando el casillero corresponde a Ir a la Cárcel. String[descripción]
 		 */
-		IR_A_LA_CARCEL(new String[] { "debes ir a la cárcel." }),
+		IR_A_LA_CARCEL(new String[] { "Debes ir a la cárcel." }),
 
 		/**
 		 * Cuándo el casillero corresponde a un descanso (Salida, Parking, En la
 		 * Cárcel de visita) String[descripción]
 		 */
-		DESCANSO(new String[] { "debes descansar." }),
+		DESCANSO(new String[] { "Casillero %s, debes descansar." }),
 
 		/**
-		 * Cuándo el casillero corresponde a Impuesto al Capital o lujo
+		 * Cuándo el casillero corresponde a Impuesto de lujo
 		 * String[Descripción][Monto]
 		 */
-		IMPUESTO(new String[] { "debes pargar impuestos.", "Monto" }),
+		IMPUESTO_DE_LUJO(new String[] { "El banco te cobra 100 € por el impuesto de lujo.", "100" }),
+		
+		/**
+		 * Cuándo el casillero corresponde a Impuesto sobre el capital.
+		 * String[Descripción]
+		 */
+		IMPUESTO_SOBRE_CAPITAL(new String[] { "Impuesto sobre el capital. El banco te cobra 200 € o el 10% del valor total de su capital"}),
 
 		/**
 		 * Cuándo el casillero corresponde a una propiedad comprada
 		 * anteriormente. String[descripción]
 		 */
-		MI_PROPIEDAD(new String[] { "ya adquiriste esta propiedad." }),
+		MI_PROPIEDAD(new String[] { "Ya adquiriste esta propiedad." }),
 
 		/*
 		 * Cuándo el casillero corresponde a propiedad de otros jugador que se
 		 * encuentra hipotecada. String[descripción]
 		 */
-		HIPOTECADA(new String[] { "esta propiedad está hipotecada" });
+		HIPOTECADA(new String[] { "Propiedad del jugador %s.", "La propiedad %s se encuentra hipotecada" });
 
 		private String[] acciones;
 

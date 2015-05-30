@@ -8,16 +8,22 @@ import java.util.List;
 
 import monopoly.controller.PartidasController;
 import monopoly.controller.UsuarioController;
+import monopoly.model.Dado;
 import monopoly.model.Estado.EstadoJuego;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.Usuario;
+import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
+import monopoly.util.message.ErrorMessage;
 import monopoly.util.message.LoginMessage;
-import monopoly.util.message.game.LoadGameMessage;
+import monopoly.util.message.game.AdvanceInBoardMessage;
 import monopoly.util.message.game.JoinGameMessage;
+import monopoly.util.message.game.LoadGameMessage;
+import monopoly.util.message.game.StartGameMessage;
+import monopoly.util.message.game.actions.BuyPropertyMessage;
 
 /**
  * @author Bostico Alejandro
@@ -25,10 +31,6 @@ import monopoly.util.message.game.JoinGameMessage;
  *
  */
 public class MonopolyGame extends GameServer {
-
-	private Usuario usuario;
-	private Juego juego;
-	private List<Juego> juegosList;
 
 	/**
 	 * Creates a MonopolyGame listening on a specified port.
@@ -74,68 +76,93 @@ public class MonopolyGame extends GameServer {
 	 * as a message to be displayed to that player.
 	 */
 	protected void messageReceived(int senderId, Object message) {
-		try
-		{
-		switch (message.getClass().getSimpleName()) {
-		case ConstantesMensaje.LOGIN_MESSAGE:
-			usuario = (Usuario) ((LoginMessage) message).message;
-			usuario = UsuarioController.validarUsuario(usuario.getUserName(),
-					usuario.getPassword());
-			sendToOne(senderId, new LoginMessage(senderId, usuario));
-			break;
+		Usuario usuario;
+		Juego juego;
+		Jugador jugador;
+		try {
+			switch (message.getClass().getSimpleName()) {
+			case ConstantesMensaje.LOGIN_MESSAGE:
+				usuario = (Usuario) ((LoginMessage) message).message;
+				usuario = UsuarioController.validarUsuario(
+						usuario.getUserName(), usuario.getPassword());
+				sendToOne(senderId, new LoginMessage(senderId, usuario));
+				break;
 
-		case ConstantesMensaje.CREATE_ACCOUNT_MESSAGE:
-			// tomar el usuario y grabarlo
-			usuario = (Usuario) ((CreateAccountMessage) message).message;
-			UsuarioController.saveUsuario(usuario);
-			sendToOne(senderId, new CreateAccountMessage(senderId, usuario));
-			break;
+			case ConstantesMensaje.CREATE_ACCOUNT_MESSAGE:
+				// tomar el usuario y grabarlo
+				usuario = (Usuario) ((CreateAccountMessage) message).message;
+				UsuarioController.saveUsuario(usuario);
+				sendToOne(senderId, new CreateAccountMessage(senderId, usuario));
+				break;
 
-		case ConstantesMensaje.CREATE_GAME_MESSAGE:
-			// create juego
-			usuario = (Usuario) ((CreateGameMessage) message).message;
-			juego = PartidasController.getInstance().crearJuego(usuario, "");
-			sendToOne(senderId, new CreateGameMessage(senderId, juego));
-			break;
+			case ConstantesMensaje.CREATE_GAME_MESSAGE:
+				// create juego
+				usuario = (Usuario) ((CreateGameMessage) message).message;
+				juego = PartidasController.getInstance()
+						.crearJuego(usuario, "");
+				sendToOne(senderId, new CreateGameMessage(senderId, juego));
+				break;
 
-		case ConstantesMensaje.JOIN_GAME_MESSAGE:
-			// unirse al juego
-			Jugador jugador = (Jugador) ((JoinGameMessage) message).message;
-			PartidasController.getInstance().joinPlayerGame(jugador);
-			break;
-			
-		case ConstantesMensaje.LOAD_GAME_MESSAGE:
-			juego = (Juego) ((LoadGameMessage) message).message;
-			PartidasController.getInstance().loadGame(senderId,juego);
-			break;
-			
-		case ConstantesMensaje.START_GAME_MESSAGE:
-			PartidasController.getInstance().establecerTurnoJugador(senderId, message);
-			break;
-			
-		case ConstantesMensaje.ADVANCE_IN_BOARD_MESSAGE:
-			PartidasController.getInstance().avanzarDeCasillero(senderId, message);
-		break;
+			case ConstantesMensaje.JOIN_GAME_MESSAGE:
+				// unirse al juego
+				jugador = (Jugador) ((JoinGameMessage) message).message;
+				PartidasController.getInstance().joinPlayerGame(jugador);
+				break;
 
-		case ConstantesMensaje.DISCONNECT_MESSAGE:
+			case ConstantesMensaje.LOAD_GAME_MESSAGE:
+				juego = (Juego) ((LoadGameMessage) message).message;
+				PartidasController.getInstance().loadGame(senderId, juego);
+				break;
 
-			break;
-			
-		case "String":
-			messageString(senderId, message);
-			break;
+			case ConstantesMensaje.START_GAME_MESSAGE:
+				StartGameMessage msgStartGameMessage  = (StartGameMessage) message;
+				PartidasController.getInstance().establecerTurnoJugador(
+						senderId, msgStartGameMessage.UniqueIdJuego, (Dado)msgStartGameMessage.message);
+				break;
 
-		default:
-			System.out.print(message.getClass().getSimpleName());
-			break;
+			case ConstantesMensaje.ADVANCE_IN_BOARD_MESSAGE:
+				AdvanceInBoardMessage msgAdvanceInBoardMessage = (AdvanceInBoardMessage) message;
+				PartidasController.getInstance().avanzarDeCasillero(senderId, msgAdvanceInBoardMessage.idJuego,(Dado)msgAdvanceInBoardMessage.dados);
+				break;
+
+			case ConstantesMensaje.AUCTION_PROPERTY_MESSAGE:
+				break;
+
+			case ConstantesMensaje.BUY_PROPERTY_MESSAGE:
+				BuyPropertyMessage msgBuyPropertyMessage = (BuyPropertyMessage) message;
+				PartidasController.getInstance().comprarPropiedad(msgBuyPropertyMessage.idJuego, senderId, (TarjetaPropiedad)msgBuyPropertyMessage.message);
+
+				break;
+
+			case ConstantesMensaje.CHANCE_CARD_MESSAGE:
+				break;
+
+			case ConstantesMensaje.COMMUNITY_CARD_MESSAGE:
+				break;
+
+			case ConstantesMensaje.PAY_TO_BANK_MESSAGE:
+				break;
+
+			case ConstantesMensaje.DISCONNECT_MESSAGE:
+
+				break;
+
+			case "String":
+				messageString(senderId, message);
+				break;
+
+			default:
+				System.out.print(message.getClass().getSimpleName());
+				break;
+			}
+		} catch (Exception ex) {
+			sendToOne(senderId, new ErrorMessage(ex));
 		}
-		}catch (Exception ex){
-			
-		}
-		
+
 	}
 
-	private void messageString(int senderId, Object message) {
+	private void messageString(int senderId, Object message) throws Exception{
+		List<Juego> juegosList;
 		switch ((String) message) {
 		case ConstantesMensaje.GET_PENDING_GAMES_MESSAGE:
 			juegosList = PartidasController.getInstance().buscarJuegos(

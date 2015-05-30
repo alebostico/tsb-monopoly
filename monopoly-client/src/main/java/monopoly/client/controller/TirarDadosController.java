@@ -80,8 +80,7 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 						@Override
 						public void handle(ActionEvent e) {
 							// devolver el valor de los dados
-							TirarDadosController.getInstance()
-									.tirarDados(modo);
+							TirarDadosController.getInstance().tirarDados(modo);
 						}
 					});
 					break;
@@ -90,8 +89,7 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 						@Override
 						public void handle(ActionEvent e) {
 							// avanzar de casillero
-							TirarDadosController.getInstance()
-							.tirarDados(modo);
+							TirarDadosController.getInstance().tirarDados(modo);
 						}
 					});
 					break;
@@ -108,16 +106,14 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 		ImageView imgDado1;
 		ImageView imgDado2;
 		History history;
-		int senderId;
 		String mensaje = "";
-		
+
 		dados = new Dado();
 		hbPanel.getChildren().clear();
 
 		path = Dado.getPathImageDado(dados.getValorDado(1));
-		img = new Image(
-				TirarDadosController.class.getResourceAsStream(path), 50, 50,
-				true, true);
+		img = new Image(TirarDadosController.class.getResourceAsStream(path),
+				50, 50, true, true);
 		imgDado1 = new ImageView(img);
 
 		path = Dado.getPathImageDado(dados.getValorDado(2));
@@ -131,37 +127,38 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 		hbPanel.getChildren().add(new Label(" = "));
 		hbPanel.getChildren().add(new Label(" " + dados.getSuma() + " "));
 
-		senderId = ConnectionController.getInstance().getIdPlayer();
 		btnAceptar = new Button("Aceptar");
 		btnAceptar.setDisable(true);
-		
-		switch(modo)
-		{
+
+		switch (modo) {
 		case TURNO_INICIO:
-			mensaje = String.format("El resultado de los dados para establecer su turno fue %s.", dados.getSuma());
-			
+			mensaje = String
+					.format("El resultado de los dados para establecer su turno fue %s.",
+							dados.getSuma());
+
 			ConnectionController.getInstance().send(
-					new StartGameMessage(senderId, TableroController.getInstance().getJuego().getUniqueID(), dados));
-			
+					new StartGameMessage(TableroController.getInstance()
+							.getJuego().getUniqueID(), dados));
+
 			break;
-			
+
 		case AVANZAR_CASILLERO:
-			mensaje = String.format("El resultado de los dados para avanzar de casillero fue %s.", dados.getSuma());
+			mensaje = String
+					.format("El resultado de los dados para avanzar de casillero fue %s.",
+							dados.getSuma());
 			ConnectionController.getInstance().send(
-					new AdvanceInBoardMessage(senderId, new Object[] {
-							TableroController.getInstance().getJuego()
-									.getUniqueID(), dados }));
-			
+					new AdvanceInBoardMessage(TableroController.getInstance()
+							.getJuego().getUniqueID(), dados));
+
 			break;
 		}
-		
-		history = new History(StringUtils.getFechaActual(),
-				TableroController.getInstance().getUsuarioLogueado()
-						.getUserName(),mensaje);
+
+		history = new History(StringUtils.getFechaActual(), TableroController
+				.getInstance().getUsuarioLogueado().getUserName(), mensaje);
 		TableroController.getInstance().addHistoryGame(history);
-		
+
 		vbPanel.getChildren().add(btnAceptar);
-		
+
 	}
 
 	public void habilitarBtnAceptarCerrar() {
@@ -180,7 +177,7 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 			}
 		});
 	}
-	
+
 	public void habilitarBtnAceptarTirarDados() {
 		Platform.runLater(new Runnable() {
 			@Override
@@ -189,7 +186,10 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 					btnAceptar.setOnAction(new EventHandler<ActionEvent>() {
 						@Override
 						public void handle(ActionEvent e) {
-							TableroController.getInstance().tirarDados(EnumsTirarDados.TirarDados.AVANZAR_CASILLERO);
+							TableroController
+									.getInstance()
+									.tirarDados(
+											EnumsTirarDados.TirarDados.AVANZAR_CASILLERO);
 						}
 					});
 					btnAceptar.setDisable(false);

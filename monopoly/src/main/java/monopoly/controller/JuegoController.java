@@ -186,7 +186,7 @@ public class JuegoController {
 			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.ESPERANDO_TURNO;
 			break;
 		case DISPONIBLE_PARA_VENDER:
-		case IMPUESTO:
+		case IMPUESTO_DE_LUJO:
 		case IR_A_LA_CARCEL:
 		case PAGAR_ALQUILER:
 			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
