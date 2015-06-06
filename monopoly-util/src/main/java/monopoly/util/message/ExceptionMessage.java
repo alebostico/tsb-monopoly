@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author Moreno Pablo
  *
  */
-public class ErrorMessage implements Serializable {
+public class ExceptionMessage implements Serializable {
 
 	private static final long serialVersionUID = 2317691159922810533L;
 	
@@ -19,7 +19,7 @@ public class ErrorMessage implements Serializable {
 	/**
 	 * @param message
 	 */
-	public ErrorMessage(Exception message) {
+	public ExceptionMessage(Exception message) {
 		super();
 		this.message = message;
 	}

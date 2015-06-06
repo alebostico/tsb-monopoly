@@ -154,7 +154,7 @@
                                         <MenuItem mnemonicParsing="false" text="Action 2" />
                                       </items>
                                     </MenuButton>
-                                    <MenuButton fx:id="btnAcciones" maxWidth="135.0" minWidth="135.0" mnemonicParsing="false" onAction="#processAcciones" popupSide="TOP" prefWidth="135.0" styleClass="context-menu" stylesheets="@../css/Sheet.css" text="Acciones" textFill="#280404">
+                                    <MenuButton fx:id="btnAcciones" maxWidth="135.0" minWidth="135.0" mnemonicParsing="false" onAction="#processAcciones" popupSide="TOP" prefWidth="135.0" styleClass="context-menu" stylesheets="@../css/Sheet.css" text="Acciones">
                                        <items>
                                           <MenuItem fx:id="btnConstruir" mnemonicParsing="false" onAction="#processContruir" text="Construir" />
                                           <MenuItem fx:id="btnVender" mnemonicParsing="false" onAction="#processVender" text="Vender Construccion" />
@@ -172,7 +172,7 @@
                                                       <Image url="@../images/dados/dice.png" />
                                                    </image>
                                                 </ImageView>
-                                                <Label fx:id="lblTurnoDados" maxWidth="100.0" minWidth="100.0" styleClass="labelJugador" text="Turno de:" textFill="#2b1cae">
+                                                <Label fx:id="lblTurnoDados" maxWidth="100.0" minWidth="100.0" styleClass="labelJugador" text="Turno de:">
                                                    <font>
                                                       <Font name="Liberation Serif Bold Italic" size="22.0" />
                                                    </font>
@@ -180,7 +180,7 @@
                                                 <Label fx:id="lblTurnoJugador" maxWidth="180.0" minHeight="30.0" minWidth="180.0" prefWidth="180.0" styleClass="labelJugador" text="" />
                                              </children>
                                           </HBox>
-                                          <Button fx:id="btnFinalizarTurno" minWidth="150.0" mnemonicParsing="false" style="-fx-text-fill: #e4f3fc; -fx-text-fill: linear-gradient(white, #d0d0d0); -fx-background-color: #2d4b8e;" text="Finalizar Turno" />
+                                          <Button fx:id="btnFinalizarTurno" minWidth="150.0" mnemonicParsing="false" onAction="#processfinalizarTurno" style="-fx-text-fill: #e4f3fc; -fx-text-fill: linear-gradient(white, #d0d0d0); -fx-background-color: #2d4b8e;" text="Finalizar Turno" />
                                        </children>
                                     </VBox>
                                  </children>

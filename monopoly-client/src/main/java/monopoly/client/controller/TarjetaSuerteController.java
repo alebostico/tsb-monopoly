@@ -14,7 +14,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import monopoly.client.connection.ConnectionController;
 import monopoly.model.tarjetas.TarjetaSuerte;
+import monopoly.util.message.game.actions.ChanceCardMessage;
 
 /**
  * @author Bostico Alejandro
@@ -37,6 +39,8 @@ public class TarjetaSuerteController extends AnchorPane implements
     
     private TarjetaSuerte tarjetaSeleccionada;
     
+    private String idJuego;
+    
     private static TarjetaSuerteController instance;
     
 	@Override
@@ -48,6 +52,8 @@ public class TarjetaSuerteController extends AnchorPane implements
 	@FXML
     void processAceptar(ActionEvent event) {
 		// enviar datos a servidor para procesar tarjeta.
+		ChanceCardMessage msg = new ChanceCardMessage(idJuego, tarjetaSeleccionada);
+		ConnectionController.getInstance().send(msg);
 		currentStage.close();
     }
 	
@@ -74,6 +80,14 @@ public class TarjetaSuerteController extends AnchorPane implements
 		this.tarjetaSeleccionada = tarjetaSeleccionada;
 	}
 	
+	public String getIdJuego() {
+		return idJuego;
+	}
+
+	public void setIdJuego(String idJuego) {
+		this.idJuego = idJuego;
+	}
+
 	public static TarjetaSuerteController getInstance() {
 		if (instance == null)
 			instance = new TarjetaSuerteController();
