@@ -12,6 +12,7 @@ import monopoly.dao.ITarjetaCompaniaDao;
 import monopoly.dao.ITarjetaComunidadDao;
 import monopoly.dao.ITarjetaEstacionDao;
 import monopoly.dao.ITarjetaSuerteDao;
+import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaComunidad;
@@ -19,6 +20,7 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
 import monopoly.util.ListUtils;
+import monopoly.util.exception.SinDineroException;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -51,7 +53,8 @@ public class TarjetaController {
 	}
 
 	private void mezclarTarjetasSuerte() {
-		this.tarjetasSuerteList = ListUtils.randomizeList(this.tarjetasSuerteList);
+		this.tarjetasSuerteList = ListUtils
+				.randomizeList(this.tarjetasSuerteList);
 		GestorLogs.registrarLog("Tarjetas Suerte Mezcladas");
 
 		for (TarjetaSuerte tarjetaSuerte : tarjetasSuerteList) {
@@ -60,7 +63,8 @@ public class TarjetaController {
 	}
 
 	private void mezclarTarjetasComunidad() {
-		this.tarjetasComunidadList = ListUtils.randomizeList(this.tarjetasComunidadList);
+		this.tarjetasComunidadList = ListUtils
+				.randomizeList(this.tarjetasComunidadList);
 		GestorLogs.registrarLog("Tarjetas Comunidad Mezcladas");
 
 		for (TarjetaComunidad tarjetaComunidad : tarjetasComunidadList) {
@@ -155,26 +159,41 @@ public class TarjetaController {
 	 */
 
 	public boolean jugarTarjetaSuerte(Jugador jugador, Tarjeta tarjetaSuerte) {
+		
+		JuegoController juegoController = PartidasController.getInstance()
+				.buscarControladorJuego(jugador.getJuego().getUniqueID());
+		Juego juego = juegoController.getJuego();
+		BancoController banco = juegoController.getGestorBanco();
+		TableroController tableroController = juegoController
+				.getGestorTablero();
+		
 		switch (((TarjetaComunidad) tarjetaSuerte).getIdTarjeta()) {
-		/*
-		 * case 1: return (juego.getTablero().moverACasillero(jugador, 40,
-		 * false) != null);// del // prado case 2: return
-		 * (juego.getTablero().moverACasillero(jugador, 12, true) != null);//
-		 * glorieta // de // bilbao case 3: return banco.pagar(jugador, 50);
-		 * case 4: return (juego.getTablero().moverACasillero(jugador, 1, true)
-		 * != null);// salida case 5: return
-		 * (juego.getTablero().moverACasillero(jugador, 25, true) != null);//
-		 * calle // bermudez case 6: return banco.pagar(jugador, 150); case 7:
-		 * return (juego.getTablero().irACarcel(jugador) != null); case 8:
-		 * return banco.cobrar(jugador, 20); case 9: return
-		 * (juego.getTablero().moverAtras(jugador, 3) != null); case 10: return
-		 * banco.cobrarPorCasaYHotel(jugador, 25, 100); case 11: return
-		 * banco.cobrarPorCasaYHotel(jugador, 40, 115); // TODO: como hago aca?
-		 * case 12: jugador.getTarjetaCarcelList().add(tarjetaSuerte); return
-		 * true; case 13: return banco.cobrar(jugador, 150); case 14: return
-		 * (juego.getTablero().moverACasillero(jugador, 16, true) != null);//
-		 * las
-		 */// delicias
+		
+		  case 1: return (tableroController.moverACasillero(jugador, 40,
+		  true) != null);// del prado 
+		  case 2: return
+		  (tableroController.moverACasillero(jugador, 12, true) != null);// glorieta de bilbao 
+		  case 3: return banco.pagar(jugador, 50);
+		  case 4: return (tableroController.moverACasillero(jugador, 1, true)
+		  != null);// salida 
+		  case 5: return
+		  (tableroController.moverACasillero(jugador, 25, true) != null);// calle bermudez 
+		  case 6: return banco.pagar(jugador, 150); 
+		  case 7:
+		  return (tableroController.irACarcel(jugador) != null); 
+//		  case 8: banco.cobrar(jugador, 20);return true;
+//		  case 9: return
+//		  (tableroController.moverAtras(jugador, 3) != null); 
+//		  case 10: return
+//		  banco.getBanco().cobrarPorCasaYHotel(jugador, 25, 100); 
+//		  case 11: return
+//		  banco.cobrarPorCasaYHotel(jugador, 40, 115); // TODO: como hago aca?
+//		  case 12: jugador.getTarjetaCarcelList().add(tarjetaSuerte); return
+//		  true; 
+//		  case 13: return banco.cobrar(jugador, 150); 
+//		  case 14: return
+//		  (juego.getTablero().moverACasillero(jugador, 16, true) != null);
+//		  // las delicias
 		default:
 			return false;
 		}
@@ -186,8 +205,9 @@ public class TarjetaController {
 
 		this.proximaTarjetaSuerte++;
 
-		if (this.proximaTarjetaSuerte >= this.tarjetasSuerteList.size()){
-			this.tarjetasSuerteList = ListUtils.randomizeList(this.tarjetasSuerteList);
+		if (this.proximaTarjetaSuerte >= this.tarjetasSuerteList.size()) {
+			this.tarjetasSuerteList = ListUtils
+					.randomizeList(this.tarjetasSuerteList);
 			this.proximaTarjetaSuerte = 0;
 		}
 
@@ -200,8 +220,9 @@ public class TarjetaController {
 
 		this.proximaTarjetaComunidad++;
 
-		if (this.proximaTarjetaComunidad >= this.tarjetasComunidadList.size()){
-			this.tarjetasComunidadList = ListUtils.randomizeList(this.tarjetasComunidadList);
+		if (this.proximaTarjetaComunidad >= this.tarjetasComunidadList.size()) {
+			this.tarjetasComunidadList = ListUtils
+					.randomizeList(this.tarjetasComunidadList);
 			this.proximaTarjetaComunidad = 0;
 		}
 
@@ -266,7 +287,7 @@ public class TarjetaController {
 		return tarjetaComunidadDao.getAll();
 	}
 
-	/*
+	/**
 	 * devuelve todas las tarjetas de propiedades de la base de datos.
 	 * 
 	 * @return una lista de tarjetas de propiedades.
