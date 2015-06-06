@@ -20,8 +20,8 @@ import javax.persistence.Transient;
 
 import monopoly.model.Estado.EstadoJugador;
 import monopoly.model.tablero.Casillero;
-import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tablero.Casillero.TipoCasillero;
+import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
@@ -562,6 +562,24 @@ public abstract class Jugador implements Serializable {
 		}
 		tmpCapitalVenta += this.getDinero();
 		return tmpCapitalVenta;
+	}
+
+	/**
+	 * Devuelve true si el Jugador es un Jugador Virtual
+	 * 
+	 * @return true si el jugador es una instancia de {@code JugadorVirtual}
+	 */
+	public boolean isVirtual() {
+		return this instanceof JugadorVirtual;
+	}
+
+	/**
+	 * Devuelve true si el Jugador es un Jugador Humano
+	 * 
+	 * @return true si el jugador es una instancia de {@code JugadorHumano}
+	 */
+	public boolean isHumano() {
+		return this instanceof JugadorHumano;
 	}
 
 	/*

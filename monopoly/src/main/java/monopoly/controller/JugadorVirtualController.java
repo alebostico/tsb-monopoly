@@ -1055,14 +1055,39 @@ public class JugadorVirtualController {
 		// capital). Aumentando si es cobrar
 		if (cantidad <= jugador.getDinero()) {
 			jugador.pagar(cantidad);
+			GestorLogs.registrarDebug("El jugador " + jugador.getNombre()
+					+ " pagó " + cantidad + " €");
 		}
 		// Declaro al jugador moroso
 		else {
 			// Bancarrota
 			jugador.setEstadoJugador(EstadoJugador.EJ_BANCARROTA);
+			GestorLogs.registrarLog("El jugador " + jugador.getNombre()
+					+ " quedó en bancarrota porque no puede pagar " + cantidad
+					+ " €");
 			return -1;
 		}
 		return jugador.getDinero();
+	}
+
+	/**
+	 * Permite que un Jugador Virtual pague un monto a otro Jugador (Virtual o
+	 * Humano)
+	 * 
+	 * @param jugadorPaga El Jugador Virtual que paga
+	 * @param jugadorCobra El Jugador que cobra
+	 * @param monto El monto que paga
+	 * @return El monto que paga o -1 si se declara en bancarrota
+	 */
+	public static int pagarAJugador(JugadorVirtual jugadorPaga,
+			Jugador jugadorCobra, int monto) {
+		if (JugadorVirtualController.pagar(jugadorPaga, monto) == monto) {
+			jugadorCobra.cobrar(monto);
+			return monto;
+		} else {
+			return -1;
+		}
+
 	}
 
 }
