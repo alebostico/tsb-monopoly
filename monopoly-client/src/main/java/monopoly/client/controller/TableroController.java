@@ -67,6 +67,7 @@ import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
+import monopoly.model.tablero.Casillero;
 import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tablero.CasilleroCompania;
 import monopoly.model.tablero.CasilleroEstacion;
@@ -78,7 +79,9 @@ import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.constantes.ConstantesFXML;
+import monopoly.util.constantes.EnumAction;
 import monopoly.util.constantes.EnumsTirarDados;
+import monopoly.util.message.game.CompleteTurnMessage;
 
 /**
  * @author Bostico Alejandro
@@ -271,8 +274,8 @@ public class TableroController extends AnchorPane implements Serializable,
 	@FXML
 	private Label lblTurnoJugador;
 
-    @FXML
-    private Button btnFinalizarTurno;
+	@FXML
+	private Button btnFinalizarTurno;
 
 	private static TableroController instance;
 
@@ -284,7 +287,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	@FXML
 	private Stage preloaderStage;
-	
+
 	@FXML
 	private final Rectangle bloquearPantalla = new Rectangle();
 
@@ -343,7 +346,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			addHistoryGame(usuarioLogueado.getUserName(), "Juego Creado.");
 		else
 			addHistoryGame(usuarioLogueado.getUserName(), "Te uniste al Juego.");
-		
+
 		esperarJugadores();
 	}
 
@@ -551,6 +554,9 @@ public class TableroController extends AnchorPane implements Serializable,
 	public void actualizarEstadoJuego(final MonopolyGameStatus status) {
 		this.status = status;
 		Platform.runLater(new Runnable() {
+			private JugadorHumano jugadorActual;
+			private Casillero casilleroActual;
+
 			@Override
 			public void run() {
 				Alert alert = null;
@@ -558,11 +564,10 @@ public class TableroController extends AnchorPane implements Serializable,
 					for (History history : status.getHirtoryList()) {
 						TableroController.getInstance().addHistoryGame(history);
 					}
-
+					jugadorActual = (JugadorHumano) status.getCurrentPlayer();
 					switch (status.getStatus()) {
 					case TIRAR_DADO:
-						if (status
-								.getCurrentPlayer()
+						if (jugadorActual
 								.getNombre()
 								.toLowerCase()
 								.equals(usuarioLogueado.getNombre()
@@ -581,7 +586,7 @@ public class TableroController extends AnchorPane implements Serializable,
 									.getCurrentStage().close();
 						}
 						actualizarGraficoEnElTablero();
-						
+
 						switch (status.getAccionCasillero()) {
 						case DESCANSO:
 							alert = new Alert(AlertType.INFORMATION);
@@ -591,7 +596,7 @@ public class TableroController extends AnchorPane implements Serializable,
 									.getAcciones()[0]);
 							alert.showAndWait();
 							break;
-							
+
 						case DISPONIBLE_PARA_VENDER:
 							alert = new Alert(AlertType.INFORMATION);
 							alert.setTitle("Compra de propiedad dispobible...");
@@ -603,26 +608,24 @@ public class TableroController extends AnchorPane implements Serializable,
 									.getAcciones()[0]);
 							alert.showAndWait();
 
-							switch (status.getCurrentPlayer()
-									.getCasilleroActual().getTipoCasillero()) {
+							casilleroActual = jugadorActual
+									.getCasilleroActual();
+
+							switch (casilleroActual.getTipoCasillero()) {
 							case C_CALLE:
-								showVentaPropiedad(((CasilleroCalle) status
-										.getCurrentPlayer()
-										.getCasilleroActual())
-										.getTarjetaCalle());
+								showVentaPropiedad(
+										((CasilleroCalle) casilleroActual)
+												.getTarjetaCalle(),
+										jugadorActual);
 								break;
 							case C_COMPANIA:
-								showVentaPropiedad(((CasilleroCompania) status
-										.getCurrentPlayer()
-										.getCasilleroActual())
-										.getTarjetaCompania());
+								showVentaPropiedad(((CasilleroCompania) casilleroActual)
+										.getTarjetaCompania(), jugadorActual);
 								break;
 
 							case C_ESTACION:
-								showVentaPropiedad(((CasilleroEstacion) status
-										.getCurrentPlayer()
-										.getCasilleroActual())
-										.getTarjetaEstacion());
+								showVentaPropiedad(((CasilleroEstacion) casilleroActual)
+										.getTarjetaEstacion(), jugadorActual);
 								break;
 							default:
 								break;
@@ -689,7 +692,7 @@ public class TableroController extends AnchorPane implements Serializable,
 									.getAcciones()[0]);
 							alert.showAndWait();
 							break;
-							
+
 						case PAGAR_ALQUILER:
 							alert = new Alert(AlertType.INFORMATION);
 							alert.setTitle("Pagar...");
@@ -698,7 +701,7 @@ public class TableroController extends AnchorPane implements Serializable,
 									.getAcciones()[0]);
 							alert.showAndWait();
 							break;
-							
+
 						case IR_A_LA_CARCEL:
 							alert = new Alert(AlertType.INFORMATION);
 							alert.setTitle("Marche preso...");
@@ -707,12 +710,12 @@ public class TableroController extends AnchorPane implements Serializable,
 									.getAcciones()[0]);
 							alert.showAndWait();
 							break;
-							
+
 						default:
 							break;
 						}
 						break;
-					
+
 					case ESPERANDO_TURNO:
 						break;
 					default:
@@ -740,7 +743,8 @@ public class TableroController extends AnchorPane implements Serializable,
 		});
 	}
 
-	private void showVentaPropiedad(final TarjetaPropiedad tarjeta) {
+	private void showVentaPropiedad(final TarjetaPropiedad tarjeta,
+			final JugadorHumano jugadorComprador) {
 		Platform.runLater(new Runnable() {
 			private Stage ventaPropiedadStage = null;
 
@@ -761,6 +765,7 @@ public class TableroController extends AnchorPane implements Serializable,
 									StageStyle.TRANSPARENT);
 					controller.setCurrentStage(ventaPropiedadStage);
 					controller.cargarPropiedad(tarjeta);
+					controller.setJugadorComprador(jugadorComprador);
 					ventaPropiedadStage.show();
 				} catch (Exception ex) {
 					// TODO Auto-generated catch block
@@ -790,6 +795,7 @@ public class TableroController extends AnchorPane implements Serializable,
 									false, Modality.APPLICATION_MODAL,
 									StageStyle.TRANSPARENT);
 					controller.setCurrentStage(tarjetaComunidadStage);
+					controller.setIdJuego(getJuego().getUniqueID());
 					controller.mostrarTarjeta(tarjeta);
 					tarjetaComunidadStage.show();
 				} catch (Exception ex) {
@@ -820,6 +826,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							Modality.APPLICATION_MODAL, StageStyle.TRANSPARENT);
 					controller.setCurrentStage(TarjetaSuerteStage);
 					controller.mostrarTarjeta(tarjeta);
+					controller.setIdJuego(getJuego().getUniqueID());
 					TarjetaSuerteStage.show();
 				} catch (Exception ex) {
 					// TODO Auto-generated catch block
@@ -827,6 +834,37 @@ public class TableroController extends AnchorPane implements Serializable,
 				}
 			}
 		});
+	}
+
+	public void completarTurno(String message, final EnumAction accion,
+			MonopolyGameStatus status) {
+		this.status = status;
+
+		Platform.runLater(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					switch (accion) {
+					case BUY_PROPERTY:
+
+						actualizarGraficoEnElTablero();
+
+						break;
+
+					default:
+						break;
+					}
+					bloquearTablero(false);
+
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+
 	}
 
 	// =======================================================================//
@@ -1007,16 +1045,16 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
-	public void bloquearTablero(boolean bloquear){
-		bloquearPantalla.setFill(Color.TRANSPARENT);  
-		bloquearPantalla.setMouseTransparent(false);  
-		bloquearPantalla.setX(0);  
-		bloquearPantalla.setY(0);  
-	    bloquearPantalla.widthProperty().bind(currentStage.widthProperty());  
-	    bloquearPantalla.heightProperty().bind(currentStage.heightProperty());  
-	    bloquearPantalla.setVisible(bloquear);
+	public void bloquearTablero(boolean bloquear) {
+		bloquearPantalla.setFill(Color.TRANSPARENT);
+		bloquearPantalla.setMouseTransparent(false);
+		bloquearPantalla.setX(0);
+		bloquearPantalla.setY(0);
+		bloquearPantalla.widthProperty().bind(currentStage.widthProperty());
+		bloquearPantalla.heightProperty().bind(currentStage.heightProperty());
+		bloquearPantalla.setVisible(bloquear);
 	}
-	
+
 	/**
 	 * 
 	 * Dibuje el TitledPane con la información actual del jugador.
@@ -1548,6 +1586,14 @@ public class TableroController extends AnchorPane implements Serializable,
 	@FXML
 	void processSendMessage(ActionEvent event) {
 
+	}
+
+	@FXML
+	void processfinalizarTurno(ActionEvent event) {
+		CompleteTurnMessage msg = new CompleteTurnMessage(getJuego()
+				.getUniqueID(), null, null);
+		ConnectionController.getInstance().send(msg);
+		bloquearTablero(true);
 	}
 
 	// ======================================================================//

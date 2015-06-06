@@ -13,7 +13,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import monopoly.client.connection.ConnectionController;
 import monopoly.model.tarjetas.TarjetaComunidad;
+import monopoly.util.message.game.actions.CommunityCardMessage;
 
 /**
  * @author Bostico Alejandro
@@ -31,8 +33,10 @@ public class TarjetaComunidadController extends AnchorPane implements
 
 	@FXML
 	private Button btnAceptar;
-	
+
 	private TarjetaComunidad tarjetaSeleccionada;
+
+	private String idJuego;
 
 	private static TarjetaComunidadController instance;
 
@@ -50,12 +54,15 @@ public class TarjetaComunidadController extends AnchorPane implements
 
 	@FXML
 	private void processAceptar(ActionEvent event) {
-		// enviar datos a servidor para procesar tarjeta.
-				currentStage.close();
+		CommunityCardMessage msg = new CommunityCardMessage(idJuego,
+				tarjetaSeleccionada);
+		ConnectionController.getInstance().send(msg);
+		currentStage.close();
 	}
-	public void mostrarTarjeta(TarjetaComunidad tarjeta){
-		this.tarjetaSeleccionada =  tarjeta;
-		if(lblMensaje != null){
+
+	public void mostrarTarjeta(TarjetaComunidad tarjeta) {
+		this.tarjetaSeleccionada = tarjeta;
+		if (lblMensaje != null) {
 			lblMensaje.setText(tarjetaSeleccionada.getObjetivo());
 		}
 	}
@@ -66,6 +73,14 @@ public class TarjetaComunidadController extends AnchorPane implements
 
 	public void setTarjetaSeleccionada(TarjetaComunidad tarjetaSeleccionada) {
 		this.tarjetaSeleccionada = tarjetaSeleccionada;
+	}
+
+	public String getIdJuego() {
+		return idJuego;
+	}
+
+	public void setIdJuego(String idJuego) {
+		this.idJuego = idJuego;
 	}
 
 	public Stage getCurrentStage() {

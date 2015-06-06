@@ -1620,7 +1620,7 @@ public class TableroController {
 	 * @throws SinDineroException
 	 *             Si el jugador no tiene dinero para pagar la propiedad.
 	 */
-	public boolean comprarPropiedad(Jugador jugador, TarjetaPropiedad tarjeta)
+	public void comprarPropiedad(Jugador jugador, TarjetaPropiedad tarjeta)
 			throws SinDineroException {
 
 		if (!jugador.puedePagarConEfectivo(tarjeta.getValorPropiedad())) {
@@ -1632,7 +1632,6 @@ public class TableroController {
 		this.getBancoController(jugador.getJuego()).venderPropiedad(jugador,
 				tarjeta);
 
-		return true;
 	}
 
 	/**

@@ -14,8 +14,11 @@ import monopoly.model.Estado.EstadoJuego;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.Usuario;
+import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaPropiedad;
+import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
+import monopoly.util.exception.SinDineroException;
 
 /**
  * @author Bostico Alejandro
@@ -27,6 +30,8 @@ public class PartidasController {
 	private TreeMap<String, JuegoController> juegosControllerList;
 
 	private static PartidasController instance;
+
+	private JuegoController juegoController;
 
 	private GameServer monopolyGame;
 
@@ -55,24 +60,23 @@ public class PartidasController {
 	 */
 	public void loadGame(int senderID, Juego juego) throws Exception {
 		// TODO Auto-generated method stub
-		JuegoController controller = juegosControllerList.get(juego
-				.getUniqueID());
+		juegoController = juegosControllerList.get(juego.getUniqueID());
 		int cantJugadores = juego.getCantJugadores();
 
-		controller.setJuego(juego);
-		controller.getEstadoJuego().actualizarEstadoJuego();
-		controller.setCantJugadores(cantJugadores);
+		juegoController.setJuego(juego);
+		juegoController.getEstadoJuego().actualizarEstadoJuego();
+		juegoController.setCantJugadores(cantJugadores);
 
 		for (Jugador jugador : juego.getJugadoresList()) {
-			controller.addPlayer(jugador);
+			juegoController.addPlayer(jugador);
 		}
 	}
 
 	public void establecerTurnoJugador(int senderId, String idJuego, Dado dados)
 			throws Exception {
 		// TODO Auto-generated method stub
-		JuegoController controller = juegosControllerList.get(idJuego);
-		controller.establecerTurnoJugador(senderId, dados);
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.establecerTurnoJugador(senderId, dados);
 	}
 
 	/**
@@ -83,9 +87,8 @@ public class PartidasController {
 	 */
 	public void avanzarDeCasillero(int senderId, String idJuego, Dado dados)
 			throws Exception {
-		JuegoController controller;
-		controller = juegosControllerList.get(idJuego);
-		controller.avanzarDeCasillero(senderId, dados);
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.avanzarDeCasillero(senderId, dados);
 	}
 
 	/**
@@ -94,8 +97,7 @@ public class PartidasController {
 	 * @param jugador
 	 */
 	public void joinPlayerGame(Jugador jugador) throws Exception {
-		JuegoController juegoController = buscarControladorJuego(jugador
-				.getJuego());
+		juegoController = buscarControladorJuego(jugador.getJuego());
 		GestorLogs.registrarLog(String.format(
 				"Agregando el jugador %s al juego %s..", jugador.getNombre(),
 				juegoController.getJuego().getUniqueID()));
@@ -111,8 +113,51 @@ public class PartidasController {
 	 *            , tarjeta de la propiedad que desea comprar el jugador.
 	 */
 	public void comprarPropiedad(String idJuego, int senderId,
-			TarjetaPropiedad tarjeta) throws Exception {
+			TarjetaPropiedad tarjeta) throws SinDineroException, Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.comprarPropiedad(senderId, tarjeta);
+	}
+	
+	/**
+	 * Método ejecutado para realizar el objetivo de la tarjeta suerte
+	 * que nos  salió.
+	 * 
+	 * @param idJuego
+	 * @param senderId
+	 * @param message
+	 * @throws Exception 
+	 */
+	public void tarjetaSuerte(String idJuego, int senderId,
+			TarjetaSuerte tarjeta) throws Exception {
+		// TODO Auto-generated method stub
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.tarjetaSuerte(senderId, tarjeta);
+	}
+	
+	/**
+	 * Método ejecutado para realizar el objetivo de la tarjeta comunidad
+	 * que nos  salió.
+	 * 
+	 * @param idJuego
+	 * @param senderId
+	 * @param message
+	 */
+	public void tarjetaComunidad(String idJuego, int senderId,
+			TarjetaComunidad tarjeta) throws Exception{
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.tarjetaComunidad(senderId, tarjeta);
+	}
 
+	/**
+	 * Método para avanzar de turno cuando el jugador
+	 * confirma que finalizó la jugada.
+	 * 
+	 * @param idJuego
+	 * @throws Exception 
+	 */
+	public void siguienteTurno(String idJuego) throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.siguienteTurno();
 	}
 
 	/**

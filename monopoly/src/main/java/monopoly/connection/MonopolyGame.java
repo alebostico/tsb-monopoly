@@ -13,17 +13,23 @@ import monopoly.model.Estado.EstadoJuego;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.Usuario;
+import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaPropiedad;
+import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.constantes.ConstantesMensaje;
+import monopoly.util.exception.SinDineroException;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
-import monopoly.util.message.ErrorMessage;
+import monopoly.util.message.ExceptionMessage;
 import monopoly.util.message.LoginMessage;
 import monopoly.util.message.game.AdvanceInBoardMessage;
+import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.JoinGameMessage;
 import monopoly.util.message.game.LoadGameMessage;
 import monopoly.util.message.game.StartGameMessage;
 import monopoly.util.message.game.actions.BuyPropertyMessage;
+import monopoly.util.message.game.actions.ChanceCardMessage;
+import monopoly.util.message.game.actions.CommunityCardMessage;
 
 /**
  * @author Bostico Alejandro
@@ -135,12 +141,21 @@ public class MonopolyGame extends GameServer {
 				break;
 
 			case ConstantesMensaje.CHANCE_CARD_MESSAGE:
+				ChanceCardMessage msgChanceCardMessage = (ChanceCardMessage) message;
+				PartidasController.getInstance().tarjetaSuerte(msgChanceCardMessage.idJuego, senderId, (TarjetaSuerte)msgChanceCardMessage.message);
 				break;
 
 			case ConstantesMensaje.COMMUNITY_CARD_MESSAGE:
+				CommunityCardMessage msgCommunityCardMessage = (CommunityCardMessage) message;
+				PartidasController.getInstance().tarjetaComunidad(msgCommunityCardMessage.idJuego, senderId, (TarjetaComunidad)msgCommunityCardMessage.message);
 				break;
 
 			case ConstantesMensaje.PAY_TO_BANK_MESSAGE:
+				break;
+				
+			case ConstantesMensaje.COMPLETE_TURN_MESSAGE:
+				CompleteTurnMessage msgCompleteTurnMessage = (CompleteTurnMessage) message;
+				PartidasController.getInstance().siguienteTurno(msgCompleteTurnMessage.message);
 				break;
 
 			case ConstantesMensaje.DISCONNECT_MESSAGE:
@@ -155,8 +170,10 @@ public class MonopolyGame extends GameServer {
 				System.out.print(message.getClass().getSimpleName());
 				break;
 			}
+		}catch (SinDineroException sde){
+			sendToOne(senderId, new ExceptionMessage(sde));
 		} catch (Exception ex) {
-			sendToOne(senderId, new ErrorMessage(ex));
+			sendToOne(senderId, new ExceptionMessage(ex));
 		}
 
 	}

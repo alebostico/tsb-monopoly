@@ -15,9 +15,11 @@ public class CommunityCardMessage implements Serializable
 
 	private static final long serialVersionUID = 2955654835156221691L;
 
+	public final String idJuego;
 	public final Object message; // Original message from a client.
 
-	public CommunityCardMessage(Object message) {
+	public CommunityCardMessage(String idJuego,Object message) {
+		this.idJuego = idJuego;
 		this.message = message;
 	}
 }

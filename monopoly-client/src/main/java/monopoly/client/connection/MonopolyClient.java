@@ -22,6 +22,7 @@ import monopoly.util.constantes.EnumsTirarDados;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
 import monopoly.util.message.LoginMessage;
+import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.JoinGameMessage;
 
@@ -88,6 +89,15 @@ public class MonopolyClient extends GameClient {
 		case ConstantesMensaje.HISTORY_GAME_MESSAGE:
 			History history = (History) ((HistoryGameMessage) message).message;
 			TableroController.getInstance().addHistoryGame(history);
+			break;
+			
+		case ConstantesMensaje.COMPLETE_TURN_MESSAGE:
+			CompleteTurnMessage msgCompleteTurnMessage =(CompleteTurnMessage)message;
+			TableroController.getInstance().completarTurno(msgCompleteTurnMessage.message, msgCompleteTurnMessage.action, (MonopolyGameStatus)msgCompleteTurnMessage.status);
+			break;
+			
+		case ConstantesMensaje.EXCEPTION_MESSAGE:
+			
 			break;
 
 		case "String":
