@@ -6,7 +6,6 @@ package monopoly.util;
 import java.util.Comparator;
 
 import monopoly.model.tablero.Casillero;
-import monopoly.model.tarjetas.TarjetaPropiedad;
 
 /**
  * Clase para ordenar las propiedades según su valor de menor a mayor. Para

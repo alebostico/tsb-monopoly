@@ -16,6 +16,8 @@ import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.TarjetaPropiedadComparator;
+import monopoly.util.exception.SinDineroException;
+import monopoly.util.exception.SinEdificiosException;
 
 /**
  * Clase est&aacute;tica para el manejo de la inteligencia de los jugadores
@@ -731,13 +733,16 @@ public class JugadorVirtualController {
 	 *            La cantidad que necesita obtener de la hipoteca
 	 * @param jugadorActual
 	 *            El jugador que quiere hipotecar
+	 * @return La sumatoria de todas las hipotecas (puede ser igual o menor a
+	 *         cantidad)
 	 */
 	@SuppressWarnings("unused")
-	private static void hipotecarAleatorio(int cantidad,
+	private static int hipotecarAleatorio(int cantidad,
 			JugadorVirtual jugadorActual) {
 
 		// 1- Copiar ordenadamente las propiedades hipotecables
 		List<TarjetaPropiedad> propiedadesHipotecables = new LinkedList<>();
+		int totalHipoteca = 0;
 
 		for (TarjetaPropiedad tarjetaPropiedad : jugadorActual
 				.getTarjPropiedadList()) {
@@ -763,6 +768,7 @@ public class JugadorVirtualController {
 					.hipotecarPropiedad(tarjetaPropiedad);
 			if (valorHipoteca > 0) {
 				cantidad -= valorHipoteca;
+				totalHipoteca += valorHipoteca;
 			}
 
 			// llegamos al monto necesario...
@@ -770,6 +776,7 @@ public class JugadorVirtualController {
 				break;
 
 		}
+		return totalHipoteca;
 
 	}
 
@@ -826,10 +833,19 @@ public class JugadorVirtualController {
 	 * 
 	 * @param cantidad
 	 * @param jugadorActual
+	 * @return La sumatoria de todas las ventas (puede ser igual o menor a
+	 *         cantidad)
 	 */
 	@SuppressWarnings("unused")
-	private static void venderAleatorio(int cantidad,
+	private static int venderAleatorio(int cantidad,
 			JugadorVirtual jugadorActual) {
+
+		Random rnd = new Random();
+		JuegoController juegoController = PartidasController.getInstance()
+				.buscarControladorJuego(jugadorActual.getJuego().getUniqueID());
+		TableroController tableroController = juegoController
+				.getGestorTablero();
+		int totalVendido = 0;
 
 		// 1- Selecciono el monopolio a construir entre todos los posibles.
 		// Para ello busco todas las calles con permiso de construcción y las
@@ -841,80 +857,120 @@ public class JugadorVirtualController {
 		for (TarjetaPropiedad tarjetaPropiedad : jugadorActual
 				.getTarjPropiedadList()) {
 			if (tarjetaPropiedad.getCasillero().getTipoCasillero() == TipoCasillero.C_CALLE) {
-				propiedadesEdificadas.add((TarjetaCalle) tarjetaPropiedad);
+				if (tableroController
+						.cantEdificiosMonopolio((TarjetaCalle) tarjetaPropiedad) > 0)
+					propiedadesEdificadas.add((TarjetaCalle) tarjetaPropiedad);
 			}
 		}
 
 		// Ordenamos la lista por precio de mayor a menor
-				Collections.sort(propiedadesEdificadas,
-						Collections.reverseOrder(new TarjetaPropiedadComparator()));
-				
-		// Selecciono el monopolio a vender -> El primero, si no hay dinero suficiente, el segundo...		
-				
-				
-				
-		/*		
-				
-				  int i = 0;
-				  vector <calle*> callesTestadas;
-				  set <propiedad*> vender;
-				  bool posible = true;
-				  // Mientras siga haciendo falta dinero y no haya llegado al final de la lista de calles edificadas.
-				  while ( cantidad > get_dinero_total() && i != propiedadesEdificadas.size() )
-				    {      
-				      int j = 0;
-				      while ( j != callesTestadas.size() && posible )
-					{
-					  if ( propiedadesEdificadas[i] == callesTestadas[j] )
-					    posible = false;
-					  j++;
-					}
-				      //Si se ha encontrado un monopolio vendible.
-				      //Se marca para no volver a venderle y se venden sus casas hasta acabar con el dinero
-				      if ( posible )
-					{
-					  vender = propiedadesEdificadas[i]->get_monopolioCompleto ( propiedadesEdificadas[i] );
-					  set <propiedad*>::iterator test;
-					  for ( test = vender.begin(); test != vender.end(); test ++ )
-					    if ( calle *c = dynamic_cast <calle*> (*test) )
-					      callesTestadas.push_back( c );
-					  bool existenEdificios = true;
-					  while ( cantidad > get_dinero_total() && existenEdificios )
-					    {
-					      set <propiedad*>::iterator iterVender = vender.begin();
-					      //Vender de una calle
-					      existenEdificios = false;
-					      if ( iterVender != vender.end() )
-						if ( calle *calleV = dynamic_cast <calle*> (*iterVender) )
-						  if ( calleV->puedeVenderEdificio() && ( calleV->get_numHoteles() > 0 || calleV->get_numCasas() > 0 ) )
-						    {		    
-						      if ( calleV->get_numHoteles() == 1 && tablero::obtenerCasasDisponibles () >= 4 )
-							{
-							  cout << get_nombre() << " vende un hotel de " << calleV->get_nombre() << endl;
-							  calleV->venderSinComprobar();
-							  existenEdificios = true;
-							}
-						      else if ( calleV->get_numCasas() > 0 )
-							{
-							  cout << get_nombre() << " vende una casa de " << calleV->get_nombre() << endl;
-							  existenEdificios = true;
-							  calleV->venderSinComprobar();
-							}
-						    }
-					      iterVender ++; 	 
-					    }
-					}
-				      i++;
-				    }  		
-				*/
-				
-				
-				
-				
-				
-				
-				
+		Collections.sort(propiedadesEdificadas,
+				Collections.reverseOrder(new TarjetaPropiedadComparator()));
+
+		// Selecciono el monopolio a vender -> El primero, si no hay dinero
+		// suficiente, el segundo...
+
+		for (TarjetaCalle tarjeta : propiedadesEdificadas) {
+
+			int montoVenta = tableroController
+					.venderTodosLosEdificios((CasilleroCalle) tarjeta
+							.getCasillero())
+					* tarjeta.getPrecioCadaCasa();
+			cantidad -= montoVenta;
+			totalVendido += montoVenta;
+
+			// llegamos al monto necesario...
+			if (cantidad <= 0)
+				break;
+
+		}
+
+		return totalVendido;
 
 	}
 
+	public static void construirAleatorio(JugadorVirtual jugadorActual)
+			throws SinEdificiosException, SinDineroException {
+
+		Random rnd = new Random();
+		JuegoController juegoController = PartidasController.getInstance()
+				.buscarControladorJuego(jugadorActual.getJuego().getUniqueID());
+		TableroController tableroController = juegoController
+				.getGestorTablero();
+
+		// 1- Selecciono el monopolio a construir entre todos los posibles.
+		// Para ello busco todas las calles con permiso de construcción y las
+		// ordeno en una lista
+		// Creare otra para meter las calles que ya se han comprobado y no
+		// repetir sobre el mismo
+
+		List<TarjetaCalle> propiedadesConstruibles = new LinkedList<>();
+
+		for (TarjetaPropiedad tarjetaPropiedad : jugadorActual
+				.getTarjPropiedadList()) {
+			if (tarjetaPropiedad.getCasillero().getTipoCasillero() == TipoCasillero.C_CALLE) {
+				if (tableroController
+						.esConstruible(((CasilleroCalle) tarjetaPropiedad
+								.getCasillero()))) {
+
+					boolean existe = false;
+					for (TarjetaCalle tarjetaCalle : propiedadesConstruibles) {
+						if (tarjetaCalle.getColor() == ((TarjetaCalle) tarjetaPropiedad)
+								.getColor()) {
+							existe = true;
+							break;
+						}
+					}
+					if (!existe)
+						propiedadesConstruibles
+								.add((TarjetaCalle) tarjetaPropiedad);
+				}
+			}
+		}
+
+		// Ordenamos la lista por precio de mayor a menor
+		Collections.sort(propiedadesConstruibles,
+				Collections.reverseOrder(new TarjetaPropiedadComparator()));
+
+		// Selecciono el monopolio a construir
+
+		// 2- Construir sobre el monopolio seleccionado (variable construir)
+		// Se intentará construir hasta que el azar diga que se pare y sea
+		// posible construir algo.
+		for (TarjetaCalle tarjetaCalle : propiedadesConstruibles) {
+			if (jugadorActual.getDinero() >= tarjetaCalle.getPrecioCadaCasa()) {
+				int probabilidad = (jugadorActual.getDinero() - tarjetaCalle
+						.getPrecioCadaCasa()) * 100 / jugadorActual.getDinero();
+				int resultado = rnd.nextInt() % 100;
+				if (resultado < probabilidad) {
+
+					int casasMonopolio = tableroController
+							.cantEdificiosMonopolio(tarjetaCalle);
+					int paraConstruir = (tableroController
+							.cantPropiedadesMonopolio(tarjetaCalle
+									.getCasillero()) * 5)
+							- casasMonopolio;
+
+					while (paraConstruir > 0) {
+						probabilidad = (jugadorActual.getDinero() - tarjetaCalle
+								.getPrecioCadaCasa())
+								* 100
+								/ jugadorActual.getDinero();
+						resultado = rnd.nextInt() % 100;
+
+						if (resultado < probabilidad) {
+							casasMonopolio++;
+							paraConstruir--;
+						} else {
+							break;
+						}
+					}
+
+					tableroController.comprarEdificio(casasMonopolio,
+							(CasilleroCalle) tarjetaCalle.getCasillero());
+				}
+			}
+		}
+
+	}
 }
