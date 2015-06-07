@@ -3,6 +3,7 @@
  */
 package monopoly.client.controller;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -16,7 +17,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -25,14 +25,16 @@ import monopoly.model.Dado;
 import monopoly.model.History;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
-import monopoly.util.message.game.AdvanceInBoardMessage;
+import monopoly.util.message.game.StartGameMessage;
 
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
  *
  */
-public class TirarDadosController extends AnchorPane implements Initializable {
+public class TirarDadosTurnoController implements Initializable, Serializable {
+
+	private static final long serialVersionUID = 5580949166994505501L;
 
 	@FXML
 	private Label lblNombre;
@@ -51,7 +53,7 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 
 	private Dado dados;
 
-	private static TirarDadosController instance;
+	private static TirarDadosTurnoController instance;
 
 	/*
 	 * (non-Javadoc)
@@ -73,7 +75,7 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 		ImageView imgDado2;
 		History history;
 		String mensaje = "";
-		
+
 		try {
 			dados = new Dado();
 			hbPanel.getChildren().clear();
@@ -101,17 +103,18 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 				@Override
 				public void handle(ActionEvent e) {
 					ConnectionController.getInstance().send(
-							new AdvanceInBoardMessage(TableroController.getInstance()
+							new StartGameMessage(TableroController.getInstance()
 									.getJuego().getUniqueID(), dados));
-					if (TirarDadosController.getInstance() != null)
-						TirarDadosController.getInstance().getCurrentStage()
-								.close();
+					if (TirarDadosTurnoController.getInstance() != null)
+						TirarDadosTurnoController.getInstance()
+								.getCurrentStage().close();
 				}
 			});
+			
 			vbPanel.getChildren().add(btnTirarDados);
 
 			mensaje = String
-					.format("El resultado de los dados para avanzar de casillero fue %s.",
+					.format("El resultado de los dados para establecer su turno fue %s.",
 							dados.getSuma());
 
 			history = new History(StringUtils.getFechaActual(),
@@ -141,9 +144,9 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 		this.currentStage = currentStage;
 	}
 
-	public static TirarDadosController getInstance() {
+	public static TirarDadosTurnoController getInstance() {
 		if (instance == null)
-			instance = new TirarDadosController();
+			instance = new TirarDadosTurnoController();
 		return instance;
 	}
 

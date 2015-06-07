@@ -10,7 +10,7 @@ import java.util.List;
 import monopoly.model.Banco;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
-import monopoly.model.MonopolyGameStatus.AccionEnCasillero;
+import monopoly.model.AccionEnCasillero;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tablero.Casillero.TipoCasillero;
 import monopoly.model.tablero.CasilleroCalle;
@@ -896,7 +896,7 @@ public class TableroController {
 	public int cantPropiedadesMonopolio(Casillero casillero) {
 		List<Casillero> monopolio = this
 				.getGrupoCasilleroByCasillero(casillero);
-		
+
 		return monopolio.size();
 	}
 
@@ -1117,6 +1117,7 @@ public class TableroController {
 		Tarjeta tarjetaCasillero;
 		TarjetaPropiedad tarjetaPropiedad;
 		AccionEnCasillero accionEnCasillero;
+		String mensaje = "";
 
 		switch (pCasillero.getTipoCasillero().getNombreTipoCasillero()) {
 		case Casillero.CASILLERO_CALLE:
@@ -1128,9 +1129,9 @@ public class TableroController {
 			// Nadie es propietario de la tarjeta.
 			if (tarjetaPropiedad.getJugador() == null) {
 				accionEnCasillero = AccionEnCasillero.DISPONIBLE_PARA_VENDER;
-				accionEnCasillero.getAcciones()[0] = String.format(
-						accionEnCasillero.getAcciones()[0],
-						pCasillero.getNombreCasillero());
+				accionEnCasillero.setMensaje("La propiedad "
+						+ pCasillero.getNombreCasillero()
+						+ " está disponible para la venta.");
 			} else {
 				nombreJugadorActual = pJugador.getNombre().toLowerCase();
 				nombreJugadorPropietario = tarjetaPropiedad.getJugador()
@@ -1144,12 +1145,13 @@ public class TableroController {
 					// Si está hipotecada
 					if (tarjetaPropiedad.isHipotecada()) {
 						accionEnCasillero = AccionEnCasillero.HIPOTECADA;
-						accionEnCasillero.getAcciones()[0] = String.format(
-								accionEnCasillero.getAcciones()[0],
+						mensaje = String.format(accionEnCasillero.getMensaje(),
 								nombreJugadorPropietario);
-						accionEnCasillero.getAcciones()[1] = String.format(
-								accionEnCasillero.getAcciones()[1],
+						accionEnCasillero.setMensaje(mensaje);
+						mensaje = String.format(
+								accionEnCasillero.getDescripcion(),
 								pCasillero.getNombreCasillero());
+						accionEnCasillero.setDescripcion(mensaje);
 					} else // calculo el alquiler
 					{
 						accionEnCasillero = AccionEnCasillero.PAGAR_ALQUILER;
@@ -1157,11 +1159,11 @@ public class TableroController {
 								.getNombreTipoCasillero()) {
 						case Casillero.CASILLERO_CALLE:
 							montoAPagar = calcularAlquilerCalle((CasilleroCalle) pCasillero);
-							accionEnCasillero.setAcciones(new String[] {
-									String.format(
-											accionEnCasillero.getAcciones()[0],
-											montoAPagar, pJugador.getNombre()),
-									String.valueOf(montoAPagar) });
+							mensaje = String.format(
+									accionEnCasillero.getMensaje(),
+									montoAPagar, pJugador.getNombre());
+							accionEnCasillero.setMensaje(mensaje);
+							accionEnCasillero.setMonto(montoAPagar);
 							break;
 						case Casillero.CASILLERO_COMPANIA:
 							montoAPagar = calcularAlquilerCompania(
@@ -1202,9 +1204,9 @@ public class TableroController {
 		case Casillero.CASILLERO_DESCANSO:
 		case Casillero.CASILLERO_SALIDA:
 			accionEnCasillero = AccionEnCasillero.DESCANSO;
-			accionEnCasillero.getAcciones()[0] = String.format(
-					accionEnCasillero.getAcciones()[0],
+			mensaje = String.format(accionEnCasillero.getMensaje(),
 					pCasillero.getNombreCasillero());
+			accionEnCasillero.setMensaje(mensaje);
 			break;
 		default:
 			throw new CondicionInvalidaException(
@@ -1276,7 +1278,7 @@ public class TableroController {
 	 *             {@link TableroController#comprarEdificio(int, CasilleroCalle)}
 	 *             que hace todos los controles necesarios
 	 */
-	@Deprecated 
+	@Deprecated
 	@SuppressWarnings("unused")
 	private boolean comprarSinComprobar(CasilleroCalle casillero)
 			throws SinEdificiosException {

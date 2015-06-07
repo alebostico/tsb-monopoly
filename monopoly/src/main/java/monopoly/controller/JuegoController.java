@@ -15,7 +15,7 @@ import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.JugadorVirtual;
 import monopoly.model.MonopolyGameStatus;
-import monopoly.model.MonopolyGameStatus.AccionEnCasillero;
+import monopoly.model.AccionEnCasillero;
 import monopoly.model.Usuario;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tarjetas.Tarjeta;
@@ -180,15 +180,13 @@ public class JuegoController {
 		switch (accion) {
 		case TARJETA_SUERTE:
 			tarjetaSelected = gestorTablero.getTarjetaSuerte();
-			accion.getAcciones()[1] = String
-					.valueOf(((TarjetaSuerte) tarjetaSelected).getIdTarjeta());
+			accion.setMonto(((TarjetaSuerte) tarjetaSelected).getIdTarjeta());
 			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
 			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.ESPERANDO_TURNO;
 			break;
 		case TARJETA_COMUNIDAD:
 			tarjetaSelected = gestorTablero.getTarjetaComunidad();
-			accion.getAcciones()[1] = String
-					.valueOf(((TarjetaComunidad) tarjetaSelected)
+			accion.setMonto(((TarjetaComunidad) tarjetaSelected)
 							.getIdTarjeta());
 			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
 			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.ESPERANDO_TURNO;
@@ -212,7 +210,7 @@ public class JuegoController {
 		}
 
 		mensaje = String.format("Avanzaste al casillero %s, %s",
-				casillero.getNombreCasillero(), accion.getAcciones()[0]);
+				casillero.getNombreCasillero(), accion.getMensaje());
 
 		historyList.add(new History(StringUtils.getFechaActual(), jugador
 				.getNombre(), mensaje));
@@ -227,7 +225,7 @@ public class JuegoController {
 
 		sendToOne(senderId, status);
 
-		mensaje = String.format("Avanzó al casillero {1}.",
+		mensaje = String.format("Avanzó al casillero %s.",
 				casillero.getNombreCasillero());
 
 		historyList = new ArrayList<History>();

@@ -24,9 +24,9 @@
 }
 
 .labelJugador {
-	-fx-font: italic 13pt "Encode Sans Condensed";
-    -fx-text-fill: rgb(0,0,0);
-    -fx-effect: dropshadow( one-pass-box , rgb(42, 28, 174, 1.0), 0, 0.0 , 0 , 1 );
+	-fx-font: 15pt "Tahoma Bold";
+	-fx-text-fill: #2d4b8e;
+	-fx-effect: dropshadow( one-pass-box , #FFFFFA, 0, 0.0 , 0 , 1 );
 }
 
 .labelError {

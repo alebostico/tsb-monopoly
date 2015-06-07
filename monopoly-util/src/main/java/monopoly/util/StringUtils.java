@@ -151,9 +151,16 @@ public class StringUtils {
 		return dateFormat.format(calendar.getTime()); 
 	}
 
-	public final static DecimalFormat decimalFormat = new DecimalFormat( "#,###,###,##0' €'" );
-	
-	//public static final NumberFormat FORMATO_IMPORTE = NumberFormat.getCurrencyInstance();
+	private final static DecimalFormat decimalFormat = new DecimalFormat( "#,###,###,##0' €'" );
+	/**
+	 * Método para convertir un entero en moneda
+	 *
+	 * @param monto monto a convertir en moneda
+	 * @return devuelve el monto convertido en euro.
+	 */
+	public static String formatearNumero(int monto){
+		return decimalFormat.format(monto);
+	}
 	
 	public static boolean IsNullOrEmpty(String str)
 	{

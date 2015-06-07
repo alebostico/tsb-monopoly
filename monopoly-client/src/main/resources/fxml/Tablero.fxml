@@ -15,11 +15,11 @@
    <children>
       <AnchorPane maxHeight="760.0" maxWidth="1100.0" minHeight="760.0" minWidth="1100.0" prefHeight="760.0" prefWidth="1100.0">
          <children>
-            <HBox alignment="CENTER" maxHeight="750.0" maxWidth="1000.0" minHeight="750.0" minWidth="1000.0" prefHeight="750.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <HBox alignment="CENTER" maxHeight="750.0" maxWidth="1000.0" minHeight="750.0" minWidth="1200.0" prefHeight="750.0" prefWidth="1200.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                <AnchorPane maxWidth="630.0" minWidth="630.0" prefWidth="630.0">
+                <AnchorPane maxWidth="700.0" minWidth="630.0" prefWidth="630.0">
                      <children>
-                        <VBox alignment="CENTER" layoutX="-25.0" prefHeight="740.0" prefWidth="650.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-25.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0">
+                        <VBox alignment="CENTER" layoutX="-25.0" prefHeight="740.0" prefWidth="650.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <BorderPane maxHeight="630.0" maxWidth="630.0" minHeight="630.0" minWidth="630.0" prefHeight="630.0" prefWidth="630.0" style="-fx-background-color: #C4E1FF;">
                                  <bottom>
@@ -148,41 +148,40 @@
                               </BorderPane>
                               <HBox alignment="CENTER" prefHeight="70.0" prefWidth="644.0" spacing="5.0">
                                  <children>
-                                    <MenuButton fx:id="btnMenu" maxWidth="120.0" minWidth="100.0" mnemonicParsing="false" onAction="#processMenu" popupSide="TOP" prefWidth="120.0" styleClass="context-menu" stylesheets="@../css/Sheet.css" text="Menú">
-                                      <items>
-                                        <MenuItem mnemonicParsing="false" text="Action 1" />
-                                        <MenuItem mnemonicParsing="false" text="Action 2" />
-                                      </items>
-                                    </MenuButton>
-                                    <MenuButton fx:id="btnAcciones" maxWidth="135.0" minWidth="135.0" mnemonicParsing="false" onAction="#processAcciones" popupSide="TOP" prefWidth="135.0" styleClass="context-menu" stylesheets="@../css/Sheet.css" text="Acciones">
-                                       <items>
-                                          <MenuItem fx:id="btnConstruir" mnemonicParsing="false" onAction="#processContruir" text="Construir" />
-                                          <MenuItem fx:id="btnVender" mnemonicParsing="false" onAction="#processVender" text="Vender Construccion" />
-                                          <MenuItem fx:id="btnHipotecar" mnemonicParsing="false" onAction="#processHipotecar" text="Hipotecar" />
-                                          <MenuItem fx:id="btnDeshipotecar" mnemonicParsing="false" onAction="#processDeshipotecar" text="Deshipotecar" />
-                                          <MenuItem fx:id="btnComercializar" mnemonicParsing="false" onAction="#processComercializar" text="Comercializar Propiedad" />
-                                       </items>
-                                    </MenuButton>
+                                    <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="5.0">
+                                       <children>
+                                          <MenuButton fx:id="btnAcciones" alignment="CENTER" maxHeight="35.0" maxWidth="150.0" minHeight="35.0" minWidth="150.0" mnemonicParsing="false" onAction="#processAcciones" popupSide="TOP" prefHeight="35.0" prefWidth="150.0" styleClass="context-menu" stylesheets="@../css/Sheet.css" text="Acciones">
+                                             <items>
+                                                <MenuItem fx:id="btnConstruir" mnemonicParsing="false" onAction="#processContruir" text="Construir" />
+                                                <MenuItem fx:id="btnVender" mnemonicParsing="false" onAction="#processVender" text="Vender Construccion" />
+                                                <MenuItem fx:id="btnHipotecar" mnemonicParsing="false" onAction="#processHipotecar" text="Hipotecar" />
+                                                <MenuItem fx:id="btnDeshipotecar" mnemonicParsing="false" onAction="#processDeshipotecar" text="Deshipotecar" />
+                                                <MenuItem fx:id="btnComercializar" mnemonicParsing="false" onAction="#processComercializar" text="Comercializar Propiedad" />
+                                             </items>
+                                          </MenuButton>
+                                          <MenuButton fx:id="btnMenu" alignment="CENTER" maxHeight="35.0" maxWidth="150.0" minHeight="35.0" minWidth="150.0" mnemonicParsing="false" onAction="#processMenu" popupSide="TOP" prefHeight="35.0" prefWidth="150.0" styleClass="context-menu" stylesheets="@../css/Sheet.css" text="Menú">
+                                            <items>
+                                              <MenuItem mnemonicParsing="false" text="Action 1" />
+                                              <MenuItem mnemonicParsing="false" text="Action 2" />
+                                            </items>
+                                          </MenuButton>
+                                       </children>
+                                    </VBox>
                                     <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
                                        <children>
-                                          <HBox fx:id="hboxTurnoDados" alignment="CENTER_LEFT" maxWidth="350.0" minWidth="350.0" prefHeight="100.0" prefWidth="350.0">
+                                          <HBox fx:id="hboxTurnoDados" alignment="CENTER" maxWidth="350.0" minWidth="350.0" prefWidth="350.0">
                                              <children>
                                                 <ImageView fx:id="imgDados" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
                                                       <Image url="@../images/dados/dice.png" />
                                                    </image>
                                                 </ImageView>
-                                                <Label fx:id="lblTurnoDados" maxWidth="100.0" minWidth="100.0" styleClass="labelJugador" text="Turno de:">
-                                                   <font>
-                                                      <Font name="Liberation Serif Bold Italic" size="22.0" />
-                                                   </font>
-                                                </Label>
-                                                <Label fx:id="lblTurnoJugador" maxWidth="180.0" minHeight="30.0" minWidth="180.0" prefWidth="180.0" styleClass="labelJugador" text="" />
+                                                <Label fx:id="lblTurnoJugador" maxWidth="280.0" minHeight="30.0" minWidth="280.0" prefWidth="280.0" styleClass="labelJugador" stylesheets="@../css/Sheet.css" text="Turno de" />
                                              </children>
                                           </HBox>
-                                          <Button fx:id="btnFinalizarTurno" minWidth="150.0" mnemonicParsing="false" onAction="#processfinalizarTurno" style="-fx-text-fill: #e4f3fc; -fx-text-fill: linear-gradient(white, #d0d0d0); -fx-background-color: #2d4b8e;" text="Finalizar Turno" />
                                        </children>
                                     </VBox>
+                                    <Button fx:id="btnFinalizarTurno" minWidth="150.0" mnemonicParsing="false" onAction="#processfinalizarTurno" style="-fx-text-fill: #e4f3fc; -fx-text-fill: linear-gradient(white, #d0d0d0); -fx-background-color: #2d4b8e;" text="Finalizar Turno" />
                                  </children>
                                  <VBox.margin>
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -200,7 +199,7 @@
                   </AnchorPane>
                 <AnchorPane minWidth="370.0">
                      <children>
-                        <SplitPane dividerPositions="0.6703096539162113, 0.5" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <SplitPane dividerPositions="0.5, 0.5" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <items>
                               <AnchorPane minHeight="360.0">
                                  <children>
@@ -227,12 +226,12 @@
                                           </TitledPane>
                                         <TitledPane fx:id="tpChat" animated="false" text="Chat">
                                              <content>
-                                                <VBox alignment="CENTER" spacing="2.0">
+                                                <VBox alignment="CENTER" maxWidth="400.0" minWidth="400.0" prefWidth="400.0" spacing="5.0">
                                                    <children>
-                                                      <ListView fx:id="lvHistoryChat" />
-                                                      <HBox spacing="5.0">
+                                                      <ListView fx:id="lvHistoryChat" fixedCellSize="0.0" maxHeight="200.0" maxWidth="380.0" minHeight="200.0" minWidth="380.0" prefHeight="200.0" prefWidth="380.0" />
+                                                      <HBox alignment="CENTER" maxHeight="60.0" maxWidth="400.0" minHeight="60.0" minWidth="400.0" prefHeight="60.0" prefWidth="400.0" spacing="5.0">
                                                          <children>
-                                                            <TextArea fx:id="txtMessageChat" prefWidth="250.0" wrapText="true" />
+                                                            <TextArea fx:id="txtMessageChat" maxHeight="55.0" maxWidth="250.0" minHeight="55.0" minWidth="250.0" prefHeight="55.0" prefWidth="250.0" wrapText="true" />
                                                             <Button fx:id="btnSendMessage" alignment="CENTER" mnemonicParsing="false" onAction="#processSendMessage" text="Enviar" />
                                                          </children>
                                                       </HBox>

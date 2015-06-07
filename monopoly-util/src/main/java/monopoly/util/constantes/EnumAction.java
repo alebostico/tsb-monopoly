@@ -17,7 +17,8 @@ public enum EnumAction implements Serializable{
 	AUCTION_PROPERTY("Subastar Propiedad"),
 	CHANCE_CARD("Tarjeta de la Suerte"),
 	COMMUNITY_CARD("Tarjeta de la Comunidad"),
-	PAY_TO_BANK("Pagar al Banco");
+	PAY_TO_BANK("Pagar al Banco"),
+	GO_TO_JAIL("Ve a la Cárcel");
 	
 	private String descripcion;
 	

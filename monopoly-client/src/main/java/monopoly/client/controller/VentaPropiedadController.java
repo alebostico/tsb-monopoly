@@ -21,6 +21,7 @@ import monopoly.client.connection.ConnectionController;
 import monopoly.model.JugadorHumano;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
+import monopoly.util.StringUtils;
 import monopoly.util.message.game.actions.BuyPropertyMessage;
 
 /**
@@ -108,7 +109,7 @@ public class VentaPropiedadController extends AnchorPane implements
 						.getResourceAsStream(tarjetaSelected
 								.getPathImagenFrente()));
 		imgTarjetaDetalle.setImage(img);
-		lblPrecioPropiedad.setText(tarjetaSelected.getValorPropiedad() + " €");
+		lblPrecioPropiedad.setText(StringUtils.formatearNumero( tarjetaSelected.getValorPropiedad()));
 	}
 
 	public Stage getCurrentStage() {

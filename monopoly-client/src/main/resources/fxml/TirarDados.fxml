@@ -11,7 +11,7 @@
    <children>
       <AnchorPane>
          <children>
-            <VBox fx:id="vbPanel" alignment="CENTER" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <VBox fx:id="vbPanel" alignment="CENTER" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <Label fx:id="lblNombre" alignment="CENTER" text="[Nombre Jugador]">
                      <VBox.margin>
@@ -28,6 +28,7 @@
                               <Insets />
                            </HBox.margin>
                         </ImageView>
+                        <Button fx:id="btnTirarDados" mnemonicParsing="false" onAction="#processTirarDados" text="Tirar Dados" />
                      </children>
                   </HBox>
                </children>
