@@ -19,6 +19,7 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
 import monopoly.util.ListUtils;
+import monopoly.util.exception.SinDineroException;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -51,7 +52,8 @@ public class TarjetaController {
 	}
 
 	private void mezclarTarjetasSuerte() {
-		this.tarjetasSuerteList = ListUtils.randomizeList(this.tarjetasSuerteList);
+		this.tarjetasSuerteList = ListUtils
+				.randomizeList(this.tarjetasSuerteList);
 		GestorLogs.registrarLog("Tarjetas Suerte Mezcladas");
 
 		for (TarjetaSuerte tarjetaSuerte : tarjetasSuerteList) {
@@ -60,7 +62,8 @@ public class TarjetaController {
 	}
 
 	private void mezclarTarjetasComunidad() {
-		this.tarjetasComunidadList = ListUtils.randomizeList(this.tarjetasComunidadList);
+		this.tarjetasComunidadList = ListUtils
+				.randomizeList(this.tarjetasComunidadList);
 		GestorLogs.registrarLog("Tarjetas Comunidad Mezcladas");
 
 		for (TarjetaComunidad tarjetaComunidad : tarjetasComunidadList) {
@@ -94,28 +97,54 @@ public class TarjetaController {
 	 * @param tarjetaComunidad
 	 *            la tarjeta que tiene el jugador
 	 * @return true si se pudo ejecutar la accion
+	 * @throws SinDineroException
 	 * 
 	 */
 
 	public boolean jugarTarjetaComunidad(Jugador jugador,
-			Tarjeta tarjetaComunidad) {
+			Tarjeta tarjetaComunidad) throws SinDineroException {
+
+		JuegoController juegoController = PartidasController.getInstance()
+				.buscarControladorJuego(jugador.getJuego().getUniqueID());
+		BancoController banco = juegoController.getGestorBanco();
+		TableroController tableroController = juegoController
+				.getGestorTablero();
+
 		switch (((TarjetaComunidad) tarjetaComunidad).getIdTarjeta()) {
-		/**
-		 * case 1: return banco.pagar(jugador, 50); case 2: return
-		 * banco.cobrarATodosPagarAUno(juego.getJugadoresList(), jugador, 10);
-		 * case 3: return (juego.getTablero().moverACasillero(jugador, 1, true)
-		 * != null);// salida case 4: return banco.pagar(jugador, 50); case 5:
-		 * return banco.cobrar(jugador, 10); case 6: return
-		 * banco.cobrar(jugador, 200); case 7: return
-		 * (juego.getTablero().irACarcel(jugador) != null); case 8: return
-		 * banco.pagar(jugador, 20); case 9: return banco.pagar(jugador, 100);
-		 * case 10: return banco.pagar(jugador, 100); case 11: return
-		 * banco.cobrar(jugador, 100); case 12: return
-		 * (juego.getTablero().retrocederA(jugador, 2) != null); // TODO: como
-		 * hago aca? case 13:
-		 * jugador.getTarjetaCarcelList().add(tarjetaComunidad); return true;
-		 * case 14: return banco.pagar(jugador, 50);
-		 */
+
+		case 1:
+			return banco.pagar(jugador, 50);
+		case 2:
+			banco.cobrarATodosPagarAUno(jugador, 10);
+			return true;
+		case 3:
+			return (tableroController.moverACasillero(jugador, 1, true) != null);
+		case 4:
+			return banco.pagar(jugador, 50);
+		case 5:
+			banco.cobrar(jugador, 10);
+			return true;
+		case 6:
+			banco.cobrar(jugador, 200);
+			return true;
+		case 7:
+			return (tableroController.irACarcel(jugador) != null);
+		case 8:
+			return banco.pagar(jugador, 20);
+		case 9:
+			return banco.pagar(jugador, 100);
+		case 10:
+			return banco.pagar(jugador, 100);
+		case 11:
+			banco.cobrar(jugador, 100);
+			return true;
+		case 12:
+			return (tableroController.retrocederA(jugador, 2) != null);
+		case 13:
+			jugador.getTarjetaCarcelList().add(tarjetaComunidad);
+			return true;
+		case 14:
+			return banco.pagar(jugador, 50);
 		default:
 			return false;
 		}
@@ -152,29 +181,56 @@ public class TarjetaController {
 	 * @param tarjetaSuerte
 	 *            la tarjeta que tiene el jugador
 	 * @return true si se pudo ejecutar la accion
+	 * @throws SinDineroException
+	 *             Si se debe cobrar al jugador y no tiene suficiente dinero
+	 *             para pagar, se lanza una {@code SinDineroException}
 	 */
 
-	public boolean jugarTarjetaSuerte(Jugador jugador, Tarjeta tarjetaSuerte) {
+	public boolean jugarTarjetaSuerte(Jugador jugador, Tarjeta tarjetaSuerte)
+			throws SinDineroException {
+
+		JuegoController juegoController = PartidasController.getInstance()
+				.buscarControladorJuego(jugador.getJuego().getUniqueID());
+		BancoController banco = juegoController.getGestorBanco();
+		TableroController tableroController = juegoController
+				.getGestorTablero();
+
 		switch (((TarjetaComunidad) tarjetaSuerte).getIdTarjeta()) {
-		/*
-		 * case 1: return (juego.getTablero().moverACasillero(jugador, 40,
-		 * false) != null);// del // prado case 2: return
-		 * (juego.getTablero().moverACasillero(jugador, 12, true) != null);//
-		 * glorieta // de // bilbao case 3: return banco.pagar(jugador, 50);
-		 * case 4: return (juego.getTablero().moverACasillero(jugador, 1, true)
-		 * != null);// salida case 5: return
-		 * (juego.getTablero().moverACasillero(jugador, 25, true) != null);//
-		 * calle // bermudez case 6: return banco.pagar(jugador, 150); case 7:
-		 * return (juego.getTablero().irACarcel(jugador) != null); case 8:
-		 * return banco.cobrar(jugador, 20); case 9: return
-		 * (juego.getTablero().moverAtras(jugador, 3) != null); case 10: return
-		 * banco.cobrarPorCasaYHotel(jugador, 25, 100); case 11: return
-		 * banco.cobrarPorCasaYHotel(jugador, 40, 115); // TODO: como hago aca?
-		 * case 12: jugador.getTarjetaCarcelList().add(tarjetaSuerte); return
-		 * true; case 13: return banco.cobrar(jugador, 150); case 14: return
-		 * (juego.getTablero().moverACasillero(jugador, 16, true) != null);//
-		 * las
-		 */// delicias
+
+		case 1:
+			return (tableroController.moverACasillero(jugador, 40, true) != null);
+		case 2:
+			return (tableroController.moverACasillero(jugador, 12, true) != null);
+		case 3:
+			return banco.pagar(jugador, 50);
+		case 4:
+			return (tableroController.moverACasillero(jugador, 1, true) != null);
+		case 5:
+			return (tableroController.moverACasillero(jugador, 25, true) != null);
+		case 6:
+			return banco.pagar(jugador, 150);
+		case 7:
+			return (tableroController.irACarcel(jugador) != null);
+		case 8:
+			banco.cobrar(jugador, 20);
+			return true;
+
+		case 9:
+			return (tableroController.moverAtras(jugador, 3) != null);
+		case 10:
+			banco.cobrarPorCasaYHotel(jugador, 25, 100);
+			return true;
+		case 11:
+			banco.cobrarPorCasaYHotel(jugador, 40, 115);
+			return true;
+		case 12:
+			jugador.getTarjetaCarcelList().add(tarjetaSuerte);
+			return true;
+		case 13:
+			banco.cobrar(jugador, 150);
+			return true;
+		case 14:
+			return (tableroController.moverACasillero(jugador, 16, true) != null);
 		default:
 			return false;
 		}
@@ -186,8 +242,9 @@ public class TarjetaController {
 
 		this.proximaTarjetaSuerte++;
 
-		if (this.proximaTarjetaSuerte >= this.tarjetasSuerteList.size()){
-			this.tarjetasSuerteList = ListUtils.randomizeList(this.tarjetasSuerteList);
+		if (this.proximaTarjetaSuerte >= this.tarjetasSuerteList.size()) {
+			this.tarjetasSuerteList = ListUtils
+					.randomizeList(this.tarjetasSuerteList);
 			this.proximaTarjetaSuerte = 0;
 		}
 
@@ -200,8 +257,9 @@ public class TarjetaController {
 
 		this.proximaTarjetaComunidad++;
 
-		if (this.proximaTarjetaComunidad >= this.tarjetasComunidadList.size()){
-			this.tarjetasComunidadList = ListUtils.randomizeList(this.tarjetasComunidadList);
+		if (this.proximaTarjetaComunidad >= this.tarjetasComunidadList.size()) {
+			this.tarjetasComunidadList = ListUtils
+					.randomizeList(this.tarjetasComunidadList);
 			this.proximaTarjetaComunidad = 0;
 		}
 
@@ -266,7 +324,7 @@ public class TarjetaController {
 		return tarjetaComunidadDao.getAll();
 	}
 
-	/*
+	/**
 	 * devuelve todas las tarjetas de propiedades de la base de datos.
 	 * 
 	 * @return una lista de tarjetas de propiedades.

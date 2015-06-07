@@ -95,11 +95,11 @@ public class JugadorController {
 
 	}
 
-	public Jugador siguienteTurno(){
+	public Jugador siguienteTurno() {
 		currentPlayer = currentPlayer.getNext();
 		return currentPlayer.getKey();
 	}
-	
+
 	public int cantJugadoresConectados() {
 		return this.jugadoresList.size();
 	}
@@ -139,23 +139,21 @@ public class JugadorController {
 		return vIdConnection;
 	}
 
-	public boolean isJugadorVirtual(Jugador jugador)
-	{
-		if(jugador instanceof JugadorVirtual)
-			return true;
-		return false;
+	public boolean isJugadorVirtual(Jugador jugador) {
+		return (jugador instanceof JugadorVirtual);
 	}
-	
-	public boolean isJugadorVirtualElJugadorActual(){
-		if(getCurrentPlayer() instanceof JugadorVirtual)
-			return true;
-		return false;
+
+	public boolean isJugadorVirtualElJugadorActual() {
+		return isJugadorVirtual(getCurrentPlayer());
 	}
-	
-	public int getSenderIdPlayer(Jugador jugador) throws IlegalJugadorException{
-		if(!(jugador instanceof JugadorHumano))
-			throw new IlegalJugadorException(String.format("El Jugador %s no es un jugador controlado por una persona. ", jugador.getNombre()));
+
+	public int getSenderIdPlayer(Jugador jugador) throws IlegalJugadorException {
+		if (!(jugador instanceof JugadorHumano))
+			throw new IlegalJugadorException(
+					String.format(
+							"El Jugador %s no es un jugador controlado por una persona. ",
+							jugador.getNombre()));
 		return ((JugadorHumano) jugador).getSenderID();
 	}
-	
+
 }

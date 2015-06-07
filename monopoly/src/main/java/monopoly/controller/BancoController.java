@@ -8,6 +8,7 @@ import java.util.List;
 
 import monopoly.model.Banco;
 import monopoly.model.Jugador;
+import monopoly.model.JugadorVirtual;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tablero.CasilleroCompania;
@@ -29,21 +30,23 @@ public class BancoController {
 		for (Casillero casillero : casilleros) {
 			switch (casillero.getTipoCasillero()) {
 			case C_CALLE:
-				tarjetasList.add(((CasilleroCalle)casillero).getTarjetaCalle());
+				tarjetasList
+						.add(((CasilleroCalle) casillero).getTarjetaCalle());
 				break;
 			case C_ESTACION:
-				tarjetasList.add(((CasilleroEstacion)casillero).getTarjetaEstacion());
+				tarjetasList.add(((CasilleroEstacion) casillero)
+						.getTarjetaEstacion());
 				break;
 			case C_COMPANIA:
-				tarjetasList.add(((CasilleroCompania)casillero).getTarjetaCompania());
+				tarjetasList.add(((CasilleroCompania) casillero)
+						.getTarjetaCompania());
 				break;
 			default:
 				break;
 			}
 		}
 
-		this.banco = new Banco(tarjetasList, 32,
-				12);
+		this.banco = new Banco(tarjetasList, 32, 12);
 	}
 
 	public Banco getBanco() {
@@ -62,13 +65,18 @@ public class BancoController {
 	 * @param monto
 	 *            el monto que se quiere cobrar
 	 * @throws SinDineroException
+	 *             Si el jugador no tiene dinero para pagar
 	 */
 	public void cobrar(Jugador jugador, int monto) throws SinDineroException {
-		if (!jugador.pagar(monto)) {
-			throw new SinDineroException(
-					String.format(
-							"El jugador %s no posee dinero suficiente para pagar %s €",
-							jugador.getNombre(), monto));
+		if (jugador.isVirtual()) {
+			JugadorVirtualController.pagar((JugadorVirtual) jugador, monto);
+		} else {
+			if (!jugador.pagar(monto)) {
+				throw new SinDineroException(
+						String.format(
+								"El jugador %s no posee dinero suficiente para pagar %s €",
+								jugador.getNombre(), monto));
+			}
 		}
 	}
 
@@ -135,6 +143,76 @@ public class BancoController {
 			TarjetaPropiedad tarjetaPropiedad) throws SinDineroException {
 		this.cobrar(jugador, tarjetaPropiedad.getValorPropiedad());
 		jugador.adquirirPropiedad(tarjetaPropiedad);
+
+	}
+
+	/**
+	 * Cobra al jugador los montos especificados por cada casa y cada hotel que
+	 * tenga
+	 * 
+	 * @param jugador
+	 *            El jugador al que se le tiene que cobrar
+	 * @param cuantoPorCasa
+	 *            El monto que tiene que pagar por cada casa que tenga
+	 * @param cuantoPorHotel
+	 *            El monto que tiene que pagar por cada hotel que tenga
+	 * @return El monto total que pagó el jugador:
+	 *         {@code ((cuantoPorCasa * cantCasas)
+	 *         + (cuantoPorHotel * cantHoteles))}
+	 * @throws SinDineroException
+	 *             Si el jugador no tiene dinero suficiente para pagar
+	 */
+	public int cobrarPorCasaYHotel(Jugador jugador, int cuantoPorCasa,
+			int cuantoPorHotel) throws SinDineroException {
+
+		int montoCasas = jugador.getNroCasas() * cuantoPorCasa;
+		int montoHoteles = jugador.getNroHoteles() * cuantoPorHotel;
+
+		// si el monto a pagar es cero, salimos...
+		if ((montoCasas + montoHoteles) == 0)
+			return 0;
+
+		if (jugador.isVirtual()) {
+			JugadorVirtualController.pagar((JugadorVirtual) jugador, montoCasas
+					+ montoHoteles);
+		} else {
+			this.cobrar(jugador, montoCasas + montoHoteles);
+		}
+		return montoCasas + montoHoteles;
+	}
+
+	/**
+	 * Permite que {@code jugadorCobra} cobre {@code cantidad} de los demás
+	 * jugadores
+	 * 
+	 * @param jugadorCobra
+	 *            El jugador que cobra
+	 * @param cantidad
+	 *            La cantidad que cobra de cada jugador
+	 * @throws SinDineroException
+	 *             Si algún Jugador Humano no tiene dinero para pagar, lanza una
+	 *             {@code SinDineroExeption}. Sin un Jugador Virtual no tiene
+	 *             dinero para pagar (aún vendiendo edificios e hipotecando
+	 *             propiedades), se declara en bancarrota
+	 */
+	public void cobrarATodosPagarAUno(Jugador jugadorCobra, int cantidad)
+			throws SinDineroException {
+
+		JuegoController juegoController = PartidasController.getInstance()
+				.buscarControladorJuego(jugadorCobra.getJuego().getUniqueID());
+		List<Jugador> jugadoresList = juegoController.getGestorJugadores()
+				.getTurnoslist();
+
+		for (Jugador jugador : jugadoresList) {
+			if (!jugador.equals(jugadorCobra)) {
+
+				if (jugador instanceof JugadorVirtual)
+					JugadorVirtualController.pagarAJugador(
+							(JugadorVirtual) jugador, jugadorCobra, cantidad);
+				else
+					jugador.pagarAJugador(jugadorCobra, cantidad);
+			}
+		}
 
 	}
 

@@ -323,29 +323,61 @@ public class JuegoController {
 
 	}
 
+	/**
+	 * Implementa la accion de TarjetaSuerte cuando viene desde el cliente
+	 * (JugadorHumano)
+	 * 
+	 * @param senderId
+	 * @param tarjeta
+	 * @throws Exception
+	 */
 	public void tarjetaSuerte(int senderId, TarjetaSuerte tarjeta)
 			throws Exception {
-		// TODO Auto-generated method stub
 		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
-		tarjetaSuerte(senderId, jugador,tarjeta);
+		tarjetaSuerte(senderId, jugador, tarjeta);
 	}
 
+	/**
+	 * Implementa la accion de TarjetaSuerte cuando se ejecuta en el server
+	 * (JugadorVirtual)
+	 * 
+	 * @param senderId
+	 * @param jugador
+	 * @param tarjeta
+	 * @throws Exception
+	 */
 	private void tarjetaSuerte(int senderId, Jugador jugador,
 			TarjetaSuerte tarjeta) throws Exception {
-		// TODO Auto-generated method stub
-		
+		gestorTablero.getGestorTarjetas().jugarTarjetaSuerte(jugador, tarjeta);
 	}
 
+	/**
+	 * Implementa la accion de TarjetaComunidad cuando viene desde el cliente
+	 * (JugadorHumano)
+	 * 
+	 * @param senderId
+	 * @param tarjeta
+	 * @throws Exception
+	 */
 	public void tarjetaComunidad(int senderId, TarjetaComunidad tarjeta)
 			throws Exception {
-		// TODO Auto-generated method stub
 		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
 		tarjetaComunidad(senderId, jugador, tarjeta);
 	}
 
+	/**
+	 * * Implementa la accion de TarjetaComunidad cuando se ejecuta en el server
+	 * (JugadorVirtual)
+	 * 
+	 * @param senderId
+	 * @param jugador
+	 * @param tarjeta
+	 * @throws Exception
+	 */
 	private void tarjetaComunidad(int senderId, Jugador jugador,
 			TarjetaComunidad tarjeta) throws Exception {
-		// TODO Auto-generated method stub
+		gestorTablero.getGestorTarjetas().jugarTarjetaComunidad(jugador,
+				tarjeta);
 	}
 
 	private void sendToOne(int recipientID, Object message) {

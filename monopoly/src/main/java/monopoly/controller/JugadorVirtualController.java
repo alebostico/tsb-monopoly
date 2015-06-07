@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import monopoly.model.Estado.EstadoJugador;
 import monopoly.model.Jugador;
 import monopoly.model.JugadorVirtual;
 import monopoly.model.tablero.Casillero;
@@ -510,6 +511,13 @@ public class JugadorVirtualController {
 		return false;
 	}
 
+	/**
+	 * Decide si le conviene pagar para salir de la carcel o no
+	 * 
+	 * @param jugadorActual
+	 *            El jugador que está en la carcel
+	 * @return true si sale de la carcel. False si no lo hace.
+	 */
 	public boolean decidirSalirPagando(JugadorVirtual jugadorActual) {
 
 		Random rnd = new Random();
@@ -614,6 +622,13 @@ public class JugadorVirtualController {
 		return false;
 	}
 
+	/**
+	 * Decide si le conviene salir de la carcel usando la tarjeta de salida.
+	 * 
+	 * @param jugadorActual
+	 *            El jugador que está en la carcel
+	 * @return true si sale de la carcel. False si no lo hace.
+	 */
 	public boolean decidirSalirTarjeta(JugadorVirtual jugadorActual) {
 
 		Random rnd = new Random();
@@ -736,7 +751,6 @@ public class JugadorVirtualController {
 	 * @return La sumatoria de todas las hipotecas (puede ser igual o menor a
 	 *         cantidad)
 	 */
-	@SuppressWarnings("unused")
 	private static int hipotecarAleatorio(int cantidad,
 			JugadorVirtual jugadorActual) {
 
@@ -889,6 +903,18 @@ public class JugadorVirtualController {
 
 	}
 
+	/**
+	 * Contruye casas y/o hoteles en alguna propiedad del jugador
+	 * 
+	 * @param jugadorActual
+	 *            El jugador que va a construír
+	 * @throws SinEdificiosException
+	 *             Cuando el banco no dipone de las casas/hoteles necesarios
+	 *             para construír
+	 * @throws SinDineroException
+	 *             Cuando el jugador no dispone dinero para comprar las
+	 *             casas/hoteles
+	 */
 	public static void construirAleatorio(JugadorVirtual jugadorActual)
 			throws SinEdificiosException, SinDineroException {
 
@@ -973,4 +999,95 @@ public class JugadorVirtualController {
 		}
 
 	}
+
+	/**
+	 * Método por el cual un jugador paga una cantidad. Si la cantidad es
+	 * positiva, el jugador pagará dinero, en caso de ser negativa, el jugador
+	 * estará cobrando dinero. Al pagar, se debe restar la cantidad del dinero
+	 * total y del capital. Si no tiene dinero suficiente se tratará de
+	 * conseguir automáticamente mediante hipotecas y ventas de edificios. Si
+	 * aun así no consigue el dinero suficiente se declara como moroso. Si es
+	 * moroso devuelve -1.
+	 * 
+	 * @param jugador
+	 *            El jugador que debe pagar
+	 * @param cantidad
+	 *            La cantidad que tiene que pagar
+	 * @return El dinero que le quedó al jugador después de pagar
+	 */
+	public static int pagar(JugadorVirtual jugador, int cantidad) {
+		// 1. Intento vender edificios si no tengo dinero suficiente
+		if (cantidad > jugador.getDinero()) {
+			int dineroNecesario = cantidad - jugador.getDinero();
+			switch (jugador.getTipoJugador()) {
+			// Jugador basado en reglas
+			case TJ_MAGNATE: {
+				venderAleatorio(dineroNecesario, jugador);
+				break;
+			}
+			// Jugador con comportamiento aleatorio
+			case TJ_EMPRESARIO:
+			case TJ_COMPRADOR_PRIMERIZO:
+				venderAleatorio(dineroNecesario, jugador);
+				break;
+			}
+		}
+
+		// 2. Si aún no dispongo de dinero suficiente, intento hipotecar
+		// propiedades
+		if (cantidad > jugador.getDinero()) {
+			int dineroNecesario = cantidad - jugador.getDinero();
+			switch (jugador.getTipoJugador()) {
+			case TJ_MAGNATE: // Jugador inteligente
+			{
+				hipotecarAleatorio(dineroNecesario, jugador);
+				break;
+			}
+			case TJ_EMPRESARIO:
+			case TJ_COMPRADOR_PRIMERIZO: // Jugador aleatorio
+				hipotecarAleatorio(dineroNecesario, jugador);
+				break;
+			}
+		}
+
+		// PAGAR:
+		// Si tengo dinero suficiente, se paga (descontando de dinero total y
+		// capital). Aumentando si es cobrar
+		if (cantidad <= jugador.getDinero()) {
+			jugador.pagar(cantidad);
+			GestorLogs.registrarDebug("El jugador " + jugador.getNombre()
+					+ " pagó " + cantidad + " €");
+		}
+		// Declaro al jugador moroso
+		else {
+			// Bancarrota
+			jugador.setEstadoJugador(EstadoJugador.EJ_BANCARROTA);
+			GestorLogs.registrarLog("El jugador " + jugador.getNombre()
+					+ " quedó en bancarrota porque no puede pagar " + cantidad
+					+ " €");
+			return -1;
+		}
+		return jugador.getDinero();
+	}
+
+	/**
+	 * Permite que un Jugador Virtual pague un monto a otro Jugador (Virtual o
+	 * Humano)
+	 * 
+	 * @param jugadorPaga El Jugador Virtual que paga
+	 * @param jugadorCobra El Jugador que cobra
+	 * @param monto El monto que paga
+	 * @return El monto que paga o -1 si se declara en bancarrota
+	 */
+	public static int pagarAJugador(JugadorVirtual jugadorPaga,
+			Jugador jugadorCobra, int monto) {
+		if (JugadorVirtualController.pagar(jugadorPaga, monto) == monto) {
+			jugadorCobra.cobrar(monto);
+			return monto;
+		} else {
+			return -1;
+		}
+
+	}
+
 }

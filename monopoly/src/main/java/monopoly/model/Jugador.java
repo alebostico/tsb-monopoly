@@ -20,8 +20,8 @@ import javax.persistence.Transient;
 
 import monopoly.model.Estado.EstadoJugador;
 import monopoly.model.tablero.Casillero;
-import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tablero.Casillero.TipoCasillero;
+import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
@@ -86,7 +86,8 @@ public abstract class Jugador implements Serializable {
 	 * será utilizado para almacenar las tarjetas de comunidad y suerte que
 	 * permiten salir de la cárcel.
 	 */
-	public Jugador(String nombre, Ficha ficha, Juego juego, Casillero casilleroActual) {
+	public Jugador(String nombre, Ficha ficha, Juego juego,
+			Casillero casilleroActual) {
 		this.nombre = nombre;
 		this.ficha = ficha;
 		this.juego = juego;
@@ -443,12 +444,35 @@ public abstract class Jugador implements Serializable {
 							this.getNombre(), monto, jugador.getNombre()));
 	}
 
+	/**
+	 * Calula la cantidad de casas que tiene el jugador en todo el tablero
+	 * 
+	 * @return La cantidad total de casas que tiene el jugador
+	 */
 	public int getNroCasas() {
-		return nroCasas;
+		int cantCasas = 0;
+
+		for (TarjetaPropiedad tarjetaPropiedad : tarjPropiedadList)
+			if (tarjetaPropiedad.getCasillero().getTipoCasillero() == TipoCasillero.C_CALLE) {
+				int tmpCasas = ((CasilleroCalle) tarjetaPropiedad
+						.getCasillero()).getNroCasas();
+				cantCasas += (tmpCasas < 5 ? tmpCasas : 0);
+			}
+
+		return cantCasas;
 	}
 
 	public int getNroHoteles() {
-		return nroHoteles;
+		int cantHoteles = 0;
+
+		for (TarjetaPropiedad tarjetaPropiedad : tarjPropiedadList)
+			if (tarjetaPropiedad.getCasillero().getTipoCasillero() == TipoCasillero.C_CALLE) {
+				int tmpHoteles = ((CasilleroCalle) tarjetaPropiedad
+						.getCasillero()).getNroCasas();
+				cantHoteles += (tmpHoteles == 5 ? 1 : 0);
+			}
+
+		return cantHoteles;
 	}
 
 	public int getCantPropiedades() {
@@ -538,6 +562,24 @@ public abstract class Jugador implements Serializable {
 		}
 		tmpCapitalVenta += this.getDinero();
 		return tmpCapitalVenta;
+	}
+
+	/**
+	 * Devuelve true si el Jugador es un Jugador Virtual
+	 * 
+	 * @return true si el jugador es una instancia de {@code JugadorVirtual}
+	 */
+	public boolean isVirtual() {
+		return this instanceof JugadorVirtual;
+	}
+
+	/**
+	 * Devuelve true si el Jugador es un Jugador Humano
+	 * 
+	 * @return true si el jugador es una instancia de {@code JugadorHumano}
+	 */
+	public boolean isHumano() {
+		return this instanceof JugadorHumano;
 	}
 
 	/*
