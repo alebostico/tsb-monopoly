@@ -79,6 +79,12 @@ public abstract class Jugador implements Serializable {
 	private int contTurnosCarcel;
 
 	@Transient
+	private boolean isPreso;
+
+	@Transient
+	private int contDadosDobles;
+
+	@Transient
 	private EstadoJugador estadoJugador;
 
 	/**
@@ -95,8 +101,11 @@ public abstract class Jugador implements Serializable {
 		this.nroCasas = 0;
 		this.nroHoteles = 0;
 		this.casilleroActual = casilleroActual;
-		tarjetaCarcelList = new ArrayList<>();
-		tarjPropiedadList = new ArrayList<>();
+		this.tarjetaCarcelList = new ArrayList<>();
+		this.tarjPropiedadList = new ArrayList<>();
+		this.isPreso = false;
+		this.contDadosDobles = 0;
+		this.contTurnosCarcel = 0;
 	}
 
 	/**
@@ -159,6 +168,11 @@ public abstract class Jugador implements Serializable {
 		this.juego = juego;
 	}
 
+	/**
+	 * Cantidad de dinero que posee el Jugador
+	 * 
+	 * @return el dinero en efectivo que posee el jugador
+	 */
 	public int getDinero() {
 		return dinero;
 	}
@@ -195,6 +209,64 @@ public abstract class Jugador implements Serializable {
 	 */
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
+	}
+
+	/**
+	 * Determina si el jugador se encuentra en la cárcel.
+	 * 
+	 * @return {@code true} si el jugador está preso {@code true} si el jugador
+	 *         no está preso
+	 */
+	public boolean estaPreso() {
+		return isPreso;
+	}
+
+	public void setPreso(boolean isPreso) {
+		this.isPreso = isPreso;
+	}
+
+	/**
+	 * Indica la cantidad de veces que el jugador saco valores iguales en la
+	 * tirada de dados.
+	 * 
+	 * @return Nro de veces
+	 */
+	public int getCatidadDadosDobles() {
+		return contDadosDobles;
+	}
+
+	public void setCatidadDadosDobles(int contDadosDobles) {
+		this.contDadosDobles = contDadosDobles;
+	}
+
+	/**
+	 * Incrementa el valor cuando el jugador ha sacado valores iguales en la
+	 * tirada de dado.
+	 */
+	public void incrementarCantidadDadosDobles() {
+		this.contDadosDobles++;
+	}
+
+	/**
+	 * Indica la cantidad de veces en la que el jugador ha estado en la cárcel
+	 * cuando le tocaba su turno.
+	 * 
+	 * @return
+	 */
+	public int getCantidadTurnosCarcel() {
+		return contTurnosCarcel;
+	}
+
+	/**
+	 * Incrementa la cantidad de veces en la que el jugador ha estado en la cárcel
+	 * cuando le tocó su turno.
+	 */
+	public void incrementarCantidadTurnosCarcel() {
+		this.contTurnosCarcel++;
+	}
+
+	public void setCantidadTurnosCarcel(int contTurnosCarcel) {
+		this.contTurnosCarcel = contTurnosCarcel;
 	}
 
 	/**

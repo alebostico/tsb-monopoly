@@ -12,6 +12,7 @@ import monopoly.dao.ITarjetaCompaniaDao;
 import monopoly.dao.ITarjetaComunidadDao;
 import monopoly.dao.ITarjetaEstacionDao;
 import monopoly.dao.ITarjetaSuerteDao;
+import monopoly.model.AccionEnTarjeta;
 import monopoly.model.Jugador;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaComunidad;
@@ -19,6 +20,7 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
 import monopoly.util.ListUtils;
+import monopoly.util.StringUtils;
 import monopoly.util.exception.SinDineroException;
 
 import org.springframework.context.ApplicationContext;
@@ -101,7 +103,7 @@ public class TarjetaController {
 	 * 
 	 */
 
-	public boolean jugarTarjetaComunidad(Jugador jugador,
+	public AccionEnTarjeta jugarTarjetaComunidad(Jugador jugador,
 			Tarjeta tarjetaComunidad) throws SinDineroException {
 
 		JuegoController juegoController = PartidasController.getInstance()
@@ -110,44 +112,64 @@ public class TarjetaController {
 		TableroController tableroController = juegoController
 				.getGestorTablero();
 
+		AccionEnTarjeta accion = null;
+		
 		switch (((TarjetaComunidad) tarjetaComunidad).getIdTarjeta()) {
 
 		case 1:
-			return banco.pagar(jugador, 50);
+			accion = AccionEnTarjeta.PAGAR;
+			accion.setMonto(50);
+			accion.setMensaje(String.format("Paga %s por su póliza de seguro.", StringUtils.formatearAMoneda(50)));
+			break;
 		case 2:
-			banco.cobrarATodosPagarAUno(jugador, 10);
-			return true;
+			accion = AccionEnTarjeta.COBRAR_TODOS;
+			accion.setMonto(10);
+			accion.setMensaje(String.format("Cobra %s de todos por su cumpleaños.", StringUtils.formatearAMoneda(10)));
+			//banco.cobrarATodosPagarAUno(jugador, 10);
+			
 		case 3:
-			return (tableroController.moverACasillero(jugador, 1, true) != null);
+			
+			//return (tableroController.moverACasillero(jugador, 1, true) != null);
 		case 4:
-			return banco.pagar(jugador, 50);
+			accion = AccionEnTarjeta.PAGAR;
+			break;
+			//return banco.pagar(jugador, 50);
 		case 5:
 			banco.cobrar(jugador, 10);
-			return true;
+			break;
 		case 6:
 			banco.cobrar(jugador, 200);
-			return true;
+			break;
 		case 7:
-			return (tableroController.irACarcel(jugador) != null);
+			//return (tableroController.irACarcel(jugador) != null);
+			break;
 		case 8:
-			return banco.pagar(jugador, 20);
+			accion = AccionEnTarjeta.PAGAR;
+			//return banco.pagar(jugador, 20);
+			break;
 		case 9:
-			return banco.pagar(jugador, 100);
+			accion = AccionEnTarjeta.PAGAR;
+			//return banco.pagar(jugador, 100);
+			break;
 		case 10:
-			return banco.pagar(jugador, 100);
+			//return banco.pagar(jugador, 100);
+			break;
 		case 11:
 			banco.cobrar(jugador, 100);
-			return true;
+			break;
 		case 12:
-			return (tableroController.retrocederA(jugador, 2) != null);
+			//return (tableroController.retrocederA(jugador, 2) != null);
+			break;
 		case 13:
 			jugador.getTarjetaCarcelList().add(tarjetaComunidad);
-			return true;
+			break;
 		case 14:
-			return banco.pagar(jugador, 50);
+			//return banco.pagar(jugador, 50);
+			break;
 		default:
-			return false;
+			break;
 		}
+		return accion;
 	}
 
 	/**

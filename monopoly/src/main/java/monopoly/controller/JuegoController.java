@@ -6,6 +6,7 @@ package monopoly.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import monopoly.model.AccionEnCasillero;
 import monopoly.model.Dado;
 import monopoly.model.Estado;
 import monopoly.model.Estado.EstadoJuego;
@@ -15,7 +16,6 @@ import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.JugadorVirtual;
 import monopoly.model.MonopolyGameStatus;
-import monopoly.model.AccionEnCasillero;
 import monopoly.model.Usuario;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tarjetas.Tarjeta;
@@ -98,7 +98,6 @@ public class JuegoController {
 	 *            objecto dado con los números obtenidos.
 	 */
 	public void establecerTurnoJugador(int key, Dado dados) throws Exception {
-		// TODO Auto-generated method stub
 		JugadorHumano jugador = gestorJugadores.getJugadorHumano(key);
 		jugador.setTiradaInicial(dados);
 		boolean tiraronTodosDados = true;
@@ -158,7 +157,6 @@ public class JuegoController {
 
 	public void avanzarDeCasillero(int senderId, Dado dados)
 			throws CondicionInvalidaException, Exception {
-		// TODO Auto-generated method stub
 		Jugador jugador;
 		Casillero casillero;
 		boolean cobraSalida = true;
@@ -186,8 +184,7 @@ public class JuegoController {
 			break;
 		case TARJETA_COMUNIDAD:
 			tarjetaSelected = gestorTablero.getTarjetaComunidad();
-			accion.setMonto(((TarjetaComunidad) tarjetaSelected)
-							.getIdTarjeta());
+			accion.setMonto(((TarjetaComunidad) tarjetaSelected).getIdTarjeta());
 			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
 			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.ESPERANDO_TURNO;
 			break;
@@ -280,7 +277,6 @@ public class JuegoController {
 	}
 
 	public void siguienteTurno() throws Exception {
-		// TODO Auto-generated method stub
 		History history;
 		Jugador jugadorActual;
 		Jugador jugadorSiguiente;
@@ -378,6 +374,21 @@ public class JuegoController {
 			TarjetaComunidad tarjeta) throws Exception {
 		gestorTablero.getGestorTarjetas().jugarTarjetaComunidad(jugador,
 				tarjeta);
+	}
+
+	/**
+	 * Método para llevar preso al jugador.
+	 * 
+	 * @param senderId
+	 */
+	public void irALaCarcel(int senderId) throws Exception {
+		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
+		gestorTablero.irACarcel(jugador);
+		
+		History history = new History(StringUtils.getFechaActual(),
+				jugador.getNombre(), "Fue a la cárcel");
+		sendToAll(new HistoryGameMessage(history));
+		siguienteTurno();
 	}
 
 	private void sendToOne(int recipientID, Object message) {

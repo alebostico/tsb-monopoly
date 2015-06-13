@@ -119,8 +119,7 @@ public class UnirJugadorController extends AnchorPane implements Initializable {
 			currentStage.close();
 
 		} catch (Exception ex) {
-			// TODO Auto-generated catch block
-			GestorLogs.registrarError(ex.getMessage());
+			GestorLogs.registrarError(ex);
 		}
 	}
 

@@ -56,7 +56,6 @@ public class TarjetaSuerte extends Tarjeta implements Serializable {
      */
 	public TarjetaSuerte() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

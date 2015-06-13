@@ -48,7 +48,6 @@ public class TarjetaComunidad extends Tarjeta implements Serializable {
      */
 	public TarjetaComunidad() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

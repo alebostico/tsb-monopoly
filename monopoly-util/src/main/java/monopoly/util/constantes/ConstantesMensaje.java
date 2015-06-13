@@ -29,6 +29,7 @@ public class ConstantesMensaje {
 	public final static String CHANCE_CARD_MESSAGE = "ChanceCardMessage";
 	public final static String COMMUNITY_CARD_MESSAGE = "CommunityCardMessage";
 	public final static String PAY_TO_BANK_MESSAGE = "PayToBankMessage";
+	public final static String GO_TO_JAIL_MESSAGE = "GoToJailMessage";
 
 	public final static String COMPLETE_TURN_MESSAGE = "CompleteTurnMessage";
 	/*************************************************************************************/

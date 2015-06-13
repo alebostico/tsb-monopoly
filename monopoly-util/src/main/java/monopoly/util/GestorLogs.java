@@ -161,7 +161,7 @@ public class GestorLogs {
 	 * 
 	 * @param e
 	 */
-	public static void registrarExeption(Exception e) {
+	public static void registrarException(Exception e) {
 		GestorLogs.registrar(GestorLogs.MSG_ERROR, "Exception: ");
 		// GestorLogs.registrar(GestorLogs.MSG_ERROR, e.toString());
 		// GestorLogs.registrar(GestorLogs.MSG_ERROR, e.getMessage());

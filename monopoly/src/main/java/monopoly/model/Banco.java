@@ -26,7 +26,6 @@ public class Banco implements Serializable {
 	private int nroHoteles;
 
 	public Banco(List<TarjetaPropiedad> list, int nroCasas, int nroHoteles) {
-		// TODO cargar todas las propiedades
 		tarjPropiedadList = new ArrayList<TarjetaPropiedad>();
 		tarjPropiedadList.addAll(list);
 		this.nroCasas = nroCasas;

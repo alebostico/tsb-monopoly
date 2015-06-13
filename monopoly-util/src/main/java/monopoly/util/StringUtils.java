@@ -158,7 +158,7 @@ public class StringUtils {
 	 * @param monto monto a convertir en moneda
 	 * @return devuelve el monto convertido en euro.
 	 */
-	public static String formatearNumero(int monto){
+	public static String formatearAMoneda(int monto){
 		return decimalFormat.format(monto);
 	}
 	

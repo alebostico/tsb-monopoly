@@ -71,7 +71,6 @@ public class LoginController extends AnchorPane implements Initializable {
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
 		instance = this;
 		lblMsgError.setText("");
 	}
@@ -115,7 +114,6 @@ public class LoginController extends AnchorPane implements Initializable {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				if (user != null) {
 					try {
 						FXMLLoader loader = ScreensFramework.getLoader(fxml);
@@ -127,8 +125,7 @@ public class LoginController extends AnchorPane implements Initializable {
 						controller.showOptionMenu(root);
 
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						GestorLogs.registrarError(e.getMessage());
+						GestorLogs.registrarException(e);
 					}
 				} else {
 					lblMsgError.setText("Usuario / Contraseña inválida");
@@ -192,8 +189,7 @@ public class LoginController extends AnchorPane implements Initializable {
 			stage.show();
 
 		} catch (Exception ex) {
-			// TODO Auto-generated catch block
-			GestorLogs.registrarError(ex.getMessage());
+			GestorLogs.registrarException(ex);
 		}
 	}
 
