@@ -572,7 +572,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		Platform.runLater(new Runnable() {
 			private AccionEnCasillero accionCasillero;
 			private EstadoJuego statusGame;
-			private JugadorHumano jugadorActual;
+			private Jugador jugadorActual;
 			private Casillero casilleroActual;
 			private String userNameJugadorActual;
 			private String userNameJugador;
@@ -586,7 +586,7 @@ public class TableroController extends AnchorPane implements Serializable,
 						TableroController.getInstance().addHistoryGame(history);
 					}
 
-					jugadorActual = (JugadorHumano) status.getCurrentPlayer();
+					jugadorActual = status.getCurrentPlayer();
 					accionCasillero = status.getAccionCasillero();
 					statusGame = status.getStatus();
 					switch (statusGame) {
@@ -802,7 +802,7 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	private void showVentaPropiedad(final TarjetaPropiedad tarjeta,
-			final JugadorHumano jugadorComprador) {
+			final Jugador jugadorComprador) {
 		Platform.runLater(new Runnable() {
 			private Stage ventaPropiedadStage = null;
 

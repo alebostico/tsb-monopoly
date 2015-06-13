@@ -6,6 +6,7 @@ package monopoly.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import monopoly.model.AccionEnCasillero;
 import monopoly.model.Dado;
 import monopoly.model.Estado;
 import monopoly.model.Estado.EstadoJuego;
@@ -15,7 +16,6 @@ import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.JugadorVirtual;
 import monopoly.model.MonopolyGameStatus;
-import monopoly.model.AccionEnCasillero;
 import monopoly.model.Usuario;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tarjetas.Tarjeta;
@@ -133,6 +133,9 @@ public class JuegoController {
 
 	public void tirarDadosJugadorVirtual() {
 
+		Dado dados = new Dado();
+		dados.getSuma();
+
 	}
 
 	/**
@@ -158,7 +161,6 @@ public class JuegoController {
 
 	public void avanzarDeCasillero(int senderId, Dado dados)
 			throws CondicionInvalidaException, Exception {
-		// TODO Auto-generated method stub
 		Jugador jugador;
 		Casillero casillero;
 		boolean cobraSalida = true;
@@ -186,8 +188,7 @@ public class JuegoController {
 			break;
 		case TARJETA_COMUNIDAD:
 			tarjetaSelected = gestorTablero.getTarjetaComunidad();
-			accion.setMonto(((TarjetaComunidad) tarjetaSelected)
-							.getIdTarjeta());
+			accion.setMonto(((TarjetaComunidad) tarjetaSelected).getIdTarjeta());
 			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
 			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.ESPERANDO_TURNO;
 			break;
@@ -239,6 +240,78 @@ public class JuegoController {
 				tarjetaSelected);
 
 		sendToOther(senderId, status);
+	}
+
+	public void avanzarDeCasilleroJV(JugadorVirtual jugador, Dado dados)
+			throws CondicionInvalidaException {
+		Casillero casillero;
+		boolean cobraSalida = true;
+		AccionEnCasillero accion;
+		EstadoJuego estadoJuegoJugadorActual = EstadoJuego.TIRAR_DADO;
+		EstadoJuego estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.TIRAR_DADO;
+		MonopolyGameStatus status;
+		Tarjeta tarjetaSelected = null;
+		String mensaje;
+
+		List<History> historyList = new ArrayList<History>();
+
+		casillero = gestorTablero.moverAdelante(jugador, dados.getSuma(),
+				cobraSalida);
+
+		accion = gestorTablero.getAccionEnCasillero(jugador, casillero,
+				dados.getSuma());
+
+		mensaje = String.format("El Jugador %s avanzó al casillero %s, %s",
+				jugador.getNombre(), casillero.getNombreCasillero(),
+				accion.getMensaje());
+
+		historyList.add(new History(StringUtils.getFechaActual(), jugador
+				.getNombre(), mensaje));
+		if (estadoJuegoJugadorActual != EstadoJuego.JUGANDO)
+			gestorJugadores.siguienteTurno();
+
+		status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+				gestorBanco.getBanco(), gestorTablero.getTablero(),
+				estadoJuegoJugadorActual, accion,
+				gestorJugadores.getCurrentPlayer(), historyList,
+				tarjetaSelected);
+
+		sendToAll(status);
+
+		switch (accion) {
+		case TARJETA_SUERTE:
+			tarjetaSelected = gestorTablero.getTarjetaSuerte();
+			accion.setMonto(((TarjetaSuerte) tarjetaSelected).getIdTarjeta());
+
+			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
+			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.ESPERANDO_TURNO;
+			break;
+		case TARJETA_COMUNIDAD:
+			tarjetaSelected = gestorTablero.getTarjetaComunidad();
+			accion.setMonto(((TarjetaComunidad) tarjetaSelected).getIdTarjeta());
+			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
+			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.ESPERANDO_TURNO;
+			break;
+		case DISPONIBLE_PARA_VENDER:
+		case IMPUESTO_DE_LUJO:
+			
+			
+		case IR_A_LA_CARCEL:
+		case PAGAR_ALQUILER:
+			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
+			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.ESPERANDO_TURNO;
+			break;
+		case DESCANSO:
+		case HIPOTECADA:
+		case MI_PROPIEDAD:
+			estadoJuegoJugadorActual = Estado.EstadoJuego.ESPERANDO_TURNO;
+			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.TIRAR_DADO;
+			break;
+		default:
+			throw new CondicionInvalidaException(String.format(
+					"La acción %s es inválida.", accion.toString()));
+		}
+
 	}
 
 	public void comprarPropiedad(int senderId, TarjetaPropiedad tarjeta)
