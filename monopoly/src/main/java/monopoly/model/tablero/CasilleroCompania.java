@@ -37,14 +37,6 @@ public class CasilleroCompania extends Casillero implements Serializable {
 		return tarjetaCompania;
 	}
 
-	// public TarjetaCompania comprarCompania(Jugador jugador) {
-	// // TODO: implementar el metodo que realiza la compra de la Compania.
-	// if (this.getTablero().getBanco()
-	// .venderPropiedad(jugador, this.getTarjetaCompania()))
-	// return (TarjetaCompania) tarjetaCompania;
-	// return null;
-	// }
-
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

@@ -195,8 +195,7 @@ public class BancoController {
 	 *             dinero para pagar (aún vendiendo edificios e hipotecando
 	 *             propiedades), se declara en bancarrota
 	 */
-	public void cobrarATodosPagarAUno(Jugador jugadorCobra, int cantidad)
-			throws SinDineroException {
+	public void cobrarATodosPagarAUno(Jugador jugadorCobra, int cantidad) {
 
 		JuegoController juegoController = PartidasController.getInstance()
 				.buscarControladorJuego(jugadorCobra.getJuego().getUniqueID());
@@ -210,7 +209,14 @@ public class BancoController {
 					JugadorVirtualController.pagarAJugador(
 							(JugadorVirtual) jugador, jugadorCobra, cantidad);
 				else
+					try
+				{
 					jugador.pagarAJugador(jugadorCobra, cantidad);
+				}
+				catch(SinDineroException sde){
+					// TODO: enviar mensaje
+					
+				}
 			}
 		}
 

@@ -37,7 +37,6 @@ public class ConnectionController {
 				connection = new MonopolyClient(ServerIp, ServerPort);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			GestorLogs.registrarError(e.getMessage());
 		}
 		idPlayer = connection.getID();
@@ -50,7 +49,6 @@ public class ConnectionController {
 				connection = new MonopolyClient(ServerIp, ServerPort);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			GestorLogs.registrarError(e.getMessage());
 		}
 		idPlayer = connection.getID();

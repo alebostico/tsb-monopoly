@@ -349,6 +349,7 @@ public class TableroController {
 	 */
 	public Casillero irACarcel(Jugador jugador) {
 		// mando al casillero de la carcel y si pasa por la salida no cobra
+		jugador.setPreso(true);
 		return this.moverACasillero(jugador, 11, false);
 	}
 

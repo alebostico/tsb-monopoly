@@ -30,7 +30,6 @@ public class IniciarAplicacion extends Application {
 	 */
 	@Override
 	public void start(final Stage stage) throws IOException {
-		// TODO Auto-generated method stub
 		gotoLogin(stage);
 	}
 

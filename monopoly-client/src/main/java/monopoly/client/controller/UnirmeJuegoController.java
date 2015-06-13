@@ -197,8 +197,7 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 				controller.setUsuarioLogueado(usuarioLogueado);
 				stage.show();
 		} catch (Exception ex) {
-			// TODO Auto-generated catch block
-			GestorLogs.registrarError(ex.getMessage());
+			GestorLogs.registrarError(ex);
 			Dialogs.create().owner(currentStage).title("Error")
 			.masthead("Error mediante una excepción").message(ex.getMessage())
 			.showError();

@@ -74,7 +74,6 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 	 */
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		// TODO Auto-generated method stub
 		instance = this;
 	}
 
@@ -84,7 +83,6 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
 				if (nuevoJuego != null) {
@@ -140,7 +138,6 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 			.masthead("Campo Obligatorio").message(cve.getMessage())
 			.showWarning();
 		} catch (Exception ex) {
-			// TODO Auto-generated catch block
 			GestorLogs.registrarError(ex.getMessage());
 			Dialogs.create().owner(currentStage).title("Error")
 			.masthead("Error mediante una excepción").message(ex.getMessage())

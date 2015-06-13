@@ -87,8 +87,7 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 			currentStage.show();
 			
 		} catch (Exception ex) {
-			// TODO Auto-generated catch block
-			GestorLogs.registrarError(ex.getMessage());
+			GestorLogs.registrarException(ex);
 		}
 	}
 
@@ -116,8 +115,7 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 			ConnectionController.getInstance().send(new CreateGameMessage(senderId, usuarioLogueado));
 
 		} catch (Exception ex) {
-			// TODO Auto-generated catch block
-			GestorLogs.registrarError(ex.getMessage());
+			GestorLogs.registrarException(ex);
 		}
 	}
 	
@@ -146,8 +144,7 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 			ConnectionController.getInstance().send(ConstantesMensaje.GET_PENDING_GAMES_MESSAGE);
 
 		} catch (Exception ex) {
-			// TODO Auto-generated catch block
-			GestorLogs.registrarError(ex.getMessage());
+			GestorLogs.registrarException(ex);
 		}
 	}
 

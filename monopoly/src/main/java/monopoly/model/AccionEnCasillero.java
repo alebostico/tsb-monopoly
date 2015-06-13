@@ -57,7 +57,7 @@ public enum AccionEnCasillero implements Serializable {
 	 */
 	IMPUESTO_DE_LUJO(String.format(
 			"El banco te cobra %s por el impuesto de lujo.",
-			StringUtils.formatearNumero(100)), null, 100),
+			StringUtils.formatearAMoneda(100)), null, 100),
 
 	/**
 	 * Cuándo el casillero corresponde a Impuesto sobre el capital.

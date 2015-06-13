@@ -28,7 +28,6 @@ public class Main {
 			PartidasController.getInstance().setMonopolyGame(gs);
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			gs.shutdownServer();
 		}

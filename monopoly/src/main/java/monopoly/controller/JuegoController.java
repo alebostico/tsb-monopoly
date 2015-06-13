@@ -98,7 +98,6 @@ public class JuegoController {
 	 *            objecto dado con los números obtenidos.
 	 */
 	public void establecerTurnoJugador(int key, Dado dados) throws Exception {
-		// TODO Auto-generated method stub
 		JugadorHumano jugador = gestorJugadores.getJugadorHumano(key);
 		jugador.setTiradaInicial(dados);
 		boolean tiraronTodosDados = true;
@@ -353,7 +352,6 @@ public class JuegoController {
 	}
 
 	public void siguienteTurno() throws Exception {
-		// TODO Auto-generated method stub
 		History history;
 		Jugador jugadorActual;
 		Jugador jugadorSiguiente;
@@ -451,6 +449,21 @@ public class JuegoController {
 			TarjetaComunidad tarjeta) throws Exception {
 		gestorTablero.getGestorTarjetas().jugarTarjetaComunidad(jugador,
 				tarjeta);
+	}
+
+	/**
+	 * Método para llevar preso al jugador.
+	 * 
+	 * @param senderId
+	 */
+	public void irALaCarcel(int senderId) throws Exception {
+		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
+		gestorTablero.irACarcel(jugador);
+		
+		History history = new History(StringUtils.getFechaActual(),
+				jugador.getNombre(), "Fue a la cárcel");
+		sendToAll(new HistoryGameMessage(history));
+		siguienteTurno();
 	}
 
 	private void sendToOne(int recipientID, Object message) {

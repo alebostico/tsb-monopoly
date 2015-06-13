@@ -110,7 +110,7 @@ public class VentaPropiedadController extends AnchorPane implements
 						.getResourceAsStream(tarjetaSelected
 								.getPathImagenFrente()));
 		imgTarjetaDetalle.setImage(img);
-		lblPrecioPropiedad.setText(StringUtils.formatearNumero( tarjetaSelected.getValorPropiedad()));
+		lblPrecioPropiedad.setText(StringUtils.formatearAMoneda( tarjetaSelected.getValorPropiedad()));
 	}
 
 	public Stage getCurrentStage() {

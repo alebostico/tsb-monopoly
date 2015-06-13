@@ -117,15 +117,15 @@ public class PartidasController {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.comprarPropiedad(senderId, tarjeta);
 	}
-	
+
 	/**
-	 * Método ejecutado para realizar el objetivo de la tarjeta suerte
-	 * que nos  salió.
+	 * Método ejecutado para realizar el objetivo de la tarjeta suerte que nos
+	 * salió.
 	 * 
 	 * @param idJuego
 	 * @param senderId
 	 * @param message
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void tarjetaSuerte(String idJuego, int senderId,
 			TarjetaSuerte tarjeta) throws Exception {
@@ -133,31 +133,43 @@ public class PartidasController {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.tarjetaSuerte(senderId, tarjeta);
 	}
-	
+
 	/**
-	 * Método ejecutado para realizar el objetivo de la tarjeta comunidad
-	 * que nos  salió.
+	 * Método ejecutado para realizar el objetivo de la tarjeta comunidad que
+	 * nos salió.
 	 * 
 	 * @param idJuego
 	 * @param senderId
 	 * @param message
 	 */
 	public void tarjetaComunidad(String idJuego, int senderId,
-			TarjetaComunidad tarjeta) throws Exception{
+			TarjetaComunidad tarjeta) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.tarjetaComunidad(senderId, tarjeta);
 	}
 
 	/**
-	 * Método para avanzar de turno cuando el jugador
-	 * confirma que finalizó la jugada.
+	 * Método para avanzar de turno cuando el jugador confirma que finalizó la
+	 * jugada.
 	 * 
 	 * @param idJuego
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void siguienteTurno(String idJuego) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.siguienteTurno();
+	}
+
+	/**
+	 * Método para llevar preso al jugador.
+	 * 
+	 * @param senderId
+	 * @param idJuego
+	 * @throws Exception 
+	 */
+	public void irALaCarcel(int senderId, String idJuego) throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.irALaCarcel(senderId);
 	}
 
 	/**
@@ -305,7 +317,6 @@ public class PartidasController {
 	 * @return
 	 */
 	public List<Juego> buscarJuegos(EstadoJuego estado) {
-		// TODO: Implementar método
 		List<Juego> juegos = new ArrayList<Juego>();
 		for (JuegoController jc : juegosControllerList.values()) {
 			if (jc.getEstadoJuego().getEstadoJuego().equals(estado))

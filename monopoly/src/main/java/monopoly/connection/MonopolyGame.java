@@ -30,6 +30,7 @@ import monopoly.util.message.game.StartGameMessage;
 import monopoly.util.message.game.actions.BuyPropertyMessage;
 import monopoly.util.message.game.actions.ChanceCardMessage;
 import monopoly.util.message.game.actions.CommunityCardMessage;
+import monopoly.util.message.game.actions.GoToJailMessage;
 
 /**
  * @author Bostico Alejandro
@@ -156,6 +157,11 @@ public class MonopolyGame extends GameServer {
 			case ConstantesMensaje.COMPLETE_TURN_MESSAGE:
 				CompleteTurnMessage msgCompleteTurnMessage = (CompleteTurnMessage) message;
 				PartidasController.getInstance().siguienteTurno(msgCompleteTurnMessage.message);
+				break;
+				
+			case ConstantesMensaje.GO_TO_JAIL_MESSAGE:
+				GoToJailMessage msgGoToJailMessage = (GoToJailMessage)message;
+				PartidasController.getInstance().irALaCarcel(senderId, msgGoToJailMessage.idJuego);
 				break;
 
 			case ConstantesMensaje.DISCONNECT_MESSAGE:

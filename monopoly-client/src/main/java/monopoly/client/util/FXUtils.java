@@ -40,8 +40,7 @@ public class FXUtils {
 			
 
 		} catch (Exception ex) {
-			// TODO Auto-generated catch block
-			GestorLogs.registrarError(ex.getMessage());
+			GestorLogs.registrarException(ex);
 		}
 		return controller;
 	}

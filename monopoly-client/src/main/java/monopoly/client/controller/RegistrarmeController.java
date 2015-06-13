@@ -134,7 +134,6 @@ public class RegistrarmeController extends AnchorPane implements Initializable {
 				ConnectionController.getInstance().iniciarConexionToAccount(usuario);
 			}
 		} catch (EmailInvalidoException eie) {
-			// TODO Auto-generated catch block
 			Dialogs.create().owner(currentStage).title("Advertencia")
 			.masthead("Campo Inválido").message(eie.getMessage())
 			.showWarning();
@@ -161,8 +160,7 @@ public class RegistrarmeController extends AnchorPane implements Initializable {
 						controller.showOptionMenu(root);
 
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						GestorLogs.registrarError(e.getMessage());
+						GestorLogs.registrarException(e);
 					}
 				} else {
 					lblMsgError.setText("Usuario / Contraseña inválida");
