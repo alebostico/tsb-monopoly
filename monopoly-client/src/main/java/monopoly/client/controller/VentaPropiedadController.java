@@ -19,7 +19,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import monopoly.client.connection.ConnectionController;
 import monopoly.model.Jugador;
-import monopoly.model.JugadorHumano;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;

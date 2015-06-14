@@ -14,7 +14,6 @@ import monopoly.dao.ITarjetaEstacionDao;
 import monopoly.dao.ITarjetaSuerteDao;
 import monopoly.model.AccionEnTarjeta;
 import monopoly.model.Jugador;
-import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
@@ -104,67 +103,113 @@ public class TarjetaController {
 	 */
 
 	public AccionEnTarjeta jugarTarjetaComunidad(Jugador jugador,
-			Tarjeta tarjetaComunidad) throws SinDineroException {
-
-		JuegoController juegoController = PartidasController.getInstance()
-				.buscarControladorJuego(jugador.getJuego().getUniqueID());
-		BancoController banco = juegoController.getGestorBanco();
-		TableroController tableroController = juegoController
-				.getGestorTablero();
+			TarjetaComunidad tarjetaComunidad) {
 
 		AccionEnTarjeta accion = null;
-		
-		switch (((TarjetaComunidad) tarjetaComunidad).getIdTarjeta()) {
+
+		switch (tarjetaComunidad.getIdTarjeta()) {
 
 		case 1:
 			accion = AccionEnTarjeta.PAGAR;
 			accion.setMonto(50);
-			accion.setMensaje(String.format("Paga %s por su póliza de seguro.", StringUtils.formatearAMoneda(50)));
+			accion.setMensaje(String.format("Paga %s por su póliza de seguro.",
+					StringUtils.formatearAMoneda(50)));
 			break;
 		case 2:
 			accion = AccionEnTarjeta.COBRAR_TODOS;
 			accion.setMonto(10);
-			accion.setMensaje(String.format("Cobra %s de todos por su cumpleaños.", StringUtils.formatearAMoneda(10)));
-			//banco.cobrarATodosPagarAUno(jugador, 10);
-			
+			accion.setMensaje(String.format(
+					"Cobra %s de todos por su cumpleaños.",
+					StringUtils.formatearAMoneda(10)));
+			// banco.cobrarATodosPagarAUno(jugador, 10);
+			break;
 		case 3:
-			
-			//return (tableroController.moverACasillero(jugador, 1, true) != null);
+			accion = AccionEnTarjeta.MOVER_A;
+			accion.setNroCasilleros(1);
+			accion.setCobraSalida(true);
+			accion.setMensaje("Va al casillero SALIDA.");
+			break;
+		// return (tableroController.moverACasillero(jugador, 1, true) != null);
 		case 4:
 			accion = AccionEnTarjeta.PAGAR;
+			accion.setMonto(50);
+			accion.setMensaje(String.format(
+					"Paga %s por la factura del médico.",
+					StringUtils.formatearAMoneda(50)));
 			break;
-			//return banco.pagar(jugador, 50);
+		// return banco.pagar(jugador, 50);
 		case 5:
-			banco.cobrar(jugador, 10);
+			accion = AccionEnTarjeta.COBRAR;
+			accion.setMonto(10);
+			accion.setMensaje(String.format(
+					"Cobra %s por un concurso de belleza.",
+					StringUtils.formatearAMoneda(10)));
+			// banco.cobrar(jugador, 10);
 			break;
 		case 6:
-			banco.cobrar(jugador, 200);
+			accion = AccionEnTarjeta.COBRAR;
+			accion.setMonto(200);
+			accion.setMensaje(String.format(
+					"Cobra %s por un error en la banca.",
+					StringUtils.formatearAMoneda(200)));
+			// banco.cobrar(jugador, 200);
 			break;
 		case 7:
-			//return (tableroController.irACarcel(jugador) != null);
+			accion = AccionEnTarjeta.IR_A_CARCEL;
+			accion.setMensaje(String.format(
+					"Va a la CARCEL sin pasar por la SALIDA y sin cobrar %s.",
+					StringUtils.formatearAMoneda(200)));
+			// return (tableroController.irACarcel(jugador) != null);
 			break;
 		case 8:
-			accion = AccionEnTarjeta.PAGAR;
-			//return banco.pagar(jugador, 20);
+			accion = AccionEnTarjeta.COBRAR;
+			accion.setMonto(20);
+			accion.setMensaje(String.format("La hacienda le devolvió %s.",
+					StringUtils.formatearAMoneda(20)));
+			// return banco.pagar(jugador, 20);
 			break;
 		case 9:
-			accion = AccionEnTarjeta.PAGAR;
-			//return banco.pagar(jugador, 100);
+			accion = AccionEnTarjeta.COBRAR;
+			accion.setMonto(100);
+			accion.setMensaje(String.format("Cobra %s por una herencia.",
+					StringUtils.formatearAMoneda(100)));
+			// return banco.pagar(jugador, 100);
 			break;
 		case 10:
-			//return banco.pagar(jugador, 100);
+			accion = AccionEnTarjeta.COBRAR;
+			accion.setMonto(100);
+			accion.setMensaje(String.format(
+					"Cobra %s por los intereses de un plazo fijo.",
+					StringUtils.formatearAMoneda(100)));
+			// return banco.pagar(jugador, 100);
 			break;
 		case 11:
-			banco.cobrar(jugador, 100);
+			accion = AccionEnTarjeta.PAGAR;
+			accion.setMonto(100);
+			accion.setMensaje(String.format("Paga %s al hospital.",
+					StringUtils.formatearAMoneda(100)));
+			// banco.cobrar(jugador, 100);
 			break;
 		case 12:
-			//return (tableroController.retrocederA(jugador, 2) != null);
+			accion = AccionEnTarjeta.MOVER_A;
+			accion.setNroCasilleros(2);
+			accion.setCobraSalida(false);
+			accion.setMensaje("Retrocede hasta RONDA DE VALENCIA");
+			// return (tableroController.retrocederA(jugador, 2) != null);
 			break;
 		case 13:
-			jugador.getTarjetaCarcelList().add(tarjetaComunidad);
+			accion = AccionEnTarjeta.LIBRE_DE_CARCEL;
+			accion.setTarjetaCarcel(tarjetaComunidad);
+			accion.setMensaje("Queda libre de la carcel.");
+			// jugador.getTarjetaCarcelList().add(tarjetaComunidad);
 			break;
 		case 14:
-			//return banco.pagar(jugador, 50);
+			accion = AccionEnTarjeta.COBRAR;
+			accion.setMonto(50);
+			accion.setMensaje(String.format(
+					"Cobra %s por la venta de acciones.",
+					StringUtils.formatearAMoneda(50)));
+			// return banco.pagar(jugador, 50);
 			break;
 		default:
 			break;
@@ -208,54 +253,134 @@ public class TarjetaController {
 	 *             para pagar, se lanza una {@code SinDineroException}
 	 */
 
-	public boolean jugarTarjetaSuerte(Jugador jugador, Tarjeta tarjetaSuerte)
-			throws SinDineroException {
+	public AccionEnTarjeta jugarTarjetaSuerte(Jugador jugador,
+			TarjetaSuerte tarjetaSuerte) {
 
-		JuegoController juegoController = PartidasController.getInstance()
-				.buscarControladorJuego(jugador.getJuego().getUniqueID());
-		BancoController banco = juegoController.getGestorBanco();
-		TableroController tableroController = juegoController
-				.getGestorTablero();
+		AccionEnTarjeta accion = null;
 
-		switch (((TarjetaComunidad) tarjetaSuerte).getIdTarjeta()) {
+		switch (tarjetaSuerte.getIdTarjeta()) {
 
 		case 1:
-			return (tableroController.moverACasillero(jugador, 40, true) != null);
+			accion = AccionEnTarjeta.MOVER_A;
+			accion.setNroCasilleros(40);
+			accion.setCobraSalida(true);
+			accion.setMensaje("Va al casillero PASEO DEL PRADO.");
+			break;
+		// return (tableroController.moverACasillero(jugador, 40, true) !=
+		// null);
 		case 2:
-			return (tableroController.moverACasillero(jugador, 12, true) != null);
+			accion = AccionEnTarjeta.MOVER_A;
+			accion.setNroCasilleros(12);
+			accion.setCobraSalida(true);
+			accion.setMensaje("Va al casillero GLORIETA DE BILBAO.");
+			break;
+		// return (tableroController.moverACasillero(jugcobraSalidaador, 12,
+		// true) !=
+		// null);
 		case 3:
-			return banco.pagar(jugador, 50);
+			accion = AccionEnTarjeta.COBRAR;
+			accion.setMonto(50);
+			accion.setMensaje(String.format(
+					"Cobra %s por intereses del banco.",
+					StringUtils.formatearAMoneda(50)));
+			break;
+		// return banco.pagar(jugador, 50);
 		case 4:
-			return (tableroController.moverACasillero(jugador, 1, true) != null);
+			accion = AccionEnTarjeta.MOVER_A;
+			accion.setNroCasilleros(1);
+			accion.setCobraSalida(true);
+			accion.setMensaje("Va al casillero SALIDA.");
+			break;
+
+		// return (tableroController.moverACasillero(jugador, 1, true) !=
+		// null);
 		case 5:
-			return (tableroController.moverACasillero(jugador, 25, true) != null);
+			accion = AccionEnTarjeta.MOVER_A;
+			accion.setNroCasilleros(25);
+			accion.setCobraSalida(true);
+			accion.setMensaje("Va al casillero CEA BERMÚDEZ.");
+			break;
+		// return (tableroController.moverACasillero(jugador, 25, true) !=
+		// null);
 		case 6:
-			return banco.pagar(jugador, 150);
+			accion = AccionEnTarjeta.COBRAR;
+			accion.setMonto(150);
+			accion.setMensaje(String.format(
+					"Cobra %s por el seguro de los edificios.",
+					StringUtils.formatearAMoneda(150)));
+			break;
+		// return banco.pagar(jugador, 150);
 		case 7:
-			return (tableroController.irACarcel(jugador) != null);
+			accion = AccionEnTarjeta.IR_A_CARCEL;
+			accion.setMensaje(String.format(
+					"Va a la CARCEL sin pasar por la SALIDA y sin cobrar %s.",
+					StringUtils.formatearAMoneda(200)));
+			break; // return (tableroController.irACarcel(jugador) != null);
 		case 8:
-			banco.cobrar(jugador, 20);
-			return true;
+			accion = AccionEnTarjeta.PAGAR;
+			accion.setMonto(20);
+			accion.setMensaje(String.format(
+					"Paga %s por una multa por embriaguez.",
+					StringUtils.formatearAMoneda(20)));
+			break;
+		// banco.cobrar(jugador, 20);
+		// return true;
 
 		case 9:
-			return (tableroController.moverAtras(jugador, 3) != null);
+			accion = AccionEnTarjeta.MOVER;
+			accion.setMonto(-3);
+			accion.setMensaje("Retrocede tres lugares.");
+			break;
+		// return (tableroController.moverAtras(jugador, 3) != null);
 		case 10:
-			banco.cobrarPorCasaYHotel(jugador, 25, 100);
-			return true;
+			accion = AccionEnTarjeta.PAGAR_POR_CASA_HOTEL;
+			accion.setPrecioPorCasa(25);
+			accion.setPrecioPorHotel(100);
+			String.format(
+					"Paga %s por cada casa y %s por cada hotel a causa de reparaciones.",
+					StringUtils.formatearAMoneda(25),
+					StringUtils.formatearAMoneda(100));
+			break;
+		// banco.cobrarPorCasaYHotel(jugador, 25, 100);
+		// return true;
 		case 11:
-			banco.cobrarPorCasaYHotel(jugador, 40, 115);
-			return true;
+			accion = AccionEnTarjeta.PAGAR_POR_CASA_HOTEL;
+			accion.setPrecioPorCasa(40);
+			accion.setPrecioPorHotel(115);
+			String.format(
+					"Paga %s por cada casa y %s por cada hotel a causa de reparaciones.",
+					StringUtils.formatearAMoneda(40),
+					StringUtils.formatearAMoneda(115));
+			break;
+		// banco.cobrarPorCasaYHotel(jugador, 40, 115);
+		// return true;
 		case 12:
-			jugador.getTarjetaCarcelList().add(tarjetaSuerte);
-			return true;
+			accion = AccionEnTarjeta.LIBRE_DE_CARCEL;
+			accion.setTarjetaCarcel(tarjetaSuerte);
+			accion.setMensaje("Queda libre de la carcel.");
+			break;
+		// jugador.getTarjetaCarcelList().add(tarjetaSuerte);
+		// return true;
 		case 13:
-			banco.cobrar(jugador, 150);
-			return true;
+			accion = AccionEnTarjeta.PAGAR;
+			accion.setMonto(150);
+			accion.setMensaje(String.format("Paga %s por gastos escolares.",
+					StringUtils.formatearAMoneda(150)));
+			break;
+		// banco.cobrar(jugador, 150);
+		// return true;
 		case 14:
-			return (tableroController.moverACasillero(jugador, 16, true) != null);
+			accion = AccionEnTarjeta.MOVER_A;
+			accion.setNroCasilleros(16);
+			accion.setCobraSalida(true);
+			accion.setMensaje("Va al casillero ESTACIÓN DE LAS DELICIAS.");
+			break;
+		// return (tableroController.moverACasillero(jugador, 16, true) !=
+		// null);
 		default:
-			return false;
+			break;
 		}
+		return accion;
 	}
 
 	public TarjetaSuerte getNextTarjetaSuerte() {

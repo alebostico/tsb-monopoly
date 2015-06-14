@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import monopoly.model.AccionEnCasillero;
+import monopoly.model.AccionEnTarjeta;
 import monopoly.model.Dado;
 import monopoly.model.Estado;
 import monopoly.model.Estado.EstadoJuego;
@@ -241,6 +242,97 @@ public class JuegoController {
 		sendToOther(senderId, status);
 	}
 
+	public void jugarAccionTarjeta(int senderId,
+			TarjetaComunidad tarjetaComunidad) {
+		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
+		AccionEnTarjeta accion = gestorTablero.getGestorTarjetas()
+				.jugarTarjetaComunidad(jugador, tarjetaComunidad);
+		jugarAccionTarjeta(senderId, accion);
+	}
+
+	public void jugarAccionTarjeta(int senderId, TarjetaSuerte tarjetaSuerte) {
+		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
+		AccionEnTarjeta accion = gestorTablero.getGestorTarjetas()
+				.jugarTarjetaSuerte(jugador, tarjetaSuerte);
+		jugarAccionTarjeta(senderId, accion);
+	}
+
+	public void jugarAccionTarjeta(int senderId, AccionEnTarjeta accion) {
+		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
+		String mensaje;
+		List<History> historyList = new ArrayList<History>();
+		MonopolyGameStatus status;
+		EstadoJuego estadoJuegoJugadorActual = EstadoJuego.JUGANDO;
+		EstadoJuego estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.ESPERANDO_TURNO;
+
+		switch (accion) {
+		case COBRAR:
+			// El jugador cobra, el banco paga
+			gestorBanco.pagar(jugador, accion.getMonto());
+			break;
+		case PAGAR:
+			// El jugador paga, el banco cobra
+			try {
+				gestorBanco.cobrar(jugador, accion.getMonto());
+			} catch (SinDineroException e) {
+				// TODO Agregar mensaje de SinDineeroException()
+				e.printStackTrace();
+			}
+			break;
+		case COBRAR_TODOS:
+			/*
+			 * TODO: acá también puede generar SinDineroException() pero no se
+			 * como manejarlo
+			 */
+			gestorBanco.cobrarATodosPagarAUno(jugador, accion.getMonto());
+			break;
+		case PAGAR_POR_CASA_HOTEL:
+			try {
+				gestorBanco.cobrarPorCasaYHotel(jugador,
+						accion.getPrecioPorCasa(), accion.getPrecioPorHotel());
+			} catch (SinDineroException e) {
+				// TODO Agregar mensaje de SinDineeroException()
+				e.printStackTrace();
+			}
+			break;
+		case MOVER:
+			gestorTablero.moverAdelante(jugador, accion.getNroCasilleros(),
+					accion.isCobraSalida());
+			break;
+		case MOVER_A:
+			gestorTablero.moverACasillero(jugador, accion.getNroCasilleros(),
+					accion.isCobraSalida());
+			break;
+		case LIBRE_DE_CARCEL:
+			jugador.getTarjetaCarcelList().add(accion.getTarjetaCarcel());
+			break;
+		case IR_A_CARCEL:
+			gestorTablero.irACarcel(jugador);
+			break;
+		default:
+			break;
+		}
+
+		mensaje = accion.getMensaje();
+		historyList.add(new History(StringUtils.getFechaActual(), jugador
+				.getNombre(), mensaje));
+
+		status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+				gestorBanco.getBanco(), gestorTablero.getTablero(),
+				estadoJuegoJugadorActual, null,
+				gestorJugadores.getCurrentPlayer(), historyList, null);
+
+		sendToOne(senderId, status);
+
+		status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+				gestorBanco.getBanco(), gestorTablero.getTablero(),
+				estadoJuegoRestoJugadoresEstadoJuego, null,
+				gestorJugadores.getCurrentPlayer(), historyList, null);
+
+		sendToOther(senderId, status);
+
+	}
+
 	public void avanzarDeCasilleroJV(JugadorVirtual jugador, Dado dados)
 			throws CondicionInvalidaException {
 		Casillero casillero;
@@ -293,8 +385,7 @@ public class JuegoController {
 			break;
 		case DISPONIBLE_PARA_VENDER:
 		case IMPUESTO_DE_LUJO:
-			
-			
+
 		case IR_A_LA_CARCEL:
 		case PAGAR_ALQUILER:
 			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
@@ -459,7 +550,7 @@ public class JuegoController {
 	public void irALaCarcel(int senderId) throws Exception {
 		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
 		gestorTablero.irACarcel(jugador);
-		
+
 		History history = new History(StringUtils.getFechaActual(),
 				jugador.getNombre(), "Fue a la cárcel");
 		sendToAll(new HistoryGameMessage(history));
