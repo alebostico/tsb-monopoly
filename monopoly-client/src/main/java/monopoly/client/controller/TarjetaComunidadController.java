@@ -48,7 +48,6 @@ public class TarjetaComunidadController extends AnchorPane implements
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
 		instance = this;
 	}
 

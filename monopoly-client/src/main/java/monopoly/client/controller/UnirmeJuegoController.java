@@ -100,7 +100,6 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
 		instance = this;
 		juegosList = new ArrayList<Juego>();
 		filtersJuegosList= new ArrayList<JuegoSimpleProperty>();
@@ -118,7 +117,6 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				configurarTabla();
 				cargarTabla();
 				currentStage.show();

@@ -80,7 +80,6 @@ public class RegistrarmeController extends AnchorPane implements Initializable {
 	 */
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		// TODO Auto-generated method stub
 		instance = this;
 		txtRepeatPassword.focusedProperty().addListener(
 				new ChangeListener<Boolean>() {
@@ -148,7 +147,6 @@ public class RegistrarmeController extends AnchorPane implements Initializable {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				if (user != null) {
 					try {
 						FXMLLoader loader = ScreensFramework.getLoader(ConstantesFXML.FXML_MENU_OPCIONES);

@@ -59,7 +59,6 @@ public class PartidasController {
 	 *            objecto juego, que posee los datos del juego
 	 */
 	public void loadGame(int senderID, Juego juego) throws Exception {
-		// TODO Auto-generated method stub
 		juegoController = juegosControllerList.get(juego.getUniqueID());
 		int cantJugadores = juego.getCantJugadores();
 
@@ -74,7 +73,6 @@ public class PartidasController {
 
 	public void establecerTurnoJugador(int senderId, String idJuego, Dado dados)
 			throws Exception {
-		// TODO Auto-generated method stub
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.establecerTurnoJugador(senderId, dados);
 	}
@@ -129,7 +127,6 @@ public class PartidasController {
 	 */
 	public void tarjetaSuerte(String idJuego, int senderId,
 			TarjetaSuerte tarjeta) throws Exception {
-		// TODO Auto-generated method stub
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.tarjetaSuerte(senderId, tarjeta);
 	}
@@ -242,7 +239,6 @@ public class PartidasController {
 	 * @return
 	 */
 	public Juego buscarJuego(String nombreUsuarioCreador, String nombreJuego) {
-		// TODO: implementar metodo
 		for (JuegoController jc : juegosControllerList.values()) {
 			if (jc.getJuego().getNombreJuego().equals(nombreJuego)
 					&& jc.getJuego().getOwner().getUserName()
@@ -281,7 +277,6 @@ public class PartidasController {
 	 * @return
 	 */
 	public List<Juego> buscarJuegos(String likeNombre) {
-		// TODO: Implementar método
 		List<Juego> juegos = new ArrayList<Juego>();
 		for (JuegoController jc : juegosControllerList.values()) {
 			if (jc.getJuego().getNombreJuego().contains(likeNombre))
@@ -312,7 +307,6 @@ public class PartidasController {
 	 */
 	public List<Juego> buscarJuegos(String nombreUsuarioCreador,
 			Date fechaDesde, Date fechaHasta) {
-		// TODO: implementar metodo
 		return null;
 
 	}
