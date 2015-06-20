@@ -68,8 +68,11 @@ public class BancoController {
 	 *             Si el jugador no tiene dinero para pagar
 	 */
 	public void cobrar(Jugador jugador, int monto) throws SinDineroException {
+		JuegoController juegoController = PartidasController.getInstance()
+				.buscarControladorJuego(jugador.getJuego().getUniqueID());
 		if (jugador.isVirtual()) {
-			JugadorVirtualController.pagar((JugadorVirtual) jugador, monto);
+			juegoController.getGestorJugadoresVirtuales().pagar(
+					(JugadorVirtual) jugador, monto);
 		} else {
 			if (!jugador.pagar(monto)) {
 				throw new SinDineroException(
@@ -165,6 +168,9 @@ public class BancoController {
 	public int cobrarPorCasaYHotel(Jugador jugador, int cuantoPorCasa,
 			int cuantoPorHotel) throws SinDineroException {
 
+		JuegoController juegoController = PartidasController.getInstance()
+				.buscarControladorJuego(jugador.getJuego().getUniqueID());
+
 		int montoCasas = jugador.getNroCasas() * cuantoPorCasa;
 		int montoHoteles = jugador.getNroHoteles() * cuantoPorHotel;
 
@@ -173,8 +179,8 @@ public class BancoController {
 			return 0;
 
 		if (jugador.isVirtual()) {
-			JugadorVirtualController.pagar((JugadorVirtual) jugador, montoCasas
-					+ montoHoteles);
+			juegoController.getGestorJugadoresVirtuales().pagar(
+					(JugadorVirtual) jugador, montoCasas + montoHoteles);
 		} else {
 			this.cobrar(jugador, montoCasas + montoHoteles);
 		}
@@ -206,17 +212,16 @@ public class BancoController {
 			if (!jugador.equals(jugadorCobra)) {
 
 				if (jugador instanceof JugadorVirtual)
-					JugadorVirtualController.pagarAJugador(
-							(JugadorVirtual) jugador, jugadorCobra, cantidad);
+					juegoController.getGestorJugadoresVirtuales()
+							.pagarAJugador((JugadorVirtual) jugador,
+									jugadorCobra, cantidad);
 				else
-					try
-				{
-					jugador.pagarAJugador(jugadorCobra, cantidad);
-				}
-				catch(SinDineroException sde){
-					// TODO: enviar mensaje
-					
-				}
+					try {
+						jugador.pagarAJugador(jugadorCobra, cantidad);
+					} catch (SinDineroException sde) {
+						// TODO: enviar mensaje
+
+					}
 			}
 		}
 

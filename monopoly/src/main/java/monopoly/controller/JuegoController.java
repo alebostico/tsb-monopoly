@@ -23,12 +23,16 @@ import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
+import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.constantes.EnumAction;
 import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.exception.SinDineroException;
+import monopoly.util.exception.SinEdificiosException;
+import monopoly.util.message.ExceptionMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.HistoryGameMessage;
+import monopoly.util.message.game.actions.PayToPlayerMessage;
 
 /**
  * @author Bostico Alejandro
@@ -49,7 +53,11 @@ public class JuegoController {
 
 	private JugadorController gestorJugadores;
 
+	private JugadorVirtualController gestorJugadoresVirtuales;
+
 	private MonopolyGameStatus status;
+
+	private int contadorPagos;
 
 	public JuegoController(Usuario creador, String nombre) {
 		this.gestorTablero = new TableroController();
@@ -59,6 +67,8 @@ public class JuegoController {
 		this.juego.setTablero(gestorTablero.getTablero());
 		this.estadoJuego = new Estado(EstadoJuego.CREADO);
 		this.gestorJugadores = new JugadorController();
+		this.gestorJugadoresVirtuales = new JugadorVirtualController();
+		this.contadorPagos = 0;
 	}
 
 	/**
@@ -132,9 +142,50 @@ public class JuegoController {
 	}
 
 	public void tirarDadosJugadorVirtual() {
+		History history;
+		List<History> historyList = new ArrayList<History>();
+		JugadorVirtual jugadorActual = (JugadorVirtual) this.gestorJugadores
+				.getCurrentPlayer();
+		try {
+			String mensaje = gestorJugadoresVirtuales
+					.construirAleatorio(jugadorActual);
+			if (mensaje != null) {
+				history = new History(StringUtils.getFechaActual(),
+						gestorJugadores.getCurrentPlayer().getNombre(), mensaje);
+				historyList.add(history);
+			}
+		} catch (SinEdificiosException e) {
+			history = new History(
+					StringUtils.getFechaActual(),
+					gestorJugadores.getCurrentPlayer().getNombre(),
+					String.format(
+							"El jugador %s no pudo comprar edificios porque no hay en el banco",
+							jugadorActual.getNombre()));
+			historyList.add(history);
+		} catch (SinDineroException e) {
+			history = new History(
+					StringUtils.getFechaActual(),
+					gestorJugadores.getCurrentPlayer().getNombre(),
+					String.format(
+							"El jugador %s no pudo comprar edificios porque no tiene dinero suficiente",
+							jugadorActual.getNombre()));
+			historyList.add(history);
+		}
 
 		Dado dados = new Dado();
-		dados.getSuma();
+
+		try {
+			this.avanzarDeCasilleroJV(jugadorActual, dados);
+		} catch (CondicionInvalidaException e) {
+			GestorLogs.registrarError(e);
+			e.printStackTrace();
+		}
+
+		status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+				gestorBanco.getBanco(), gestorTablero.getTablero(),
+				EstadoJuego.TIRAR_DADO, null,
+				gestorJugadores.getCurrentPlayer(), historyList, null);
+		sendToAll(status);
 
 	}
 
@@ -245,25 +296,36 @@ public class JuegoController {
 	public void jugarAccionTarjeta(int senderId,
 			TarjetaComunidad tarjetaComunidad) {
 		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
+		jugarAccionTarjeta(jugador, tarjetaComunidad);
+	}
+
+	private void jugarAccionTarjeta(Jugador jugador,
+			TarjetaComunidad tarjetaComunidad) {
 		AccionEnTarjeta accion = gestorTablero.getGestorTarjetas()
 				.jugarTarjetaComunidad(jugador, tarjetaComunidad);
-		jugarAccionTarjeta(senderId, accion);
+		jugarAccionTarjeta(jugador, accion);
 	}
 
 	public void jugarAccionTarjeta(int senderId, TarjetaSuerte tarjetaSuerte) {
 		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
-		AccionEnTarjeta accion = gestorTablero.getGestorTarjetas()
-				.jugarTarjetaSuerte(jugador, tarjetaSuerte);
-		jugarAccionTarjeta(senderId, accion);
+		jugarAccionTarjeta(jugador, tarjetaSuerte);
 	}
 
-	public void jugarAccionTarjeta(int senderId, AccionEnTarjeta accion) {
-		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
+	private void jugarAccionTarjeta(Jugador jugador, TarjetaSuerte tarjetaSuerte) {
+		AccionEnTarjeta accion = gestorTablero.getGestorTarjetas()
+				.jugarTarjetaSuerte(jugador, tarjetaSuerte);
+		jugarAccionTarjeta(jugador, accion);
+	}
+
+	public void jugarAccionTarjeta(Jugador jugador, AccionEnTarjeta accion) {
 		String mensaje;
+		int senderId = (jugador.isHumano() ? ((JugadorHumano) jugador)
+				.getIdJugador() : -1);
 		List<History> historyList = new ArrayList<History>();
-		MonopolyGameStatus status;
-		EstadoJuego estadoJuegoJugadorActual = EstadoJuego.JUGANDO;
-		EstadoJuego estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.ESPERANDO_TURNO;
+		// MonopolyGameStatus status;
+		// EstadoJuego estadoJuegoJugadorActual = EstadoJuego.JUGANDO;
+		// EstadoJuego estadoJuegoRestoJugadoresEstadoJuego =
+		// EstadoJuego.ESPERANDO_TURNO;
 
 		switch (accion) {
 		case COBRAR:
@@ -275,24 +337,30 @@ public class JuegoController {
 			try {
 				gestorBanco.cobrar(jugador, accion.getMonto());
 			} catch (SinDineroException e) {
-				// TODO Agregar mensaje de SinDineeroException()
-				e.printStackTrace();
+				ExceptionMessage msg = new ExceptionMessage(e);
+				sendToOne(senderId, msg);
 			}
 			break;
 		case COBRAR_TODOS:
-			/*
-			 * TODO: acá también puede generar SinDineroException() pero no se
-			 * como manejarlo
-			 */
-			gestorBanco.cobrarATodosPagarAUno(jugador, accion.getMonto());
+			// gestorBanco.cobrarATodosPagarAUno(jugador, accion.getMonto());
+			this.contadorPagos = 0;
+			String msgString = String.format("Debe pagar %s al jugador %s",
+					StringUtils.formatearAMoneda(accion.getMonto()),
+					jugador.getNombre());
+			PayToPlayerMessage msg = new PayToPlayerMessage(msgString, jugador,
+					accion.getMonto(), null);
+			if (senderId == -1)
+				sendToAll(msg);
+			else
+				sendToOther(senderId, msg);
 			break;
 		case PAGAR_POR_CASA_HOTEL:
 			try {
 				gestorBanco.cobrarPorCasaYHotel(jugador,
 						accion.getPrecioPorCasa(), accion.getPrecioPorHotel());
 			} catch (SinDineroException e) {
-				// TODO Agregar mensaje de SinDineeroException()
-				e.printStackTrace();
+				ExceptionMessage msgSinDinero = new ExceptionMessage(e);
+				sendToOne(senderId, msgSinDinero);
 			}
 			break;
 		case MOVER:
@@ -314,22 +382,13 @@ public class JuegoController {
 		}
 
 		mensaje = accion.getMensaje();
+		historyList = new ArrayList<History>();
 		historyList.add(new History(StringUtils.getFechaActual(), jugador
 				.getNombre(), mensaje));
 
-		status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
-				gestorBanco.getBanco(), gestorTablero.getTablero(),
-				estadoJuegoJugadorActual, null,
-				gestorJugadores.getCurrentPlayer(), historyList, null);
+		HistoryGameMessage historias = new HistoryGameMessage(historyList);
 
-		sendToOne(senderId, status);
-
-		status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
-				gestorBanco.getBanco(), gestorTablero.getTablero(),
-				estadoJuegoRestoJugadoresEstadoJuego, null,
-				gestorJugadores.getCurrentPlayer(), historyList, null);
-
-		sendToOther(senderId, status);
+		sendToAll(historias);
 
 	}
 
@@ -340,7 +399,7 @@ public class JuegoController {
 		AccionEnCasillero accion;
 		EstadoJuego estadoJuegoJugadorActual = EstadoJuego.TIRAR_DADO;
 		EstadoJuego estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.TIRAR_DADO;
-		MonopolyGameStatus status;
+		// MonopolyGameStatus status;
 		Tarjeta tarjetaSelected = null;
 		String mensaje;
 
@@ -358,30 +417,21 @@ public class JuegoController {
 
 		historyList.add(new History(StringUtils.getFechaActual(), jugador
 				.getNombre(), mensaje));
-		if (estadoJuegoJugadorActual != EstadoJuego.JUGANDO)
-			gestorJugadores.siguienteTurno();
 
-		status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
-				gestorBanco.getBanco(), gestorTablero.getTablero(),
-				estadoJuegoJugadorActual, accion,
-				gestorJugadores.getCurrentPlayer(), historyList,
-				tarjetaSelected);
+		HistoryGameMessage historia = new HistoryGameMessage(historyList);
 
-		sendToAll(status);
+		sendToAll(historia);
 
 		switch (accion) {
 		case TARJETA_SUERTE:
 			tarjetaSelected = gestorTablero.getTarjetaSuerte();
 			accion.setMonto(((TarjetaSuerte) tarjetaSelected).getIdTarjeta());
-
-			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
-			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.ESPERANDO_TURNO;
+			this.jugarAccionTarjeta(jugador, (TarjetaSuerte) tarjetaSelected);
 			break;
 		case TARJETA_COMUNIDAD:
 			tarjetaSelected = gestorTablero.getTarjetaComunidad();
 			accion.setMonto(((TarjetaComunidad) tarjetaSelected).getIdTarjeta());
-			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
-			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.ESPERANDO_TURNO;
+			this.jugarAccionTarjeta(jugador, (TarjetaComunidad) tarjetaSelected);
 			break;
 		case DISPONIBLE_PARA_VENDER:
 		case IMPUESTO_DE_LUJO:
@@ -617,6 +667,10 @@ public class JuegoController {
 		return gestorJugadores;
 	}
 
+	public JugadorVirtualController getGestorJugadoresVirtuales() {
+		return gestorJugadoresVirtuales;
+	}
+
 	public int getCantJugadores() {
 		return cantJugadores;
 	}
@@ -631,6 +685,14 @@ public class JuegoController {
 
 	public void setEstadoJuego(Estado estadoJuego) {
 		this.estadoJuego = estadoJuego;
+	}
+
+	public void addContadorPagos() {
+		this.contadorPagos++;
+	}
+
+	public boolean checkPagaronTodos() {
+		return contadorPagos == this.getCantJugadores();
 	}
 
 }

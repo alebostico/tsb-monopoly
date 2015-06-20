@@ -165,11 +165,19 @@ public class PartidasController {
 	 * 
 	 * @param senderId
 	 * @param idJuego
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void irALaCarcel(int senderId, String idJuego) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.irALaCarcel(senderId);
+	}
+
+	public void addContadorPagos(int senderId, String idJuego) throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.addContadorPagos();
+		if (juegoController.checkPagaronTodos()) {
+			juegoController.siguienteTurno();
+		}
 	}
 
 	/**

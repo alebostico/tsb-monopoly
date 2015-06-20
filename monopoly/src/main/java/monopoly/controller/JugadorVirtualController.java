@@ -751,8 +751,7 @@ public class JugadorVirtualController {
 	 * @return La sumatoria de todas las hipotecas (puede ser igual o menor a
 	 *         cantidad)
 	 */
-	private static int hipotecarAleatorio(int cantidad,
-			JugadorVirtual jugadorActual) {
+	private int hipotecarAleatorio(int cantidad, JugadorVirtual jugadorActual) {
 
 		// 1- Copiar ordenadamente las propiedades hipotecables
 		List<TarjetaPropiedad> propiedadesHipotecables = new LinkedList<>();
@@ -802,7 +801,7 @@ public class JugadorVirtualController {
 	 *            El Jugador que va a deshipotecar
 	 */
 	@SuppressWarnings("unused")
-	private static void deshipotecarAleatorio(JugadorVirtual jugadorActual) {
+	private void deshipotecarAleatorio(JugadorVirtual jugadorActual) {
 		Random rnd = new Random();
 
 		// 1- Copiar ordenadamente las propiedades hipotecables
@@ -851,8 +850,7 @@ public class JugadorVirtualController {
 	 *         cantidad)
 	 */
 	@SuppressWarnings("unused")
-	private static int venderAleatorio(int cantidad,
-			JugadorVirtual jugadorActual) {
+	private int venderAleatorio(int cantidad, JugadorVirtual jugadorActual) {
 
 		Random rnd = new Random();
 		JuegoController juegoController = PartidasController.getInstance()
@@ -908,6 +906,9 @@ public class JugadorVirtualController {
 	 * 
 	 * @param jugadorActual
 	 *            El jugador que va a construír
+	 * @return Devuelve un texto que informa cuantos edificios se compraron y el
+	 *         color del monoplio en el que se colocaron o {@code null} si no se
+	 *         compró nada
 	 * @throws SinEdificiosException
 	 *             Cuando el banco no dipone de las casas/hoteles necesarios
 	 *             para construír
@@ -915,7 +916,7 @@ public class JugadorVirtualController {
 	 *             Cuando el jugador no dispone dinero para comprar las
 	 *             casas/hoteles
 	 */
-	public static void construirAleatorio(JugadorVirtual jugadorActual)
+	public String construirAleatorio(JugadorVirtual jugadorActual)
 			throws SinEdificiosException, SinDineroException {
 
 		Random rnd = new Random();
@@ -994,9 +995,14 @@ public class JugadorVirtualController {
 
 					tableroController.comprarEdificio(casasMonopolio,
 							(CasilleroCalle) tarjetaCalle.getCasillero());
+					return String
+							.format("El jugador %s compró %s edificios para le monopolio color %s",
+									jugadorActual.getNombre(), casasMonopolio,
+									tarjetaCalle.getColor());
 				}
 			}
 		}
+		return null;
 
 	}
 
@@ -1015,7 +1021,7 @@ public class JugadorVirtualController {
 	 *            La cantidad que tiene que pagar
 	 * @return El dinero que le quedó al jugador después de pagar
 	 */
-	public static int pagar(JugadorVirtual jugador, int cantidad) {
+	public int pagar(JugadorVirtual jugador, int cantidad) {
 		// 1. Intento vender edificios si no tengo dinero suficiente
 		if (cantidad > jugador.getDinero()) {
 			int dineroNecesario = cantidad - jugador.getDinero();
@@ -1074,14 +1080,17 @@ public class JugadorVirtualController {
 	 * Permite que un Jugador Virtual pague un monto a otro Jugador (Virtual o
 	 * Humano)
 	 * 
-	 * @param jugadorPaga El Jugador Virtual que paga
-	 * @param jugadorCobra El Jugador que cobra
-	 * @param monto El monto que paga
+	 * @param jugadorPaga
+	 *            El Jugador Virtual que paga
+	 * @param jugadorCobra
+	 *            El Jugador que cobra
+	 * @param monto
+	 *            El monto que paga
 	 * @return El monto que paga o -1 si se declara en bancarrota
 	 */
-	public static int pagarAJugador(JugadorVirtual jugadorPaga,
-			Jugador jugadorCobra, int monto) {
-		if (JugadorVirtualController.pagar(jugadorPaga, monto) == monto) {
+	public int pagarAJugador(JugadorVirtual jugadorPaga, Jugador jugadorCobra,
+			int monto) {
+		if (this.pagar(jugadorPaga, monto) == monto) {
 			jugadorCobra.cobrar(monto);
 			return monto;
 		} else {
