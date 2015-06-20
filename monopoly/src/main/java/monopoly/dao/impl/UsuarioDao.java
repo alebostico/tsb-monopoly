@@ -32,7 +32,6 @@ public class UsuarioDao extends CustomHibernateDaoSupport implements
 	 */
 	@Override
 	public void save(Usuario usuario) {
-		// TODO Auto-generated method stub
 		getHibernateTemplate().save(usuario);
 	}
 
@@ -43,7 +42,6 @@ public class UsuarioDao extends CustomHibernateDaoSupport implements
 	 */
 	@Override
 	public void update(Usuario usuario) {
-		// TODO Auto-generated method stub
 		getHibernateTemplate().update(usuario);
 	}
 
@@ -54,7 +52,6 @@ public class UsuarioDao extends CustomHibernateDaoSupport implements
 	 */
 	@Override
 	public void delete(Usuario usuario) {
-		// TODO Auto-generated method stub
 		getHibernateTemplate().delete(usuario);
 	}
 
@@ -65,7 +62,6 @@ public class UsuarioDao extends CustomHibernateDaoSupport implements
 	 */
 	@Override
 	public List<Usuario> getAll() {
-		// TODO Auto-generated method stub
 		List<Usuario> usuariosList = new ArrayList<Usuario>();
 		Session session = this.getSession();
 
@@ -91,7 +87,6 @@ public class UsuarioDao extends CustomHibernateDaoSupport implements
 	 */
 	@Override
 	public Usuario validarUsuario(String userName, String password) {
-		// TODO Auto-generated method stub
 		Session session = this.getSession();
 		List<?> list = session.createCriteria(Usuario.class)
 				.add(Restrictions.eq("userName", userName))
