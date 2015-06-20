@@ -5,6 +5,8 @@ package monopoly.model;
 
 import java.io.Serializable;
 
+import monopoly.model.tarjetas.Tarjeta;
+
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
@@ -16,7 +18,7 @@ import java.io.Serializable;
 public enum AccionEnTarjeta implements Serializable {
 
 	COBRAR(0), PAGAR(0), COBRAR_TODOS(0), MOVER(0, false), IR_A_CARCEL(), PAGAR_POR_CASA_HOTEL(
-			0, 0);
+			0, 0), MOVER_A(0, false), LIBRE_DE_CARCEL();
 
 	private String mensaje;
 
@@ -29,6 +31,8 @@ public enum AccionEnTarjeta implements Serializable {
 	private int precioPorCasa;
 
 	private int precioPorHotel;
+	
+	private Tarjeta tarjetaCarcel;
 
 	private AccionEnTarjeta() {
 	}
@@ -45,6 +49,10 @@ public enum AccionEnTarjeta implements Serializable {
 	private AccionEnTarjeta(int precioPorCasa, int precioPorHotel) {
 		this.precioPorCasa = precioPorCasa;
 		this.precioPorHotel = precioPorHotel;
+	}
+	
+	private AccionEnTarjeta(Tarjeta tarjetaCarcel){
+		this.tarjetaCarcel = tarjetaCarcel;
 	}
 
 	public String getMensaje() {
@@ -93,6 +101,14 @@ public enum AccionEnTarjeta implements Serializable {
 
 	public void setPrecioPorHotel(int precioPorHotel) {
 		this.precioPorHotel = precioPorHotel;
+	}
+
+	public Tarjeta getTarjetaCarcel() {
+		return tarjetaCarcel;
+	}
+
+	public void setTarjetaCarcel(Tarjeta tarjetaCarcel) {
+		this.tarjetaCarcel = tarjetaCarcel;
 	}
 
 }

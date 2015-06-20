@@ -18,7 +18,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import monopoly.client.connection.ConnectionController;
-import monopoly.model.JugadorHumano;
+import monopoly.model.Jugador;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
@@ -52,7 +52,7 @@ public class VentaPropiedadController extends AnchorPane implements
 
 	private TarjetaPropiedad tarjetaSelected;
 
-	private JugadorHumano jugadorComprador;
+	private Jugador jugadorComprador;
 
 	private static VentaPropiedadController instance;
 
@@ -127,11 +127,11 @@ public class VentaPropiedadController extends AnchorPane implements
 		this.tarjetaSelected = tarjetaSelected;
 	}
 
-	public JugadorHumano getJugadorComprador() {
+	public Jugador getJugadorComprador() {
 		return jugadorComprador;
 	}
 
-	public void setJugadorComprador(JugadorHumano jugadorComprador) {
+	public void setJugadorComprador(Jugador jugadorComprador) {
 		this.jugadorComprador = jugadorComprador;
 	}
 
