@@ -31,6 +31,7 @@ import monopoly.util.message.game.actions.BuyPropertyMessage;
 import monopoly.util.message.game.actions.ChanceCardMessage;
 import monopoly.util.message.game.actions.CommunityCardMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
+import monopoly.util.message.game.actions.PayToBankMessage;
 import monopoly.util.message.game.actions.SuperTaxMessage;
 
 /**
@@ -153,6 +154,8 @@ public class MonopolyGame extends GameServer {
 				break;
 
 			case ConstantesMensaje.PAY_TO_BANK_MESSAGE:
+				PayToBankMessage msgPayToBank = (PayToBankMessage) message;
+				PartidasController.getInstance().pagarAlBanco(msgPayToBank.idJuego, senderId, msgPayToBank.monto, msgPayToBank.mensaje);
 				break;
 				
 			case ConstantesMensaje.COMPLETE_TURN_MESSAGE:

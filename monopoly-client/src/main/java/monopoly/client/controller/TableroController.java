@@ -533,6 +533,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			private EstadoJuego statusGame;
 			private Jugador jugadorActual;
 			private Casillero casilleroActual;
+			private String idJuego = juego.getUniqueID();
 
 			@Override
 			public void run() {
@@ -550,16 +551,20 @@ public class TableroController extends AnchorPane implements Serializable,
 					 * opción cuando al jugador le toca tirar el dado.
 					 */
 					case TIRAR_DADO:
-						btnAcciones.setDisable(false);
+						bloquearAcciones(false);
 						btnTirarDados.setVisible(true);
-						showMessageBox(AlertType.INFORMATION, "Turno de juego...", null,"Es tu turno para tirar los dados", null);
+						showMessageBox(AlertType.INFORMATION,
+								"Turno de juego...", null,
+								"Es tu turno para tirar los dados", null);
 						break;
-						
+
 					/**
 					 * Opción cuando el jugador no terminó su turno.
 					 */
 					case JUGANDO:
 						actualizarGraficoEnElTablero();
+						bloquearAcciones(true);
+						btnTirarDados.setVisible(false);
 
 						switch (accionCasillero) {
 						case DESCANSO:
@@ -635,6 +640,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							break;
 
 						case IMPUESTO_DE_LUJO:
+							PayToBankMessage msgPayToBank;
+							String mensaje;
 							showMessageBox(AlertType.INFORMATION,
 									"Impuesto de lujo...",
 									"Debes pagar el impuesto.", status
@@ -643,14 +650,20 @@ public class TableroController extends AnchorPane implements Serializable,
 
 							if (jugadorActual.getDinero() >= accionCasillero
 									.getMonto()) {
-								PayToBankMessage msgPayToBank = new PayToBankMessage(juego.getUniqueID(), 100);
-								ConnectionController.getInstance().send(msgPayToBank);
+								mensaje = String
+										.format("Ha pagado al banco %s de impuesto de lujo.",
+												StringUtils
+														.formatearAMoneda(100));
+								msgPayToBank = new PayToBankMessage(idJuego,
+										100, mensaje);
+								ConnectionController.getInstance().send(
+										msgPayToBank);
 							} else {
 								showMessageBox(AlertType.INFORMATION,
 										"Impuesto de lujo...",
 										"Debes pagar el impuesto.", status
-												.getAccionCasillero().getMensaje(),
-										null);
+												.getAccionCasillero()
+												.getMensaje(), null);
 							}
 							break;
 
@@ -679,8 +692,7 @@ public class TableroController extends AnchorPane implements Serializable,
 										juego.getUniqueID(),
 										EnumsTipoImpuesto.TIPO_IMPUESTO_PORCENTAJE);
 							} else {
-								msgSuperTax = new SuperTaxMessage(juego
-										.getUniqueID(),
+								msgSuperTax = new SuperTaxMessage(idJuego,
 										EnumsTipoImpuesto.TIPO_IMPUESTO_MONTO);
 							}
 							ConnectionController.getInstance()
@@ -702,13 +714,14 @@ public class TableroController extends AnchorPane implements Serializable,
 							break;
 
 						case IR_A_LA_CARCEL:
+							GoToJailMessage msgGoToJailMessage;
+
 							showMessageBox(AlertType.INFORMATION,
 									"Marche preso...", null, status
 											.getAccionCasillero().getMensaje(),
 									null);
 							// enviar mensaje;
-							GoToJailMessage msgGoToJailMessage = new GoToJailMessage(
-									juego.getUniqueID());
+							msgGoToJailMessage = new GoToJailMessage(idJuego);
 							ConnectionController.getInstance().send(
 									msgGoToJailMessage);
 							break;
@@ -841,45 +854,45 @@ public class TableroController extends AnchorPane implements Serializable,
 		});
 	}
 
-//	public void completarTurno(final String message, final EnumAction accion,
-//			MonopolyGameStatus status) {
-//		this.status = status;
-//
-//		Platform.runLater(new Runnable() {
-//			private Alert alert;
-//
-//			@Override
-//			public void run() {
-//				try {
-//					ButtonType buttonAceptar = new ButtonType("Aceptar",
-//							ButtonData.OK_DONE);
-//					switch (accion) {
-//					case BUY_PROPERTY:
-//
-//						actualizarGraficoEnElTablero();
-//						alert = new Alert(AlertType.INFORMATION);
-//						alert.setTitle("Compra de Propiedad...");
-//						alert.setHeaderText(null);
-//						alert.setContentText(message);
-//						alert.getButtonTypes().setAll(buttonAceptar);
-//						alert.showAndWait();
-//						break;
-//
-//					default:
-//						break;
-//					}
-//					bloquearTablero(false);
-//					btnFinalizarTurno.setDisable(false);
-//
-//				} catch (Exception ex) {
-//					GestorLogs.registrarError(ex);
-//					showMessageBox(AlertType.ERROR, "Error...", null,
-//							ex.getMessage(), null);
-//				}
-//			}
-//		});
-//
-//	}
+	// public void completarTurno(final String message, final EnumAction accion,
+	// MonopolyGameStatus status) {
+	// this.status = status;
+	//
+	// Platform.runLater(new Runnable() {
+	// private Alert alert;
+	//
+	// @Override
+	// public void run() {
+	// try {
+	// ButtonType buttonAceptar = new ButtonType("Aceptar",
+	// ButtonData.OK_DONE);
+	// switch (accion) {
+	// case BUY_PROPERTY:
+	//
+	// actualizarGraficoEnElTablero();
+	// alert = new Alert(AlertType.INFORMATION);
+	// alert.setTitle("Compra de Propiedad...");
+	// alert.setHeaderText(null);
+	// alert.setContentText(message);
+	// alert.getButtonTypes().setAll(buttonAceptar);
+	// alert.showAndWait();
+	// break;
+	//
+	// default:
+	// break;
+	// }
+	// bloquearTablero(false);
+	// btnFinalizarTurno.setDisable(false);
+	//
+	// } catch (Exception ex) {
+	// GestorLogs.registrarError(ex);
+	// showMessageBox(AlertType.ERROR, "Error...", null,
+	// ex.getMessage(), null);
+	// }
+	// }
+	// });
+	//
+	// }
 
 	// =======================================================================//
 	// =========== Métodos para dibujar componentes en la pantalla ===========//
@@ -1067,9 +1080,8 @@ public class TableroController extends AnchorPane implements Serializable,
 		btnHipotecar.setDisable(bloquear);
 		btnVender.setDisable(bloquear);
 	}
-	
-	public void debloquearVenta()
-	{
+
+	public void debloquearVenta() {
 		btnHipotecar.setDisable(false);
 		btnVender.setDisable(false);
 		btnComercializar.setDisable(false);
@@ -1672,10 +1684,10 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	@FXML
 	void processfinalizarTurno(ActionEvent event) {
-//		CompleteTurnMessage msg = new CompleteTurnMessage(getJuego()
-//				.getUniqueID(), null, null);
-//		ConnectionController.getInstance().send(msg);
-//		bloquearTablero(true);
+		// CompleteTurnMessage msg = new CompleteTurnMessage(getJuego()
+		// .getUniqueID(), null, null);
+		// ConnectionController.getInstance().send(msg);
+		// bloquearTablero(true);
 	}
 
 	// ======================================================================//

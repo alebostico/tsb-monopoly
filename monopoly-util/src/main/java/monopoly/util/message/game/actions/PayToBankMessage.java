@@ -16,9 +16,11 @@ public class PayToBankMessage implements Serializable {
 
 	public final String idJuego;
 	public final int monto;
+	public final String mensaje;
 
-	public PayToBankMessage(String idJuego, int monto) {
+	public PayToBankMessage(String idJuego, int monto, String mensaje) {
 		this.idJuego = idJuego;
 		this.monto = monto;
+		this.mensaje = mensaje;
 	}
 }

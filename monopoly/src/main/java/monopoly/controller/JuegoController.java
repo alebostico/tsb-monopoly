@@ -78,7 +78,7 @@ public class JuegoController {
 		History history = new History(StringUtils.getFechaActual(),
 				jugador.getNombre(), "Se unió al juego.");
 		HistoryGameMessage msg = new HistoryGameMessage(history);
-		if (jugador instanceof JugadorHumano)
+		if (jugador.isHumano())
 			sendToOther(((JugadorHumano) jugador).getSenderID(), msg);
 
 		if (this.gestorJugadores.cantJugadoresConectados() == cantJugadores) {
@@ -129,14 +129,15 @@ public class JuegoController {
 				sendToAll(status);
 				tirarDadosJugadorVirtual();
 			} else {
-				JugadorHumano jh = (JugadorHumano)gestorJugadores.getCurrentPlayer();
+				JugadorHumano jh = (JugadorHumano) gestorJugadores
+						.getCurrentPlayer();
 				status = new MonopolyGameStatus(
 						gestorJugadores.getTurnoslist(),
 						gestorBanco.getBanco(), gestorTablero.getTablero(),
 						EstadoJuego.TIRAR_DADO, null,
 						gestorJugadores.getCurrentPlayer(), historyList, null);
 				sendToOne(jh.getSenderID(), status);
-				
+
 				status.setStatus(EstadoJuego.ESPERANDO_TURNO);
 				sendToOther(jh.getSenderID(), status);
 			}
@@ -420,16 +421,17 @@ public class JuegoController {
 	public void comprarPropiedad(int senderId, TarjetaPropiedad tarjeta)
 			throws SinDineroException, Exception {
 		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
-		comprarPropiedad(senderId, jugador, tarjeta);
+		comprarPropiedad(jugador, tarjeta);
 	}
 
-	private void comprarPropiedad(int senderId, Jugador jugador,
-			TarjetaPropiedad tarjeta) throws SinDineroException, Exception {
-		MonopolyGameStatus status;
+	private void comprarPropiedad(Jugador jugador, TarjetaPropiedad tarjeta)
+			throws SinDineroException, Exception {
 		History history;
+		int senderId = 0;
 		gestorTablero.comprarPropiedad(jugador, tarjeta);
 
-		if (jugador instanceof JugadorHumano) {
+		if (jugador.isHumano()) {
+			senderId = ((JugadorHumano) jugador).getSenderID();
 			status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
 					gestorBanco.getBanco(), gestorTablero.getTablero(),
 					EstadoJuego.JUGANDO, null,
@@ -453,6 +455,7 @@ public class JuegoController {
 							tarjeta.getNombre()));
 			sendToAll(new HistoryGameMessage(history));
 		}
+		siguienteTurno();
 	}
 
 	public void siguienteTurno() throws Exception {
@@ -585,15 +588,26 @@ public class JuegoController {
 	public void impuestoAlCapital(int senderId, EnumsTipoImpuesto tipoImpuesto)
 			throws Exception {
 		int monto = 0;
-		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
+		History history;
+		HistoryGameMessage msgHistory;
+		Jugador jugador;
+
+		jugador = gestorJugadores.getJugadorHumano(senderId);
 		if (tipoImpuesto == EnumsTipoImpuesto.TIPO_IMPUESTO_MONTO)
 			monto = 200;
 		else
 			monto = (int) (jugador.getCapital() * 0.1);
 
-		if (jugador.getDinero() >= monto)
+		if (jugador.getDinero() >= monto) {
 			gestorBanco.cobrar(jugador, monto);
-		else {
+			history = new History();
+			history.setFecha(StringUtils.getFechaActual());
+			history.setUsuario(jugador.getNombre());
+			history.setMensaje(String.format(
+					"Ha pagado %s de impuesto al capital.", monto));
+			msgHistory = new HistoryGameMessage(history);
+			sendToAll(msgHistory);
+		} else {
 			// TODO completar acción cuando el jugador quiere pagar por
 			SinDineroException sde = new SinDineroException(
 					String.format(
@@ -601,7 +615,39 @@ public class JuegoController {
 							StringUtils.formatearAMoneda(monto)));
 			sendToOne(senderId, sde);
 		}
+		siguienteTurno();
 	}
+
+	/**
+	 * Método para que el jugador pague al banco un determinado {@code monto}.
+	 * 
+	 * @param senderId
+	 *            id de conexión del jugador humano.
+	 * @param monto
+	 *            cantidad de dinero que el jugador le pagará al banco.
+	 */
+	public void pagarAlBanco(int senderId, int monto, String mensaje)
+			throws Exception, SinDineroException {
+		Jugador jugador;
+		History history;
+		HistoryGameMessage msgHistory;
+
+		jugador = gestorJugadores.getJugadorHumano(senderId);
+		gestorBanco.cobrar(jugador, monto);
+		if (StringUtils.IsNullOrEmpty(mensaje)) {
+			history = new History();
+			history.setFecha(StringUtils.getFechaActual());
+			history.setUsuario(jugador.getNombre());
+			history.setMensaje(mensaje);
+			msgHistory = new HistoryGameMessage(history);
+			sendToAll(msgHistory);
+		}
+		siguienteTurno();
+	}
+
+	// =====================================================================//
+	// ============= Métodos para envío de mensaje al cliente. =============//
+	// =====================================================================//
 
 	private void sendToOne(int recipientID, Object message) {
 		PartidasController.getInstance().getMonopolyGame()
@@ -641,8 +687,10 @@ public class JuegoController {
 		}
 	}
 
-	// ======================= Getter & Setter =======================//
-
+	// =====================================================================//
+	// ========================== Getter & Setter ==========================//
+	// =====================================================================//
+	
 	public Juego getJuego() {
 		return juego;
 	}
