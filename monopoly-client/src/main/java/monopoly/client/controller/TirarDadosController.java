@@ -45,6 +45,9 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 
 	@FXML
 	private Button btnTirarDados;
+	
+	@FXML
+    private Button btnCancelar;
 
 	@FXML
 	private Stage currentStage;
@@ -126,6 +129,12 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 			alert.showAndWait();
 		}
 	}
+	
+	@FXML
+    void processCancelar(ActionEvent event) {
+		TableroController.getInstance().getBtnAcciones().setDisable(false);
+		currentStage.close();
+    }
 
 	public void settearDatos(String username) {
 		if (lblNombre != null)

@@ -25,6 +25,7 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.StringUtils;
 import monopoly.util.constantes.EnumAction;
+import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.exception.SinDineroException;
 import monopoly.util.message.game.CompleteTurnMessage;
@@ -119,15 +120,27 @@ public class JuegoController {
 					"Turno para tirar los dados.");
 			historyList.add(history);
 
-			status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
-					gestorBanco.getBanco(), gestorTablero.getTablero(),
-					EstadoJuego.TIRAR_DADO, null,
-					gestorJugadores.getCurrentPlayer(), historyList, null);
-			sendToAll(status);
-
-			if (gestorJugadores.getCurrentPlayer() instanceof JugadorVirtual) {
+			if (gestorJugadores.getCurrentPlayer().isVirtual()) {
+				status = new MonopolyGameStatus(
+						gestorJugadores.getTurnoslist(),
+						gestorBanco.getBanco(), gestorTablero.getTablero(),
+						EstadoJuego.TIRAR_DADO, null,
+						gestorJugadores.getCurrentPlayer(), historyList, null);
+				sendToAll(status);
 				tirarDadosJugadorVirtual();
+			} else {
+				JugadorHumano jh = (JugadorHumano)gestorJugadores.getCurrentPlayer();
+				status = new MonopolyGameStatus(
+						gestorJugadores.getTurnoslist(),
+						gestorBanco.getBanco(), gestorTablero.getTablero(),
+						EstadoJuego.TIRAR_DADO, null,
+						gestorJugadores.getCurrentPlayer(), historyList, null);
+				sendToOne(jh.getSenderID(), status);
+				
+				status.setStatus(EstadoJuego.ESPERANDO_TURNO);
+				sendToOther(jh.getSenderID(), status);
 			}
+
 		}
 	}
 
@@ -490,6 +503,7 @@ public class JuegoController {
 	 * (JugadorHumano)
 	 * 
 	 * @param senderId
+	 *            id de conexión del jugador humano
 	 * @param tarjeta
 	 * @throws Exception
 	 */
@@ -504,6 +518,7 @@ public class JuegoController {
 	 * (JugadorVirtual)
 	 * 
 	 * @param senderId
+	 *            id de conexión del jugador humano
 	 * @param jugador
 	 * @param tarjeta
 	 * @throws Exception
@@ -518,6 +533,7 @@ public class JuegoController {
 	 * (JugadorHumano)
 	 * 
 	 * @param senderId
+	 *            id de conexión del jugador humano
 	 * @param tarjeta
 	 * @throws Exception
 	 */
@@ -532,6 +548,7 @@ public class JuegoController {
 	 * (JugadorVirtual)
 	 * 
 	 * @param senderId
+	 *            id de conexión del jugador humano
 	 * @param jugador
 	 * @param tarjeta
 	 * @throws Exception
@@ -546,6 +563,7 @@ public class JuegoController {
 	 * Método para llevar preso al jugador.
 	 * 
 	 * @param senderId
+	 *            id de conexión del jugador humano
 	 */
 	public void irALaCarcel(int senderId) throws Exception {
 		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
@@ -555,6 +573,34 @@ public class JuegoController {
 				jugador.getNombre(), "Fue a la cárcel");
 		sendToAll(new HistoryGameMessage(history));
 		siguienteTurno();
+	}
+
+	/**
+	 * Método para cobrar el impuesto sobre el cápital.
+	 * 
+	 * @param senderId
+	 *            id de conexión del jugador humano
+	 * @param tipoImpuesto
+	 */
+	public void impuestoAlCapital(int senderId, EnumsTipoImpuesto tipoImpuesto)
+			throws Exception {
+		int monto = 0;
+		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
+		if (tipoImpuesto == EnumsTipoImpuesto.TIPO_IMPUESTO_MONTO)
+			monto = 200;
+		else
+			monto = (int) (jugador.getCapital() * 0.1);
+
+		if (jugador.getDinero() >= monto)
+			gestorBanco.cobrar(jugador, monto);
+		else {
+			// TODO completar acción cuando el jugador quiere pagar por
+			SinDineroException sde = new SinDineroException(
+					String.format(
+							"No posees suficiente dinero para pagar el impuesto. Debes pagar %s.",
+							StringUtils.formatearAMoneda(monto)));
+			sendToOne(senderId, sde);
+		}
 	}
 
 	private void sendToOne(int recipientID, Object message) {

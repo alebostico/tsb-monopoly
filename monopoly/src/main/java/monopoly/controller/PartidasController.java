@@ -18,6 +18,7 @@ import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
+import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.SinDineroException;
 
 /**
@@ -162,11 +163,25 @@ public class PartidasController {
 	 * 
 	 * @param senderId
 	 * @param idJuego
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void irALaCarcel(int senderId, String idJuego) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.irALaCarcel(senderId);
+	}
+
+	/**
+	 * Método para cobrar el impuesto de lujo.
+	 * 
+	 * @param senderId
+	 * @param idJuego
+	 * @param tipoImpuesto
+	 * @throws Exception 
+	 */
+	public void impuestoAlCapital(int senderId, String idJuego,
+			EnumsTipoImpuesto tipoImpuesto) throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.impuestoAlCapital(senderId,tipoImpuesto);
 	}
 
 	/**

@@ -14,9 +14,11 @@ public class PayToBankMessage implements Serializable {
 
 	private static final long serialVersionUID = -418994357796220385L;
 
-	public final Object message; // Original message from a client.
+	public final String idJuego;
+	public final int monto;
 
-	public PayToBankMessage(Object message) {
-		this.message = message;
+	public PayToBankMessage(String idJuego, int monto) {
+		this.idJuego = idJuego;
+		this.monto = monto;
 	}
 }

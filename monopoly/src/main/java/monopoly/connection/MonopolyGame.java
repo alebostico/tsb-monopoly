@@ -31,6 +31,7 @@ import monopoly.util.message.game.actions.BuyPropertyMessage;
 import monopoly.util.message.game.actions.ChanceCardMessage;
 import monopoly.util.message.game.actions.CommunityCardMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
+import monopoly.util.message.game.actions.SuperTaxMessage;
 
 /**
  * @author Bostico Alejandro
@@ -162,6 +163,11 @@ public class MonopolyGame extends GameServer {
 			case ConstantesMensaje.GO_TO_JAIL_MESSAGE:
 				GoToJailMessage msgGoToJailMessage = (GoToJailMessage)message;
 				PartidasController.getInstance().irALaCarcel(senderId, msgGoToJailMessage.idJuego);
+				break;
+				
+			case ConstantesMensaje.SUPER_TAX_MESSAGE:
+				SuperTaxMessage msgSuperTax = (SuperTaxMessage) message;
+				PartidasController.getInstance().impuestoAlCapital(senderId, msgSuperTax.idJuego, msgSuperTax.tipoImpuesto);
 				break;
 
 			case ConstantesMensaje.DISCONNECT_MESSAGE:

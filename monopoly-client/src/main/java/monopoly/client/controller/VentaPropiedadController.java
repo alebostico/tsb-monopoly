@@ -64,7 +64,6 @@ public class VentaPropiedadController extends AnchorPane implements
 				BuyPropertyMessage msg = new BuyPropertyMessage(jugadorComprador.getJuego().getUniqueID(), tarjetaSelected);
 				ConnectionController.getInstance().send(msg);
 				currentStage.close();
-				TableroController.getInstance().bloquearTablero(true);
 			} else {
 				Alert alert = new Alert(AlertType.WARNING);
 				alert.setTitle("Comprar Propiedad "
