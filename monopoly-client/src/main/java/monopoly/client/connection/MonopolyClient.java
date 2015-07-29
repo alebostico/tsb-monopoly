@@ -23,7 +23,6 @@ import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
 import monopoly.util.message.LoginMessage;
-import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.JoinGameMessage;
 
@@ -93,11 +92,11 @@ public class MonopolyClient extends GameClient {
 				break;
 
 			case ConstantesMensaje.COMPLETE_TURN_MESSAGE:
-				CompleteTurnMessage msgCompleteTurnMessage = (CompleteTurnMessage) message;
-				TableroController.getInstance().completarTurno(
-						msgCompleteTurnMessage.message,
-						msgCompleteTurnMessage.action,
-						(MonopolyGameStatus) msgCompleteTurnMessage.status);
+//				CompleteTurnMessage msgCompleteTurnMessage = (CompleteTurnMessage) message;
+//				TableroController.getInstance().completarTurno(
+//						msgCompleteTurnMessage.message,
+//						msgCompleteTurnMessage.action,
+//						(MonopolyGameStatus) msgCompleteTurnMessage.status);
 				break;
 
 			case ConstantesMensaje.EXCEPTION_MESSAGE:
@@ -129,7 +128,7 @@ public class MonopolyClient extends GameClient {
 			break;
 
 		case ConstantesMensaje.THROW_DICE_ADVANCE_MESSAGE:
-			TableroController.getInstance().tirarDados();
+			TableroController.getInstance().processTirarDados(null);
 			break;
 
 		default:

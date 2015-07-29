@@ -18,6 +18,7 @@ import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
+import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.SinDineroException;
 
 /**
@@ -81,6 +82,7 @@ public class PartidasController {
 	 * Método para avanzar de casillero en base a los resultados de los dados.
 	 * 
 	 * @param senderId
+	 *            id de conexión del jugador humano.
 	 * @param message
 	 */
 	public void avanzarDeCasillero(int senderId, String idJuego, Dado dados)
@@ -121,7 +123,9 @@ public class PartidasController {
 	 * salió.
 	 * 
 	 * @param idJuego
+	 *            identificador del juego.
 	 * @param senderId
+	 *            id de conexión del jugador humano.
 	 * @param message
 	 * @throws Exception
 	 */
@@ -136,7 +140,9 @@ public class PartidasController {
 	 * nos salió.
 	 * 
 	 * @param idJuego
+	 *            identificador del juego.
 	 * @param senderId
+	 *            id de conexión del jugador humano.
 	 * @param message
 	 */
 	public void tarjetaComunidad(String idJuego, int senderId,
@@ -150,6 +156,7 @@ public class PartidasController {
 	 * jugada.
 	 * 
 	 * @param idJuego
+	 *            identificador del juego.
 	 * @throws Exception
 	 */
 	public void siguienteTurno(String idJuego) throws Exception {
@@ -161,7 +168,12 @@ public class PartidasController {
 	 * Método para llevar preso al jugador.
 	 * 
 	 * @param senderId
+	 *            id de conexión del jugador humano.
 	 * @param idJuego
+<<<<<<< HEAD
+=======
+	 *            identificador del juego.
+>>>>>>> branch 'master' of https://github.com/ale-bos/tsb-monopoly
 	 * @throws Exception
 	 */
 	public void irALaCarcel(int senderId, String idJuego) throws Exception {
@@ -176,6 +188,42 @@ public class PartidasController {
 			juegoController.siguienteTurno();
 		}
 	}
+
+	/**
+	 * Método para cobrar el impuesto de lujo.
+	 * 
+	 * @param senderId
+	 *            id de conexión del jugador humano.
+	 * @param idJuego
+	 *            identificador del juego.
+	 * @param tipoImpuesto
+	 * @throws Exception
+	 */
+	public void impuestoAlCapital(int senderId, String idJuego,
+			EnumsTipoImpuesto tipoImpuesto) throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.impuestoAlCapital(senderId, tipoImpuesto);
+	}
+
+	/**
+	 * Método para que el jugador pague al banco un determinado {@code monto}.
+	 * 
+	 * @param idJuego
+	 *            identificador del juego.
+	 * @param senderId
+	 *            id de conexión del jugador humano.
+	 * @param monto
+	 *            cantidad de dinero que el jugador le pagará al banco.
+	 */
+	public void pagarAlBanco(String idJuego, int senderId, int monto, String mensaje)
+			throws Exception, SinDineroException {
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.pagarAlBanco(senderId, monto, mensaje);
+	}
+
+	// =====================================================================//
+	// ========================= Gestión del juego =========================//
+	// =====================================================================//
 
 	/**
 	 * Agrega un juego a la lista de juegos

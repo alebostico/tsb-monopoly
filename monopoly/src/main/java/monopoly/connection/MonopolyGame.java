@@ -31,7 +31,12 @@ import monopoly.util.message.game.actions.BuyPropertyMessage;
 import monopoly.util.message.game.actions.ChanceCardMessage;
 import monopoly.util.message.game.actions.CommunityCardMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
+<<<<<<< HEAD
 import monopoly.util.message.game.actions.PayToPlayerMessage;
+=======
+import monopoly.util.message.game.actions.PayToBankMessage;
+import monopoly.util.message.game.actions.SuperTaxMessage;
+>>>>>>> branch 'master' of https://github.com/ale-bos/tsb-monopoly
 
 /**
  * @author Bostico Alejandro
@@ -162,6 +167,8 @@ public class MonopolyGame extends GameServer {
 				break;
 
 			case ConstantesMensaje.PAY_TO_BANK_MESSAGE:
+				PayToBankMessage msgPayToBank = (PayToBankMessage) message;
+				PartidasController.getInstance().pagarAlBanco(msgPayToBank.idJuego, senderId, msgPayToBank.monto, msgPayToBank.mensaje);
 				break;
 
 			case ConstantesMensaje.COMPLETE_TURN_MESSAGE:
@@ -180,6 +187,11 @@ public class MonopolyGame extends GameServer {
 				PayToPlayerMessage msgPayToPlayerMessage = (PayToPlayerMessage) message;
 				PartidasController.getInstance().addContadorPagos(senderId,
 						msgPayToPlayerMessage.idJuego);
+				break;
+				
+			case ConstantesMensaje.SUPER_TAX_MESSAGE:
+				SuperTaxMessage msgSuperTax = (SuperTaxMessage) message;
+				PartidasController.getInstance().impuestoAlCapital(senderId, msgSuperTax.idJuego, msgSuperTax.tipoImpuesto);
 				break;
 
 			case ConstantesMensaje.DISCONNECT_MESSAGE:

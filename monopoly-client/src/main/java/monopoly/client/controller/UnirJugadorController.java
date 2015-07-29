@@ -106,7 +106,7 @@ public class UnirJugadorController extends AnchorPane implements Initializable {
 
 			Scene scene = new Scene(root);
 			stage.setScene(scene);
-			stage.setTitle("Monopoly - Tablero");
+			stage.setTitle("Monopoly - Tablero - " + usuarioLogueado.getNombre());
 			stage.centerOnScreen();
 			controller.setCurrentStage(stage);
 			controller.showTableroDeJuego();

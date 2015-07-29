@@ -225,7 +225,7 @@ public class CrearJugadoresController extends AnchorPane implements
 
 				Scene scene = new Scene(root);
 				stage.setScene(scene);
-				stage.setTitle("Monopoly - Tablero");
+				stage.setTitle("Monopoly - Tablero - " + juego.getOwner().getNombre());
 				stage.centerOnScreen();
 				controller.setCurrentStage(stage);
 				controller.showTableroDeJuego();
