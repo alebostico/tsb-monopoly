@@ -397,8 +397,9 @@ public class JuegoController {
 		Casillero casillero;
 		boolean cobraSalida = true;
 		AccionEnCasillero accion;
-		EstadoJuego estadoJuegoJugadorActual = EstadoJuego.TIRAR_DADO;
-		EstadoJuego estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.TIRAR_DADO;
+		// EstadoJuego estadoJuegoJugadorActual = EstadoJuego.TIRAR_DADO;
+		// EstadoJuego estadoJuegoRestoJugadoresEstadoJuego =
+		// EstadoJuego.TIRAR_DADO;
 		// MonopolyGameStatus status;
 		Tarjeta tarjetaSelected = null;
 		String mensaje;
@@ -438,14 +439,15 @@ public class JuegoController {
 
 		case IR_A_LA_CARCEL:
 		case PAGAR_ALQUILER:
-			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
-			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.ESPERANDO_TURNO;
+			// estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
+			// estadoJuegoRestoJugadoresEstadoJuego =
+			// EstadoJuego.ESPERANDO_TURNO;
 			break;
 		case DESCANSO:
 		case HIPOTECADA:
 		case MI_PROPIEDAD:
-			estadoJuegoJugadorActual = Estado.EstadoJuego.ESPERANDO_TURNO;
-			estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.TIRAR_DADO;
+			// estadoJuegoJugadorActual = Estado.EstadoJuego.ESPERANDO_TURNO;
+			// estadoJuegoRestoJugadoresEstadoJuego = EstadoJuego.TIRAR_DADO;
 			break;
 		default:
 			throw new CondicionInvalidaException(String.format(

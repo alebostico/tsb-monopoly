@@ -6,7 +6,6 @@ package monopoly.connection;
 import java.io.IOException;
 import java.util.List;
 
-import monopoly.controller.JuegoController;
 import monopoly.controller.PartidasController;
 import monopoly.controller.UsuarioController;
 import monopoly.model.Dado;
