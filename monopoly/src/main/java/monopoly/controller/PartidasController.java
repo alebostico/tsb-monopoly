@@ -170,12 +170,23 @@ public class PartidasController {
 	 * @param senderId
 	 *            id de conexión del jugador humano.
 	 * @param idJuego
+<<<<<<< HEAD
+=======
 	 *            identificador del juego.
+>>>>>>> branch 'master' of https://github.com/ale-bos/tsb-monopoly
 	 * @throws Exception
 	 */
 	public void irALaCarcel(int senderId, String idJuego) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.irALaCarcel(senderId);
+	}
+
+	public void addContadorPagos(int senderId, String idJuego) throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.addContadorPagos();
+		if (juegoController.checkPagaronTodos()) {
+			juegoController.siguienteTurno();
+		}
 	}
 
 	/**

@@ -31,8 +31,12 @@ import monopoly.util.message.game.actions.BuyPropertyMessage;
 import monopoly.util.message.game.actions.ChanceCardMessage;
 import monopoly.util.message.game.actions.CommunityCardMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
+<<<<<<< HEAD
+import monopoly.util.message.game.actions.PayToPlayerMessage;
+=======
 import monopoly.util.message.game.actions.PayToBankMessage;
 import monopoly.util.message.game.actions.SuperTaxMessage;
+>>>>>>> branch 'master' of https://github.com/ale-bos/tsb-monopoly
 
 /**
  * @author Bostico Alejandro
@@ -124,14 +128,17 @@ public class MonopolyGame extends GameServer {
 				break;
 
 			case ConstantesMensaje.START_GAME_MESSAGE:
-				StartGameMessage msgStartGameMessage  = (StartGameMessage) message;
+				StartGameMessage msgStartGameMessage = (StartGameMessage) message;
 				PartidasController.getInstance().establecerTurnoJugador(
-						senderId, msgStartGameMessage.UniqueIdJuego, (Dado)msgStartGameMessage.message);
+						senderId, msgStartGameMessage.UniqueIdJuego,
+						(Dado) msgStartGameMessage.message);
 				break;
 
 			case ConstantesMensaje.ADVANCE_IN_BOARD_MESSAGE:
 				AdvanceInBoardMessage msgAdvanceInBoardMessage = (AdvanceInBoardMessage) message;
-				PartidasController.getInstance().avanzarDeCasillero(senderId, msgAdvanceInBoardMessage.idJuego,(Dado)msgAdvanceInBoardMessage.dados);
+				PartidasController.getInstance().avanzarDeCasillero(senderId,
+						msgAdvanceInBoardMessage.idJuego,
+						(Dado) msgAdvanceInBoardMessage.dados);
 				break;
 
 			case ConstantesMensaje.AUCTION_PROPERTY_MESSAGE:
@@ -139,33 +146,47 @@ public class MonopolyGame extends GameServer {
 
 			case ConstantesMensaje.BUY_PROPERTY_MESSAGE:
 				BuyPropertyMessage msgBuyPropertyMessage = (BuyPropertyMessage) message;
-				PartidasController.getInstance().comprarPropiedad(msgBuyPropertyMessage.idJuego, senderId, (TarjetaPropiedad)msgBuyPropertyMessage.message);
+				PartidasController.getInstance().comprarPropiedad(
+						msgBuyPropertyMessage.idJuego, senderId,
+						(TarjetaPropiedad) msgBuyPropertyMessage.message);
 
 				break;
 
 			case ConstantesMensaje.CHANCE_CARD_MESSAGE:
 				ChanceCardMessage msgChanceCardMessage = (ChanceCardMessage) message;
-				PartidasController.getInstance().tarjetaSuerte(msgChanceCardMessage.idJuego, senderId, (TarjetaSuerte)msgChanceCardMessage.message);
+				PartidasController.getInstance().tarjetaSuerte(
+						msgChanceCardMessage.idJuego, senderId,
+						(TarjetaSuerte) msgChanceCardMessage.message);
 				break;
 
 			case ConstantesMensaje.COMMUNITY_CARD_MESSAGE:
 				CommunityCardMessage msgCommunityCardMessage = (CommunityCardMessage) message;
-				PartidasController.getInstance().tarjetaComunidad(msgCommunityCardMessage.idJuego, senderId, (TarjetaComunidad)msgCommunityCardMessage.message);
+				PartidasController.getInstance().tarjetaComunidad(
+						msgCommunityCardMessage.idJuego, senderId,
+						(TarjetaComunidad) msgCommunityCardMessage.message);
 				break;
 
 			case ConstantesMensaje.PAY_TO_BANK_MESSAGE:
 				PayToBankMessage msgPayToBank = (PayToBankMessage) message;
 				PartidasController.getInstance().pagarAlBanco(msgPayToBank.idJuego, senderId, msgPayToBank.monto, msgPayToBank.mensaje);
 				break;
-				
+
 			case ConstantesMensaje.COMPLETE_TURN_MESSAGE:
 				CompleteTurnMessage msgCompleteTurnMessage = (CompleteTurnMessage) message;
-				PartidasController.getInstance().siguienteTurno(msgCompleteTurnMessage.message);
+				PartidasController.getInstance().siguienteTurno(
+						msgCompleteTurnMessage.message);
 				break;
-				
+
 			case ConstantesMensaje.GO_TO_JAIL_MESSAGE:
-				GoToJailMessage msgGoToJailMessage = (GoToJailMessage)message;
-				PartidasController.getInstance().irALaCarcel(senderId, msgGoToJailMessage.idJuego);
+				GoToJailMessage msgGoToJailMessage = (GoToJailMessage) message;
+				PartidasController.getInstance().irALaCarcel(senderId,
+						msgGoToJailMessage.idJuego);
+				break;
+
+			case ConstantesMensaje.PAY_TO_PLAYER_MESSAGE:
+				PayToPlayerMessage msgPayToPlayerMessage = (PayToPlayerMessage) message;
+				PartidasController.getInstance().addContadorPagos(senderId,
+						msgPayToPlayerMessage.idJuego);
 				break;
 				
 			case ConstantesMensaje.SUPER_TAX_MESSAGE:
@@ -185,7 +206,7 @@ public class MonopolyGame extends GameServer {
 				System.out.print(message.getClass().getSimpleName());
 				break;
 			}
-		}catch (SinDineroException sde){
+		} catch (SinDineroException sde) {
 			sendToOne(senderId, new ExceptionMessage(sde));
 		} catch (Exception ex) {
 			sendToOne(senderId, new ExceptionMessage(ex));
@@ -193,7 +214,7 @@ public class MonopolyGame extends GameServer {
 
 	}
 
-	private void messageString(int senderId, Object message) throws Exception{
+	private void messageString(int senderId, Object message) throws Exception {
 		List<Juego> juegosList;
 		switch ((String) message) {
 		case ConstantesMensaje.GET_PENDING_GAMES_MESSAGE:

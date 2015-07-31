@@ -1223,7 +1223,7 @@ public class TableroController {
 	 * 
 	 * @param casillero
 	 *            El casillero de donde se vende la propiedad
-	 * @param jugador
+	 * @param jugadorAPagar
 	 *            El Jugador que vende la propiedad
 	 * @return true si se puede vender.
 	 * @throws SinEdificiosException
@@ -1270,7 +1270,7 @@ public class TableroController {
 	 * 
 	 * @param casillero
 	 *            El Caillero en donde agregar la propiedad
-	 * @param jugador
+	 * @param jugadorAPagar
 	 *            El jugador que compra la propiedad
 	 * @return true si compra la propiedad, false en caso contrario.
 	 * @throws SinEdificiosException

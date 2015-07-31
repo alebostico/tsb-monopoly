@@ -33,6 +33,7 @@ public class ConstantesMensaje {
 	public final static String SUPER_TAX_MESSAGE = "SuperTaxMessage";
 
 	public final static String COMPLETE_TURN_MESSAGE = "CompleteTurnMessage";
+	public final static String PAY_TO_PLAYER_MESSAGE = "PayToPlayerMessage";
 	/*************************************************************************************/
 
 	/*************************************************************************************/
