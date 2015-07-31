@@ -8,20 +8,19 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
-import org.controlsfx.dialog.Dialogs;
-
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import monopoly.client.util.ScreensFramework;
+import javafx.stage.StageStyle;
+import monopoly.client.util.FXUtils;
 import monopoly.model.Juego;
 import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
@@ -33,7 +32,6 @@ import monopoly.util.exception.CampoVacioException;
  * @author Moreno Pablo
  *
  */
-@SuppressWarnings("deprecation")
 public class CrearJuegoController extends AnchorPane implements Initializable {
 
 	@FXML
@@ -106,42 +104,44 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 
 	@FXML
 	void processCreateGame(ActionEvent event) {
-		GestorLogs.registrarLog("Creando Jugadores...");
-		String fxml = ConstantesFXML.FXML_CREAR_JUGADORES;
-		Parent root;
-		Stage stage = new Stage();
-		FXMLLoader loader = null;
+		Alert alert;
+		String fxml ;
+		Stage stageCrearJugadores;
+		CrearJugadoresController controller;
 		try {
 			if (validarCamposVacios()) {
-
+				
 				nuevoJuego.setNombreJuego(txtNombreJuego.getText());
+				
+				stageCrearJugadores = new Stage();
+				fxml = ConstantesFXML.FXML_CREAR_JUGADORES;
+				
+				controller = (CrearJugadoresController) FXUtils
+						.cargarStage(stageCrearJugadores, fxml,
+								"Monopoly - Nuevo Juego",
+								false, false, Modality.APPLICATION_MODAL,
+								StageStyle.UNDECORATED);
 
-				loader = ScreensFramework.getLoader(fxml);
-
-				root = (Parent) loader.load();
-				CrearJugadoresController controller = (CrearJugadoresController) loader
-						.getController();
 				controller.setPrevStage(prevStage);
 				controller.setJuego(nuevoJuego);
-
-				Scene scene = new Scene(root);
-				stage.setScene(scene);
-				stage.setTitle("Monopoly - Nuevo Juego");
-				stage.centerOnScreen();
-				controller.setCurrentStage(stage);
+				controller.setCurrentStage(stageCrearJugadores);
 				controller.inicializarVariables();
 				currentStage.close();
-				stage.show();
+				stageCrearJugadores.show();
 			}
 		} catch (CampoVacioException cve) {
-			Dialogs.create().owner(currentStage).title("Advertencia")
-			.masthead("Campo Obligatorio").message(cve.getMessage())
-			.showWarning();
+			alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Advertencia");
+			alert.setHeaderText("Campo Obligatorio");
+			alert.setContentText(cve.getMessage());
+			alert.showAndWait();
 		} catch (Exception ex) {
-			GestorLogs.registrarError(ex.getMessage());
-			Dialogs.create().owner(currentStage).title("Error")
-			.masthead("Error mediante una excepción").message(ex.getMessage())
-			.showError();
+			GestorLogs.registrarError(ex);
+			alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error...");
+			alert.setHeaderText("Error mediante una excepción");
+			alert.setContentText(ex.getMessage());
+			alert.showAndWait();
 		}
 	}
 
