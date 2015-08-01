@@ -31,12 +31,9 @@ import monopoly.util.message.game.actions.BuyPropertyMessage;
 import monopoly.util.message.game.actions.ChanceCardMessage;
 import monopoly.util.message.game.actions.CommunityCardMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
-<<<<<<< HEAD
-import monopoly.util.message.game.actions.PayToPlayerMessage;
-=======
 import monopoly.util.message.game.actions.PayToBankMessage;
+import monopoly.util.message.game.actions.PayToPlayerMessage;
 import monopoly.util.message.game.actions.SuperTaxMessage;
->>>>>>> branch 'master' of https://github.com/ale-bos/tsb-monopoly
 
 /**
  * @author Bostico Alejandro
