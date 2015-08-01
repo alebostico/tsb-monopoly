@@ -87,6 +87,7 @@ import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
+import monopoly.util.message.game.actions.PayToPlayerMessage;
 import monopoly.util.message.game.actions.SuperTaxMessage;
 
 /**
@@ -570,6 +571,8 @@ public class TableroController extends AnchorPane implements Serializable,
 					jugadorActual = status.getCurrentPlayer();
 					accionCasillero = status.getAccionCasillero();
 					statusGame = status.getStatus();
+					casilleroActual = jugadorActual.getCasilleroActual();
+
 					switch (statusGame) {
 					/**
 					 * opción cuando al jugador le toca tirar el dado.
@@ -606,9 +609,6 @@ public class TableroController extends AnchorPane implements Serializable,
 											.getCasilleroActual()
 											.getNombreCasillero()),
 									accionCasillero.getMensaje(), null);
-
-							casilleroActual = jugadorActual
-									.getCasilleroActual();
 
 							// Switch para determinar el tipo de casillero
 							switch (casilleroActual.getTipoCasillero()) {
@@ -739,20 +739,37 @@ public class TableroController extends AnchorPane implements Serializable,
 							break;
 
 						case PAGAR_ALQUILER:
-							//PayToPlayer
+							PayToPlayerMessage msgPayToPlayer;
+							Jugador jugadorPropietario;
 							showMessageBox(AlertType.INFORMATION, "Pagar...",
 									"Pagar alquiler.",
 									accionCasillero.getMensaje(), null);
 							if (jugadorActual.getDinero() >= accionCasillero
 									.getMonto()) {
-								mensaje = String
-										.format("Ha pagado al banco %s de impuesto de lujo.",
-												StringUtils
-														.formatearAMoneda(100));
-								msgPayToBank = new PayToBankMessage(idJuego,
-										100, mensaje);
-								ConnectionController.getInstance().send(
-										msgPayToBank);
+								jugadorPropietario = getPropietarioCasillero(casilleroActual);
+								if (jugadorPropietario != null) {
+									mensaje = String
+											.format("Ha pagado %s al jugador %s en concepto de alquiler.",
+													StringUtils
+															.formatearAMoneda(accionCasillero
+																	.getMonto()),
+													jugadorPropietario
+															.getNombre());
+									msgPayToPlayer = new PayToPlayerMessage(
+											mensaje, jugadorPropietario,
+											accionCasillero.getMonto(), idJuego);
+									ConnectionController.getInstance().send(
+											msgPayToPlayer);
+								} else
+									showMessageBox(
+											AlertType.ERROR,
+											"Error",
+											null,
+											String.format(
+													"Se produjo un error, propietario inexistente para el casillero %s.",
+													casilleroActual
+															.getNombreCasillero()),
+											null);
 							} else {
 								registrarDeuda(accionCasillero.getMonto());
 								showMessageBox(AlertType.WARNING,
@@ -776,6 +793,10 @@ public class TableroController extends AnchorPane implements Serializable,
 							break;
 
 						default:
+							showMessageBox(AlertType.ERROR, "Acción inválida",
+									"Se Produjo un error.",
+									"La acción %s no es una acción válida.",
+									null);
 							break;
 						}
 						break;
@@ -902,8 +923,19 @@ public class TableroController extends AnchorPane implements Serializable,
 			}
 		});
 	}
-	
-	private void registrarDeuda(int pMonto){
+
+	private Jugador getPropietarioCasillero(Casillero casillero) {
+		for (Jugador jugador : status.getTurnos()) {
+			for (TarjetaPropiedad tarjeta : jugador.getTarjPropiedadList()) {
+				if (tarjeta.getCasillero().getNumeroCasillero() == casillero
+						.getNumeroCasillero())
+					return jugador;
+			}
+		}
+		return null;
+	}
+
+	private void registrarDeuda(int pMonto) {
 		bloquearAcciones(false);
 		btnTirarDados.setVisible(false);
 		btnFinalizarTurno.setVisible(true);
