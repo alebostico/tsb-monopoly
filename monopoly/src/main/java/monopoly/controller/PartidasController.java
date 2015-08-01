@@ -170,10 +170,7 @@ public class PartidasController {
 	 * @param senderId
 	 *            id de conexión del jugador humano.
 	 * @param idJuego
-<<<<<<< HEAD
-=======
 	 *            identificador del juego.
->>>>>>> branch 'master' of https://github.com/ale-bos/tsb-monopoly
 	 * @throws Exception
 	 */
 	public void irALaCarcel(int senderId, String idJuego) throws Exception {
