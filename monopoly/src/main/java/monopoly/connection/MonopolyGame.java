@@ -31,8 +31,8 @@ import monopoly.util.message.game.actions.BuyPropertyMessage;
 import monopoly.util.message.game.actions.ChanceCardMessage;
 import monopoly.util.message.game.actions.CommunityCardMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
-import monopoly.util.message.game.actions.PayToPlayerMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
+import monopoly.util.message.game.actions.PayToPlayerMessage;
 import monopoly.util.message.game.actions.SuperTaxMessage;
 
 /**
