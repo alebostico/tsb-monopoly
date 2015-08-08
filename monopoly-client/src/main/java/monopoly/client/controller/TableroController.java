@@ -348,6 +348,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		currentStage.setHeight(bounds.getHeight());
 		currentStage.show();
 		prevStage.close();
+		MenuOpcionesController.getInstance().getCurrentStage().hide();
 		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent we) {
 				ConnectionController.getInstance().cerrarConexion();
@@ -398,6 +399,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			@Override
 			public void run() {
 				try {
+					/**
 					historyGameList.add(history);
 					oHistoryGameList = FXCollections
 							.observableArrayList(historyGameList);
@@ -412,7 +414,7 @@ public class TableroController extends AnchorPane implements Serializable,
 										return new ListCell<History>();
 									}
 								});
-					}
+					}*/
 				} catch (Exception ex) {
 					GestorLogs.registrarError(ex);
 					showMessageBox(AlertType.ERROR, "Error...", null,
@@ -733,6 +735,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							buttons.add(buttonPorcentaje);
 							buttons.add(buttonMonto);
 
+							
 							result = showMessageBox(AlertType.CONFIRMATION,
 									"Impuesto sobre el capital...",
 									"Debes pagar el impuesto.",
@@ -1674,6 +1677,8 @@ public class TableroController extends AnchorPane implements Serializable,
 			buttonAceptar = new ButtonType("Aceptar", ButtonData.OK_DONE);
 			alert.getButtonTypes().setAll(buttonAceptar);
 		}
+		alert.setX(0);
+		alert.setY(0);
 		return alert.showAndWait();
 	}
 
