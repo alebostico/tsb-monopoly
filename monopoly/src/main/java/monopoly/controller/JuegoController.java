@@ -331,7 +331,7 @@ public class JuegoController {
 		jugarAccionTarjeta(jugador, accion);
 	}
 
-	public void jugarAccionTarjeta(Jugador jugador, AccionEnTarjeta accion) {
+	public boolean jugarAccionTarjeta(Jugador jugador, AccionEnTarjeta accion) {
 		String mensaje;
 		int senderId = (jugador.isHumano() ? ((JugadorHumano) jugador)
 				.getIdJugador() : -1);
@@ -353,6 +353,7 @@ public class JuegoController {
 			} catch (SinDineroException e) {
 				ExceptionMessage msg = new ExceptionMessage(e);
 				sendToOne(senderId, msg);
+				return false;
 			}
 			break;
 		case COBRAR_TODOS:
@@ -375,6 +376,7 @@ public class JuegoController {
 			} catch (SinDineroException e) {
 				ExceptionMessage msgSinDinero = new ExceptionMessage(e);
 				sendToOne(senderId, msgSinDinero);
+				return false;
 			}
 			break;
 		case MOVER:
@@ -403,6 +405,7 @@ public class JuegoController {
 		HistoryGameMessage historias = new HistoryGameMessage(historyList);
 
 		sendToAll(historias);
+		return true;
 
 	}
 
@@ -580,7 +583,10 @@ public class JuegoController {
 	 */
 	private void tarjetaSuerte(int senderId, Jugador jugador,
 			TarjetaSuerte tarjeta) throws Exception {
-		gestorTablero.getGestorTarjetas().jugarTarjetaSuerte(jugador, tarjeta);
+		AccionEnTarjeta accion = gestorTablero.getGestorTarjetas()
+				.jugarTarjetaSuerte(jugador, tarjeta);
+		if (this.jugarAccionTarjeta(jugador, accion))
+			this.siguienteTurno();
 	}
 
 	/**
@@ -610,8 +616,10 @@ public class JuegoController {
 	 */
 	private void tarjetaComunidad(int senderId, Jugador jugador,
 			TarjetaComunidad tarjeta) throws Exception {
-		gestorTablero.getGestorTarjetas().jugarTarjetaComunidad(jugador,
-				tarjeta);
+		AccionEnTarjeta accion = gestorTablero.getGestorTarjetas()
+				.jugarTarjetaComunidad(jugador, tarjeta);
+		if (this.jugarAccionTarjeta(jugador, accion))
+			this.siguienteTurno();
 	}
 
 	/**
@@ -742,7 +750,7 @@ public class JuegoController {
 	// =====================================================================//
 	// ========================== Getter & Setter ==========================//
 	// =====================================================================//
-	
+
 	public Juego getJuego() {
 		return juego;
 	}
