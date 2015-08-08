@@ -210,6 +210,7 @@ public class JugadorVirtualController {
 		return puja;
 	}
 
+		
 	/**
 	 * El jugador decidir&aacute; al caer sobre una propiedad libre si quiere
 	 * comprarla o no. La decisi&oacute;n se tomar&aacute; en funci&oacute;n del

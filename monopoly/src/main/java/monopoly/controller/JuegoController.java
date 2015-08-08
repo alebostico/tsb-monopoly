@@ -19,6 +19,9 @@ import monopoly.model.JugadorVirtual;
 import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
 import monopoly.model.tablero.Casillero;
+import monopoly.model.tablero.CasilleroCalle;
+import monopoly.model.tablero.CasilleroCompania;
+import monopoly.model.tablero.CasilleroEstacion;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaPropiedad;
@@ -134,7 +137,7 @@ public class JuegoController {
 				status = new MonopolyGameStatus(
 						gestorJugadores.getTurnoslist(),
 						gestorBanco.getBanco(), gestorTablero.getTablero(),
-						EstadoJuego.TIRAR_DADO, null,
+						EstadoJuego.ESPERANDO_TURNO, null,
 						gestorJugadores.getCurrentPlayer(), historyList, null);
 				sendToAll(status);
 				tirarDadosJugadorVirtual();
@@ -419,6 +422,7 @@ public class JuegoController {
 		// EstadoJuego.TIRAR_DADO;
 		// MonopolyGameStatus status;
 		Tarjeta tarjetaSelected = null;
+		TarjetaPropiedad tarjetaPropiedad=null;
 		String mensaje;
 
 		List<History> historyList = new ArrayList<History>();
@@ -452,6 +456,28 @@ public class JuegoController {
 			this.jugarAccionTarjeta(jugador, (TarjetaComunidad) tarjetaSelected);
 			break;
 		case DISPONIBLE_PARA_VENDER:
+			if(gestorJugadoresVirtuales.decidirComprar(casillero, jugador)){
+				switch (casillero.getTipoCasillero()) {
+				case C_CALLE:
+					tarjetaPropiedad = ((CasilleroCalle)casillero).getTarjetaCalle();
+					
+					break;
+				case C_ESTACION:
+					tarjetaPropiedad = ((CasilleroEstacion)casillero).getTarjetaEstacion();
+					break;
+				case C_COMPANIA:
+					tarjetaPropiedad = ((CasilleroCompania)casillero).getTarjetaCompania();
+					break;
+				default:
+					break;
+				}
+				try{
+				gestorTablero.comprarPropiedad(jugador, tarjetaPropiedad);
+				}catch(Exception ex)
+				{
+					
+				}
+			}
 		case IMPUESTO_DE_LUJO:
 
 		case IR_A_LA_CARCEL:

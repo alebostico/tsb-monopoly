@@ -387,6 +387,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			@Override
 			public void run() {
 				try {
+					/**
 					historyGameList.add(history);
 					oHistoryGameList = FXCollections
 							.observableArrayList(historyGameList);
@@ -401,7 +402,7 @@ public class TableroController extends AnchorPane implements Serializable,
 										return new ListCell<History>();
 									}
 								});
-					}
+					}*/
 				} catch (Exception ex) {
 					GestorLogs.registrarError(ex);
 					showMessageBox(AlertType.ERROR, "Error...", null,
@@ -705,6 +706,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							buttons.add(buttonPorcentaje);
 							buttons.add(buttonMonto);
 
+							
 							result = showMessageBox(AlertType.CONFIRMATION,
 									"Impuesto sobre el capital...",
 									"Debes pagar el impuesto.",
