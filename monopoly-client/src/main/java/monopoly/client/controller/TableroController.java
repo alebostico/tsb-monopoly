@@ -336,6 +336,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		currentStage.setHeight(bounds.getHeight());
 		currentStage.show();
 		prevStage.close();
+		MenuOpcionesController.getInstance().getCurrentStage().hide();
 		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent we) {
 				ConnectionController.getInstance().cerrarConexion();
@@ -1645,6 +1646,8 @@ public class TableroController extends AnchorPane implements Serializable,
 			buttonAceptar = new ButtonType("Aceptar", ButtonData.OK_DONE);
 			alert.getButtonTypes().setAll(buttonAceptar);
 		}
+		alert.setX(0);
+		alert.setY(0);
 		return alert.showAndWait();
 	}
 

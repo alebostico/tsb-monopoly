@@ -209,4 +209,12 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 		this.usuarioLogueado = usuarioLogueado;
 	}
 
+	public Stage getCurrentStage() {
+		return currentStage;
+	}
+
+	public void setCurrentStage(Stage currentStage) {
+		this.currentStage = currentStage;
+	}
+
 }
