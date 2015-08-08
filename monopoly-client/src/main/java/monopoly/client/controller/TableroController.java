@@ -46,6 +46,8 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -85,11 +87,12 @@ import monopoly.util.StringUtils;
 import monopoly.util.constantes.ConstantesFXML;
 import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
+import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
 import monopoly.util.message.game.actions.PayToPlayerMessage;
 import monopoly.util.message.game.actions.SuperTaxMessage;
-
+	
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
@@ -261,7 +264,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	@FXML
 	private ListView<History> lvHistoryChat;
-	private List<History> historyChatList;
+	private static List<History> historyChatList;
 	private ObservableList<History> oHistoryChatList;
 
 	@FXML
@@ -318,6 +321,15 @@ public class TableroController extends AnchorPane implements Serializable,
 		oHistoryGameList = FXCollections.observableArrayList(historyGameList);
 		oHistoryChatList = FXCollections.observableArrayList(historyChatList);
 		accordionHistorial.setExpandedPane(tpHistory);
+		
+		txtMessageChat.setOnKeyTyped(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent ke) {
+				if (ke.getCode().equals(KeyCode.ENTER)) {
+					sendChatMessage();
+				}
+			}
+		});
 	}
 
 	/**
@@ -436,6 +448,23 @@ public class TableroController extends AnchorPane implements Serializable,
 		historyChatList.add(history);
 		oHistoryChatList = FXCollections.observableArrayList(historyChatList);
 		lvHistoryChat.setItems(oHistoryChatList);
+	}
+
+	public void sendChatMessage() {
+		Usuario usuario = usuarioLogueado;
+		String mensaje = this.txtMessageChat.getText();
+
+		History history = new History(StringUtils.getFechaActual(),
+				usuario.getUserName(), mensaje);
+
+		ChatGameMessage chatMessage = new ChatGameMessage(getJuego()
+				.getUniqueID(), history);
+
+		this.txtMessageChat.setText("");
+		
+		ConnectionController.getInstance().send(chatMessage);
+		
+		
 	}
 
 	/**
@@ -1727,7 +1756,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	@FXML
 	void processSendMessage(ActionEvent event) {
-
+		sendChatMessage();
 	}
 
 	@FXML
@@ -1798,6 +1827,35 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	public void setDeudaPendiente(Deuda deudaPendiente) {
 		this.deudaPendiente = deudaPendiente;
+	}
+
+	public void addChatHistoryGame(final History chatHistory) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					historyChatList.add(chatHistory);
+					oHistoryChatList = FXCollections
+							.observableArrayList(historyChatList);
+					if (lvHistoryChat != null) {
+						lvHistoryChat.getItems().clear();
+						lvHistoryChat.setItems(oHistoryGameList);
+						lvHistoryChat
+								.setCellFactory(new Callback<ListView<History>, javafx.scene.control.ListCell<History>>() {
+									@Override
+									public ListCell<History> call(
+											ListView<History> listView) {
+										return new ListCell<History>();
+									}
+								});
+					}
+				} catch (Exception ex) {
+					GestorLogs.registrarError(ex);
+					showMessageBox(AlertType.ERROR, "Error...", null,
+							ex.getMessage(), null);
+				}
+			}
+		});
 	}
 
 }

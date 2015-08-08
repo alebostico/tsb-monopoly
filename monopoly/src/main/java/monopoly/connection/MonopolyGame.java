@@ -10,6 +10,7 @@ import monopoly.controller.PartidasController;
 import monopoly.controller.UsuarioController;
 import monopoly.model.Dado;
 import monopoly.model.Estado.EstadoJuego;
+import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.Usuario;
@@ -23,6 +24,7 @@ import monopoly.util.message.CreateGameMessage;
 import monopoly.util.message.ExceptionMessage;
 import monopoly.util.message.LoginMessage;
 import monopoly.util.message.game.AdvanceInBoardMessage;
+import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.JoinGameMessage;
 import monopoly.util.message.game.LoadGameMessage;
@@ -98,6 +100,13 @@ public class MonopolyGame extends GameServer {
 				sendToOne(senderId, new LoginMessage(senderId, usuario));
 				break;
 
+			case ConstantesMensaje.CHAT_GAME_MESSAGE:
+				ChatGameMessage msgChatGameMessage = (ChatGameMessage) message;
+				History history = (History) msgChatGameMessage.message;
+				PartidasController.getInstance().sendChatMessage(
+						msgChatGameMessage.idJuego, history);
+				break;
+
 			case ConstantesMensaje.CREATE_ACCOUNT_MESSAGE:
 				// tomar el usuario y grabarlo
 				usuario = (Usuario) ((CreateAccountMessage) message).message;
@@ -165,7 +174,9 @@ public class MonopolyGame extends GameServer {
 
 			case ConstantesMensaje.PAY_TO_BANK_MESSAGE:
 				PayToBankMessage msgPayToBank = (PayToBankMessage) message;
-				PartidasController.getInstance().pagarAlBanco(msgPayToBank.idJuego, senderId, msgPayToBank.monto, msgPayToBank.mensaje);
+				PartidasController.getInstance().pagarAlBanco(
+						msgPayToBank.idJuego, senderId, msgPayToBank.monto,
+						msgPayToBank.mensaje);
 				break;
 
 			case ConstantesMensaje.COMPLETE_TURN_MESSAGE:
@@ -185,10 +196,11 @@ public class MonopolyGame extends GameServer {
 				PartidasController.getInstance().addContadorPagos(senderId,
 						msgPayToPlayerMessage.idJuego);
 				break;
-				
+
 			case ConstantesMensaje.SUPER_TAX_MESSAGE:
 				SuperTaxMessage msgSuperTax = (SuperTaxMessage) message;
-				PartidasController.getInstance().impuestoAlCapital(senderId, msgSuperTax.idJuego, msgSuperTax.tipoImpuesto);
+				PartidasController.getInstance().impuestoAlCapital(senderId,
+						msgSuperTax.idJuego, msgSuperTax.tipoImpuesto);
 				break;
 
 			case ConstantesMensaje.DISCONNECT_MESSAGE:
