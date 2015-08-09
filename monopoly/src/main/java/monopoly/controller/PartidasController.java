@@ -11,6 +11,7 @@ import java.util.TreeMap;
 import monopoly.connection.GameServer;
 import monopoly.model.Dado;
 import monopoly.model.Estado.EstadoJuego;
+import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.Usuario;
@@ -388,6 +389,11 @@ public class PartidasController {
 
 	public void setMonopolyGame(GameServer monopolyGame) {
 		this.monopolyGame = monopolyGame;
+	}
+	
+	public void sendChatMessage(String uniqueID, History history) throws Exception {
+		juegoController = juegosControllerList.get(uniqueID);
+		juegoController.sendChatMessage(history);
 	}
 
 }

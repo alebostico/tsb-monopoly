@@ -23,6 +23,7 @@ import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
 import monopoly.util.message.LoginMessage;
+import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.JoinGameMessage;
 
@@ -91,12 +92,18 @@ public class MonopolyClient extends GameClient {
 				TableroController.getInstance().addHistoryGame(history);
 				break;
 
+			case ConstantesMensaje.CHAT_GAME_MESSAGE:
+				History chatHistory = (History) ((ChatGameMessage) message).message;
+				TableroController.getInstance().addChatHistoryGame(chatHistory);
+				break;
+				
 			case ConstantesMensaje.COMPLETE_TURN_MESSAGE:
-//				CompleteTurnMessage msgCompleteTurnMessage = (CompleteTurnMessage) message;
-//				TableroController.getInstance().completarTurno(
-//						msgCompleteTurnMessage.message,
-//						msgCompleteTurnMessage.action,
-//						(MonopolyGameStatus) msgCompleteTurnMessage.status);
+				// CompleteTurnMessage msgCompleteTurnMessage =
+				// (CompleteTurnMessage) message;
+				// TableroController.getInstance().completarTurno(
+				// msgCompleteTurnMessage.message,
+				// msgCompleteTurnMessage.action,
+				// (MonopolyGameStatus) msgCompleteTurnMessage.status);
 				break;
 
 			case ConstantesMensaje.EXCEPTION_MESSAGE:

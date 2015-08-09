@@ -34,6 +34,7 @@ import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.exception.SinDineroException;
 import monopoly.util.exception.SinEdificiosException;
 import monopoly.util.message.ExceptionMessage;
+import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.actions.PayToPlayerMessage;
@@ -827,6 +828,11 @@ public class JuegoController {
 
 	public boolean checkPagaronTodos() {
 		return contadorPagos == this.getCantJugadores();
+	}
+
+	public void sendChatMessage(History history) {
+		ChatGameMessage msgChatGameMessage = new ChatGameMessage(null, history);
+		sendToAll(msgChatGameMessage);
 	}
 
 }

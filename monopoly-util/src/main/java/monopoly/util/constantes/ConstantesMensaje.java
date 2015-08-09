@@ -22,6 +22,7 @@ public class ConstantesMensaje {
 	public final static String START_GAME_MESSAGE = "StartGameMessage";
 	public final static String STATUS_GAME_MESSAGE = "MonopolyGameStatus";
 	public final static String HISTORY_GAME_MESSAGE = "HistoryGameMessage";
+	public final static String CHAT_GAME_MESSAGE = "ChatGameMessage";
 	public final static String ADVANCE_IN_BOARD_MESSAGE = "AdvanceInBoardMessage";
 
 	public final static String AUCTION_PROPERTY_MESSAGE = "AuctionPropertyMessage";

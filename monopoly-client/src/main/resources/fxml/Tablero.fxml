@@ -222,7 +222,7 @@
                                              <content>
                                                 <VBox alignment="CENTER" maxWidth="400.0" minWidth="400.0" prefWidth="400.0" spacing="5.0">
                                                    <children>
-                                                      <ListView fx:id="lvHistoryChat" fixedCellSize="0.0" maxHeight="200.0" maxWidth="380.0" minHeight="200.0" minWidth="380.0" prefHeight="200.0" prefWidth="380.0" />
+                                                      <ListView fx:id="lvHistoryChat" fixedCellSize="0.0" maxWidth="380.0" minWidth="380.0" prefWidth="380.0" />
                                                       <HBox alignment="CENTER" maxHeight="35.0" maxWidth="400.0" minHeight="35.0" minWidth="400.0" prefHeight="35.0" prefWidth="400.0" spacing="5.0">
                                                          <children>
                                                             <TextArea fx:id="txtMessageChat" maxHeight="35.0" minHeight="35.0" prefHeight="35.0" wrapText="true" />
