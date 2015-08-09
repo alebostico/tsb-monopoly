@@ -1684,6 +1684,7 @@ public class TableroController {
 
 		this.getBancoController(jugador.getJuego()).venderPropiedad(jugador,
 				tarjeta);
+		
 
 	}
 

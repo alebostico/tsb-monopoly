@@ -302,7 +302,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	private Usuario usuarioLogueado;
 
-	private MonopolyGameStatus status;
+	//private MonopolyGameStatus status;
 
 	private StringProperty clockLabelTextProperty;
 
@@ -388,21 +388,18 @@ public class TableroController extends AnchorPane implements Serializable,
 			public void run() {
 				try {
 					/**
-					historyGameList.add(history);
-					oHistoryGameList = FXCollections
-							.observableArrayList(historyGameList);
-					if (lvHistoryGame != null) {
-						lvHistoryGame.getItems().clear();
-						lvHistoryGame.setItems(oHistoryGameList);
-						lvHistoryGame
-								.setCellFactory(new Callback<ListView<History>, javafx.scene.control.ListCell<History>>() {
-									@Override
-									public ListCell<History> call(
-											ListView<History> listView) {
-										return new ListCell<History>();
-									}
-								});
-					}*/
+					 * historyGameList.add(history); oHistoryGameList =
+					 * FXCollections .observableArrayList(historyGameList); if
+					 * (lvHistoryGame != null) {
+					 * lvHistoryGame.getItems().clear();
+					 * lvHistoryGame.setItems(oHistoryGameList); lvHistoryGame
+					 * .setCellFactory(new Callback<ListView<History>,
+					 * javafx.scene.control.ListCell<History>>() {
+					 * 
+					 * @Override public ListCell<History> call(
+					 *           ListView<History> listView) { return new
+					 *           ListCell<History>(); } }); }
+					 */
 				} catch (Exception ex) {
 					GestorLogs.registrarError(ex);
 					showMessageBox(AlertType.ERROR, "Error...", null,
@@ -525,25 +522,6 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	/**
-	 * Método que recibe la información sobre el orden de los turnos para
-	 * empezar a jugar el juego.
-	 * 
-	 * @param status
-	 *            objeto que contiene información sobre los turnos, estado del
-	 *            banco y jugador actual.
-	 */
-	public void empezarJuego() {
-		try {
-			actualizarGraficoEnElTablero();
-		} catch (Exception ex) {
-			GestorLogs.registrarError(ex);
-			showMessageBox(AlertType.ERROR, "Error...",
-					"Se produjo un error mientras se dibujaban los graficos.",
-					ex.getMessage(), null);
-		}
-	}
-
-	/**
 	 * Realiza las diferentes acciones que se puede realizar en el juego en base
 	 * al casillero al cual avanzó en el caso de que haya sido su turno. Si no
 	 * lo fue informa al usuario las direntes estrategias realizada por los
@@ -552,8 +530,7 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * @param status
 	 *            Toda las información del juego.
 	 */
-	public void actualizarEstadoJuego(final MonopolyGameStatus status) {
-		this.status = status;
+	public void actualizarEstadoJuego(final MonopolyGameStatus monopolyGameStatus) {
 		Platform.runLater(new Runnable() {
 			private AccionEnCasillero accionCasillero;
 			private EstadoJuego statusGame;
@@ -561,6 +538,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			private Casillero casilleroActual;
 			private String idJuego = juego.getUniqueID();
 			private String msgSinDinero;
+			private MonopolyGameStatus status = monopolyGameStatus;
 
 			@Override
 			public void run() {
@@ -575,11 +553,14 @@ public class TableroController extends AnchorPane implements Serializable,
 					statusGame = status.getStatus();
 					casilleroActual = jugadorActual.getCasilleroActual();
 
+					actualizarGraficoEnElTablero(status.getTurnos(),status.getBanco());
+					
 					switch (statusGame) {
 					/**
 					 * opción cuando al jugador le toca tirar el dado.
 					 */
 					case TIRAR_DADO:
+						
 						bloquearAcciones(false);
 						btnTirarDados.setVisible(true);
 						showMessageBox(AlertType.INFORMATION,
@@ -591,7 +572,6 @@ public class TableroController extends AnchorPane implements Serializable,
 					 * Opción cuando el jugador no terminó su turno.
 					 */
 					case JUGANDO:
-						actualizarGraficoEnElTablero();
 						bloquearAcciones(true);
 						btnTirarDados.setVisible(false);
 
@@ -706,7 +686,6 @@ public class TableroController extends AnchorPane implements Serializable,
 							buttons.add(buttonPorcentaje);
 							buttons.add(buttonMonto);
 
-							
 							result = showMessageBox(AlertType.CONFIRMATION,
 									"Impuesto sobre el capital...",
 									"Debes pagar el impuesto.",
@@ -749,7 +728,7 @@ public class TableroController extends AnchorPane implements Serializable,
 									accionCasillero.getMensaje(), null);
 							if (jugadorActual.getDinero() >= accionCasillero
 									.getMonto()) {
-								jugadorPropietario = getPropietarioCasillero(casilleroActual);
+								jugadorPropietario = getPropietarioCasillero(casilleroActual, status.getTurnos());
 								if (jugadorPropietario != null) {
 									mensaje = String
 											.format("Ha pagado %s al jugador %s en concepto de alquiler.",
@@ -805,13 +784,12 @@ public class TableroController extends AnchorPane implements Serializable,
 						break;
 
 					case ESPERANDO_TURNO:
-						actualizarGraficoEnElTablero();
 						break;
 					default:
 						break;
 					}
 
-					actualizarTurnoJugador();
+					actualizarTurnoJugador(status);
 
 				} catch (Exception ex) {
 					GestorLogs.registrarError(ex);
@@ -822,23 +800,25 @@ public class TableroController extends AnchorPane implements Serializable,
 		});
 	}
 
-	private void actualizarTurnoJugador() {
+	private void actualizarTurnoJugador(final MonopolyGameStatus monopolyGameStatus) {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				if (status != null) {
+				if (monopolyGameStatus != null) {
 					lblTurnoJugador.setText("Turno de "
-							+ status.getCurrentPlayer().getNombre());
+							+ monopolyGameStatus.getCurrentPlayer().getNombre());
 				}
 			}
 		});
 	}
 
-	private void showVentaPropiedad(final TarjetaPropiedad tarjeta,
-			final Jugador jugadorComprador) {
+	private void showVentaPropiedad(final TarjetaPropiedad tarjetaPropiedad,
+			final Jugador jugador) {
 		Platform.runLater(new Runnable() {
 			private Stage ventaPropiedadStage = null;
-
+			private TarjetaPropiedad tarjeta = tarjetaPropiedad;
+			private Jugador jugadorComprador = jugador;
+			
 			@Override
 			public void run() {
 				String fxml;
@@ -866,10 +846,10 @@ public class TableroController extends AnchorPane implements Serializable,
 		});
 	}
 
-	private void showTarjetaComunidad(final TarjetaComunidad tarjeta) {
+	private void showTarjetaComunidad(final TarjetaComunidad tarjetaComunidad) {
 		Platform.runLater(new Runnable() {
 			private Stage tarjetaComunidadStage = null;
-
+			private TarjetaComunidad tarjeta = tarjetaComunidad; 
 			@Override
 			public void run() {
 				String fxml;
@@ -897,10 +877,11 @@ public class TableroController extends AnchorPane implements Serializable,
 		});
 	}
 
-	private void showTarjetaSuerte(final TarjetaSuerte tarjeta) {
+	private void showTarjetaSuerte(final TarjetaSuerte tarjetaSuerte) {
 		Platform.runLater(new Runnable() {
 			private Stage TarjetaSuerteStage = null;
-
+			private TarjetaSuerte tarjeta = tarjetaSuerte;
+			
 			@Override
 			public void run() {
 				String fxml;
@@ -927,8 +908,8 @@ public class TableroController extends AnchorPane implements Serializable,
 		});
 	}
 
-	private Jugador getPropietarioCasillero(Casillero casillero) {
-		for (Jugador jugador : status.getTurnos()) {
+	private Jugador getPropietarioCasillero(Casillero casillero, List<Jugador> turnosList) {
+		for (Jugador jugador : turnosList) {
 			for (TarjetaPropiedad tarjeta : jugador.getTarjPropiedadList()) {
 				if (tarjeta.getCasillero().getNumeroCasillero() == casillero
 						.getNumeroCasillero())
@@ -949,29 +930,29 @@ public class TableroController extends AnchorPane implements Serializable,
 	// =========== Métodos para dibujar componentes en la pantalla ===========//
 	// =======================================================================//
 
-	private void actualizarGraficoEnElTablero() throws Exception {
-		displayFichas();
-		showAccordionJugadores();
+	private void actualizarGraficoEnElTablero(List<Jugador> turnosList, Banco banco) throws Exception {
+		displayFichas(turnosList);
+		showAccordionJugadores(turnosList, banco);
 	}
 
 	/**
 	 * Método que dibuja a los jugadores, mostrando el estado en el juego.
 	 * 
 	 */
-	private void showAccordionJugadores() throws Exception {
-		List<Jugador> turnos = status.getTurnos();
-		tps = new TitledPane[turnos.size() + 1];
+	private void showAccordionJugadores(List<Jugador> turnosList, Banco banco) throws Exception {
+		//List<Jugador> turnos = turnosList;
+		tps = new TitledPane[turnosList.size() + 1];
 		String title;
 
-		for (int i = 0; i < turnos.size(); i++) {
-			title = turnos.get(i).getNombre() + " - ";
-			title += StringUtils.formatearAMoneda(turnos.get(i).getDinero())
+		for (int i = 0; i < turnosList.size(); i++) {
+			title = turnosList.get(i).getNombre() + " - ";
+			title += StringUtils.formatearAMoneda(turnosList.get(i).getDinero())
 					+ " - ";
-			title += (turnos.get(i) instanceof JugadorHumano) ? "Jugador Humano"
+			title += (turnosList.get(i) instanceof JugadorHumano) ? "Jugador Humano"
 					: "Jugador Virtual";
-			tps[i] = getPaneInfoPlayer(turnos.get(i), title);
+			tps[i] = getPaneInfoPlayer(turnosList.get(i), title, banco);
 		}
-		tps[turnos.size()] = getPaneInfoBanco(status.getBanco(), "BANCO");
+		tps[turnosList.size()] = getPaneInfoBanco(banco, "BANCO");
 
 		accordionPlayers.getPanes().clear();
 		accordionPlayers.getPanes().addAll(tps);
@@ -983,14 +964,14 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * 
 	 * @throws Exception
 	 */
-	private void displayFichas() throws Exception {
-		List<Jugador> turnos = status.getTurnos();
+	private void displayFichas(List<Jugador> turnosList) throws Exception {
+		//List<Jugador> turnos = status.getTurnos();
 		// Tablero tablero = status.tablero;
 		Image img;
 
 		limpiarCasilleros();
 
-		for (Jugador jugadorTurno : turnos) {
+		for (Jugador jugadorTurno : turnosList) {
 			img = new Image(
 					TableroController.class.getResourceAsStream(jugadorTurno
 							.getFicha().getPathImgSmall()), 25, 25, true, true);
@@ -1146,7 +1127,7 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * @param title
 	 * @return
 	 */
-	private TitledPane getPaneInfoPlayer(Jugador jugador, String title)
+	private TitledPane getPaneInfoPlayer(Jugador jugador, String title, Banco banco)
 			throws Exception {
 		AnchorPane root = new AnchorPane();
 		VBox vBox = new VBox();
@@ -1187,7 +1168,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		// ===================== HBox de propiedades =====================//
 
 		TarjetaPropiedad propiedad;
-		Banco banco = status.getBanco();
 		String rutaImagen = "";
 		String strStyle = "";
 		Boolean bCrearImagen = false;
@@ -1637,20 +1617,25 @@ public class TableroController extends AnchorPane implements Serializable,
 	 */
 	private Optional<ButtonType> showMessageBox(AlertType type, String title,
 			String headerText, String message, List<ButtonType> buttons) {
+
 		ButtonType buttonAceptar;
-		Alert alert = new Alert(type);
-		alert.setTitle(title);
-		alert.setHeaderText(headerText);
-		alert.setContentText(message);
-		if (buttons != null) {
-			alert.getButtonTypes().setAll(buttons);
-		} else {
-			buttonAceptar = new ButtonType("Aceptar", ButtonData.OK_DONE);
-			alert.getButtonTypes().setAll(buttonAceptar);
+		Alert alert = null;
+		try {
+			alert = new Alert(type);
+			alert.setTitle(title);
+			alert.setHeaderText(headerText);
+			alert.setContentText(message);
+			if (buttons != null) {
+				alert.getButtonTypes().setAll(buttons);
+			} else {
+				buttonAceptar = new ButtonType("Aceptar", ButtonData.OK_DONE);
+				alert.getButtonTypes().setAll(buttonAceptar);
+			}
+			return alert.showAndWait();	
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
 		}
-		alert.setX(0);
-		alert.setY(0);
-		return alert.showAndWait();
+		return null;
 	}
 
 	// ======================================================================//
@@ -1791,10 +1776,6 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	public void setUsuarioLogueado(Usuario usuarioLogueado) {
 		this.usuarioLogueado = usuarioLogueado;
-	}
-
-	public MonopolyGameStatus getStatus() {
-		return status;
 	}
 
 	public Deuda getDeudaPendiente() {

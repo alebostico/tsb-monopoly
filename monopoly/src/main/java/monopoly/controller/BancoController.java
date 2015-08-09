@@ -146,7 +146,6 @@ public class BancoController {
 			TarjetaPropiedad tarjetaPropiedad) throws SinDineroException {
 		this.cobrar(jugador, tarjetaPropiedad.getValorPropiedad());
 		jugador.adquirirPropiedad(tarjetaPropiedad);
-
 	}
 
 	/**

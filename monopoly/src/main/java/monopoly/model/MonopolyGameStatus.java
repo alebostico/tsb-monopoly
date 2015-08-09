@@ -19,21 +19,21 @@ public class MonopolyGameStatus implements Serializable {
 
 	private static final long serialVersionUID = -584315517388176762L;
 
-	private List<Jugador> turnos;
+	private final List<Jugador> turnos;
 
-	private EstadoJuego status;
+	private final EstadoJuego status;
 
-	private AccionEnCasillero accionCasillero;
+	private final  AccionEnCasillero accionCasillero;
 
-	private Banco banco;
+	private  final Banco banco;
 
-	private Tablero tablero;
+	private  final Tablero tablero;
 
-	private Jugador currentPlayer;
+	private  final Jugador currentPlayer;
 
-	private List<History> hirtoryList;
+	private  final List<History> hirtoryList;
 	
-	private Tarjeta tarjeta;
+	private  final Tarjeta tarjeta;
 
 	public MonopolyGameStatus(List<Jugador> turnos, Banco banco,
 			Tablero tablero, EstadoJuego status, AccionEnCasillero accion,
@@ -52,64 +52,31 @@ public class MonopolyGameStatus implements Serializable {
 		return turnos;
 	}
 
-	public void setTurnos(List<Jugador> turnos) {
-		this.turnos = turnos;
-	}
-
 	public EstadoJuego getStatus() {
 		return status;
-	}
-
-	public void setStatus(EstadoJuego status) {
-		this.status = status;
 	}
 
 	public AccionEnCasillero getAccionCasillero() {
 		return accionCasillero;
 	}
 
-	public void setAccionCasillero(AccionEnCasillero accionCasillero) {
-		this.accionCasillero = accionCasillero;
-	}
-
 	public Banco getBanco() {
 		return banco;
-	}
-
-	public void setBanco(Banco banco) {
-		this.banco = banco;
 	}
 
 	public Tablero getTablero() {
 		return tablero;
 	}
 
-	public void setTablero(Tablero tablero) {
-		this.tablero = tablero;
-	}
-
 	public Jugador getCurrentPlayer() {
 		return currentPlayer;
-	}
-
-	public void setCurrentPlayer(Jugador currentPlayer) {
-		this.currentPlayer = currentPlayer;
 	}
 
 	public List<History> getHirtoryList() {
 		return hirtoryList;
 	}
 
-	public void setHirtoryList(List<History> hirtoryList) {
-		this.hirtoryList = hirtoryList;
-	}
-
 	public Tarjeta getTarjeta() {
 		return tarjeta;
 	}
-
-	public void setTarjeta(Tarjeta tarjeta) {
-		this.tarjeta = tarjeta;
-	}
-
 }

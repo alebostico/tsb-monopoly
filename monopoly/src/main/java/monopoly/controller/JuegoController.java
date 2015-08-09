@@ -151,7 +151,11 @@ public class JuegoController {
 						gestorJugadores.getCurrentPlayer(), historyList, null);
 				sendToOne(jh.getSenderID(), status);
 
-				status.setStatus(EstadoJuego.ESPERANDO_TURNO);
+				status = new MonopolyGameStatus(
+						gestorJugadores.getTurnoslist(),
+						gestorBanco.getBanco(), gestorTablero.getTablero(),
+						EstadoJuego.ESPERANDO_TURNO, null,
+						gestorJugadores.getCurrentPlayer(), historyList, null);
 				sendToOther(jh.getSenderID(), status);
 			}
 
