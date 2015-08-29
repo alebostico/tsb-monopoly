@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -77,6 +79,7 @@ import monopoly.model.tablero.Casillero;
 import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tablero.CasilleroCompania;
 import monopoly.model.tablero.CasilleroEstacion;
+import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaCompania;
 import monopoly.model.tarjetas.TarjetaComunidad;
@@ -92,7 +95,7 @@ import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
 import monopoly.util.message.game.actions.PayToPlayerMessage;
 import monopoly.util.message.game.actions.SuperTaxMessage;
-	
+
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
@@ -305,7 +308,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	private Usuario usuarioLogueado;
 
-	//private MonopolyGameStatus status;
+	// private MonopolyGameStatus status;
 
 	private StringProperty clockLabelTextProperty;
 
@@ -321,7 +324,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		oHistoryGameList = FXCollections.observableArrayList(historyGameList);
 		oHistoryChatList = FXCollections.observableArrayList(historyChatList);
 		accordionHistorial.setExpandedPane(tpHistory);
-		
+
 		txtMessageChat.setOnKeyTyped(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent ke) {
@@ -460,10 +463,9 @@ public class TableroController extends AnchorPane implements Serializable,
 				.getUniqueID(), history);
 
 		this.txtMessageChat.setText("");
-		
+
 		ConnectionController.getInstance().send(chatMessage);
-		
-		
+
 	}
 
 	/**
@@ -559,284 +561,137 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * @param status
 	 *            Toda las información del juego.
 	 */
-	public void actualizarEstadoJuego(final MonopolyGameStatus monopolyGameStatus) {
-		Platform.runLater(new Runnable() {
-			private AccionEnCasillero accionCasillero;
-			private EstadoJuego statusGame;
-			private Jugador jugadorActual;
-			private Casillero casilleroActual;
-			private String idJuego = juego.getUniqueID();
-			private String msgSinDinero;
-			private MonopolyGameStatus status = monopolyGameStatus;
+	public void actualizarEstadoJuego(MonopolyGameStatus monopolyGameStatus) {
 
-			@Override
-			public void run() {
-				msgSinDinero = "No cuentas con suficiente dinero para pagar %s. Vende hoteles, casas o hipoteca propiedades para continuar con el juego.";
-				try {
-					for (History history : status.getHirtoryList()) {
-						TableroController.getInstance().addHistoryGame(history);
-					}
+		AccionEnCasillero accionCasillero = monopolyGameStatus
+				.getAccionCasillero();
+		EstadoJuego estadoDeTurno = monopolyGameStatus.getStatus();
+		Jugador jugadorActual = monopolyGameStatus.getCurrentPlayer();
+		Casillero casilleroActual = monopolyGameStatus.getCurrentPlayer()
+				.getCasilleroActual();
+		Tarjeta tarjetaSelected = monopolyGameStatus.getTarjeta();
+		MonopolyGameStatus status = monopolyGameStatus;
+		List<Jugador> turnosList = monopolyGameStatus.getTurnos();
+		try {
 
-					jugadorActual = status.getCurrentPlayer();
-					accionCasillero = status.getAccionCasillero();
-					statusGame = status.getStatus();
-					casilleroActual = jugadorActual.getCasilleroActual();
-
-					actualizarGraficoEnElTablero(status.getTurnos(),status.getBanco());
-					
-					switch (statusGame) {
-					/**
-					 * opción cuando al jugador le toca tirar el dado.
-					 */
-					case TIRAR_DADO:
-						
-						bloquearAcciones(false);
-						btnTirarDados.setVisible(true);
-						showMessageBox(AlertType.INFORMATION,
-								"Turno de juego...", null,
-								"Es tu turno para jugar", null);
-						break;
-
-					/**
-					 * Opción cuando el jugador no terminó su turno.
-					 */
-					case JUGANDO:
-						bloquearAcciones(true);
-						btnTirarDados.setVisible(false);
-
-						switch (accionCasillero) {
-						case DESCANSO:
-							showMessageBox(AlertType.INFORMATION,
-									"Descanso...", null,
-									accionCasillero.getMensaje(), null);
-							break;
-
-						case DISPONIBLE_PARA_VENDER:
-							showMessageBox(
-									AlertType.INFORMATION,
-									"Compra de propiedad dispobible...",
-									String.format("Propiedad %s", status
-											.getCurrentPlayer()
-											.getCasilleroActual()
-											.getNombreCasillero()),
-									accionCasillero.getMensaje(), null);
-
-							// Switch para determinar el tipo de casillero
-							switch (casilleroActual.getTipoCasillero()) {
-							case C_CALLE:
-								showVentaPropiedad(
-										((CasilleroCalle) casilleroActual)
-												.getTarjetaCalle(),
-										jugadorActual);
-								break;
-							case C_COMPANIA:
-								showVentaPropiedad(
-										((CasilleroCompania) casilleroActual)
-												.getTarjetaCompania(),
-										jugadorActual);
-								break;
-
-							case C_ESTACION:
-								showVentaPropiedad(
-										((CasilleroEstacion) casilleroActual)
-												.getTarjetaEstacion(),
-										jugadorActual);
-								break;
-							default:
-								throw new CondicionInvalidaException(
-										"Tipo de casillero inválido.");
-							}
-							break;
-
-						/**
-						 * Opción cuando el jugador sacó una tarjeta del mazo
-						 * Suerte.
-						 */
-						case TARJETA_SUERTE:
-							showTarjetaSuerte((TarjetaSuerte) status
-									.getTarjeta());
-							break;
-
-						/**
-						 * Opción cuando el jugador sacó una tarjeta del mazo
-						 * Comunidad.
-						 */
-						case TARJETA_COMUNIDAD:
-							showTarjetaComunidad((TarjetaComunidad) status
-									.getTarjeta());
-							break;
-
-						case HIPOTECADA:
-							showMessageBox(AlertType.INFORMATION,
-									"Propiedad hipotecada...",
-									accionCasillero.getMensaje(),
-									accionCasillero.getMensaje(), null);
-							break;
-
-						case IMPUESTO_DE_LUJO:
-							PayToBankMessage msgPayToBank;
-							String mensaje;
-							showMessageBox(AlertType.INFORMATION,
-									"Impuesto de lujo...",
-									"Debes pagar el impuesto.",
-									accionCasillero.getMensaje(), null);
-
-							if (jugadorActual.getDinero() >= accionCasillero
-									.getMonto()) {
-								mensaje = String
-										.format("Ha pagado al banco %s de impuesto de lujo.",
-												StringUtils
-														.formatearAMoneda(100));
-								msgPayToBank = new PayToBankMessage(idJuego,
-										100, mensaje);
-								ConnectionController.getInstance().send(
-										msgPayToBank);
-							} else {
-								registrarDeuda(accionCasillero.getMonto());
-								showMessageBox(AlertType.WARNING,
-										"Impuesto de lujo...",
-										"Debes pagar el impuesto.", String
-												.format(msgSinDinero,
-														"el impuesto"), null);
-							}
-							break;
-
-						case IMPUESTO_SOBRE_CAPITAL:
-							ButtonType buttonPorcentaje;
-							ButtonType buttonMonto;
-							List<ButtonType> buttons;
-							Optional<ButtonType> result;
-							SuperTaxMessage msgSuperTax = null;
-
-							buttonPorcentaje = new ButtonType("Pagar 10%");
-							buttonMonto = new ButtonType("Pagar "
-									+ StringUtils.formatearAMoneda(200));
-							buttons = new ArrayList<ButtonType>();
-							buttons.add(buttonPorcentaje);
-							buttons.add(buttonMonto);
-
-							result = showMessageBox(AlertType.CONFIRMATION,
-									"Impuesto sobre el capital...",
-									"Debes pagar el impuesto.",
-									accionCasillero.getMensaje(), buttons);
-
-							if (result.get() == buttonPorcentaje) {
-								msgSuperTax = new SuperTaxMessage(
-										juego.getUniqueID(),
-										EnumsTipoImpuesto.TIPO_IMPUESTO_PORCENTAJE);
-							} else {
-								msgSuperTax = new SuperTaxMessage(idJuego,
-										EnumsTipoImpuesto.TIPO_IMPUESTO_MONTO);
-
-								if (jugadorActual.getDinero() < 200) {
-									registrarDeuda(accionCasillero.getMonto());
-									showMessageBox(AlertType.WARNING,
-											"Impuesto de sobre el capital...",
-											"Debes pagar el impuesto.", String
-													.format(msgSinDinero,
-															"el impuesto"),
-											null);
-									break;
-								}
-							}
-							ConnectionController.getInstance()
-									.send(msgSuperTax);
-							break;
-
-						case MI_PROPIEDAD:
-							showMessageBox(AlertType.INFORMATION,
-									"Propiedad...", null,
-									accionCasillero.getMensaje(), null);
-							break;
-
-						case PAGAR_ALQUILER:
-							PayToPlayerMessage msgPayToPlayer;
-							Jugador jugadorPropietario;
-							showMessageBox(AlertType.INFORMATION, "Pagar...",
-									"Pagar alquiler.",
-									accionCasillero.getMensaje(), null);
-							if (jugadorActual.getDinero() >= accionCasillero
-									.getMonto()) {
-								jugadorPropietario = getPropietarioCasillero(casilleroActual, status.getTurnos());
-								if (jugadorPropietario != null) {
-									mensaje = String
-											.format("Ha pagado %s al jugador %s en concepto de alquiler.",
-													StringUtils
-															.formatearAMoneda(accionCasillero
-																	.getMonto()),
-													jugadorPropietario
-															.getNombre());
-									msgPayToPlayer = new PayToPlayerMessage(
-											mensaje, jugadorPropietario,
-											accionCasillero.getMonto(), idJuego);
-									ConnectionController.getInstance().send(
-											msgPayToPlayer);
-								} else
-									showMessageBox(
-											AlertType.ERROR,
-											"Error",
-											null,
-											String.format(
-													"Se produjo un error, propietario inexistente para el casillero %s.",
-													casilleroActual
-															.getNombreCasillero()),
-											null);
-							} else {
-								registrarDeuda(accionCasillero.getMonto());
-								showMessageBox(AlertType.WARNING,
-										"Alquiler...",
-										"Debes pagar el alquiler.", String
-												.format(msgSinDinero,
-														"el alquiler"), null);
-							}
-							break;
-
-						case IR_A_LA_CARCEL:
-							GoToJailMessage msgGoToJailMessage;
-
-							showMessageBox(AlertType.INFORMATION,
-									"Marche preso...", null,
-									accionCasillero.getMensaje(), null);
-							// enviar mensaje;
-							msgGoToJailMessage = new GoToJailMessage(idJuego);
-							ConnectionController.getInstance().send(
-									msgGoToJailMessage);
-							break;
-
-						default:
-							showMessageBox(AlertType.ERROR, "Acción inválida",
-									"Se Produjo un error.",
-									"La acción %s no es una acción válida.",
-									null);
-							break;
-						}
-						break;
-
-					case ESPERANDO_TURNO:
-						break;
-					default:
-						break;
-					}
-
-					actualizarTurnoJugador(status);
-
-				} catch (Exception ex) {
-					GestorLogs.registrarError(ex);
-					showMessageBox(AlertType.ERROR, "Error...", null,
-							ex.getMessage(), null);
-				}
+			// Cargo la Historia del juego
+			for (History history : status.getHirtoryList()) {
+				TableroController.getInstance().addHistoryGame(history);
 			}
-		});
+
+			// Actualizo la información en el tablero.
+			actualizarGraficoEnElTablero(status.getTurnos(), status.getBanco());
+
+			switch (estadoDeTurno) {
+			/**
+			 * opción cuando al jugador le toca tirar el dado.
+			 */
+			case TIRAR_DADO:
+				bloquearAcciones(false);
+				mostrarTirarDados(true);
+				showMessageBox(AlertType.INFORMATION, "Turno de juego...",
+						null, "Es tu turno para jugar", null);
+				break;
+			case JUGANDO:
+				bloquearAcciones(true);
+				mostrarTirarDados(false);
+				realizarAccionEnCasillero(accionCasillero, casilleroActual,
+						jugadorActual, tarjetaSelected, turnosList);
+				break;
+			case ESPERANDO_TURNO:
+				break;
+			default:
+				throw new CondicionInvalidaException("El estado de Turno "
+						+ estadoDeTurno + " es inválido.");
+			}
+
+			actualizarTurnoJugador(jugadorActual.getNombre());
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
+			showMessageBox(AlertType.ERROR, "Error...", null, ex.getMessage(),
+					null);
+		}
 	}
 
-	private void actualizarTurnoJugador(final MonopolyGameStatus monopolyGameStatus) {
+	private void realizarAccionEnCasillero(AccionEnCasillero accionCasillero,
+			Casillero casilleroActual, Jugador jugadorActual,
+			Tarjeta tarjetaSelected, List<Jugador> turnosList) throws Exception {
+
+		try {
+			switch (accionCasillero) {
+
+			case DESCANSO:
+				showMessageBox(AlertType.INFORMATION, "Descanso...", null,
+						accionCasillero.getMensaje(), null);
+				break;
+
+			case DISPONIBLE_PARA_VENDER:
+				disponibleParalaVenta(jugadorActual, casilleroActual,
+						accionCasillero.getMensaje());
+				break;
+
+			case TARJETA_SUERTE:
+				showTarjetaSuerte((TarjetaSuerte) tarjetaSelected);
+				break;
+
+			case TARJETA_COMUNIDAD:
+				showTarjetaComunidad((TarjetaComunidad) tarjetaSelected);
+				break;
+
+			case HIPOTECADA:
+				showMessageBox(AlertType.INFORMATION,
+						"Propiedad hipotecada...",
+						accionCasillero.getMensaje(),
+						accionCasillero.getMensaje(), null);
+				break;
+
+			case IMPUESTO_DE_LUJO:
+				showImpuestoDeLujo(jugadorActual, accionCasillero.getMensaje(),
+						accionCasillero.getMonto());
+				break;
+
+			case IMPUESTO_SOBRE_CAPITAL:
+				showImpuestoSobreElCapital(jugadorActual,
+						accionCasillero.getMensaje(),
+						accionCasillero.getMonto());
+				break;
+
+			case MI_PROPIEDAD:
+				showMessageBox(AlertType.INFORMATION, "Propiedad...", null,
+						accionCasillero.getMensaje(), null);
+				break;
+
+			case PAGAR_ALQUILER:
+				pagarAlquiler(jugadorActual, casilleroActual, turnosList,
+						accionCasillero.getMensaje(),
+						accionCasillero.getMonto());
+				break;
+
+			case IR_A_LA_CARCEL:
+				irALaCarcel(accionCasillero.getMensaje());
+				break;
+
+			default:
+				showMessageBox(AlertType.ERROR, "Acción inválida",
+						"Se Produjo un error.",
+						"La acción %s no es una acción válida.", null);
+				break;
+			}
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
+			showMessageBox(
+					AlertType.ERROR,
+					"Error...",
+					"Se ha producido un error al realizar el movimiento en el casillero.",
+					ex.getMessage(), null);
+		}
+	}
+
+	private void actualizarTurnoJugador(final String nombre) {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				if (monopolyGameStatus != null) {
-					lblTurnoJugador.setText("Turno de "
-							+ monopolyGameStatus.getCurrentPlayer().getNombre());
-				}
+				lblTurnoJugador.setText("Turno de " + nombre);
 			}
 		});
 	}
@@ -847,7 +702,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			private Stage ventaPropiedadStage = null;
 			private TarjetaPropiedad tarjeta = tarjetaPropiedad;
 			private Jugador jugadorComprador = jugador;
-			
+
 			@Override
 			public void run() {
 				String fxml;
@@ -868,7 +723,10 @@ public class TableroController extends AnchorPane implements Serializable,
 					ventaPropiedadStage.show();
 				} catch (Exception ex) {
 					GestorLogs.registrarException(ex);
-					showMessageBox(AlertType.ERROR, "Error...", null,
+					showMessageBox(
+							AlertType.ERROR,
+							"Error...",
+							"Se ha producido un error al mostrar la Tarjeta de la Propiedad.",
 							ex.getMessage(), null);
 				}
 			}
@@ -878,7 +736,8 @@ public class TableroController extends AnchorPane implements Serializable,
 	private void showTarjetaComunidad(final TarjetaComunidad tarjetaComunidad) {
 		Platform.runLater(new Runnable() {
 			private Stage tarjetaComunidadStage = null;
-			private TarjetaComunidad tarjeta = tarjetaComunidad; 
+			private TarjetaComunidad tarjeta = tarjetaComunidad;
+
 			@Override
 			public void run() {
 				String fxml;
@@ -899,7 +758,10 @@ public class TableroController extends AnchorPane implements Serializable,
 					tarjetaComunidadStage.show();
 				} catch (Exception ex) {
 					GestorLogs.registrarError(ex);
-					showMessageBox(AlertType.ERROR, "Error...", null,
+					showMessageBox(
+							AlertType.ERROR,
+							"Error...",
+							"Se ha producido un error al mostrar la Tarjeta de la Comunidad.",
 							ex.getMessage(), null);
 				}
 			}
@@ -910,7 +772,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		Platform.runLater(new Runnable() {
 			private Stage TarjetaSuerteStage = null;
 			private TarjetaSuerte tarjeta = tarjetaSuerte;
-			
+
 			@Override
 			public void run() {
 				String fxml;
@@ -930,14 +792,218 @@ public class TableroController extends AnchorPane implements Serializable,
 					TarjetaSuerteStage.show();
 				} catch (Exception ex) {
 					GestorLogs.registrarError(ex);
-					showMessageBox(AlertType.ERROR, "Error...", null,
+					showMessageBox(
+							AlertType.ERROR,
+							"Error...",
+							"Se ha producido un error al mostrar la Tarjeta de la Suerte.",
 							ex.getMessage(), null);
 				}
 			}
 		});
 	}
 
-	private Jugador getPropietarioCasillero(Casillero casillero, List<Jugador> turnosList) {
+	private void showImpuestoSobreElCapital(final Jugador jugadorActual,
+			final String mensaje, final int monto) {
+		Platform.runLater(new Runnable() {
+
+			@Override
+			public void run() {
+				String msgSinDinero;
+				String idJuego;
+
+				try {
+					idJuego = juego.getUniqueID();
+					msgSinDinero = "No cuentas con suficiente dinero para pagar %s. Vende hoteles, casas o hipoteca propiedades para continuar con el juego.";
+
+					ButtonType buttonPorcentaje;
+					ButtonType buttonMonto;
+					List<ButtonType> buttons;
+					Optional<ButtonType> result;
+					SuperTaxMessage msgSuperTax = null;
+
+					buttonPorcentaje = new ButtonType("Pagar 10%");
+					buttonMonto = new ButtonType("Pagar "
+							+ StringUtils.formatearAMoneda(200));
+					buttons = new ArrayList<ButtonType>();
+					buttons.add(buttonPorcentaje);
+					buttons.add(buttonMonto);
+
+					result = showMessageBox(AlertType.CONFIRMATION,
+							"Impuesto sobre el capital...",
+							"Debes pagar el impuesto.", mensaje, buttons);
+
+					if (result.get() == buttonPorcentaje) {
+						msgSuperTax = new SuperTaxMessage(juego.getUniqueID(),
+								EnumsTipoImpuesto.TIPO_IMPUESTO_PORCENTAJE);
+					} else {
+						msgSuperTax = new SuperTaxMessage(idJuego,
+								EnumsTipoImpuesto.TIPO_IMPUESTO_MONTO);
+
+						if (jugadorActual.getDinero() < 200) {
+							registrarDeuda(monto);
+							showMessageBox(AlertType.WARNING,
+									"Impuesto de sobre el capital...",
+									"Debes pagar el impuesto.",
+									String.format(msgSinDinero, "el impuesto"),
+									null);
+							return;
+						}
+					}
+					ConnectionController.getInstance().send(msgSuperTax);
+
+				} catch (Exception ex) {
+					GestorLogs.registrarError(ex);
+					showMessageBox(
+							AlertType.ERROR,
+							"Error",
+							"Se ha producido un erro al mostrar Impuestos sobre el capital",
+							ex.getMessage(), null);
+				}
+
+			}
+		});
+	}
+
+	private void showImpuestoDeLujo(Jugador jugadorActual, String mensaje,
+			int monto) {
+		PayToBankMessage msgPayToBank;
+		String msgSinDinero;
+		String idJuego;
+
+		try {
+			idJuego = juego.getUniqueID();
+			msgSinDinero = "No cuentas con suficiente dinero para pagar %s. Vende hoteles, casas o hipoteca propiedades para continuar con el juego.";
+
+			showMessageBox(AlertType.INFORMATION, "Impuesto de lujo...",
+					"Debes pagar el impuesto.", mensaje, null);
+
+			if (jugadorActual.getDinero() >= monto) {
+				mensaje = String.format(
+						"Ha pagado al banco %s de impuesto de lujo.",
+						StringUtils.formatearAMoneda(100));
+				msgPayToBank = new PayToBankMessage(idJuego, 100, mensaje);
+				ConnectionController.getInstance().send(msgPayToBank);
+			} else {
+				registrarDeuda(monto);
+				showMessageBox(AlertType.WARNING, "Impuesto de lujo...",
+						"Debes pagar el impuesto.",
+						String.format(msgSinDinero, "el impuesto"), null);
+			}
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
+			showMessageBox(AlertType.ERROR, "Error...",
+					"Se ha producido un error al Pagar el Impuesto de Lujo.",
+					ex.getMessage(), null);
+		}
+	}
+
+	private void disponibleParalaVenta(Jugador jugadorActual,
+			Casillero casilleroActual, String mensaje) {
+
+		try {
+			showMessageBox(AlertType.INFORMATION,
+					"Compra de propiedad dispobible...", "Propiedad "
+							+ casilleroActual.getNombreCasillero(), mensaje,
+					null);
+
+			switch (casilleroActual.getTipoCasillero()) {
+			case C_CALLE:
+				showVentaPropiedad(
+						((CasilleroCalle) casilleroActual).getTarjetaCalle(),
+						jugadorActual);
+				break;
+			case C_COMPANIA:
+				showVentaPropiedad(
+						((CasilleroCompania) casilleroActual)
+								.getTarjetaCompania(),
+						jugadorActual);
+				break;
+
+			case C_ESTACION:
+				showVentaPropiedad(
+						((CasilleroEstacion) casilleroActual)
+								.getTarjetaEstacion(),
+						jugadorActual);
+				break;
+			default:
+				throw new CondicionInvalidaException(
+						"Tipo de casillero inválido.");
+			}
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
+			showMessageBox(
+					AlertType.ERROR,
+					"Error...",
+					"Se ha producido un error mientras se mostraba la Propiedad disponible para la Venta.",
+					ex.getMessage(), null);
+		}
+	}
+
+	private void pagarAlquiler(Jugador jugadorActual,
+			Casillero casilleroActual, List<Jugador> turnosList,
+			String mensaje, int monto) {
+		PayToPlayerMessage msgPayToPlayer;
+		Jugador jugadorPropietario;
+		String msgSinDinero;
+		String idJuego;
+		try {
+			idJuego = juego.getUniqueID();
+			msgSinDinero = "No cuentas con suficiente dinero para pagar %s. Vende hoteles, casas o hipoteca propiedades para continuar con el juego.";
+
+			showMessageBox(AlertType.INFORMATION, "Pagar...",
+					"Pagar alquiler.", mensaje, null);
+			if (jugadorActual.getDinero() >= monto) {
+				jugadorPropietario = getPropietarioCasillero(casilleroActual,
+						turnosList);
+				if (jugadorPropietario != null) {
+					mensaje = String
+							.format("Ha pagado %s al jugador %s en concepto de alquiler.",
+									StringUtils.formatearAMoneda(monto),
+									jugadorPropietario.getNombre());
+					msgPayToPlayer = new PayToPlayerMessage(mensaje,
+							jugadorPropietario, monto, idJuego);
+					ConnectionController.getInstance().send(msgPayToPlayer);
+				} else
+					showMessageBox(
+							AlertType.ERROR,
+							"Error",
+							null,
+							String.format(
+									"Se produjo un error, propietario inexistente para el casillero %s.",
+									casilleroActual.getNombreCasillero()), null);
+			} else {
+				registrarDeuda(monto);
+				showMessageBox(AlertType.WARNING, "Alquiler...",
+						"Debes pagar el alquiler.",
+						String.format(msgSinDinero, "el alquiler"), null);
+			}
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
+			showMessageBox(AlertType.ERROR, "Error...",
+					"Se ha producido un error al Pagar el Alquiler.",
+					ex.getMessage(), null);
+		}
+	}
+
+	private void irALaCarcel(String mensaje) {
+		try {
+			GoToJailMessage msgGoToJailMessage;
+
+			showMessageBox(AlertType.INFORMATION, "Marche preso...", null,
+					mensaje, null);
+			// enviar mensaje;
+			msgGoToJailMessage = new GoToJailMessage(juego.getUniqueID());
+			ConnectionController.getInstance().send(msgGoToJailMessage);
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
+			showMessageBox(AlertType.ERROR, "Error...",
+					"Se ha producido un error al Ir a la Cárcel.",
+					ex.getMessage(), null);
+		}
+	}
+
+	private Jugador getPropietarioCasillero(Casillero casillero,
+			List<Jugador> turnosList) {
 		for (Jugador jugador : turnosList) {
 			for (TarjetaPropiedad tarjeta : jugador.getTarjPropiedadList()) {
 				if (tarjeta.getCasillero().getNumeroCasillero() == casillero
@@ -948,18 +1014,20 @@ public class TableroController extends AnchorPane implements Serializable,
 		return null;
 	}
 
-	private void registrarDeuda(int pMonto) {
+	private void registrarDeuda(int pMonto) throws Exception {
 		bloquearAcciones(false);
-		btnTirarDados.setVisible(false);
-		btnFinalizarTurno.setVisible(true);
+		mostrarTirarDados(false);
+		mostrarFinalizarTurno(true);
 		deudaPendiente = new Deuda(pMonto);
+
 	}
 
 	// =======================================================================//
 	// =========== Métodos para dibujar componentes en la pantalla ===========//
 	// =======================================================================//
 
-	private void actualizarGraficoEnElTablero(List<Jugador> turnosList, Banco banco) throws Exception {
+	private void actualizarGraficoEnElTablero(List<Jugador> turnosList,
+			Banco banco) throws Exception {
 		displayFichas(turnosList);
 		showAccordionJugadores(turnosList, banco);
 	}
@@ -968,24 +1036,32 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * Método que dibuja a los jugadores, mostrando el estado en el juego.
 	 * 
 	 */
-	private void showAccordionJugadores(List<Jugador> turnosList, Banco banco) throws Exception {
-		//List<Jugador> turnos = turnosList;
+	private void showAccordionJugadores(List<Jugador> turnosList, Banco banco)
+			throws Exception {
+		// List<Jugador> turnos = turnosList;
 		tps = new TitledPane[turnosList.size() + 1];
 		String title;
 
 		for (int i = 0; i < turnosList.size(); i++) {
 			title = turnosList.get(i).getNombre() + " - ";
-			title += StringUtils.formatearAMoneda(turnosList.get(i).getDinero())
-					+ " - ";
+			title += StringUtils
+					.formatearAMoneda(turnosList.get(i).getDinero()) + " - ";
 			title += (turnosList.get(i) instanceof JugadorHumano) ? "Jugador Humano"
 					: "Jugador Virtual";
 			tps[i] = getPaneInfoPlayer(turnosList.get(i), title, banco);
 		}
 		tps[turnosList.size()] = getPaneInfoBanco(banco, "BANCO");
 
-		accordionPlayers.getPanes().clear();
-		accordionPlayers.getPanes().addAll(tps);
-		accordionPlayers.setExpandedPane(tps[0]);
+		final TitledPane[] tpJugadores = tps;
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				accordionPlayers.getPanes().clear();
+				accordionPlayers.getPanes().addAll(tpJugadores);
+				accordionPlayers.setExpandedPane(tpJugadores[0]);
+			}
+		});
+
 	}
 
 	/**
@@ -994,158 +1070,198 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * @throws Exception
 	 */
 	private void displayFichas(List<Jugador> turnosList) throws Exception {
-		//List<Jugador> turnos = status.getTurnos();
-		// Tablero tablero = status.tablero;
-		Image img;
+
+		TilePane tpCasilleroSelected = null;
 
 		limpiarCasilleros();
 
 		for (Jugador jugadorTurno : turnosList) {
-			img = new Image(
+			final Image img = new Image(
 					TableroController.class.getResourceAsStream(jugadorTurno
 							.getFicha().getPathImgSmall()), 25, 25, true, true);
 
 			switch (jugadorTurno.getCasilleroActual().getNumeroCasillero()) {
 			case 1:
-				pCasillero01.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero01;
 				break;
 			case 2:
-				pCasillero02.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero02;
 				break;
 			case 3:
-				pCasillero03.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero03;
 				break;
 			case 4:
-				pCasillero04.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero04;
 				break;
 			case 5:
-				pCasillero05.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero05;
 				break;
 			case 6:
-				pCasillero06.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero06;
 				break;
 			case 7:
-				pCasillero07.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero07;
 				break;
 			case 8:
-				pCasillero08.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero08;
 				break;
 			case 9:
-				pCasillero01.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero01;
 				break;
 			case 10:
-				pCasillero10.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero10;
 				break;
 			case 11:
-				pCasillero11.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero11;
 				break;
 			case 12:
-				pCasillero12.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero12;
 				break;
 			case 13:
-				pCasillero13.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero13;
 				break;
 			case 14:
-				pCasillero14.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero14;
 				break;
 			case 15:
-				pCasillero15.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero15;
 				break;
 			case 16:
-				pCasillero16.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero16;
 				break;
 			case 17:
-				pCasillero17.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero17;
 				break;
 			case 18:
-				pCasillero18.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero18;
 				break;
 			case 19:
-				pCasillero19.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero19;
 				break;
-
 			case 20:
-				pCasillero20.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero20;
 				break;
 			case 21:
-				pCasillero21.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero21;
 				break;
 			case 22:
-				pCasillero22.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero22;
 				break;
 			case 23:
-				pCasillero23.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero23;
 				break;
 			case 24:
-				pCasillero24.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero24;
 				break;
 			case 25:
-				pCasillero25.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero25;
 				break;
 			case 26:
-				pCasillero26.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero26;
 				break;
 			case 27:
-				pCasillero27.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero27;
 				break;
 			case 28:
-				pCasillero28.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero28;
 				break;
 			case 29:
-				pCasillero29.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero29;
 				break;
-
 			case 30:
-				pCasillero30.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero30;
 				break;
 			case 31:
-				pCasillero31.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero31;
 				break;
 			case 32:
-				pCasillero32.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero32;
 				break;
 			case 33:
-				pCasillero33.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero33;
 				break;
 			case 34:
-				pCasillero34.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero34;
 				break;
 			case 35:
-				pCasillero35.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero35;
 				break;
 			case 36:
-				pCasillero36.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero36;
 				break;
 			case 37:
-				pCasillero37.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero37;
 				break;
 			case 38:
-				pCasillero38.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero38;
 				break;
 			case 39:
-				pCasillero39.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero39;
 				break;
 			case 40:
-				pCasillero40.getChildren().add(new ImageView(img));
+				tpCasilleroSelected = pCasillero40;
 				break;
 			default:
 				break;
 			}
+
+			final TilePane tpCasilleroSel = tpCasilleroSelected;
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					tpCasilleroSel.getChildren().add(new ImageView(img));
+				}
+			});
 		}
 	}
 
-	public void bloquearAcciones(boolean bloquear) {
-		btnConstruir.setDisable(bloquear);
-		btnComercializar.setDisable(bloquear);
-		btnDeshipotecar.setDisable(bloquear);
-		btnHipotecar.setDisable(bloquear);
-		btnVender.setDisable(bloquear);
+	private void bloquearAcciones(final boolean bloquear) {
+		Platform.runLater(new Runnable() {
+
+			@Override
+			public void run() {
+				btnConstruir.setDisable(bloquear);
+				btnComercializar.setDisable(bloquear);
+				btnDeshipotecar.setDisable(bloquear);
+				btnHipotecar.setDisable(bloquear);
+				btnVender.setDisable(bloquear);
+			}
+		});
 	}
 
-	public void debloquearVenta() {
-		btnHipotecar.setDisable(false);
-		btnVender.setDisable(false);
-		btnComercializar.setDisable(false);
+	@SuppressWarnings("unused")
+	private void desbloquearVenta() throws Exception {
+		Platform.runLater(new Runnable() {
+
+			@Override
+			public void run() {
+				btnHipotecar.setDisable(false);
+				btnVender.setDisable(false);
+				btnComercializar.setDisable(false);
+			}
+		});
+	}
+
+	private void mostrarTirarDados(final boolean pbMostrar) throws Exception {
+		Platform.runLater(new Runnable() {
+
+			@Override
+			public void run() {
+				btnTirarDados.setVisible(pbMostrar);
+
+			}
+		});
+	}
+
+	private void mostrarFinalizarTurno(final boolean pbMostrar)
+			throws Exception {
+		Platform.runLater(new Runnable() {
+
+			@Override
+			public void run() {
+				btnFinalizarTurno.setVisible(pbMostrar);
+			}
+		});
 	}
 
 	/**
@@ -1156,11 +1272,12 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * @param title
 	 * @return
 	 */
-	private TitledPane getPaneInfoPlayer(Jugador jugador, String title, Banco banco)
-			throws Exception {
+	private TitledPane getPaneInfoPlayer(Jugador jugador, String title,
+			Banco banco) throws Exception {
+
 		AnchorPane root = new AnchorPane();
 		VBox vBox = new VBox();
-		// HBox hbInfoJugador = new HBox();
+		VBox pImgFicha = new VBox();
 		HBox hbPropiedades = new HBox();
 		HBox hbExtra = new HBox();
 		ScrollPane scroll;
@@ -1171,26 +1288,20 @@ public class TableroController extends AnchorPane implements Serializable,
 		vBox.setAlignment(Pos.CENTER);
 		vBox.setSpacing(10);
 
-		// hbInfoJugador.setAlignment(Pos.CENTER);
-		// hbInfoJugador.setSpacing(25);
-
 		hbPropiedades.setAlignment(Pos.CENTER);
 		hbPropiedades.setSpacing(20);
 
 		hbExtra.setAlignment(Pos.CENTER);
 		hbExtra.setSpacing(20);
 
-		// vBox.getChildren().add(hbInfoJugador);
 		vBox.getChildren().add(hbPropiedades);
 		vBox.getChildren().add(hbExtra);
 
 		root.getChildren().add(vBox);
 		scroll = makeScrollable(root);
 
-		VBox pImgFicha = new VBox();
 		acoplarAContenedor(pImgFicha, 0);
 		pImgFicha.setAlignment(Pos.CENTER);
-
 		pImgFicha.getStyleClass().add("bg_info_ficha");
 		pImgFicha.setPrefSize((double) 60, (double) 60);
 
@@ -1518,28 +1629,37 @@ public class TableroController extends AnchorPane implements Serializable,
 		return tp;
 	}
 
-	private HBox crearHBoxTarjetaPropiedad(String style, boolean creaImagen,
-			String rutaImagen, Double hbWidth, Double hbHeight, String toolTips) {
-		HBox hBox_inner = new HBox();
-		Image imgPropiedad;
-		Tooltip tpImagen;
+	private HBox crearHBoxTarjetaPropiedad(final String style,
+			final boolean creaImagen, final String rutaImagen,
+			final Double hbWidth, final Double hbHeight, final String toolTips) {
+		final HBox hBox_inner = new HBox();
 
-		hBox_inner.getStyleClass().add("border_" + style.toLowerCase());
-		hBox_inner.setPrefSize(hbWidth, hbHeight);
+		Platform.runLater(new Runnable() {
 
-		if (creaImagen) {
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(rutaImagen),
-					hbWidth, hbHeight, false, false);
-			hBox_inner.getChildren().add(new ImageView(imgPropiedad));
-			tpImagen = new Tooltip(toolTips);
-			imgPropiedad = new Image(
-					TableroController.class.getResourceAsStream(rutaImagen),
-					170, 200, false, false);
-			tpImagen.setGraphic(new ImageView(imgPropiedad));
+			@Override
+			public void run() {
+				Image imgPropiedad;
+				Tooltip tpImagen;
 
-			Tooltip.install(hBox_inner, tpImagen);
-		}
+				hBox_inner.getStyleClass().add("border_" + style.toLowerCase());
+				hBox_inner.setPrefSize(hbWidth, hbHeight);
+
+				if (creaImagen) {
+					imgPropiedad = new Image(TableroController.class
+							.getResourceAsStream(rutaImagen), hbWidth,
+							hbHeight, false, false);
+					hBox_inner.getChildren().add(new ImageView(imgPropiedad));
+					tpImagen = new Tooltip(toolTips);
+					imgPropiedad = new Image(TableroController.class
+							.getResourceAsStream(rutaImagen), 170, 200, false,
+							false);
+					tpImagen.setGraphic(new ImageView(imgPropiedad));
+
+					Tooltip.install(hBox_inner, tpImagen);
+				}
+			}
+		});
+
 		return hBox_inner;
 	}
 
@@ -1592,47 +1712,53 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * Borra todos los elementos que estan dibujados en todos los casillero del
 	 * tablero.
 	 */
-	private void limpiarCasilleros() {
-		pCasillero01.getChildren().clear();
-		pCasillero02.getChildren().clear();
-		pCasillero03.getChildren().clear();
-		pCasillero04.getChildren().clear();
-		pCasillero05.getChildren().clear();
-		pCasillero06.getChildren().clear();
-		pCasillero07.getChildren().clear();
-		pCasillero08.getChildren().clear();
-		pCasillero01.getChildren().clear();
-		pCasillero10.getChildren().clear();
-		pCasillero11.getChildren().clear();
-		pCasillero12.getChildren().clear();
-		pCasillero13.getChildren().clear();
-		pCasillero14.getChildren().clear();
-		pCasillero15.getChildren().clear();
-		pCasillero16.getChildren().clear();
-		pCasillero17.getChildren().clear();
-		pCasillero18.getChildren().clear();
-		pCasillero19.getChildren().clear();
-		pCasillero20.getChildren().clear();
-		pCasillero21.getChildren().clear();
-		pCasillero22.getChildren().clear();
-		pCasillero23.getChildren().clear();
-		pCasillero24.getChildren().clear();
-		pCasillero25.getChildren().clear();
-		pCasillero26.getChildren().clear();
-		pCasillero27.getChildren().clear();
-		pCasillero28.getChildren().clear();
-		pCasillero29.getChildren().clear();
-		pCasillero30.getChildren().clear();
-		pCasillero31.getChildren().clear();
-		pCasillero32.getChildren().clear();
-		pCasillero33.getChildren().clear();
-		pCasillero34.getChildren().clear();
-		pCasillero35.getChildren().clear();
-		pCasillero36.getChildren().clear();
-		pCasillero37.getChildren().clear();
-		pCasillero38.getChildren().clear();
-		pCasillero39.getChildren().clear();
-		pCasillero40.getChildren().clear();
+	private void limpiarCasilleros() throws Exception {
+		Platform.runLater(new Runnable() {
+
+			@Override
+			public void run() {
+				pCasillero01.getChildren().clear();
+				pCasillero02.getChildren().clear();
+				pCasillero03.getChildren().clear();
+				pCasillero04.getChildren().clear();
+				pCasillero05.getChildren().clear();
+				pCasillero06.getChildren().clear();
+				pCasillero07.getChildren().clear();
+				pCasillero08.getChildren().clear();
+				pCasillero01.getChildren().clear();
+				pCasillero10.getChildren().clear();
+				pCasillero11.getChildren().clear();
+				pCasillero12.getChildren().clear();
+				pCasillero13.getChildren().clear();
+				pCasillero14.getChildren().clear();
+				pCasillero15.getChildren().clear();
+				pCasillero16.getChildren().clear();
+				pCasillero17.getChildren().clear();
+				pCasillero18.getChildren().clear();
+				pCasillero19.getChildren().clear();
+				pCasillero20.getChildren().clear();
+				pCasillero21.getChildren().clear();
+				pCasillero22.getChildren().clear();
+				pCasillero23.getChildren().clear();
+				pCasillero24.getChildren().clear();
+				pCasillero25.getChildren().clear();
+				pCasillero26.getChildren().clear();
+				pCasillero27.getChildren().clear();
+				pCasillero28.getChildren().clear();
+				pCasillero29.getChildren().clear();
+				pCasillero30.getChildren().clear();
+				pCasillero31.getChildren().clear();
+				pCasillero32.getChildren().clear();
+				pCasillero33.getChildren().clear();
+				pCasillero34.getChildren().clear();
+				pCasillero35.getChildren().clear();
+				pCasillero36.getChildren().clear();
+				pCasillero37.getChildren().clear();
+				pCasillero38.getChildren().clear();
+				pCasillero39.getChildren().clear();
+				pCasillero40.getChildren().clear();
+			}
+		});
 	}
 
 	/**
@@ -1644,23 +1770,34 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * @param message
 	 * @param buttons
 	 */
-	private Optional<ButtonType> showMessageBox(AlertType type, String title,
-			String headerText, String message, List<ButtonType> buttons) {
+	private Optional<ButtonType> showMessageBox(final AlertType type,
+			final String title, final String headerText, final String message,
+			final List<ButtonType> buttons) {
 
-		ButtonType buttonAceptar;
-		Alert alert = null;
 		try {
-			alert = new Alert(type);
-			alert.setTitle(title);
-			alert.setHeaderText(headerText);
-			alert.setContentText(message);
-			if (buttons != null) {
-				alert.getButtonTypes().setAll(buttons);
-			} else {
-				buttonAceptar = new ButtonType("Aceptar", ButtonData.OK_DONE);
-				alert.getButtonTypes().setAll(buttonAceptar);
-			}
-			return alert.showAndWait();	
+			final FutureTask<Optional<ButtonType>> query = new FutureTask<Optional<ButtonType>>(new Callable<Optional<ButtonType>>() {
+				@Override
+				public Optional<ButtonType> call() throws Exception {
+					ButtonType buttonAceptar;
+
+					final Alert alert = new Alert(type);
+
+					alert.setTitle(title);
+					alert.setHeaderText(headerText);
+					alert.setContentText(message);
+					if (buttons != null) {
+						alert.getButtonTypes().setAll(buttons);
+					} else {
+						buttonAceptar = new ButtonType("Aceptar",
+								ButtonData.OK_DONE);
+						alert.getButtonTypes().setAll(buttonAceptar);
+					}
+					return alert.showAndWait();
+
+				}
+			});
+			Platform.runLater(query);
+			return query.get();
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
 		}

@@ -16,6 +16,9 @@ import monopoly.util.StringUtils;
  * 
  **/
 public enum AccionEnCasillero implements Serializable {
+	
+	
+	
 	/**
 	 * Cuando una propiedad es libre para ser comprada String[descripción]
 	 */
