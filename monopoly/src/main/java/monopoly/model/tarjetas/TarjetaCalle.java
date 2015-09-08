@@ -13,6 +13,7 @@ import javax.persistence.Transient;
 
 import monopoly.model.Jugador;
 import monopoly.model.tablero.Casillero;
+import monopoly.model.tablero.CasilleroCalle;
 
 /**
  * @author Bostico Alejandro
@@ -102,6 +103,17 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 		this.precioCadaCasa = precioCadaCasa;
 		this.precioCadaHotel = precioCadaHotel;
 		this.color = color;
+	}
+
+	/**
+	 * Caclula el precio del alquiler de acuerdo a la cantidad de casas que
+	 * tenga edificadas en la calle.
+	 * 
+	 * @return El monto del alquiler a pagar
+	 */
+	public int calcularAlquiler() {
+		CasilleroCalle casilleroCalle = (CasilleroCalle) this.getCasillero();
+		return this.calcularAlquiler(casilleroCalle.getNroCasas());
 	}
 
 	/**
@@ -329,6 +341,13 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 		return color;
 	}
 
+	/**
+	 * Calcula el monto del alquiler
+	 * 
+	 * @param nroCasas
+	 *            La cantidad de casas contruidas en la calle
+	 * @return El monto del alquiere correspondiente
+	 */
 	public int calcularAlquiler(int nroCasas) {
 		int monto = 0;
 		switch (nroCasas) {

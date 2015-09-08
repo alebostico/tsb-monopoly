@@ -12,6 +12,8 @@ import javax.persistence.Table;
 
 import monopoly.model.Jugador;
 import monopoly.model.tablero.Casillero;
+import monopoly.model.tablero.Casillero.TipoCasillero;
+import monopoly.model.tablero.CasilleroEstacion;
 
 /**
  * @author Bostico Alejandro
@@ -41,7 +43,6 @@ public class TarjetaEstacion extends TarjetaPropiedad implements Serializable {
 	public TarjetaEstacion() {
 		super();
 	}
-
 
 	public TarjetaEstacion(Jugador jugador, String nombre,
 			int valorHipotecario, int precioAlquiler, int valorDosEstacion,
@@ -114,13 +115,36 @@ public class TarjetaEstacion extends TarjetaPropiedad implements Serializable {
 	public void setValorCuatroEstacion(int valorCuatroEstacion) {
 		this.valorCuatroEstacion = valorCuatroEstacion;
 	}
-	
+
 	/**
 	 * Método que calcula el valor del alquiler.
 	 * 
-	 * @param nroEstaciones cantidad  de estaciones que posee
-	 * el jugador.
-	 * @return el monto a cobrar  por el alquiler de la propiedad.
+	 * @return el monto a pagar por el alquiler de la propiedad.
+	 *
+	 */
+	public int calcularAlquiler() {
+		int cantEstaciones = 0;
+		for (TarjetaPropiedad tarjProp : this.getJugador()
+				.getTarjPropiedadList()) {
+			if (tarjProp.getCasillero().getTipoCasillero() == TipoCasillero.C_ESTACION) {
+				CasilleroEstacion casEst = (CasilleroEstacion) tarjProp
+						.getCasillero();
+				if (casEst.getTarjetaEstacion().getJugador()
+						.equals(this.getJugador())) {
+					cantEstaciones++;
+				}
+			}
+		}
+
+		return this.calcularAlquiler(cantEstaciones);
+	}
+
+	/**
+	 * Método que calcula el valor del alquiler.
+	 * 
+	 * @param nroEstaciones
+	 *            cantidad de estaciones que posee el jugador.
+	 * @return el monto a pagar por el alquiler de la propiedad.
 	 */
 	public int calcularAlquiler(int nroEstaciones) {
 		int monto = 0;
@@ -161,15 +185,16 @@ public class TarjetaEstacion extends TarjetaPropiedad implements Serializable {
 		return true;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		return super.getIdTarjeta();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 

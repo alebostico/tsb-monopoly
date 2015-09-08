@@ -12,6 +12,8 @@ import javax.persistence.Table;
 
 import monopoly.model.Jugador;
 import monopoly.model.tablero.Casillero;
+import monopoly.model.tablero.Casillero.TipoCasillero;
+import monopoly.model.tablero.CasilleroCompania;
 
 /**
  * @author Bostico Alejandro
@@ -77,6 +79,38 @@ public class TarjetaCompania extends TarjetaPropiedad implements Serializable {
 		this.vecesPorDosCartas = vecesPorDosCartas;
 	}
 
+	/**
+	 * Método que calcula el valor del alquiler.
+	 * 
+	 * @param resultadoDados
+	 *            El resultado de la última tirada de dados
+	 * @return El monto a pagar por el alquiler
+	 */
+	public int calcularAlquiler(int resultadoDados) {
+		int cantCompanias = 0;
+		for (TarjetaPropiedad tarjProp : this.getJugador()
+				.getTarjPropiedadList()) {
+			if (tarjProp.getCasillero().getTipoCasillero() == TipoCasillero.C_COMPANIA) {
+				CasilleroCompania casCom = (CasilleroCompania) tarjProp
+						.getCasillero();
+				if (casCom.getTarjetaCompania().getJugador()
+						.equals(this.getJugador())) {
+					cantCompanias++;
+				}
+			}
+		}
+		return this.calcularAlquiler(cantCompanias, resultadoDados);
+	}
+
+	/**
+	 * Método que calcula el valor del alquiler.
+	 * 
+	 * @param nroCompania
+	 *            La cantidad de compañías que posee el jugador que cobra
+	 * @param resultadoDados
+	 *            El resultado de la última tirada de dados
+	 * @return El monto a pagar por el alquiler
+	 */
 	public int calcularAlquiler(int nroCompania, int resultadosDados) {
 		int monto = 0;
 		switch (nroCompania) {
