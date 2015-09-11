@@ -19,64 +19,33 @@ public class MonopolyGameStatus implements Serializable {
 
 	private static final long serialVersionUID = -584315517388176762L;
 
-	private final List<Jugador> turnos;
+	public final List<Jugador> turnos;
 
-	private final EstadoJuego status;
+	public final EstadoJuego estadoTurno;
 
-	private final  AccionEnCasillero accionCasillero;
+	public final  AccionEnCasillero accionCasillero;
 
-	private  final Banco banco;
+	public final Banco banco;
 
-	private  final Tablero tablero;
+	public final Tablero tablero;
 
-	private  final Jugador currentPlayer;
+	public final Jugador currentPlayer;
 
-	private  final List<History> hirtoryList;
+	public final List<History> hirtoryList;
 	
-	private  final Tarjeta tarjeta;
+	public final Tarjeta tarjeta;
 
-	public MonopolyGameStatus(List<Jugador> turnos, Banco banco,
-			Tablero tablero, EstadoJuego status, AccionEnCasillero accion,
-			Jugador currentPlayer, List<History> hirtoryList, Tarjeta tarjeta) {
-		this.turnos = turnos;
-		this.status = status;
-		this.accionCasillero = accion;
-		this.currentPlayer = currentPlayer;
-		this.banco = banco;
-		this.tablero = tablero;
-		this.hirtoryList = hirtoryList;
-		this.tarjeta = tarjeta;
+	public MonopolyGameStatus(List<Jugador> _turnos, Banco _banco,
+			Tablero _tablero, EstadoJuego _status, AccionEnCasillero _accion,
+			Jugador _currentPlayer, List<History> _hirtoryList, Tarjeta _tarjeta) {
+		this.turnos = _turnos;
+		this.estadoTurno = _status;
+		this.accionCasillero = _accion;
+		this.currentPlayer = _currentPlayer;
+		this.banco = _banco;
+		this.tablero = _tablero;
+		this.hirtoryList = _hirtoryList;
+		this.tarjeta = _tarjeta;
 	}
 
-	public List<Jugador> getTurnos() {
-		return turnos;
-	}
-
-	public EstadoJuego getStatus() {
-		return status;
-	}
-
-	public AccionEnCasillero getAccionCasillero() {
-		return accionCasillero;
-	}
-
-	public Banco getBanco() {
-		return banco;
-	}
-
-	public Tablero getTablero() {
-		return tablero;
-	}
-
-	public Jugador getCurrentPlayer() {
-		return currentPlayer;
-	}
-
-	public List<History> getHirtoryList() {
-		return hirtoryList;
-	}
-
-	public Tarjeta getTarjeta() {
-		return tarjeta;
-	}
 }

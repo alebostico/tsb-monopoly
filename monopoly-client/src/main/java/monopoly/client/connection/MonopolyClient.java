@@ -147,7 +147,7 @@ public class MonopolyClient extends GameClient {
 	private void determinarAccion(Object message) {
 		MonopolyGameStatus status = (MonopolyGameStatus) message;
 
-		switch (status.getStatus()) {
+		switch (status.estadoTurno) {
 		case INICIADO:
 			TableroController.getInstance().actualizarEstadoJuego(status);
 			break;

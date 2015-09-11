@@ -145,7 +145,7 @@ public class StringUtils {
 	/**
 	 * @return devuelve la  fecha actual
 	 */
-	private final static DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+	private final static DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
 	public static String getFechaActual(){
 		Calendar calendar = GregorianCalendar.getInstance();
 		return dateFormat.format(calendar.getTime()); 

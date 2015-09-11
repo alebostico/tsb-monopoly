@@ -55,6 +55,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -68,7 +70,6 @@ import monopoly.client.util.ScreensFramework;
 import monopoly.model.AccionEnCasillero;
 import monopoly.model.Banco;
 import monopoly.model.Deuda;
-import monopoly.model.Estado.EstadoJuego;
 import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
@@ -308,7 +309,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	private Usuario usuarioLogueado;
 
-	// private MonopolyGameStatus status;
+	private static MonopolyGameStatus estadoActual;
 
 	private StringProperty clockLabelTextProperty;
 
@@ -317,7 +318,7 @@ public class TableroController extends AnchorPane implements Serializable,
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		instance = this;
-		lvHistoryGame = new ListView<History>();
+		//lvHistoryGame = new ListView<History>();
 
 		historyGameList = new ArrayList<History>();
 		historyChatList = new ArrayList<History>();
@@ -398,30 +399,48 @@ public class TableroController extends AnchorPane implements Serializable,
 	 *            evento.
 	 */
 	public void addHistoryGame(final History history) {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					/**
-					 * historyGameList.add(history); oHistoryGameList =
-					 * FXCollections .observableArrayList(historyGameList); if
-					 * (lvHistoryGame != null) {
-					 * lvHistoryGame.getItems().clear();
-					 * lvHistoryGame.setItems(oHistoryGameList); lvHistoryGame
-					 * .setCellFactory(new Callback<ListView<History>,
-					 * javafx.scene.control.ListCell<History>>() {
-					 * 
-					 * @Override public ListCell<History> call(
-					 *           ListView<History> listView) { return new
-					 *           ListCell<History>(); } }); }
-					 */
-				} catch (Exception ex) {
-					GestorLogs.registrarError(ex);
-					showMessageBox(AlertType.ERROR, "Error...", null,
-							ex.getMessage(), null);
+		FutureTask<Void> taskAddHistory = null;
+		try {
+			taskAddHistory = new FutureTask<Void>(new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
+					historyGameList.add(history);
+
+					oHistoryGameList = FXCollections
+							.observableArrayList(historyGameList);
+
+					if (lvHistoryGame != null) {
+						lvHistoryGame.getItems().clear();
+						lvHistoryGame.setItems(oHistoryGameList);
+						lvHistoryGame
+								.setCellFactory(new Callback<ListView<History>, javafx.scene.control.ListCell<History>>() {
+									@Override
+									public ListCell<History> call(
+											ListView<History> listView) {
+										return new ListCell<History>() {
+
+						                    @Override
+						                    protected void updateItem(History item, boolean bln) {
+						                        super.updateItem(item, bln);
+						                        if (item != null) {
+						                        	Text txtHistory = new Text(item.toString());
+						                        	txtHistory.setFill(Color.RED);
+						                            setGraphic(txtHistory);
+						                        }
+						                    }
+
+						                };
+									}
+								});
+					}
+					return null;
 				}
-			}
-		});
+			});
+			Platform.runLater(taskAddHistory);
+
+		} catch (Exception ex) {
+			GestorLogs.registrarException(ex);
+		}
 	}
 
 	/**
@@ -558,31 +577,24 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * lo fue informa al usuario las direntes estrategias realizada por los
 	 * contrincantes.
 	 * 
-	 * @param status
+	 * @param estadoTurno
 	 *            Toda las información del juego.
 	 */
 	public void actualizarEstadoJuego(MonopolyGameStatus monopolyGameStatus) {
 
-		AccionEnCasillero accionCasillero = monopolyGameStatus
-				.getAccionCasillero();
-		EstadoJuego estadoDeTurno = monopolyGameStatus.getStatus();
-		Jugador jugadorActual = monopolyGameStatus.getCurrentPlayer();
-		Casillero casilleroActual = monopolyGameStatus.getCurrentPlayer()
-				.getCasilleroActual();
-		Tarjeta tarjetaSelected = monopolyGameStatus.getTarjeta();
-		MonopolyGameStatus status = monopolyGameStatus;
-		List<Jugador> turnosList = monopolyGameStatus.getTurnos();
+		estadoActual = monopolyGameStatus;
+
 		try {
 
 			// Cargo la Historia del juego
-			for (History history : status.getHirtoryList()) {
-				TableroController.getInstance().addHistoryGame(history);
+			for (History history : estadoActual.hirtoryList) {
+				addHistoryGame(history);
 			}
 
 			// Actualizo la información en el tablero.
-			actualizarGraficoEnElTablero(status.getTurnos(), status.getBanco());
+			actualizarGraficoEnElTablero();
 
-			switch (estadoDeTurno) {
+			switch (estadoActual.estadoTurno) {
 			/**
 			 * opción cuando al jugador le toca tirar el dado.
 			 */
@@ -595,17 +607,16 @@ public class TableroController extends AnchorPane implements Serializable,
 			case JUGANDO:
 				bloquearAcciones(true);
 				mostrarTirarDados(false);
-				realizarAccionEnCasillero(accionCasillero, casilleroActual,
-						jugadorActual, tarjetaSelected, turnosList);
+				realizarAccionEnCasillero();
 				break;
 			case ESPERANDO_TURNO:
 				break;
 			default:
 				throw new CondicionInvalidaException("El estado de Turno "
-						+ estadoDeTurno + " es inválido.");
+						+ estadoActual.estadoTurno + " es inválido.");
 			}
 
-			actualizarTurnoJugador(jugadorActual.getNombre());
+			actualizarTurnoJugador();
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
 			showMessageBox(AlertType.ERROR, "Error...", null, ex.getMessage(),
@@ -613,9 +624,14 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
-	private void realizarAccionEnCasillero(AccionEnCasillero accionCasillero,
-			Casillero casilleroActual, Jugador jugadorActual,
-			Tarjeta tarjetaSelected, List<Jugador> turnosList) throws Exception {
+	private void realizarAccionEnCasillero() throws Exception {
+
+		AccionEnCasillero accionCasillero = estadoActual.accionCasillero;
+		Casillero casilleroActual = estadoActual.currentPlayer
+				.getCasilleroActual();
+		Jugador jugadorActual = estadoActual.currentPlayer;
+		Tarjeta tarjetaSelected = estadoActual.tarjeta;
+		List<Jugador> turnosList = estadoActual.turnos;
 
 		try {
 			switch (accionCasillero) {
@@ -687,11 +703,12 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
-	private void actualizarTurnoJugador(final String nombre) {
+	private void actualizarTurnoJugador() {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				lblTurnoJugador.setText("Turno de " + nombre);
+				lblTurnoJugador.setText("Turno de "
+						+ estadoActual.currentPlayer.getNombre());
 			}
 		});
 	}
@@ -1026,10 +1043,10 @@ public class TableroController extends AnchorPane implements Serializable,
 	// =========== Métodos para dibujar componentes en la pantalla ===========//
 	// =======================================================================//
 
-	private void actualizarGraficoEnElTablero(List<Jugador> turnosList,
-			Banco banco) throws Exception {
-		displayFichas(turnosList);
-		showAccordionJugadores(turnosList, banco);
+	private void actualizarGraficoEnElTablero() throws Exception {
+		displayFichas(estadoActual.turnos);
+		showAccordionJugadores(estadoActual.turnos,
+				estadoActual.banco);
 	}
 
 	/**
@@ -1773,31 +1790,31 @@ public class TableroController extends AnchorPane implements Serializable,
 	private Optional<ButtonType> showMessageBox(final AlertType type,
 			final String title, final String headerText, final String message,
 			final List<ButtonType> buttons) {
-
+		FutureTask<Optional<ButtonType>> taskMessage = null;
 		try {
-			final FutureTask<Optional<ButtonType>> query = new FutureTask<Optional<ButtonType>>(new Callable<Optional<ButtonType>>() {
-				@Override
-				public Optional<ButtonType> call() throws Exception {
-					ButtonType buttonAceptar;
+			taskMessage = new FutureTask<Optional<ButtonType>>(
+					new Callable<Optional<ButtonType>>() {
+						@Override
+						public Optional<ButtonType> call() throws Exception {
+							ButtonType buttonAceptar;
 
-					final Alert alert = new Alert(type);
+							final Alert alert = new Alert(type);
 
-					alert.setTitle(title);
-					alert.setHeaderText(headerText);
-					alert.setContentText(message);
-					if (buttons != null) {
-						alert.getButtonTypes().setAll(buttons);
-					} else {
-						buttonAceptar = new ButtonType("Aceptar",
-								ButtonData.OK_DONE);
-						alert.getButtonTypes().setAll(buttonAceptar);
-					}
-					return alert.showAndWait();
-
-				}
-			});
-			Platform.runLater(query);
-			return query.get();
+							alert.setTitle(title);
+							alert.setHeaderText(headerText);
+							alert.setContentText(message);
+							if (buttons != null) {
+								alert.getButtonTypes().setAll(buttons);
+							} else {
+								buttonAceptar = new ButtonType("Aceptar",
+										ButtonData.OK_DONE);
+								alert.getButtonTypes().setAll(buttonAceptar);
+							}
+							return alert.showAndWait();
+						}
+					});
+			Platform.runLater(taskMessage);
+			return taskMessage.get();
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
 		}

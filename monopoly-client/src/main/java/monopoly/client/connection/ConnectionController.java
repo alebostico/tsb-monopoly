@@ -35,7 +35,7 @@ public class ConnectionController {
 		try {
 			if (connection == null) {
 				connection = new MonopolyClient(ServerIp, ServerPort);
-				connection.setAutoreset(true);
+				//connection.setAutoreset(true);
 			}
 		} catch (IOException e) {
 			GestorLogs.registrarError(e.getMessage());

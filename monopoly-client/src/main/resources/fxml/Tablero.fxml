@@ -211,7 +211,7 @@
                                       <panes>
                                         <TitledPane fx:id="tpHistory" animated="false" text="Historia del Juego">
                                              <content>
-                                                <ListView fx:id="lvHistory">
+                                                <ListView fx:id="lvHistoryGame">
                                                    <opaqueInsets>
                                                       <Insets />
                                                    </opaqueInsets>
