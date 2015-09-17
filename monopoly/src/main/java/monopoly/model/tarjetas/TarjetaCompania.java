@@ -25,7 +25,7 @@ import monopoly.model.tablero.CasilleroCompania;
 @PrimaryKeyJoinColumn(name = "tarjetaPropiedadID")
 public class TarjetaCompania extends TarjetaPropiedad implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -8926483320692881884L;
 
 	@Column(name = "vecesPorUnaCarta")
 	private int vecesPorUnaCarta;

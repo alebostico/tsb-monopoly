@@ -20,7 +20,7 @@ import monopoly.util.GestorLogs;
  */
 public class Juego implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 634594719477426095L;
 
 	/**
 	 * Nombre unico que identifica al juego

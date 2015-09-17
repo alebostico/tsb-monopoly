@@ -26,8 +26,8 @@ import monopoly.util.GestorLogs;
 @Table(name = "ficha", catalog = "monopoly_db")
 public class Ficha implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = -6170470808225734837L;
+	
 	public static final String TIPO_AUTO = "auto";
 	public static final String TIPO_SOMBRERO = "sombrero";
 	public static final String TIPO_BOTA = "bota";

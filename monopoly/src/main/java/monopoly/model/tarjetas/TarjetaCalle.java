@@ -34,7 +34,7 @@ import monopoly.model.tablero.CasilleroCalle;
 @PrimaryKeyJoinColumn(name = "tarjetaPropiedadID")
 public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 5915150133786803830L;
 
 	@Column(name = "precioAlquiler")
 	private int precioAlquiler;

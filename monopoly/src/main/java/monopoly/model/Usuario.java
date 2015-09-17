@@ -18,7 +18,8 @@ import monopoly.util.exception.EmailInvalidoException;
 @Table(name = "usuario", catalog = "monopoly_db")
 public class Usuario implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+
+	private static final long serialVersionUID = 671456948442187492L;
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
