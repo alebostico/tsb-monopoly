@@ -2018,32 +2018,52 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	public void addChatHistoryGame(final History chatHistory) {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
+				
+		FutureTask<Void> taskAddHistory = null;
+		try {
+			taskAddHistory = new FutureTask<Void>(new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
 					historyChatList.add(chatHistory);
+
 					oHistoryChatList = FXCollections
 							.observableArrayList(historyChatList);
+
 					if (lvHistoryChat != null) {
 						lvHistoryChat.getItems().clear();
-						lvHistoryChat.setItems(oHistoryGameList);
+						lvHistoryChat.setItems(oHistoryChatList);
 						lvHistoryChat
 								.setCellFactory(new Callback<ListView<History>, javafx.scene.control.ListCell<History>>() {
 									@Override
 									public ListCell<History> call(
 											ListView<History> listView) {
-										return new ListCell<History>();
+										return new ListCell<History>() {
+
+											@Override
+											protected void updateItem(
+													History item, boolean bln) {
+												super.updateItem(item, bln);
+												if (item != null) {
+													Text txtHistory = new Text(
+															item.toString());
+													txtHistory
+															.setFill(Color.RED);
+													setGraphic(txtHistory);
+												}
+											}
+
+										};
 									}
 								});
 					}
-				} catch (Exception ex) {
-					GestorLogs.registrarError(ex);
-					showMessageBox(AlertType.ERROR, "Error...", null,
-							ex.getMessage(), null);
+					return null;
 				}
-			}
-		});
+			});
+			Platform.runLater(taskAddHistory);
+
+		} catch (Exception ex) {
+			GestorLogs.registrarException(ex);
+		}
 	}
 
 }

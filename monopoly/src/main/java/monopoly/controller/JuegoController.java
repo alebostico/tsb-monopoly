@@ -550,8 +550,10 @@ public class JuegoController {
 
 	}
 
-	public void comprarPropiedad(int senderId, TarjetaPropiedad tarjeta)
+	public void comprarPropiedad(int senderId, String nombrePropiedad)
 			throws SinDineroException, Exception {
+		TarjetaPropiedad tarjeta = gestorBanco.getBanco().getTarjetaPropiedad(
+				nombrePropiedad);
 		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
 		comprarPropiedad(jugador, tarjeta);
 	}
@@ -642,8 +644,9 @@ public class JuegoController {
 	 * @param tarjeta
 	 * @throws Exception
 	 */
-	public void tarjetaSuerte(int senderId, TarjetaSuerte tarjeta)
-			throws Exception {
+	public void tarjetaSuerte(int senderId, int idTarjeta) throws Exception {
+		TarjetaSuerte tarjeta = gestorTablero.getGestorTarjetas()
+				.getTarjetaSuerteById(idTarjeta);
 		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
 		tarjetaSuerte(senderId, jugador, tarjeta);
 	}
@@ -675,8 +678,9 @@ public class JuegoController {
 	 * @param tarjeta
 	 * @throws Exception
 	 */
-	public void tarjetaComunidad(int senderId, TarjetaComunidad tarjeta)
-			throws Exception {
+	public void tarjetaComunidad(int senderId, int idTarjeta) throws Exception {
+		TarjetaComunidad tarjeta = gestorTablero.getGestorTarjetas()
+				.getTarjetaComunidadById(idTarjeta);
 		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
 		tarjetaComunidad(senderId, jugador, tarjeta);
 	}

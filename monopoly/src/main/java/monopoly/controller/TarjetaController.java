@@ -440,6 +440,38 @@ public class TarjetaController {
 	}
 
 	/**
+	 * Busca la tarjeta de la suerte correspondiente
+	 * al id recibido por parámetro.
+	 * @param idTarjeta id de Tarjeta suerte procedente
+	 * de la base de datos. 
+	 * @return objeto Tarjeta Suerte.
+	 */
+	public TarjetaSuerte getTarjetaSuerteById(int idTarjeta)
+	{
+		for (TarjetaSuerte tarjetaSuerte : tarjetasSuerteList) {
+			if(tarjetaSuerte.getIdTarjeta() == idTarjeta)
+				return tarjetaSuerte;
+		}
+		return null;
+	}
+	
+	/**
+	 * Busca la tarjeta de la comunidad correspondiente
+	 * al id recibido por parámetro.
+	 * @param idTarjeta id de tarjeta comunidad procedente
+	 * de la base de datos.
+	 * @return objecto Tarjeta Comunidad.
+	 */
+	public TarjetaComunidad getTarjetaComunidadById(int idTarjeta){
+		for (TarjetaComunidad tarjetaComunidad : tarjetasComunidadList) {
+			if(tarjetaComunidad.getIdTarjeta() == idTarjeta)
+				return tarjetaComunidad;
+		}
+		return null;
+	}
+	
+	
+	/**
 	 * devuelve todas las tarjetas de la suerte de la base de datos.
 	 * 
 	 * @return una lista de tarjetas de la suerte

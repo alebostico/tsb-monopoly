@@ -152,24 +152,26 @@ public class MonopolyGame extends GameServer {
 
 			case ConstantesMensaje.BUY_PROPERTY_MESSAGE:
 				BuyPropertyMessage msgBuyPropertyMessage = (BuyPropertyMessage) message;
+				TarjetaPropiedad tarjetaPropiedad = (TarjetaPropiedad) msgBuyPropertyMessage.message;
 				PartidasController.getInstance().comprarPropiedad(
-						msgBuyPropertyMessage.idJuego, senderId,
-						(TarjetaPropiedad) msgBuyPropertyMessage.message);
+						msgBuyPropertyMessage.idJuego, senderId,tarjetaPropiedad.getNombrePropiedad()
+						);
 
 				break;
 
 			case ConstantesMensaje.CHANCE_CARD_MESSAGE:
 				ChanceCardMessage msgChanceCardMessage = (ChanceCardMessage) message;
+				TarjetaSuerte tarjetaSuerte = (TarjetaSuerte) msgChanceCardMessage.message;
 				PartidasController.getInstance().tarjetaSuerte(
-						msgChanceCardMessage.idJuego, senderId,
-						(TarjetaSuerte) msgChanceCardMessage.message);
+						msgChanceCardMessage.idJuego, senderId,tarjetaSuerte.getIdTarjeta()
+						);
 				break;
 
 			case ConstantesMensaje.COMMUNITY_CARD_MESSAGE:
 				CommunityCardMessage msgCommunityCardMessage = (CommunityCardMessage) message;
+				TarjetaComunidad tarjetaComunidad = (TarjetaComunidad) msgCommunityCardMessage.message;
 				PartidasController.getInstance().tarjetaComunidad(
-						msgCommunityCardMessage.idJuego, senderId,
-						(TarjetaComunidad) msgCommunityCardMessage.message);
+						msgCommunityCardMessage.idJuego, senderId,tarjetaComunidad.getIdTarjeta());
 				break;
 
 			case ConstantesMensaje.PAY_TO_BANK_MESSAGE:

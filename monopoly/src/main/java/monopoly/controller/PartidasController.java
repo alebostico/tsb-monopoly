@@ -15,9 +15,6 @@ import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.Usuario;
-import monopoly.model.tarjetas.TarjetaComunidad;
-import monopoly.model.tarjetas.TarjetaPropiedad;
-import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.SinDineroException;
@@ -114,9 +111,9 @@ public class PartidasController {
 	 *            , tarjeta de la propiedad que desea comprar el jugador.
 	 */
 	public void comprarPropiedad(String idJuego, int senderId,
-			TarjetaPropiedad tarjeta) throws SinDineroException, Exception {
+			String nombrePropiedad) throws SinDineroException, Exception {
 		juegoController = juegosControllerList.get(idJuego);
-		juegoController.comprarPropiedad(senderId, tarjeta);
+		juegoController.comprarPropiedad(senderId, nombrePropiedad);
 	}
 
 	/**
@@ -130,10 +127,9 @@ public class PartidasController {
 	 * @param message
 	 * @throws Exception
 	 */
-	public void tarjetaSuerte(String idJuego, int senderId,
-			TarjetaSuerte tarjeta) throws Exception {
+	public void tarjetaSuerte(String idJuego, int senderId, int idTarjeta) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
-		juegoController.tarjetaSuerte(senderId, tarjeta);
+		juegoController.tarjetaSuerte(senderId, idTarjeta);
 	}
 
 	/**
@@ -147,9 +143,9 @@ public class PartidasController {
 	 * @param message
 	 */
 	public void tarjetaComunidad(String idJuego, int senderId,
-			TarjetaComunidad tarjeta) throws Exception {
+			int idTarjeta) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
-		juegoController.tarjetaComunidad(senderId, tarjeta);
+		juegoController.tarjetaComunidad(senderId, idTarjeta);
 	}
 
 	/**
