@@ -318,7 +318,7 @@ public class TableroController extends AnchorPane implements Serializable,
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		instance = this;
-		//lvHistoryGame = new ListView<History>();
+		// lvHistoryGame = new ListView<History>();
 
 		historyGameList = new ArrayList<History>();
 		historyChatList = new ArrayList<History>();
@@ -419,17 +419,20 @@ public class TableroController extends AnchorPane implements Serializable,
 											ListView<History> listView) {
 										return new ListCell<History>() {
 
-						                    @Override
-						                    protected void updateItem(History item, boolean bln) {
-						                        super.updateItem(item, bln);
-						                        if (item != null) {
-						                        	Text txtHistory = new Text(item.toString());
-						                        	txtHistory.setFill(Color.RED);
-						                            setGraphic(txtHistory);
-						                        }
-						                    }
+											@Override
+											protected void updateItem(
+													History item, boolean bln) {
+												super.updateItem(item, bln);
+												if (item != null) {
+													Text txtHistory = new Text(
+															item.toString());
+													txtHistory
+															.setFill(Color.RED);
+													setGraphic(txtHistory);
+												}
+											}
 
-						                };
+										};
 									}
 								});
 					}
@@ -444,11 +447,15 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	/**
-	 * 
-	 * Método que agrega un mensaje de chat al panel de Chat.
+	 * Método que agrega un mensaje de chat al panel de chat. Mantiene un
+	 * historial de todos lo mensajes que se intercambian entre los usuarios.
 	 * 
 	 * @param usuario
+	 *            nombre que aparecerá en la primer columna informando quién
+	 *            envió el mensaje.
 	 * @param mensaje
+	 *            mensaje que se mostrará.
+	 * 
 	 */
 	@SuppressWarnings("unused")
 	private void addHistoryChat(String usuario, String mensaje) {
@@ -458,17 +465,59 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	/**
-	 * 
-	 * Método que agrega un mensaje de chat al panel de Chat.
+	 * Método que agrega un mensaje de chat al panel de chat. Mantiene un
+	 * historial de todos lo mensajes que se intercambian entre los usuarios.f
 	 * 
 	 * @param history
 	 *            objeto que contiene información sobre el usuario que escribió
 	 *            el mensaje, el mensaje y la fecha y hora.
 	 */
-	public void addHistoryChat(History history) {
-		historyChatList.add(history);
-		oHistoryChatList = FXCollections.observableArrayList(historyChatList);
-		lvHistoryChat.setItems(oHistoryChatList);
+	public void addHistoryChat(final History history) {
+		FutureTask<Void> taskAddHistory = null;
+		try {
+			taskAddHistory = new FutureTask<Void>(new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
+					historyChatList.add(history);
+
+					oHistoryChatList = FXCollections
+							.observableArrayList(historyChatList);
+
+					if (lvHistoryChat != null) {
+						lvHistoryChat.getItems().clear();
+						lvHistoryChat.setItems(oHistoryChatList);
+						lvHistoryChat
+								.setCellFactory(new Callback<ListView<History>, javafx.scene.control.ListCell<History>>() {
+									@Override
+									public ListCell<History> call(
+											ListView<History> listView) {
+										return new ListCell<History>() {
+
+											@Override
+											protected void updateItem(
+													History item, boolean bln) {
+												super.updateItem(item, bln);
+												if (item != null) {
+													Text txtHistory = new Text(
+															item.toString());
+													txtHistory
+															.setFill(Color.RED);
+													setGraphic(txtHistory);
+												}
+											}
+
+										};
+									}
+								});
+					}
+					return null;
+				}
+			});
+			Platform.runLater(taskAddHistory);
+
+		} catch (Exception ex) {
+			GestorLogs.registrarException(ex);
+		}
 	}
 
 	public void sendChatMessage() {
@@ -1045,8 +1094,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	private void actualizarGraficoEnElTablero() throws Exception {
 		displayFichas(estadoActual.turnos);
-		showAccordionJugadores(estadoActual.turnos,
-				estadoActual.banco);
+		showAccordionJugadores(estadoActual.turnos, estadoActual.banco);
 	}
 
 	/**
