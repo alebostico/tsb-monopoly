@@ -82,5 +82,15 @@ public class History implements Serializable {
 	public String toString(){
 		return fecha + " - "  + usuario + " - " + mensaje;
 	}
+	
+	public String toChatString(){
+		StringBuffer sb = new StringBuffer();
+		sb.append("(" + fecha.substring(fecha.length() - 5, fecha.length()) + ")");
+		sb.append(" ");
+		sb.append(usuario);
+		sb.append(":\n");
+		sb.append(mensaje);
+		return sb.toString();
+	}
 
 }
