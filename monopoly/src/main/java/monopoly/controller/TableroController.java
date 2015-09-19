@@ -94,28 +94,8 @@ public class TableroController {
 	 *         par&aacute;metro o null si no existe.
 	 */
 	public Casillero getCasillero(int nroCasillero) {
-		/*
-		 * TODO: estar&iacute;a bueno que si el casillero no existe porque pasa
-		 * un nroCasillero incorrecto, en vez de retornar null tire una
-		 * excepci&oacute;n CasilleroInvalidoException por ejemplo
-		 */
-
 		if (nroCasillero > this.cantCasilleros || nroCasillero < 1)
 			return null;
-
-		// Creo que este casteo no es necesario porque afuera hay que volver a
-		// preguntar y castear
-		// switch (this.casillerosList[nroCasillero - 1].getTipoCasillero()) {
-		// case Casillero.CASILLERO_CALLE:
-		// return (CasilleroCalle) this.casillerosList[nroCasillero - 1];
-		// case Casillero.CASILLERO_COMPANIA:
-		// return (CasilleroCompania) this.casillerosList[nroCasillero - 1];
-		// case Casillero.CASILLERO_ESTACION:
-		// return (CasilleroEstacion) this.casillerosList[nroCasillero - 1];
-		// default:
-		// return this.casillerosList[nroCasillero + 1];
-		// }
-
 		return this.tablero.getCasillerosList()[nroCasillero - 1];
 	}
 
@@ -129,13 +109,6 @@ public class TableroController {
 	 *         la calle no existe.
 	 */
 	public Casillero getCasillero(String nombreCasillero) {
-
-		/*
-		 * TODO: estar&iacute;a bueno que si el casillero no existe porque el
-		 * nombre de la calle no existe, en vez de retornar null tire una
-		 * excepci&oacute;n NombreInvalidoException por ejemplo
-		 */
-
 		Casillero casilleroActual;
 
 		for (int i = 1; i <= this.cantCasilleros; i++) {
@@ -178,7 +151,7 @@ public class TableroController {
 
 	/**
 	 * Mueve a un Jugador 'cantCasilleros' casilleros hacia adelante (o hacia
-	 * atrÃ¡s si 'cantCasilleros' es negativo) y devuelve el Casillero en el que
+	 * atrás si 'cantCasilleros' es negativo) y devuelve el Casillero en el que
 	 * cayo. Si el movimiento es hacia adelante, el jugador pasa por la salida y
 	 * el parametro 'cobraSalida' es true, cobra los $200
 	 * 
@@ -273,17 +246,13 @@ public class TableroController {
 	 */
 	public Casillero moverACasillero(Jugador jugador, int nroCasillero,
 			boolean cobraSalida) {
-		/*
-		 * TODO: estarÃ­a bueno que si el casillero no existe porque pasa un
-		 * nroCasillero incorrecto, en vez de retornar null tire una excepciÃ³n
-		 * CasilleroInvalidoException por ejemplo
-		 */
+		
 		Casillero casilleroActual = jugador.getCasilleroActual();
 		Casillero casilleroSiguiente = this.getCasillero(nroCasillero);
 
 		int cobroSalida = 0;
 
-		// si el nroCasillero es invÃ¡lido (menor a 1 o mayor a 40) retorna
+		// si el nroCasillero es inválido (menor a 1 o mayor a 40) retorna
 		// null...
 		if (casilleroSiguiente == null)
 			return null;
@@ -314,7 +283,7 @@ public class TableroController {
 
 	/**
 	 * Mueve el jugador 'jugador' al CasilleroCalle con el nombre 'nombreCalle'.
-	 * Retorna el Casillero al cual se movio al jugador o null si no existe.
+	 * Retorna el Casillero al cual se movió al jugador o null si no existe.
 	 * 
 	 * @param jugador
 	 *            El jugador que se quiere mover.
@@ -323,7 +292,7 @@ public class TableroController {
 	 * @param cobraSalida
 	 *            true en el caso que el jugador deba cobrar los $200 si pasa
 	 *            por la salida. false si no los cobra.
-	 * @return El casillero al cual se moviÃ³ el jugador si 'nombreCasillero'
+	 * @return El casillero al cual se movió el jugador si 'nombreCasillero'
 	 *         existe. null en caso contrario.
 	 */
 	public Casillero moverACasillero(Jugador jugador, String nombreCasillero,
@@ -402,7 +371,7 @@ public class TableroController {
 			sb.append(", paso por la salida y NO cobró los $200");
 			break;
 		case 0:
-			sb.append(", NO paso por la salida (y no cobró los $200)");
+			sb.append(", NO paso por la salida");
 			break;
 		case 1:
 			sb.append(", paso por la salida y cobró los $200");
@@ -483,7 +452,7 @@ public class TableroController {
 	 * es decir que tienen el mismo color de calle.
 	 * 
 	 * @param tarjeta
-	 *            Una de las tarjetas del mopolio
+	 *            Una de las tarjetas del monopolio
 	 * @return Todas las tarjetas de las calles que tienen el mismo color
 	 */
 	public List<TarjetaCalle> getGrupoDeSolaresByCalle(TarjetaCalle tarjeta) {
@@ -1511,7 +1480,7 @@ public class TableroController {
 	 *         Si {@code edificios < cantidad}, retorna {@code edificios}.<br />
 	 *         Si {@code edificios >= cantidad}, retorna {@code cantidad}.
 	 * @throws SinEdificiosException
-	 *             Si se vende algún hotel y quedan casas en algún casillero, si
+	 *             Si se vende algún hotel y quedan casas en algún casillero y
 	 *             el banco no dispone de esas casas, se lanza
 	 *             {@code SinEdificiosException}.
 	 */

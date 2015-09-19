@@ -330,11 +330,17 @@ public class TableroController extends AnchorPane implements Serializable,
 			@Override
 			public void handle(KeyEvent keyEvent) {
 				if (keyEvent.getCode() == KeyCode.ENTER) {
-					if (keyEvent.isAltDown() || keyEvent.isControlDown()) {
-						txtMessageChat.appendText("\n");
-					} else {
-						sendChatMessage();
+					if (txtMessageChat.getText().trim().length() == 0) {
 						keyEvent.consume();
+					} else {
+						if (keyEvent.isAltDown() || keyEvent.isControlDown()
+								|| keyEvent.isShiftDown()) {
+							txtMessageChat.appendText("\n");
+						} else {
+							sendChatMessage();
+							keyEvent.consume();
+						}
+
 					}
 				}
 			}

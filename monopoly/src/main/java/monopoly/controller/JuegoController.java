@@ -268,9 +268,8 @@ public class JuegoController {
 		sendToOther(senderId, status);
 	}
 
-	public void avanzarDeCasilleroJV(JugadorVirtual jugador, Dado dados,
-			List<History> historiasList) throws CondicionInvalidaException,
-			SinDineroException, Exception {
+	public void avanzarDeCasilleroJV(JugadorVirtual jugador, Dado dados)
+			throws CondicionInvalidaException, SinDineroException, Exception {
 		Casillero casillero;
 		boolean cobraSalida = true;
 		AccionEnCasillero accion;
@@ -300,8 +299,11 @@ public class JuegoController {
 				jugador.getNombre(), casillero.getNombreCasillero(),
 				accion.getMensaje());
 
-		historiasList.add(new History(StringUtils.getFechaActual(), jugador
-				.getNombre(), mensaje));
+		sendToAll(new HistoryGameMessage(new History(
+				StringUtils.getFechaActual(), jugador.getNombre(), mensaje)));
+
+		// historiasList.add(new History(StringUtils.getFechaActual(), jugador
+		// .getNombre(), mensaje));
 
 		switch (accion) {
 		case TARJETA_SUERTE:
@@ -332,6 +334,11 @@ public class JuegoController {
 				}
 
 				comprarPropiedad(jugador, tarjetaPropiedad);
+			}else{
+				mensaje = String.format("El Jugador %s decidió no comprar %s.",
+						jugador.getNombre(), casillero.getNombreCasillero());
+				sendToAll(new HistoryGameMessage(new History(
+						StringUtils.getFechaActual(), jugador.getNombre(), mensaje)));
 			}
 			break;
 		case IMPUESTO_DE_LUJO:
@@ -383,14 +390,14 @@ public class JuegoController {
 					"La acción %s es inválida.", accion.toString()));
 		}
 
-		mensaje = accion.getMensaje();
-		historiasList.add(new History(StringUtils.getFechaActual(), jugador
-				.getNombre(), mensaje));
+//		mensaje = accion.getMensaje();
+		
+//		sendToAll(new HistoryGameMessage(new History(
+//				StringUtils.getFechaActual(), jugador.getNombre(), mensaje)));
 
 	}
 
 	public void tirarDadosJugadorVirtual() throws Exception {
-		History history;
 		List<History> historyList = new ArrayList<History>();
 		JugadorVirtual jugadorActual = (JugadorVirtual) this.gestorJugadores
 				.getCurrentPlayer();
@@ -409,16 +416,18 @@ public class JuegoController {
 							jugadorActual.getNombre());
 		}
 
+		// TODO: Agregar la verificacion de deshipoteca.
+
 		if (mensaje != null) {
-			history = new History(StringUtils.getFechaActual(), gestorJugadores
-					.getCurrentPlayer().getNombre(), mensaje);
-			historyList.add(history);
+			sendToAll(new HistoryGameMessage(new History(
+					StringUtils.getFechaActual(), gestorJugadores
+					.getCurrentPlayer().getNombre(), mensaje)));
 		}
 
 		Dado dados = new Dado();
 
 		try {
-			this.avanzarDeCasilleroJV(jugadorActual, dados, historyList);
+			this.avanzarDeCasilleroJV(jugadorActual, dados);
 		} catch (CondicionInvalidaException | SinDineroException e) {
 			/*
 			 * "SinDineroException" no debería generarse nunca para un

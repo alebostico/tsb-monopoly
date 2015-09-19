@@ -8,17 +8,15 @@ import java.io.Serializable;
 import monopoly.util.StringUtils;
 
 /**
+ * Enumerador para determinar que es lo que se debe realizar cuando el jugador
+ * cae en un determinado casillero.
+ * 
  * @author Bostico Alejandro
  * @author Moreno Pablo
- *
- *         Enumerador para determinar que es lo que se debe realizar cuando el
- *         jugador cae en un determinado casillero.
  * 
  **/
 public enum AccionEnCasillero implements Serializable {
-	
-	
-	
+
 	/**
 	 * Cuando una propiedad es libre para ser comprada String[descripción]
 	 */
