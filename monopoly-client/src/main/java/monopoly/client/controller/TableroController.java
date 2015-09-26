@@ -325,11 +325,22 @@ public class TableroController extends AnchorPane implements Serializable,
 		oHistoryChatList = FXCollections.observableArrayList(historyChatList);
 		accordionHistorial.setExpandedPane(tpHistory);
 
-		txtMessageChat.setOnKeyTyped(new EventHandler<KeyEvent>() {
+		txtMessageChat.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
-			public void handle(KeyEvent ke) {
-				if (ke.getCode().equals(KeyCode.ENTER)) {
-					sendChatMessage();
+			public void handle(KeyEvent keyEvent) {
+				if (keyEvent.getCode() == KeyCode.ENTER) {
+					if (txtMessageChat.getText().trim().length() == 0) {
+						keyEvent.consume();
+					} else {
+						if (keyEvent.isAltDown() || keyEvent.isControlDown()
+								|| keyEvent.isShiftDown()) {
+							txtMessageChat.appendText("\n");
+						} else {
+							sendChatMessage();
+							keyEvent.consume();
+						}
+
+					}
 				}
 			}
 		});
@@ -2026,7 +2037,7 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	public void addChatHistoryGame(final History chatHistory) {
-				
+
 		FutureTask<Void> taskAddHistory = null;
 		try {
 			taskAddHistory = new FutureTask<Void>(new Callable<Void>() {
@@ -2053,7 +2064,7 @@ public class TableroController extends AnchorPane implements Serializable,
 												super.updateItem(item, bln);
 												if (item != null) {
 													Text txtHistory = new Text(
-															item.toString());
+															item.toChatString());
 													txtHistory
 															.setFill(Color.RED);
 													setGraphic(txtHistory);
