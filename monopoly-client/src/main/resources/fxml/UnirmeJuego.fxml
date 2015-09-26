@@ -7,7 +7,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="550.0" minWidth="800.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.UnirmeJuegoController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="530.0" minWidth="703.0" prefHeight="530.0" prefWidth="703.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.UnirmeJuegoController">
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="200.0">
          <children>
@@ -20,11 +20,11 @@
                   </ImageView>
                   <GridPane alignment="CENTER" hgap="10.0" vgap="10.0">
                     <columnConstraints>
-                      <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="70.0" prefWidth="70.0" />
+                      <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="120.0" prefWidth="120.0" />
-                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="120.0" prefWidth="120.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -42,25 +42,25 @@
                         <TextField id="txtFechaDesde" fx:id="txtFechaDesde" promptText="dd/mm/aaaa" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                      </children>
                      <padding>
-                        <Insets left="10.0" right="10.0" />
+                        <Insets left="20.0" right="20.0" />
                      </padding>
                   </GridPane>
                   <HBox alignment="CENTER">
                      <children>
-                        <TableView id="tblJuegos" fx:id="tblJuegos" maxHeight="200.0" minHeight="200.0" minWidth="600.0">
+                        <TableView id="tblJuegos" fx:id="tblJuegos" maxHeight="200.0" minHeight="200.0" minWidth="650.0">
                            <columns>
-                              <TableColumn id="collumnNombre" fx:id="colNombre" maxWidth="300.0" minWidth="50.0" prefWidth="175.0" text="Nombre" />
-                              <TableColumn id="collumnCreador" fx:id="colCreador" maxWidth="300.0" minWidth="50.0" prefWidth="175.0" text="Creador" />
-                              <TableColumn id="collumnFecha" fx:id="colFecha" maxWidth="300.0" minWidth="50.0" prefWidth="120.0" text="Fecha" />
-                              <TableColumn id="collumnParticipantes" fx:id="colParticipantes" maxWidth="300.0" minWidth="50.0" prefWidth="175.0" text="Participantes" />
+                              <TableColumn id="collumnNombre" fx:id="colNombre" maxWidth="300.0" minWidth="190.0" prefWidth="190.0" text="Nombre" />
+                              <TableColumn id="collumnCreador" fx:id="colCreador" maxWidth="300.0" minWidth="180.0" prefWidth="180.0" text="Creador" />
+                              <TableColumn id="collumnFecha" fx:id="colFecha" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" text="Fecha" />
+                              <TableColumn id="collumnParticipantes" fx:id="colParticipantes" maxWidth="160.0" minWidth="160.0" prefWidth="160.0" text="Participantes" />
                            </columns>
                         </TableView>
                      </children>
                   </HBox>
                   <HBox alignment="CENTER" minHeight="80.0" spacing="20.0">
                      <children>
-                        <Button id="btnCancelar" fx:id="btnCancelar" mnemonicParsing="false" onAction="#processCancel" prefHeight="51.0" prefWidth="200.0" text="Cancelar" />
-                        <Button fx:id="btnUnirmeJuego" contentDisplay="CENTER" mnemonicParsing="false" onAction="#processJoinGame" prefHeight="51.0" text="Unirme a Juego" />
+                        <Button id="btnCancelar" fx:id="btnCancelar" mnemonicParsing="false" onAction="#processCancel" text="Cancelar" />
+                        <Button fx:id="btnUnirmeJuego" contentDisplay="CENTER" mnemonicParsing="false" onAction="#processJoinGame" text="Unirme a Juego" />
                      </children>
                   </HBox>
                </children>

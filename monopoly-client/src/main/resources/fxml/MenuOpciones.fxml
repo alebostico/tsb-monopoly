@@ -11,36 +11,35 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="900.0" styleClass="bg_logo_option" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.MenuOpcionesController">
+<StackPane maxHeight="600.0" maxWidth="750.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="750.0" styleClass="bg_logo_option" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.MenuOpcionesController">
    <children>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0">
+      <AnchorPane prefHeight="750.0" prefWidth="750.0">
          <children>
             <VBox alignment="TOP_CENTER" spacing="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <ImageView fitHeight="223.0" fitWidth="699.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="167.0" fitWidth="453.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../images/logos/LoginLogo_big.png" />
                      </image>
                   </ImageView>
-                  <VBox alignment="CENTER" minHeight="300.0" spacing="20.0">
+                  <VBox alignment="CENTER" minHeight="250.0" spacing="25.0">
                      <children>
-                        <Button fx:id="btnNuevoJuego" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" focusTraversable="true" onAction="#processNewGame" prefHeight="70.0" prefWidth="419.9998779296875" text="Nuevo Juego" />
-                        <Button fx:id="btnUnirmeJuego" defaultButton="true" onAction="#processJoinGame" prefHeight="70.0" prefWidth="420.0" text="Unirme a Juego" />
-                        <Button fx:id="btnReanudarJuego" defaultButton="true" onAction="#processLoadGame" prefHeight="70.0" prefWidth="420.0" text="Reanudar Juego" />
+                        <Button fx:id="btnNuevoJuego" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" focusTraversable="true" onAction="#processNewGame" prefHeight="50.0" prefWidth="280.0" text="Nuevo Juego" />
+                        <Button fx:id="btnUnirmeJuego" defaultButton="true" onAction="#processJoinGame" prefHeight="50.0" prefWidth="280.0" text="Unirme a Juego" />
+                        <Button fx:id="btnReanudarJuego" defaultButton="true" onAction="#processLoadGame" prefHeight="50.0" prefWidth="280.0" text="Reanudar Juego" />
                      </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" top="10.0" />
+                     </VBox.margin>
                   </VBox>
-                  <VBox alignment="BOTTOM_CENTER" minHeight="100.0">
+                  <HBox alignment="CENTER" spacing="20.0">
                      <children>
-                        <HBox alignment="CENTER" spacing="20.0">
-                           <children>
-                              <Button fx:id="btnOpciones" defaultButton="true" onAction="#processOptions" prefHeight="70.0" prefWidth="200.0" text="Opciones" />
-                              <Button fx:id="btnAyuda" defaultButton="true" onAction="#processHelp" prefHeight="70.0" prefWidth="200.0" text="Ayuda" />
-                              <Button fx:id="btnAcercaDe" alignment="CENTER" defaultButton="true" onAction="#processAbout" prefHeight="70.0" prefWidth="200.0" text="Acerca de" />
-                              <Button fx:id="btnSalir" defaultButton="true" onAction="#processExit" prefHeight="70.0" prefWidth="200.0" text="Salir" />
-                           </children>
-                        </HBox>
+                        <Button fx:id="btnOpciones" defaultButton="true" onAction="#processOptions" prefHeight="50.0" prefWidth="180.0" text="Opciones" />
+                        <Button fx:id="btnAyuda" defaultButton="true" onAction="#processHelp" prefHeight="50.0" prefWidth="170.0" text="Ayuda" />
+                        <Button fx:id="btnAcercaDe" alignment="CENTER" defaultButton="true" onAction="#processAbout" prefHeight="50.0" prefWidth="190.0" text="Acerca de" />
+                        <Button fx:id="btnSalir" defaultButton="true" onAction="#processExit" prefHeight="50.0" prefWidth="180.0" text="Salir" />
                      </children>
-                  </VBox>
+                  </HBox>
                </children>
                <padding>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

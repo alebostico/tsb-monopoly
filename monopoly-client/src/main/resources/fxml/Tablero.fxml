@@ -11,19 +11,19 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane maxHeight="700.0" maxWidth="1100.0" minHeight="700.0" minWidth="1100.0" prefHeight="700.0" prefWidth="1100.0" style="-fx-background-color: #C4E1FF;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.TableroController">
+<StackPane minHeight="700.0" minWidth="1100.0" styleClass="background_tablero" stylesheets="@../css/Sheet_tablero.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.TableroController">
    <children>
-      <AnchorPane maxHeight="700.0" maxWidth="1100.0" minHeight="700.0" minWidth="1100.0" prefHeight="700.0" prefWidth="1100.0">
+      <AnchorPane minHeight="680.0" minWidth="1080.0" prefHeight="680.0" prefWidth="1080.0" styleClass="borde_panel_lateral">
          <children>
-            <HBox alignment="CENTER" maxHeight="750.0" maxWidth="1000.0" minHeight="750.0" minWidth="1200.0" prefHeight="750.0" prefWidth="1200.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <HBox alignment="CENTER" minHeight="680.0" minWidth="1080.0" prefHeight="680.0" prefWidth="1080.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                <AnchorPane maxWidth="700.0" minWidth="630.0" prefWidth="630.0">
+                  <Pane maxHeight="680.0" minHeight="680.0" prefHeight="680.0">
                      <children>
-                        <VBox alignment="CENTER" layoutX="-25.0" maxHeight="700.0" prefHeight="700.0" prefWidth="650.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox alignment="CENTER" maxHeight="680.0" minHeight="680.0" prefHeight="680.0" spacing="10.0">
                            <children>
-                              <BorderPane maxHeight="630.0" maxWidth="630.0" minHeight="630.0" minWidth="630.0" prefHeight="630.0" prefWidth="630.0" style="-fx-background-color: #C4E1FF;">
+                              <BorderPane maxHeight="630.0" maxWidth="630.0" minHeight="630.0" minWidth="630.0" prefHeight="630.0" prefWidth="630.0" style="-fx-background-color: #C4E1FF;" styleClass="background_tablero">
                                  <bottom>
-                                    <HBox BorderPane.alignment="TOP_LEFT">
+                                    <HBox maxHeight="90.0" maxWidth="630.0" minHeight="90.0" minWidth="630.0" prefHeight="90.0" prefWidth="630.0" BorderPane.alignment="TOP_LEFT">
                                        <children>
                                           <TilePane fx:id="pCasillero11" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="90.0" styleClass="bg_casillero11" vgap="5.0" />
                                           <TilePane fx:id="pCasillero10" alignment="CENTER" hgap="5.0" prefColumns="2" prefHeight="90.0" prefRows="4" prefWidth="50.0" styleClass="bg_casillero10" vgap="5.0" />
@@ -102,7 +102,7 @@
                                     </GridPane>
                                  </center>
                                  <left>
-                                    <VBox BorderPane.alignment="TOP_RIGHT">
+                                    <VBox maxHeight="50.0" maxWidth="90.0" minHeight="50.0" minWidth="90.0" prefHeight="50.0" prefWidth="90.0" BorderPane.alignment="TOP_RIGHT">
                                        <children>
                                           <TilePane fx:id="pCasillero20" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="4" prefRows="2" styleClass="bg_casillero20" vgap="5.0" />
                                           <TilePane fx:id="pCasillero19" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="4" prefRows="2" styleClass="bg_casillero19" vgap="5.0" />
@@ -117,7 +117,7 @@
                                     </VBox>
                                  </left>
                                  <right>
-                                    <VBox BorderPane.alignment="TOP_LEFT">
+                                    <VBox maxHeight="50.0" maxWidth="90.0" minHeight="50.0" minWidth="90.0" prefHeight="50.0" prefWidth="90.0" BorderPane.alignment="TOP_LEFT">
                                        <children>
                                           <TilePane fx:id="pCasillero32" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="4" prefRows="2" styleClass="bg_casillero32" vgap="5.0" />
                                           <TilePane fx:id="pCasillero33" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="4" prefRows="2" styleClass="bg_casillero33" vgap="5.0" />
@@ -132,7 +132,7 @@
                                     </VBox>
                                  </right>
                                  <top>
-                                    <HBox alignment="CENTER_LEFT" BorderPane.alignment="BOTTOM_CENTER">
+                                    <HBox alignment="CENTER_LEFT" maxHeight="90.0" maxWidth="630.0" minHeight="90.0" minWidth="630.0" prefHeight="90.0" prefWidth="630.0" BorderPane.alignment="BOTTOM_CENTER">
                                        <children>
                                           <TilePane fx:id="pCasillero21" alignment="CENTER" hgap="5.0" minHeight="50.0" minWidth="90.0" prefColumns="2" prefHeight="90.0" prefRows="3" prefWidth="90.0" styleClass="bg_casillero21" vgap="5.0" />
                                           <TilePane fx:id="pCasillero22" alignment="CENTER" hgap="5.0" minHeight="90.0" minWidth="50.0" prefColumns="2" prefHeight="90.0" prefRows="4" prefWidth="50.0" styleClass="bg_casillero22" vgap="5.0" />
@@ -155,17 +155,18 @@
                                     <URL value="@../css/Casilleros.css" />
                                     <URL value="@../css/Images_Background.css" />
                                     <URL value="@../css/Sheet.css" />
+                                    <URL value="@../css/Sheet_tablero.css" />
                                  </stylesheets>
                               </BorderPane>
-                              <HBox alignment="CENTER" prefHeight="48.0" prefWidth="605.0" spacing="5.0">
+                              <HBox alignment="CENTER" spacing="10.0">
                                  <children>
-                                    <MenuButton fx:id="btnMenu" alignment="CENTER" maxHeight="35.0" maxWidth="150.0" minHeight="35.0" minWidth="150.0" mnemonicParsing="false" onAction="#processMenu" popupSide="TOP" prefHeight="35.0" prefWidth="150.0" styleClass="context-menu" stylesheets="@../css/Sheet.css" text="Menú">
+                                    <MenuButton fx:id="btnMenu" alignment="CENTER" minWidth="140.0" mnemonicParsing="false" onAction="#processMenu" popupSide="TOP" styleClass="context-menu" text="Menú">
                                       <items>
                                         <MenuItem mnemonicParsing="false" text="Action 1" />
                                         <MenuItem mnemonicParsing="false" text="Action 2" />
                                       </items>
                                     </MenuButton>
-                                    <MenuButton fx:id="btnAcciones" alignment="CENTER" maxHeight="35.0" maxWidth="150.0" minHeight="35.0" minWidth="150.0" mnemonicParsing="false" onAction="#processAcciones" popupSide="TOP" prefHeight="35.0" prefWidth="150.0" styleClass="context-menu" stylesheets="@../css/Sheet.css" text="Acciones">
+                                    <MenuButton fx:id="btnAcciones" alignment="CENTER" minWidth="140.0" mnemonicParsing="false" onAction="#processAcciones" popupSide="TOP" styleClass="context-menu" text="Acciones">
                                        <items>
                                           <MenuItem fx:id="btnConstruir" mnemonicParsing="false" onAction="#processContruir" text="Construir" />
                                           <MenuItem fx:id="btnVender" mnemonicParsing="false" onAction="#processVender" text="Vender Construccion" />
@@ -174,81 +175,65 @@
                                           <MenuItem fx:id="btnComercializar" mnemonicParsing="false" onAction="#processComercializar" text="Comercializar Propiedad" />
                                        </items>
                                     </MenuButton>
-                                    <Button fx:id="btnTirarDados" maxWidth="150.0" minWidth="100.0" mnemonicParsing="false" onAction="#processTirarDados" prefWidth="150.0" style="-fx-text-fill: #e4f3fc; -fx-text-fill: linear-gradient(white, #d0d0d0); -fx-background-color: #2d4b8e;" text="Tirar Dados" visible="false" />
-                                    <Button fx:id="btnFinalizarTurno" minWidth="150.0" mnemonicParsing="false" onAction="#processfinalizarTurno" style="-fx-text-fill: #e4f3fc; -fx-text-fill: linear-gradient(white, #d0d0d0); -fx-background-color: #2d4b8e;" text="Finalizar Turno" visible="false" />
+                                    <Button fx:id="btnTirarDados" alignment="CENTER" maxWidth="150.0" minWidth="100.0" mnemonicParsing="false" onAction="#processTirarDados" prefWidth="150.0" styleClass="button_tablero" text="Tirar Dados" visible="false" />
+                                    <Button fx:id="btnFinalizarTurno" minWidth="150.0" mnemonicParsing="false" onAction="#processfinalizarTurno" styleClass="button_tablero" text="Finalizar Turno" visible="false" />
                                  </children>
                                  <VBox.margin>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    <Insets />
                                  </VBox.margin>
                               </HBox>
                            </children>
                         </VBox>
                      </children>
-                     <HBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </HBox.margin>
-                     <padding>
-                        <Insets right="5.0" />
-                     </padding>
-                  </AnchorPane>
-                <AnchorPane minWidth="310.0">
+                  </Pane>
+                  <VBox alignment="CENTER" minWidth="400.0" prefWidth="400.0" spacing="2.0" styleClass="bordered-titled-border" HBox.hgrow="SOMETIMES">
                      <children>
-                        <SplitPane dividerPositions="0.5, 0.5" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <items>
-                              <AnchorPane minHeight="360.0">
-                                 <children>
-                                    <Accordion fx:id="accordionPlayers" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                 </children>
-                              </AnchorPane>
-                              <AnchorPane maxHeight="30.0" minHeight="30.0" prefHeight="30.0">
-                                 <children>
-                                    <Label fx:id="lblStopwatch" alignment="CENTER" layoutX="80.0" layoutY="7.0" styleClass="label_hora" text="[HH:mm:ss]" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                 </children>
-                              </AnchorPane>
-                              <AnchorPane minHeight="200.0">
-                                 <children>
-                                    <Accordion fx:id="accordionHistorial" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                      <panes>
-                                        <TitledPane fx:id="tpHistory" animated="false" text="Historia del Juego">
-                                             <content>
-                                                <ListView fx:id="lvHistoryGame">
-                                                   <opaqueInsets>
-                                                      <Insets />
-                                                   </opaqueInsets>
-                                                </ListView>
-                                             </content>
-                                          </TitledPane>
-                                        <TitledPane fx:id="tpChat" animated="false" text="Chat">
-                                             <content>
-                                                <VBox alignment="CENTER" maxWidth="400.0" minWidth="400.0" prefWidth="400.0" spacing="5.0">
-                                                   <children>
-                                                      <ListView fx:id="lvHistoryChat" fixedCellSize="0.0" maxWidth="380.0" minWidth="380.0" prefWidth="380.0" />
-                                                      <HBox alignment="CENTER" maxHeight="35.0" maxWidth="400.0" minHeight="35.0" minWidth="400.0" prefHeight="35.0" prefWidth="400.0" spacing="5.0">
-                                                         <children>
-                                                            <TextArea fx:id="txtMessageChat" maxHeight="35.0" minHeight="35.0" prefHeight="35.0" wrapText="true" />
-                                                            <Button fx:id="btnSendMessage" alignment="CENTER" maxHeight="35.0" minHeight="35.0" mnemonicParsing="false" onAction="#processSendMessage" prefHeight="35.0" styleClass="btn_sendmsj" />
-                                                         </children>
-                                                         <padding>
-                                                            <Insets left="10.0" right="10.0" />
-                                                         </padding>
-                                                      </HBox>
-                                                   </children>
-                                                </VBox>
-                                             </content>
-                                          </TitledPane>
-                                      </panes>
-                                    </Accordion>
-                                 </children>
-                              </AnchorPane>
-                              
-                           </items>
-                        </SplitPane>
+                        <AnchorPane maxHeight="40.0" minHeight="40.0" minWidth="400.0" prefHeight="40.0" prefWidth="400.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Label fx:id="lblStopwatch" alignment="CENTER" layoutX="80.0" layoutY="7.0" styleClass="label_hora" text="[HH:mm:ss]" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                        <Accordion fx:id="accordionPlayers" minHeight="330.0" minWidth="400.0" prefHeight="330.0" prefWidth="400.0" />
+                        <Accordion fx:id="accordionHistorial" maxHeight="300.0" minHeight="300.0" minWidth="400.0" prefHeight="300.0" prefWidth="400.0">
+                          <panes>
+                            <TitledPane fx:id="tpHistory" contentDisplay="CENTER" text="Historia del Juego" textFill="WHITE">
+                                 <content>
+                                    <ListView fx:id="lvHistoryGame">
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                    </ListView>
+                                 </content>
+                              </TitledPane>
+                            <TitledPane fx:id="tpChat" contentDisplay="CENTER" text="Chat" textFill="WHITE" wrapText="true">
+                                 <content>
+                                    <VBox alignment="CENTER" minWidth="400.0" prefWidth="400.0" spacing="5.0">
+                                       <children>
+                                          <ListView fx:id="lvHistoryChat" fixedCellSize="0.0" minWidth="400.0" />
+                                          <HBox alignment="CENTER" maxHeight="35.0" minHeight="35.0" minWidth="400.0" prefHeight="35.0" spacing="5.0" VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <TextArea fx:id="txtMessageChat" maxHeight="35.0" minHeight="35.0" minWidth="355.0" prefHeight="35.0" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="btnSendMessage" alignment="CENTER" contentDisplay="CENTER" maxHeight="35.0" maxWidth="35.0" minHeight="35.0" minWidth="35.0" mnemonicParsing="false" onAction="#processSendMessage" prefHeight="35.0" prefWidth="35.0" styleClass="btn_sendmsj" HBox.hgrow="ALWAYS" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
+                          </panes>
+                        </Accordion>
                      </children>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
                      <stylesheets>
-                        <URL value="@../css/Sheet.css" />
                         <URL value="@../css/Images_Background.css" />
+                        <URL value="@../css/Sheet_tablero.css" />
                      </stylesheets>
-                  </AnchorPane>
+                  </VBox>
                </children>
             </HBox>
          </children>

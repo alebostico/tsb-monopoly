@@ -93,9 +93,6 @@ public class CrearJugadoresController extends AnchorPane implements
 	private ImageView imgFichaPc;
 
 	@FXML
-	private Button btnRestablecerReglas;
-
-	@FXML
 	private ImageView imgBack;
 
 	@FXML
@@ -118,9 +115,6 @@ public class CrearJugadoresController extends AnchorPane implements
 
 	@FXML
 	private TextField txtNroJugadores;
-
-	@FXML
-	private Button btnModificarReglas;
 
 	@FXML
 	private RadioButton rbMagnate;
@@ -180,16 +174,6 @@ public class CrearJugadoresController extends AnchorPane implements
 	void processCancel(ActionEvent event) {
 		prevStage.show();
 		currentStage.close();
-	}
-
-	@FXML
-	void processRestoreRules(ActionEvent event) {
-
-	}
-
-	@FXML
-	void processModificateRules(ActionEvent event) {
-
 	}
 
 	@FXML

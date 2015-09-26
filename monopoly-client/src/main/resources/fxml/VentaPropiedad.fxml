@@ -9,7 +9,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane maxHeight="492.0" maxWidth="403.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="492.0" prefWidth="403.0" stylesheets="@../css/Images_Background.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.VentaPropiedadController">
+<StackPane maxHeight="492.0" maxWidth="403.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="468.0" prefWidth="379.0" stylesheets="@../css/Images_Background.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.VentaPropiedadController">
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="background" stylesheets="@../css/Sheet.css">
          <children>
@@ -49,10 +49,10 @@
                         </ImageView>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER" prefHeight="68.0" prefWidth="404.0" spacing="35.0">
+                  <HBox alignment="CENTER" prefHeight="68.0" prefWidth="404.0" spacing="20.0">
                      <children>
-                        <Button fx:id="btnSubasta" cancelButton="true" mnemonicParsing="false" onAction="#processSubasta" text="Subastar" />
-                        <Button fx:id="btnComprar" defaultButton="true" mnemonicParsing="false" onAction="#processComprar" text="Comprar" />
+                        <Button fx:id="btnSubasta" cancelButton="true" mnemonicParsing="false" onAction="#processSubasta" prefWidth="160.0" text="Subastar" />
+                        <Button fx:id="btnComprar" defaultButton="true" mnemonicParsing="false" onAction="#processComprar" prefWidth="160.0" text="Comprar" />
                      </children>
                   </HBox>
                </children>

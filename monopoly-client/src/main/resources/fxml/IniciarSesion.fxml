@@ -9,18 +9,18 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<StackPane alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="500.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.LoginController">
+<StackPane alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="584.0" prefWidth="434.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.LoginController">
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" StackPane.alignment="CENTER">
          <children>
             <VBox alignment="CENTER" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <ImageView id="app-login-logo" fitHeight="134.0" fitWidth="472.0">
+                  <ImageView id="app-login-logo" fitHeight="114.0" fitWidth="380.0">
                      <image>
                         <Image url="@../images/logos/Logo.png" />
                      </image>
                   </ImageView>
-                  <VBox alignment="CENTER">
+                  <VBox alignment="CENTER" styleClass="top-segment">
                      <children>
                         <GridPane alignment="CENTER" hgap="10.0" vgap="10.0">
                           <columnConstraints>
@@ -39,19 +39,21 @@
                               <PasswordField id="txtContraseña" fx:id="txtPassword" minWidth="200.0" prefWidth="250.0" promptText="Contraseña" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <Label id="lblMensajeError" fx:id="lblMsgError" opacity="0.0" styleClass="labelError" text="" wrapText="true" GridPane.columnSpan="2" GridPane.rowIndex="2" />
                            </children>
+                           <VBox.margin>
+                              <Insets bottom="5.0" left="40.0" right="40.0" top="5.0" />
+                           </VBox.margin>
                         </GridPane>
                      </children>
                      <VBox.margin>
-                        <Insets left="40.0" right="40.0" top="10.0" />
+                        <Insets top="10.0" />
                      </VBox.margin>
                   </VBox>
-                  <VBox styleClass="top-segment" />
-                  <VBox alignment="CENTER" spacing="10.0">
+                  <VBox alignment="CENTER" spacing="15.0">
                      <children>
-                        <Button id="btnIngresar" fx:id="btnLohgin" defaultButton="true" onAction="#processLogin" prefHeight="70.0" prefWidth="400.0" text="Ingresar" />
-                        <Button id="btnRegistrarme" fx:id="btnRegistrarme" onAction="#processCreateAccount" prefHeight="70.0" prefWidth="400.0" text="Registrarme" />
-                        <Button id="btnRegistrarme" fx:id="btnConfig" onAction="#processConfig" prefHeight="70.0" prefWidth="400.0" text="Configuraciones" />
-                        <Button id="btnSalir" fx:id="btnSalir" cancelButton="true" onAction="#processExit" prefHeight="70.0" prefWidth="400.0" text="Salir" />
+                        <Button id="btnIngresar" fx:id="btnLohgin" defaultButton="true" onAction="#processLogin" prefHeight="50.0" prefWidth="290.0" text="Ingresar" />
+                        <Button id="btnRegistrarme" fx:id="btnRegistrarme" onAction="#processCreateAccount" prefHeight="50.0" prefWidth="290.0" text="Registrarme" />
+                        <Button id="btnRegistrarme" fx:id="btnConfig" onAction="#processConfig" prefHeight="50.0" prefWidth="290.0" text="Configuraciones" />
+                        <Button id="btnSalir" fx:id="btnSalir" cancelButton="true" onAction="#processExit" prefHeight="50.0" prefWidth="290.0" text="Salir" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="10.0" />
@@ -63,7 +65,7 @@
       </AnchorPane>
    </children>
    <padding>
-      <Insets left="25.0" right="25.0" />
+      <Insets left="5.0" right="5.0" />
    </padding>
    <stylesheets>
       <URL value="@../css/Sheet.css" />

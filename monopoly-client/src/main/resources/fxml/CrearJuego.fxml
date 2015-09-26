@@ -7,7 +7,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.CrearJuegoController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="452.0" prefWidth="506.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.CrearJuegoController">
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="200.0">
          <children>
@@ -18,9 +18,9 @@
                         <Image url="@../images/logos/Logo.png" />
                      </image>
                   </ImageView>
-                  <VBox alignment="CENTER">
+                  <VBox alignment="CENTER" fillWidth="false">
                      <children>
-                        <GridPane hgap="10.0" vgap="10.0">
+                        <GridPane alignment="CENTER" hgap="10.0" vgap="10.0">
                            <children>
                               <Label text="Nombre">
                                  <GridPane.margin>
@@ -37,15 +37,18 @@
                                     <Insets right="15.0" />
                                  </GridPane.margin>
                               </Label>
-                              <TextField id="txtNombreJuego" fx:id="txtNombreJuego" prefHeight="30.0" prefWidth="200.0" promptText="Nombre del Juego" GridPane.columnIndex="1" />
+                              <TextField id="txtNombreJuego" fx:id="txtNombreJuego" promptText="Nombre del Juego" GridPane.columnIndex="1" />
                               <TextField id="txtFechaCreacion" fx:id="txtFechaCreacion" disable="true" editable="false" prefHeight="30.0" prefWidth="200.0" promptText="fecha creación" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <TextField id="txtUserName" fx:id="txtUserName" disable="true" editable="false" prefHeight="30.0" prefWidth="200.0" promptText="Usuario creador" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <Label text="Id Juego" GridPane.rowIndex="3" />
+                              <Label text="Id Juego" GridPane.rowIndex="3">
+                                 <GridPane.margin>
+                                    <Insets right="15.0" />
+                                 </GridPane.margin></Label>
                               <TextField id="txtIdJuego" fx:id="txtIdJuego" editable="false" prefHeight="30.0" prefWidth="200.0" promptText="Id Juego" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                            </children>
                            <columnConstraints>
-                              <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="262.0" minWidth="10.0" prefWidth="121.0" />
-                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="369.0" minWidth="10.0" prefWidth="354.0" />
+                              <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="262.0" minWidth="150.0" prefWidth="80.0" />
+                              <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="369.0" minWidth="220.0" prefWidth="300.0" />
                            </columnConstraints>
                            <rowConstraints>
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -54,18 +57,18 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <padding>
-                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                              <Insets bottom="20.0" top="20.0" />
                            </padding>
                         </GridPane>
                      </children>
                      <padding>
-                        <Insets bottom="20.0" left="50.0" right="50.0" top="20.0" />
+                        <Insets bottom="10.0" top="10.0" />
                      </padding>
                   </VBox>
                   <HBox alignment="CENTER" spacing="20.0">
                      <children>
-                        <Button id="btnCancelar" fx:id="btnCancelar" mnemonicParsing="false" onAction="#processCancel" prefHeight="51.0" prefWidth="200.0" text="Cancelar" />
-                        <Button id="btnCrearJuego" fx:id="btnCrearJuego" mnemonicParsing="false" onAction="#processCreateGame" prefHeight="51.0" prefWidth="200.0" text="Crear Juego" />
+                        <Button id="btnCancelar" fx:id="btnCancelar" mnemonicParsing="false" onAction="#processCancel" prefHeight="50.0" prefWidth="200.0" text="Cancelar" />
+                        <Button id="btnCrearJuego" fx:id="btnCrearJuego" mnemonicParsing="false" onAction="#processCreateGame" prefHeight="50.0" prefWidth="200.0" text="Crear Juego" />
                      </children>
                   </HBox>
                </children>

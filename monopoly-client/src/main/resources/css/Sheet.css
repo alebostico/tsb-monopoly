@@ -1,5 +1,5 @@
 .top-segment {
-	-fx-background-color: rgba(255, 255, 255, 0.05);
+	
 	-fx-border-color: 
 		transparent transparent rgb(255, 255, 255, 0.08) transparent,
 		transparent transparent rgb(0, 0, 0, 0.5) transparent;
@@ -24,9 +24,16 @@
 }
 
 .labelJugador {
-	-fx-font: 15pt "Tahoma Bold";
-	-fx-text-fill: #2d4b8e;
-	-fx-effect: dropshadow( one-pass-box , #FFFFFA, 0, 0.0 , 0 , 1 );
+	-fx-font: 15pt "Arial";
+	-fx-text-fill: rgb(255,255,255);
+	-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 1.9 );
+}
+
+.label_tarjeta {
+	-fx-font-family: "Arial";
+    -fx-font-size: 18;
+    -fx-text-fill: rgb(255,255,255);
+    -fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 1.9 );
 }
 
 .labelError {
@@ -88,58 +95,9 @@
     -fx-background-insets: -3 -3 -4 -3, -3, 0, 1, 2, 0;
 	-fx-font-family: "Arial";
     -fx-text-fill: white;
-    -fx-font-size: 26;
+    -fx-font-size: 18;
     -fx-text-fill: linear-gradient(white, #d0d0d0);
-    -fx-padding: 10 20 10 20;
-}
-
-.button:focused, .button:hover {
-    -fx-background-color:
-    	rgb(255, 255, 255, 0.08),
-    	rgb(0, 0, 0, 0.8),
-        #090a0c,
-        linear-gradient(#4a5661 0%, #1f2429 20%, #1f242a 100%),
-        linear-gradient(#3f4950, #23282e),
-        radial-gradient(center 50% 0%, radius 100%, rgba(135,142,148,0.9),
-        rgba(255,255,255,0));
-}
-
-.text-field, .text-area {
-	-fx-font-size: 18;
-    -fx-background-color:
-    	rgb(255, 255, 255, 0.3),
-    	linear-gradient(rgb(0, 0, 0, 0.5), rgb(0, 0, 0, 0.8) 50%),
-        rgb(218, 226, 224);
-    -fx-background-insets: 0 0 -1 0, 0, 1.5;
-    -fx-background-radius: 6, 5, 4;
-    -fx-padding: 6 10 4 10;
-    -fx-effect: innershadow( gaussian, rgb(0, 0, 0, 0.8), 5, 0, 0, 2 );
-    -fx-font-family: "Arial";
-}
-
-.text-area {
-	-fx-padding: 6 5 6 5;
-}
-
-.text-field:focused, .text-area:focused {
-	 -fx-background-color:
-    	rgb(235, 235, 235, 0.5),
-        rgb(0, 0, 0, 0.4),
-        rgb(255, 255, 255);
-}
-
-.label_tarjeta {
-	-fx-font-family: "Arial";
-    -fx-font-size: 16;
-    -fx-text-fill: rgb(0,0,0);
-    -fx-effect: dropshadow( one-pass-box , rgb(139, 131, 131, 0.4), 0, 0.0 , 0 , 1 );
-}
-
-.label_hora {
-	-fx-font-family: "Arial";
-    -fx-font-size: 26;
-    -fx-text-fill: rgb(0,0,0);
-    -fx-effect: dropshadow( one-pass-box , rgb(139, 131, 131, 0.4), 0, 0.0 , 0 , 1 );
+    -fx-padding: 5 5 5 5;
 }
 
 .button_enviar {
@@ -160,25 +118,39 @@
     -fx-padding: 10 20 10 20;
 }
 
-.context-menu {
-	-fx-text-fill: #e4f3fc;
-	-fx-text-fill: linear-gradient(white, #d0d0d0);
-    -fx-font: 15pt "Tahoma Bold";
-    -fx-padding: 2;
-    -fx-background-color: #2d4b8e
+.button:focused, .button:hover {
+	-fx-background-color:
+		rgb(255, 255, 255, 0.08),
+		rgb(0, 0, 0, 0.8),
+		#090a0c,
+		linear-gradient(#4a5661 0%, #1f2429 20%, #1f242a 100%),
+		linear-gradient(#3f4950, #23282e),
+		radial-gradient(center 50% 0%, radius 100%, rgba(135,142,148,0.9),
+		rgba(255,255,255,0));
 }
 
-.context-menu:hover {
-	-fx-base: #395bae;
+.text-field, .text-area {
+	-fx-font-size: 18;
+	-fx-background-color:
+		rgb(255, 255, 255, 0.3),
+		linear-gradient(rgb(0, 0, 0, 0.5), rgb(0, 0, 0, 0.8) 50%),
+		rgb(218, 226, 224);
+	-fx-background-insets: 0 0 -1 0, 0, 1.5;
+	-fx-background-radius: 6, 5, 4;
+	-fx-padding: 6 10 4 10;
+	-fx-effect: innershadow( gaussian, rgb(0, 0, 0, 0.8), 5, 0, 0, 2 );
+	-fx-font-family: "Arial";
 }
 
-.menu-item .label {
-  	-fx-text-fill: White;
-	-fx-text-fill: #e4f3fc;
+.text-area {
+	-fx-padding: 6 5 6 5;
 }
 
-.menu-item:focused .label {
-  	-fx-text-fill: white;
+.text-field:focused, .text-area:focused {
+	-fx-background-color:
+		rgb(235, 235, 235, 0.5),
+		rgb(0, 0, 0, 0.4),
+		rgb(255, 255, 255);
 }
 
 .boton_finalizar{

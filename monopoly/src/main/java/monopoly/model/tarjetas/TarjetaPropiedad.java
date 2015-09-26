@@ -215,6 +215,30 @@ public abstract class TarjetaPropiedad extends Tarjeta implements Serializable {
 		this.pathImagenDorso = pathImagenDorso;
 	}
 	
+	/**
+	 * Devuelve true o false si es una Calle
+	 * @return True si es tarjeta calle, False caso contrario.
+	 */
+	public boolean isPropiedadCalle(){
+		return this instanceof TarjetaCalle;
+	}
+	
+	/**
+	 * Devuelve true o false si es una compania.
+	 * @return True si es tarjeta compania, False caso contrario.
+	 */
+	public boolean isPropiedadCompania(){
+		return this instanceof TarjetaCompania;
+	}
+	
+	/**
+	 * Devuelve true o false si es una estación
+	 * @return True si es una tarjeta estación, False caso contrario.
+	 */
+	public boolean isPropiedadEstacion(){
+		return this instanceof TarjetaEstacion;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

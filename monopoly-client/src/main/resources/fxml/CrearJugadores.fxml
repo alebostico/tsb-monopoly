@@ -9,16 +9,19 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="1000.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.CrearJugadoresController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="678.0" prefWidth="755.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.CrearJugadoresController">
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="200.0">
          <children>
-            <VBox alignment="CENTER" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <VBox alignment="CENTER" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <ImageView fitHeight="196.0" fitWidth="476.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../images/logos/Logo.png" />
                      </image>
+                     <VBox.margin>
+                        <Insets bottom="5.0" top="5.0" />
+                     </VBox.margin>
                   </ImageView>
                   <HBox alignment="CENTER" spacing="10.0">
                      <children>
@@ -35,9 +38,9 @@
                               <Image url="@../images/iconos/back.png" />
                            </image>
                         </ImageView>
-                        <Pane maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" prefHeight="100.0" prefWidth="100.0" styleClass="bg_ficha">
+                        <Pane maxHeight="80.0" maxWidth="80.0" minHeight="80.0" minWidth="80.0" prefHeight="80.0" prefWidth="80.0" style="-fx-background-radius: 7, 6, 5, 4, 3, 5; -fx-background-insets: -3 -3 -4 -3, -3, 0, 1, 2, 0;" styleClass="bg_ficha">
                            <children>
-                              <VBox alignment="CENTER" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" prefHeight="100.0" prefWidth="100.0">
+                              <VBox alignment="CENTER" maxHeight="80.0" maxWidth="80.0" minHeight="80.0" minWidth="80.0" prefHeight="80.0" prefWidth="80.0">
                                  <children>
                                     <ImageView id="imgFicha" fx:id="imgFicha" fitHeight="52.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                                        <viewport>
@@ -66,7 +69,7 @@
                               <Insets left="15.0" right="10.0" />
                            </HBox.margin>
                         </Label>
-                        <VBox spacing="5.0">
+                        <VBox spacing="3.0">
                            <children>
                               <TextField id="txtNroJugadores" fx:id="txtNroJugadores" editable="false" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" promptText="0" text="0">
                                  <VBox.margin>
@@ -81,7 +84,7 @@
                   <HBox alignment="CENTER" spacing="10.0">
                      <children>
                         <Label text="Jugador Virtual" />
-                        <VBox alignment="CENTER_LEFT">
+                        <VBox alignment="CENTER_LEFT" spacing="5.0">
                            <children>
                               <Label text="Tipo de Jugador" />
                               <RadioButton id="rbCompradorPrimerizo" fx:id="rbCompradorPrimerizo" mnemonicParsing="false" selected="true" text="Comprador Primerizo" textFill="WHITE">
@@ -104,10 +107,10 @@
                               </RadioButton>
                            </children>
                         </VBox>
-                        <VBox alignment="CENTER">
+                        <VBox alignment="CENTER" spacing="5.0">
                            <children>
                               <Label contentDisplay="CENTER" text="Ficha" />
-                              <HBox alignment="CENTER">
+                              <HBox alignment="CENTER" spacing="10.0">
                                  <children>
                                     <ImageView fx:id="imgBackPc" fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                                        <cursor>
@@ -117,9 +120,9 @@
                                           <Image url="@../images/iconos/back.png" />
                                        </image>
                                     </ImageView>
-                                    <Pane maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" prefHeight="100.0" prefWidth="100.0" styleClass="bg_ficha">
+                                    <Pane maxHeight="80.0" maxWidth="80.0" minHeight="80.0" minWidth="80.0" prefHeight="80.0" prefWidth="80.0" style="-fx-background-radius: 7, 6, 5, 4, 3, 5; -fx-background-insets: -3 -3 -4 -3, -3, 0, 1, 2, 0;" styleClass="bg_ficha">
                                        <children>
-                                          <VBox alignment="CENTER" maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" prefHeight="100.0" prefWidth="100.0">
+                                          <VBox alignment="CENTER" maxHeight="80.0" maxWidth="80.0" minHeight="80.0" minWidth="80.0" prefHeight="80.0" prefWidth="80.0">
                                              <children>
                                                 <ImageView fx:id="imgFichaPc" fitHeight="52.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                                                    <viewport>
@@ -164,10 +167,10 @@
                   </HBox>
                   <HBox alignment="CENTER">
                      <children>
-                        <TableView fx:id="tblJugadoresVirtuales" minHeight="100.0" minWidth="500.0" prefHeight="150.0">
+                        <TableView fx:id="tblJugadoresVirtuales" minHeight="100.0" minWidth="520.0">
                            <columns>
-                              <TableColumn fx:id="colNombreJugador" maxWidth="-1.0" minWidth="100.0" prefWidth="-1.0" text="Jugador" />
-                              <TableColumn fx:id="colFicha" maxWidth="-1.0" minWidth="100.0" prefWidth="-1.0" text="Ficha" />
+                              <TableColumn fx:id="colNombreJugador" maxWidth="-1.0" minWidth="150.0" prefWidth="-1.0" text="Jugador" />
+                              <TableColumn fx:id="colFicha" maxWidth="-1.0" minWidth="120.0" prefWidth="-1.0" text="Ficha" />
                               <TableColumn fx:id="colTipoJugador" maxWidth="-1.0" minWidth="150.0" prefWidth="-1.0" text="Tipo Jugador" />
                               <TableColumn fx:id="colAction" maxWidth="-1.0" minWidth="100.0" prefWidth="-1.0" text="Acción" />
                            </columns>
@@ -177,11 +180,9 @@
                         </TableView>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER" spacing="10.0">
+                  <HBox alignment="CENTER" spacing="25.0">
                      <children>
                         <Button id="btnCancelar" fx:id="btnCancelar" mnemonicParsing="false" onAction="#processCancel" text="Cancelar" />
-                        <Button id="btnCrearJuego" fx:id="btnModificarReglas" mnemonicParsing="false" onAction="#processModificateRules" text="Modificar Reglas" />
-                        <Button id="btnCrearJuego" fx:id="btnRestablecerReglas" mnemonicParsing="false" onAction="#processRestoreRules" text="Restablecer Reglas" />
                         <Button id="btnCrearJuego" fx:id="btnEmpezarJuego" mnemonicParsing="false" onAction="#processStartGame" text="Empezar Juego" />
                      </children>
                   </HBox>
@@ -194,4 +195,7 @@
       <URL value="@../css/Sheet.css" />
       <URL value="@../css/Images_Background.css" />
    </stylesheets>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
 </StackPane>

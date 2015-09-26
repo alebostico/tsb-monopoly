@@ -73,7 +73,6 @@ import monopoly.model.Deuda;
 import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
-import monopoly.model.JugadorHumano;
 import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
 import monopoly.model.tablero.Casillero;
@@ -1103,7 +1102,6 @@ public class TableroController extends AnchorPane implements Serializable,
 	 */
 	private void showAccordionJugadores(List<Jugador> turnosList, Banco banco)
 			throws Exception {
-		// List<Jugador> turnos = turnosList;
 		tps = new TitledPane[turnosList.size() + 1];
 		String title;
 
@@ -1111,7 +1109,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			title = turnosList.get(i).getNombre() + " - ";
 			title += StringUtils
 					.formatearAMoneda(turnosList.get(i).getDinero()) + " - ";
-			title += (turnosList.get(i) instanceof JugadorHumano) ? "Jugador Humano"
+			title += (turnosList.get(i).isHumano()) ? "Jugador Humano"
 					: "Jugador Virtual";
 			tps[i] = getPaneInfoPlayer(turnosList.get(i), title, banco);
 		}
@@ -1412,10 +1410,10 @@ public class TableroController extends AnchorPane implements Serializable,
 		for (String[] vTarjeta : vTarjetas) {
 			propiedad = banco.getTarjetaPropiedad(vTarjeta[0]);
 			if (propiedad != null) {
-				if (propiedad instanceof TarjetaCalle) {
+				if (propiedad.isPropiedadCalle()) {
 					strStyle = ((TarjetaCalle) (propiedad)).getColorTarjeta();
 				} else {
-					if (propiedad instanceof TarjetaCompania)
+					if (propiedad.isPropiedadCompania())
 						strStyle = "blanco";
 					else
 						strStyle = "negro";
@@ -1458,10 +1456,10 @@ public class TableroController extends AnchorPane implements Serializable,
 		for (String[] vTarjeta : vTarjetas) {
 			propiedad = banco.getTarjetaPropiedad(vTarjeta[0]);
 			if (propiedad != null) {
-				if (propiedad instanceof TarjetaCalle) {
+				if (propiedad.isPropiedadCalle()) {
 					strStyle = ((TarjetaCalle) (propiedad)).getColorTarjeta();
 				} else {
-					if (propiedad instanceof TarjetaCompania)
+					if (propiedad.isPropiedadCompania())
 						strStyle = "blanco";
 					else
 						strStyle = "negro";
@@ -1506,15 +1504,24 @@ public class TableroController extends AnchorPane implements Serializable,
 						.getResourceAsStream("/images/tarjetas/Carcel.jpg"),
 				30, 30, false, false);
 
+		Label lblDescripcion;
+		
 		hbExtra.getChildren().add(new ImageView(imgCasa));
-		hbExtra.getChildren().add(new Label("x " + jugador.getNroCasas()));
+		lblDescripcion = new Label("x " + jugador.getNroCasas());
+		lblDescripcion.setStyle("-fx-text-fill: white;");
+		hbExtra.getChildren().add(lblDescripcion);
+		
 		hbExtra.getChildren().add(new ImageView(imgHotel));
-		hbExtra.getChildren().add(new Label("x " + jugador.getNroHoteles()));
+		lblDescripcion = new Label("x " + jugador.getNroHoteles());
+		lblDescripcion.setStyle("-fx-text-fill: white;");
+		hbExtra.getChildren().add(lblDescripcion);
 		hbExtra.getChildren().add(new ImageView(imgCarcel));
-		hbExtra.getChildren().add(
-				new Label("x " + jugador.getTarjetaCarcelList().size()));
+		lblDescripcion = new Label("x " + jugador.getTarjetaCarcelList().size());
+		lblDescripcion.setStyle("-fx-text-fill: white;");
+		hbExtra.getChildren().add(lblDescripcion);
 
 		TitledPane tpInfoPlayer = new TitledPane(title, scroll);
+		tpInfoPlayer.setStyle("-fx-text-fill: white;");
 		tpInfoPlayer.setId("tp_" + jugador.getNombre());
 		tpInfoPlayer.setCollapsible(true);
 
@@ -1688,10 +1695,11 @@ public class TableroController extends AnchorPane implements Serializable,
 		hbExtra.getChildren().add(new ImageView(imgHotel));
 		hbExtra.getChildren().add(new Label("x " + banco.getNroHoteles()));
 
-		TitledPane tp = new TitledPane(title, scroll);
-		tp.setId("tp_banco");
-		tp.setCollapsible(true);
-		return tp;
+		TitledPane tpBanco = new TitledPane(title, scroll);
+		tpBanco.setId("tp_banco");
+		tpBanco.setStyle("-fx-text-fill: white;");
+		tpBanco.setCollapsible(true);
+		return tpBanco;
 	}
 
 	private HBox crearHBoxTarjetaPropiedad(final String style,
