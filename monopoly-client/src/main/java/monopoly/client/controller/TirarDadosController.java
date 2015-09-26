@@ -110,7 +110,7 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 			vbPanel.getChildren().add(btnTirarDados);
 
 			mensaje = String
-					.format("El resultado de los dados para avanzar de casillero fue %s.",
+					.format("Resultado de dados para avanzar de casillero fue %s.",
 							dados.getSuma());
 
 			history = new History(StringUtils.getFechaActual(),

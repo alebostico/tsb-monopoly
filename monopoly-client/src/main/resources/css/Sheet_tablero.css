@@ -1,0 +1,204 @@
+.background_tablero {
+    -fx-background-image: url("../images/background/background_tablero.png");
+    -fx-background-repeat: repeat;
+	-fx-background-color:
+        linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
+        linear-gradient(#20262b, #191d22),
+        radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+}
+
+.label_hora {
+	-fx-font-family: "Arial";
+	-fx-font-size: 20;
+	-fx-text-fill: rgb(255,255,255);
+	-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 1.9 );
+}
+
+.labelJugador {
+	-fx-font: 15pt "Arial";
+	-fx-text-fill: rgb(255,255,255);
+	-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 1.9 );
+}
+
+.label_tarjeta {
+	-fx-font-family: "Arial";
+    -fx-font-size: 18;
+    -fx-text-fill: rgb(255,255,255);
+    -fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 1.9 );
+}
+
+.button .text {
+    -fx-effect: dropshadow( one-pass-box , rgb(0, 0, 0, 0.8), 0, 0.0 , 0 , -1 );
+}
+
+.button {
+	-fx-background-color:
+		rgb(255, 255, 255, 0.08),
+		rgb(0, 0, 0, 0.8),
+		#090a0c,
+		linear-gradient(#4a5661 0%, #1f2429 20%, #1f242a 100%),
+		linear-gradient(#242a2e, #23282e),
+		radial-gradient(center 50% 0%, radius 100%, rgba(135,142,148,0.9),
+		rgba(255,255,255,0));
+	-fx-background-radius: 7, 6, 5, 4, 3, 5;
+	-fx-background-insets: -3 -3 -4 -3, -3, 0, 1, 2, 0;
+	-fx-font-family: "Arial";
+	-fx-font-size: 18;
+	-fx-text-fill: rgb(255,255,255);
+	-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 0.1 );
+    	-fx-padding: 5 5 5 5;
+}
+
+.btn_sendmsj {
+    -fx-background-image: url("../images/iconos/send.png");
+    -fx-background-size: 18 18;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position:center;
+}
+
+.context-menu {
+	-fx-background-color: rgb(255, 255, 255, 0.08), rgb(0, 0, 0, 0.8),#090a0c,
+		linear-gradient(#4a5661 0%, #1f2429 20%, #1f242a 100%),
+		linear-gradient(#242a2e, #23282e),
+		radial-gradient(center 50% 0%, radius 100%, rgba(135,142,148,0.9),
+		rgba(255,255,255,0));
+	-fx-background-radius: 7, 6, 5, 4, 3, 5;
+	-fx-background-insets: -3 -3 -4 -3, -3, 0, 1, 2, 0;
+	-fx-font-family: "Arial";
+	-fx-font-size: 16;
+	-fx-text-fill: #e4f3fc;
+	-fx-padding: 0;
+	
+}
+
+.menu-item .label {
+	-fx-text-fill:linear-gradient(#EDEDED, #EDEDED);
+}
+
+
+.menu-item:focused , .menu-item:hover .label {
+	/*-fx-background-color:
+		rgb(255, 255, 255, 0.08),
+		rgb(0, 0, 0, 0.8),
+		#090a0c,
+		linear-gradient(#4a5661 0%, #1f2429 20%, #1f242a 100%),
+		linear-gradient(#3f4950, #23282e),
+		radial-gradient(center 50% 0%, radius 100%, rgba(135,142,148,0.9),
+		rgba(255,255,255,0));*/
+	-fx-background-color: rgb(255, 255, 255, 0.08), rgb(0, 0, 0, 0.8),#090a0c,
+		linear-gradient(#4a5661 0%, #1f2429 20%, #1f242a 100%),
+		linear-gradient(#242a2e, #23282e),
+		radial-gradient(center 50% 0%, radius 100%, rgba(135,142,148,0.9),
+		rgba(255,255,255,0));
+}
+
+.borde_panel_lateral {
+	-fx-border-color: 
+		rgb(255, 255, 255, 0.08) transparent rgb(255, 255, 255, 0.08) transparent ,
+		rgb(0, 0, 0, 0.5) transparent rgb(0, 0, 0, 0.5) transparent ;
+	-fx-border-width: 1, 1.5;
+	/*-fx-border-insets: -1, 0; */
+}
+
+.bordered-titled-title {
+	-fx-translate-x:  8;
+	-fx-translate-y: -10;
+	-fx-padding: 0 0 0 4;
+	-fx-background-color: -fx-background;
+}
+
+
+.titled-pane > .title
+{
+	-fx-font-family: "Arial";
+	-fx-font-size: 12pt;
+    	-fx-padding: 6;
+	-fx-background-color:
+		linear-gradient(#38424b 0%, #ffffff 20%, #ffffff 100%),
+		linear-gradient(#20262b, #191d22),
+		radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+	-fx-background-insets: 0, 1, 2;
+	-fx-color: white;
+	-fx-shape: null;
+	-fx-text-fill: white;
+}
+
+.titled-pane:focused > .title > .arrow-button .arrow 
+{
+	-fx-background-color: white;
+}
+
+.titled-pane > *.content 
+{
+	-fx-background-color:transparent transparent rgb(255, 255, 255, 0.08) transparent,
+		transparent transparent rgb(0, 0, 0, 0.5) transparent;
+}
+.border_marron{
+	-fx-border-color: #61210B;
+	-fx-border-width: 2;
+	-fx-border-style: solid;
+	-fx-background-color: #424242;
+}
+
+.border_celeste{
+	-fx-border-color: #CEF6EC;
+	-fx-border-width: 2;
+	-fx-border-style: solid;
+	-fx-background-color: #424242;
+}
+
+.border_fucsia{
+	-fx-border-color: #B4045F;
+	-fx-border-width: 2;
+	-fx-border-style: solid;
+	-fx-background-color: #424242;
+}
+
+.border_naranja{
+	-fx-border-color: orange;
+	-fx-border-width: 2;
+	-fx-border-style: solid;
+	-fx-background-color: #424242;
+}
+
+.border_rojo{
+	-fx-border-color: red;
+	-fx-border-width: 2;
+	-fx-border-style: solid;
+	-fx-background-color: #424242;
+}
+
+.border_amarillo{
+	-fx-border-color: yellow;
+	-fx-border-width: 2;
+	-fx-border-style: solid;
+	-fx-background-color: #424242;
+}
+
+.border_verde{
+	-fx-border-color: green;
+	-fx-border-width: 2;
+	-fx-border-style: solid;
+	-fx-background-color: #424242;
+}
+
+.border_azul{
+	-fx-border-color: blue;
+	-fx-border-width: 2;
+	-fx-border-style: solid;
+	-fx-background-color: #424242;
+}
+
+.border_blanco{
+	-fx-border-color: white;
+	-fx-border-width: 2;
+	-fx-border-style: solid;
+	-fx-background-color: #424242;
+}
+
+.border_negro{
+	-fx-border-color: black;
+	-fx-border-width: 2;
+	-fx-border-style: solid;
+	-fx-background-color: #424242;
+}

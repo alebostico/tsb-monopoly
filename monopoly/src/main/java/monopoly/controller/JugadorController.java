@@ -117,7 +117,18 @@ public class JugadorController {
 	}
 
 	public List<Jugador> getTurnoslist() {
-		return turnosList.toList();
+		List<Jugador> turnos = new ArrayList<Jugador>();		
+		Node<Jugador> head = currentPlayer;		
+		Node<Jugador> aux = head;
+		turnos.add(aux.getKey());
+		for(;aux.getNext() != null;){
+			if(aux.getNext() != head)
+				turnos.add(aux.getNext().getKey());
+			else
+				break;
+			aux= aux.getNext();
+		}
+		return turnos;
 	}
 
 	public Jugador getCurrentPlayer() {

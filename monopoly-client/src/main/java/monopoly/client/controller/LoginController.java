@@ -3,9 +3,10 @@
  */
 package monopoly.client.controller;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -14,6 +15,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -29,13 +32,10 @@ import monopoly.util.encriptacion.Encrypter;
 import monopoly.util.encriptacion.VernamEncrypter;
 import monopoly.util.exception.CampoVacioException;
 
-import org.controlsfx.dialog.Dialogs;
-
 /**
  * @author pablo
  * 
  */
-@SuppressWarnings("deprecation")
 public class LoginController extends AnchorPane implements Initializable {
 
 	@FXML
@@ -85,9 +85,11 @@ public class LoginController extends AnchorPane implements Initializable {
 				validarUsuario(userName, password);
 			}
 		} catch (CampoVacioException cve) {
-			Dialogs.create().owner(primaryStage).title("Advertencia")
-					.masthead("Campo Obligatorio").message(cve.getMessage())
-					.showWarning();
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Advertencia");
+			alert.setHeaderText("Campo Obligatorio");
+			alert.setContentText(cve.getMessage());
+			alert.showAndWait();
 		}
 	}
 
@@ -111,27 +113,36 @@ public class LoginController extends AnchorPane implements Initializable {
 	public void iniciarSesion(final Usuario user) {
 		final String fxml = ConstantesFXML.FXML_MENU_OPCIONES;
 
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				if (user != null) {
+		FutureTask<Void> taskMostrarOpciones = null;
+		try {
+			taskMostrarOpciones = new FutureTask<Void>(new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
 					try {
-						FXMLLoader loader = ScreensFramework.getLoader(fxml);
-						Parent root = (Parent) loader.load();
-						MenuOpcionesController controller = (MenuOpcionesController) loader
-								.getController();
-						controller.setPrevStage(primaryStage);
-						controller.setUsuarioLogueado(user);
-						controller.showOptionMenu(root);
+						if (user != null) {
 
-					} catch (IOException e) {
-						GestorLogs.registrarException(e);
+							FXMLLoader loader = ScreensFramework.getLoader(fxml);
+							Parent root = (Parent) loader.load();
+							MenuOpcionesController controller = (MenuOpcionesController) loader
+									.getController();
+							controller.setPrevStage(primaryStage);
+							controller.setUsuarioLogueado(user);
+							controller.showOptionMenu(root);
+
+						} else {
+							lblMsgError.setText("Usuario / Contraseña inválida");
+						}
+					} catch (Exception e) {
+						GestorLogs.registrarError(e);
 					}
-				} else {
-					lblMsgError.setText("Usuario / Contraseña inválida");
+					return null;
 				}
-			}
-		});
+			});
+			Platform.runLater(taskMostrarOpciones);
+		
+		} catch (Exception e) {
+			GestorLogs.registrarError(e);
+		}
 	}
 
 	/**

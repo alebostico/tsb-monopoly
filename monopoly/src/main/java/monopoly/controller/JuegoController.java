@@ -236,7 +236,7 @@ public class JuegoController {
 					"La acción %s es inválida.", accion.toString()));
 		}
 
-		mensaje = String.format("Avanzaste al casillero %s, %s",
+		mensaje = String.format("Avanzastó al casillero %s, %s",
 				casillero.getNombreCasillero(), accion.getMensaje());
 
 		historyList.add(new History(StringUtils.getFechaActual(), jugador
@@ -408,7 +408,7 @@ public class JuegoController {
 
 		} catch (SinEdificiosException e) {
 			mensaje = String
-					.format("El jugador %s no pudo comprar edificios porque no hay en el banco",
+					.format("El jugador %s no pudo comprar edificios porque no tiene disponibilidad en el banco",
 							jugadorActual.getNombre());
 		} catch (SinDineroException e) {
 			mensaje = String
@@ -462,7 +462,7 @@ public class JuegoController {
 		jugadorSiguiente = gestorJugadores.siguienteTurno();
 
 		history = new History(StringUtils.getFechaActual(),
-				jugadorActual.getNombre(), "Ha finalizado su turno.");
+				jugadorActual.getNombre(), "Finalizó su turno.");
 		historyList.add(history);
 		history = new History(StringUtils.getFechaActual(),
 				jugadorSiguiente.getNombre(), String.format(
@@ -613,18 +613,18 @@ public class JuegoController {
 			sendToOne(
 					senderId,
 					new CompleteTurnMessage(String.format(
-							"Ha adquirido la propiedad %s.",
+							"Adquirió la propiedad %s.",
 							tarjeta.getNombre()), EnumAction.BUY_PROPERTY,
 							status));
 			history = new History(StringUtils.getFechaActual(),
 					jugador.getNombre(), String.format(
-							"Ha adquirido la propiedad %s.",
+							"Adquirió la propiedad %s.",
 							tarjeta.getNombre()));
 			sendToOther(senderId, new HistoryGameMessage(history));
 		} else {
 			history = new History(StringUtils.getFechaActual(),
 					jugador.getNombre(), String.format(
-							"Ha adquirido la propiedad %s.",
+							"Adquirió la propiedad %s.",
 							tarjeta.getNombre()));
 			sendToAll(new HistoryGameMessage(history));
 		}
@@ -746,7 +746,7 @@ public class JuegoController {
 			history.setFecha(StringUtils.getFechaActual());
 			history.setUsuario(jugador.getNombre());
 			history.setMensaje(String.format(
-					"Ha pagado %s de impuesto al capital.", monto));
+					"Pagó %s de impuesto al capital.", monto));
 			msgHistory = new HistoryGameMessage(history);
 			sendToAll(msgHistory);
 		} else {

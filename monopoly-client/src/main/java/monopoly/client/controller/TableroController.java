@@ -266,6 +266,9 @@ public class TableroController extends AnchorPane implements Serializable,
 	private MenuItem btnConstruir;
 
 	@FXML
+    private MenuItem btnBancarrota;
+	
+	@FXML
 	private ListView<History> lvHistoryChat;
 	private static List<History> historyChatList;
 	private ObservableList<History> oHistoryChatList;
@@ -372,9 +375,9 @@ public class TableroController extends AnchorPane implements Serializable,
 
 		createDigitalClock();
 		if (usuarioLogueado.equals(juego.getOwner()))
-			addHistoryGame(usuarioLogueado.getUserName(), "Juego Creado.");
+			addHistoryGame(usuarioLogueado.getUserName(), "Creó el juego.");
 		else
-			addHistoryGame(usuarioLogueado.getUserName(), "Te uniste al Juego.");
+			addHistoryGame(usuarioLogueado.getUserName(), "Sé unió al Juego.");
 
 		esperarJugadores();
 	}
@@ -1978,6 +1981,11 @@ public class TableroController extends AnchorPane implements Serializable,
 		// bloquearTablero(true);
 	}
 
+	@FXML
+    void processBancarrota(ActionEvent event) {
+
+    }
+	
 	// ======================================================================//
 	// ========================== Getter & Setter ===========================//
 	// ======================================================================//

@@ -113,7 +113,7 @@ public class TirarDadosTurnoController implements Initializable, Serializable {
 			vbPanel.getChildren().add(btnTirarDados);
 
 			mensaje = String
-					.format("El resultado de los dados para establecer su turno fue %s.",
+					.format("Resultado de dados para turno fue %s.",
 							dados.getSuma());
 
 			history = new History(StringUtils.getFechaActual(),
