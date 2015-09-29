@@ -273,10 +273,6 @@ public class JuegoController {
 		Casillero casillero;
 		boolean cobraSalida = true;
 		AccionEnCasillero accion;
-		// EstadoJuego estadoJuegoJugadorActual = EstadoJuego.TIRAR_DADO;
-		// EstadoJuego estadoJuegoRestoJugadoresEstadoJuego =
-		// EstadoJuego.TIRAR_DADO;
-		// MonopolyGameStatus status;
 		Tarjeta tarjetaSelected = null;
 		TarjetaPropiedad tarjetaPropiedad = null;
 		String mensaje;
@@ -308,11 +304,11 @@ public class JuegoController {
 		switch (accion) {
 		case TARJETA_SUERTE:
 			tarjetaSelected = gestorTablero.getTarjetaSuerte();
-			tarjetaSuerte(jugador, (TarjetaSuerte) tarjetaSelected);
+			realizarObjetivoTarjeta(jugador, tarjetaSelected);
 			break;
 		case TARJETA_COMUNIDAD:
 			tarjetaSelected = gestorTablero.getTarjetaComunidad();
-			tarjetaComunidad(jugador, (TarjetaComunidad) tarjetaSelected);
+			realizarObjetivoTarjeta(jugador, tarjetaSelected);
 			break;
 		case DISPONIBLE_PARA_VENDER:
 			if (gestorJugadoresVirtuales.decidirComprar(casillero, jugador)) {
@@ -334,11 +330,12 @@ public class JuegoController {
 				}
 
 				comprarPropiedad(jugador, tarjetaPropiedad);
-			}else{
+			} else {
 				mensaje = String.format("El Jugador %s decidió no comprar %s.",
 						jugador.getNombre(), casillero.getNombreCasillero());
 				sendToAll(new HistoryGameMessage(new History(
-						StringUtils.getFechaActual(), jugador.getNombre(), mensaje)));
+						StringUtils.getFechaActual(), jugador.getNombre(),
+						mensaje)));
 			}
 			break;
 		case IMPUESTO_DE_LUJO:
@@ -389,12 +386,6 @@ public class JuegoController {
 			throw new CondicionInvalidaException(String.format(
 					"La acción %s es inválida.", accion.toString()));
 		}
-
-//		mensaje = accion.getMensaje();
-		
-//		sendToAll(new HistoryGameMessage(new History(
-//				StringUtils.getFechaActual(), jugador.getNombre(), mensaje)));
-
 	}
 
 	public void tirarDadosJugadorVirtual() throws Exception {
@@ -421,7 +412,7 @@ public class JuegoController {
 		if (mensaje != null) {
 			sendToAll(new HistoryGameMessage(new History(
 					StringUtils.getFechaActual(), gestorJugadores
-					.getCurrentPlayer().getNombre(), mensaje)));
+							.getCurrentPlayer().getNombre(), mensaje)));
 		}
 
 		Dado dados = new Dado();
@@ -494,30 +485,75 @@ public class JuegoController {
 
 	}
 
-	public void jugarAccionTarjeta(int senderId,
-			TarjetaComunidad tarjetaComunidad) {
+	public void comprarPropiedad(int senderId, String nombrePropiedad)
+			throws SinDineroException, Exception {
+		TarjetaPropiedad tarjeta = gestorBanco.getBanco().getTarjetaPropiedad(
+				nombrePropiedad);
 		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
-		jugarAccionTarjeta(jugador, tarjetaComunidad);
+		comprarPropiedad(jugador, tarjeta);
 	}
 
-	private void jugarAccionTarjeta(Jugador jugador,
-			TarjetaComunidad tarjetaComunidad) {
-		AccionEnTarjeta accion = gestorTablero.getGestorTarjetas()
-				.jugarTarjetaComunidad(jugador, tarjetaComunidad);
-		jugarAccionTarjeta(jugador, accion);
+	private void comprarPropiedad(Jugador jugador, TarjetaPropiedad tarjeta)
+			throws SinDineroException, Exception {
+		History history;
+		int senderId = 0;
+		gestorTablero.comprarPropiedad(jugador, tarjeta);
+
+		if (jugador.isHumano()) {
+			senderId = ((JugadorHumano) jugador).getSenderID();
+			status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+					gestorBanco.getBanco(), gestorTablero.getTablero(),
+					EstadoJuego.JUGANDO, null,
+					gestorJugadores.getCurrentPlayer(),
+					new ArrayList<History>(), null);
+			sendToOne(
+					senderId,
+					new CompleteTurnMessage(String.format(
+							"Adquirió la propiedad %s.", tarjeta.getNombre()),
+							EnumAction.BUY_PROPERTY, status));
+			history = new History(StringUtils.getFechaActual(),
+					jugador.getNombre(), String.format(
+							"Adquirió la propiedad %s.", tarjeta.getNombre()));
+			sendToOther(senderId, new HistoryGameMessage(history));
+		} else {
+			history = new History(StringUtils.getFechaActual(),
+					jugador.getNombre(), String.format(
+							"Adquirió la propiedad %s.", tarjeta.getNombre()));
+			sendToAll(new HistoryGameMessage(history));
+		}
+
+		if (jugador.isHumano())
+			siguienteTurno();
 	}
 
-	public void jugarAccionTarjeta(int senderId, TarjetaSuerte tarjetaSuerte) {
+	/**
+	 * Implementa el objetivo de la tarjeta Comunidad o Suerte
+	 * Cuando un jugador humano saca una de las tarjetas.
+	 * 
+	 * @param senderId id de jugador que envió el mensaje.
+	 * @param tarjeta Tarjeta obtenida en el casillero.
+	 * 
+	 */
+	public void realizarObjetivoTarjeta(int senderId, Tarjeta tarjeta) throws Exception {
 		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
-		jugarAccionTarjeta(jugador, tarjetaSuerte);
+		realizarObjetivoTarjeta(jugador, tarjeta);
 	}
 
-	private void jugarAccionTarjeta(Jugador jugador, TarjetaSuerte tarjetaSuerte) {
-		AccionEnTarjeta accion = gestorTablero.getGestorTarjetas()
-				.jugarTarjetaSuerte(jugador, tarjetaSuerte);
-		jugarAccionTarjeta(jugador, accion);
+	private void realizarObjetivoTarjeta(Jugador jugador, Tarjeta tarjeta) throws Exception{
+		AccionEnTarjeta accion = null;
+		if (tarjeta.isTarjetaComunidad()) {
+			accion = gestorTablero.getGestorTarjetas().jugarTarjetaComunidad(
+					jugador, (TarjetaComunidad) tarjeta);
+		} else {
+			accion = gestorTablero.getGestorTarjetas().jugarTarjetaSuerte(
+					jugador, (TarjetaSuerte) tarjeta);
+		}
+		if (this.jugarAccionTarjeta(jugador, accion)){
+			if (jugador.isHumano())
+				this.siguienteTurno();
+		}
 	}
-
+	
 	public boolean jugarAccionTarjeta(Jugador jugador, AccionEnTarjeta accion) {
 		String mensaje;
 		int senderId = (jugador.isHumano() ? ((JugadorHumano) jugador)
@@ -589,120 +625,6 @@ public class JuegoController {
 
 	}
 
-	public void comprarPropiedad(int senderId, String nombrePropiedad)
-			throws SinDineroException, Exception {
-		TarjetaPropiedad tarjeta = gestorBanco.getBanco().getTarjetaPropiedad(
-				nombrePropiedad);
-		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
-		comprarPropiedad(jugador, tarjeta);
-	}
-
-	private void comprarPropiedad(Jugador jugador, TarjetaPropiedad tarjeta)
-			throws SinDineroException, Exception {
-		History history;
-		int senderId = 0;
-		gestorTablero.comprarPropiedad(jugador, tarjeta);
-
-		if (jugador.isHumano()) {
-			senderId = ((JugadorHumano) jugador).getSenderID();
-			status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
-					gestorBanco.getBanco(), gestorTablero.getTablero(),
-					EstadoJuego.JUGANDO, null,
-					gestorJugadores.getCurrentPlayer(),
-					new ArrayList<History>(), null);
-			sendToOne(
-					senderId,
-					new CompleteTurnMessage(String.format(
-							"Adquirió la propiedad %s.",
-							tarjeta.getNombre()), EnumAction.BUY_PROPERTY,
-							status));
-			history = new History(StringUtils.getFechaActual(),
-					jugador.getNombre(), String.format(
-							"Adquirió la propiedad %s.",
-							tarjeta.getNombre()));
-			sendToOther(senderId, new HistoryGameMessage(history));
-		} else {
-			history = new History(StringUtils.getFechaActual(),
-					jugador.getNombre(), String.format(
-							"Adquirió la propiedad %s.",
-							tarjeta.getNombre()));
-			sendToAll(new HistoryGameMessage(history));
-		}
-
-		if (jugador.isHumano())
-			siguienteTurno();
-	}
-
-	/**
-	 * Implementa la accion de TarjetaSuerte cuando viene desde el cliente
-	 * (JugadorHumano)
-	 * 
-	 * @param senderId
-	 *            id de conexión del jugador humano
-	 * @param tarjeta
-	 * @throws Exception
-	 */
-	public void tarjetaSuerte(int senderId, int idTarjeta) throws Exception {
-		TarjetaSuerte tarjeta = gestorTablero.getGestorTarjetas()
-				.getTarjetaSuerteById(idTarjeta);
-		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
-		tarjetaSuerte(jugador, tarjeta);
-	}
-
-	/**
-	 * Implementa la accion de TarjetaSuerte cuando se ejecuta en el server
-	 * (JugadorVirtual)
-	 * 
-	 * @param senderId
-	 *            id de conexión del jugador humano
-	 * @param jugador
-	 * @param tarjeta
-	 * @throws Exception
-	 */
-	private void tarjetaSuerte(Jugador jugador, TarjetaSuerte tarjeta)
-			throws Exception {
-		AccionEnTarjeta accion = gestorTablero.getGestorTarjetas()
-				.jugarTarjetaSuerte(jugador, tarjeta);
-		if (this.jugarAccionTarjeta(jugador, accion))
-			if (jugador.isHumano())
-				this.siguienteTurno();
-	}
-
-	/**
-	 * Implementa la accion de TarjetaComunidad cuando viene desde el cliente
-	 * (JugadorHumano)
-	 * 
-	 * @param senderId
-	 *            id de conexión del jugador humano
-	 * @param tarjeta
-	 * @throws Exception
-	 */
-	public void tarjetaComunidad(int senderId, int idTarjeta) throws Exception {
-		TarjetaComunidad tarjeta = gestorTablero.getGestorTarjetas()
-				.getTarjetaComunidadById(idTarjeta);
-		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
-		tarjetaComunidad(jugador, tarjeta);
-	}
-
-	/**
-	 * * Implementa la accion de TarjetaComunidad cuando se ejecuta en el server
-	 * (JugadorVirtual)
-	 * 
-	 * @param senderId
-	 *            id de conexión del jugador humano
-	 * @param jugador
-	 * @param tarjeta
-	 * @throws Exception
-	 */
-	private void tarjetaComunidad(Jugador jugador, TarjetaComunidad tarjeta)
-			throws Exception {
-		AccionEnTarjeta accion = gestorTablero.getGestorTarjetas()
-				.jugarTarjetaComunidad(jugador, tarjeta);
-		if (this.jugarAccionTarjeta(jugador, accion))
-			if (jugador.isHumano())
-				this.siguienteTurno();
-	}
-
 	/**
 	 * Método para llevar preso al jugador.
 	 * 
@@ -745,8 +667,8 @@ public class JuegoController {
 			history = new History();
 			history.setFecha(StringUtils.getFechaActual());
 			history.setUsuario(jugador.getNombre());
-			history.setMensaje(String.format(
-					"Pagó %s de impuesto al capital.", monto));
+			history.setMensaje(String.format("Pagó %s de impuesto al capital.",
+					monto));
 			msgHistory = new HistoryGameMessage(history);
 			sendToAll(msgHistory);
 		} else {

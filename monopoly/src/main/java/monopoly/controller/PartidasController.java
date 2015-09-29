@@ -15,6 +15,7 @@ import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.Usuario;
+import monopoly.model.tarjetas.Tarjeta;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.SinDineroException;
@@ -117,35 +118,18 @@ public class PartidasController {
 	}
 
 	/**
-	 * Método ejecutado para realizar el objetivo de la tarjeta suerte que nos
-	 * salió.
+	 * Método ejecutado para realizar el objetivo de la tarjeta comunidad o suerte
+	 * que salió.
 	 * 
-	 * @param idJuego
-	 *            identificador del juego.
-	 * @param senderId
-	 *            id de conexión del jugador humano.
-	 * @param message
+	 * @param idJuego identificador del juego.
+	 * @param senderId id de conexión del jugador humano.
+	 * @param tarjeta Tarjeta obtenida del mazo.
 	 * @throws Exception
 	 */
-	public void tarjetaSuerte(String idJuego, int senderId, int idTarjeta) throws Exception {
+	public void jugarTarjeta(String idJuego, int senderId, Tarjeta tarjeta)
+			throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
-		juegoController.tarjetaSuerte(senderId, idTarjeta);
-	}
-
-	/**
-	 * Método ejecutado para realizar el objetivo de la tarjeta comunidad que
-	 * nos salió.
-	 * 
-	 * @param idJuego
-	 *            identificador del juego.
-	 * @param senderId
-	 *            id de conexión del jugador humano.
-	 * @param message
-	 */
-	public void tarjetaComunidad(String idJuego, int senderId,
-			int idTarjeta) throws Exception {
-		juegoController = juegosControllerList.get(idJuego);
-		juegoController.tarjetaComunidad(senderId, idTarjeta);
+		juegoController.realizarObjetivoTarjeta(senderId, tarjeta);
 	}
 
 	/**
@@ -209,8 +193,8 @@ public class PartidasController {
 	 * @param monto
 	 *            cantidad de dinero que el jugador le pagará al banco.
 	 */
-	public void pagarAlBanco(String idJuego, int senderId, int monto, String mensaje)
-			throws Exception, SinDineroException {
+	public void pagarAlBanco(String idJuego, int senderId, int monto,
+			String mensaje) throws Exception, SinDineroException {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.pagarAlBanco(senderId, monto, mensaje);
 	}
@@ -386,8 +370,9 @@ public class PartidasController {
 	public void setMonopolyGame(GameServer monopolyGame) {
 		this.monopolyGame = monopolyGame;
 	}
-	
-	public void sendChatMessage(String uniqueID, History history) throws Exception {
+
+	public void sendChatMessage(String uniqueID, History history)
+			throws Exception {
 		juegoController = juegosControllerList.get(uniqueID);
 		juegoController.sendChatMessage(history);
 	}

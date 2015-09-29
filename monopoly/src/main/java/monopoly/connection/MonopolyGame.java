@@ -14,9 +14,8 @@ import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
 import monopoly.model.Usuario;
-import monopoly.model.tarjetas.TarjetaComunidad;
+import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaPropiedad;
-import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.exception.SinDineroException;
 import monopoly.util.message.CreateAccountMessage;
@@ -91,6 +90,8 @@ public class MonopolyGame extends GameServer {
 		Usuario usuario;
 		Juego juego;
 		Jugador jugador;
+		Tarjeta tarjeta;
+		
 		try {
 			switch (message.getClass().getSimpleName()) {
 			case ConstantesMensaje.LOGIN_MESSAGE:
@@ -161,17 +162,14 @@ public class MonopolyGame extends GameServer {
 
 			case ConstantesMensaje.CHANCE_CARD_MESSAGE:
 				ChanceCardMessage msgChanceCardMessage = (ChanceCardMessage) message;
-				TarjetaSuerte tarjetaSuerte = (TarjetaSuerte) msgChanceCardMessage.message;
-				PartidasController.getInstance().tarjetaSuerte(
-						msgChanceCardMessage.idJuego, senderId,tarjetaSuerte.getIdTarjeta()
-						);
+				tarjeta = (Tarjeta) msgChanceCardMessage.message;
+				PartidasController.getInstance().jugarTarjeta(msgChanceCardMessage.idJuego, senderId, tarjeta);
 				break;
 
 			case ConstantesMensaje.COMMUNITY_CARD_MESSAGE:
 				CommunityCardMessage msgCommunityCardMessage = (CommunityCardMessage) message;
-				TarjetaComunidad tarjetaComunidad = (TarjetaComunidad) msgCommunityCardMessage.message;
-				PartidasController.getInstance().tarjetaComunidad(
-						msgCommunityCardMessage.idJuego, senderId,tarjetaComunidad.getIdTarjeta());
+				tarjeta = (Tarjeta) msgCommunityCardMessage.message;
+				PartidasController.getInstance().jugarTarjeta(msgCommunityCardMessage.idJuego, senderId, tarjeta);
 				break;
 
 			case ConstantesMensaje.PAY_TO_BANK_MESSAGE:
