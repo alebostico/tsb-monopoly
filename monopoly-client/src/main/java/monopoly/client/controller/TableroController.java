@@ -1446,10 +1446,9 @@ public class TableroController extends AnchorPane implements Serializable,
 				if (jugador.getTarjPropiedadList().contains(propiedad)) {
 					bCrearImagen = true;
 					if (!propiedad.isHipotecada())
-						rutaImagen = propiedad.getPathImagenPropiedad();
+						rutaImagen = propiedad.getPathImagenFrente();
 					else
-						rutaImagen = propiedad.getPathImagenPropiedad()
-								.replace("propiedades", "dorso");
+						rutaImagen = propiedad.getPathImagenDorso();
 					strToolTip = showToolTipsPropiedad(propiedad);
 				}
 				gridPane1.add(
@@ -1684,6 +1683,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					else
 						strStyle = "negro";
 				}
+				bCrearImagen = false;
 				if (propiedad.getJugador() == null) {
 					bCrearImagen = true;
 					rutaImagen = propiedad.getPathImagenFrente();
@@ -1748,10 +1748,10 @@ public class TableroController extends AnchorPane implements Serializable,
 					hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 					tpImagen = new Tooltip(toolTips);
 					imgPropiedad = new Image(TableroController.class
-							.getResourceAsStream(rutaImagen), 170, 200, false,
+							.getResourceAsStream(rutaImagen), 250, 284, false,
 							false);
 					tpImagen.setGraphic(new ImageView(imgPropiedad));
-
+					tpImagen.setAutoHide(false);
 					Tooltip.install(hBox_inner, tpImagen);
 				}
 			}
