@@ -35,9 +35,13 @@ public class GestorLogs {
 	 * GestorLogs.MSG_ERROR.
 	 */
 	// En este caso loguea MSG_INFO, MSG_WARNING y MSG_ERROR.
-	private static int loggingDetailLevel = GestorLogs.MSG_INFO;
-	// private static int loggingDetailLevel = GestorLogs.MSG_DEBUG;
-	// private static int loggingDetailLevel = GestorLogs.MSG_DEBUG_DETAIL;
+	// private static int loggingDetailLevel = GestorLogs.MSG_INFO;
+	
+	// En este caso loguea MSG_DEBUG, MSG_INFO, MSG_WARNING y MSG_ERROR.
+	private static int loggingDetailLevel = GestorLogs.MSG_DEBUG;
+	
+	// En este caso loguea MSG_DEBUG_DETAIL, MSG_DEBUG, MSG_INFO, MSG_WARNING y MSG_ERROR.
+		// private static int loggingDetailLevel = GestorLogs.MSG_DEBUG_DETAIL;
 
 	private static final String pathFolderLog = System.getProperty("user.home")
 			+ File.separator + "monopoly_logs";;

@@ -19,7 +19,7 @@ import monopoly.model.tablero.CasilleroEstacion;
 import monopoly.model.tablero.Tablero;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaCalle;
-import monopoly.model.tarjetas.TarjetaCalle.Color;
+import monopoly.model.tarjetas.TarjetaCalle.EnumColor;
 import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
@@ -246,7 +246,7 @@ public class TableroController {
 	 */
 	public Casillero moverACasillero(Jugador jugador, int nroCasillero,
 			boolean cobraSalida) {
-		
+
 		Casillero casilleroActual = jugador.getCasilleroActual();
 		Casillero casilleroSiguiente = this.getCasillero(nroCasillero);
 
@@ -433,13 +433,13 @@ public class TableroController {
 	 *            El color del monopolio
 	 * @return Todas las tarjetas de las calles que tienen el mismo color
 	 */
-	public List<TarjetaCalle> getGrupoDeSolaresByColor(Color color) {
+	public List<TarjetaCalle> getGrupoDeSolaresByColor(String color) {
 		List<TarjetaCalle> monopolio = new ArrayList<TarjetaCalle>();
 		for (Casillero casillero : this.tablero.getCasillerosList()) {
 			if (casillero.getTipoCasillero() == TipoCasillero.C_CALLE) {
 				CasilleroCalle casilleroCalle = (CasilleroCalle) casillero;
 				TarjetaCalle tarjetaCalle = casilleroCalle.getTarjetaCalle();
-				if (tarjetaCalle.getColor() == color) {
+				if (tarjetaCalle.getColor().equals(color)) {
 					monopolio.add(tarjetaCalle);
 				}
 			}
@@ -574,14 +574,17 @@ public class TableroController {
 			case C_CALLE:
 				if (((CasilleroCalle) casi).getTarjetaCalle().getJugador() != null)
 					return false;
+				break;
 			case C_COMPANIA:
 				if (((CasilleroCompania) casi).getTarjetaCompania()
 						.getJugador() != null)
 					return false;
+				break;
 			case C_ESTACION:
 				if (((CasilleroEstacion) casi).getTarjetaEstacion()
 						.getJugador() != null)
 					return false;
+				break;
 			default:
 				return false;
 			}
@@ -787,28 +790,31 @@ public class TableroController {
 
 			switch (casi.getTipoCasillero()) {
 			case C_CALLE:
-				if (!((CasilleroCalle) casi).getTarjetaCalle().getJugador()
-						.equals(jugador))
-					return -1;
 				if (((CasilleroCalle) casi).getTarjetaCalle().getJugador() == null)
 					cantPropNoCompradas++;
-
-			case C_COMPANIA:
-				if (!((CasilleroCompania) casi).getTarjetaCompania()
+				else if (!((CasilleroCalle) casi).getTarjetaCalle()
 						.getJugador().equals(jugador))
 					return -1;
+
+				break;
+			case C_COMPANIA:
 				if (((CasilleroCompania) casi).getTarjetaCompania()
 						.getJugador() == null)
 					cantPropNoCompradas++;
-
-			case C_ESTACION:
-				if (!((CasilleroEstacion) casi).getTarjetaEstacion()
+				else if (!((CasilleroCompania) casi).getTarjetaCompania()
 						.getJugador().equals(jugador))
 					return -1;
+
+				break;
+			case C_ESTACION:
 				if (((CasilleroEstacion) casi).getTarjetaEstacion()
 						.getJugador() == null)
 					cantPropNoCompradas++;
+				else if (!((CasilleroEstacion) casi).getTarjetaEstacion()
+						.getJugador().equals(jugador))
+					return -1;
 
+				break;
 			default:
 				return -2;
 			}
@@ -1451,7 +1457,7 @@ public class TableroController {
 		GestorLogs.registrarDebug("El jugador " + jugador.getNombre()
 				+ " agregó " + cantCasas + " casas " + " y " + cantHoteles
 				+ " hoteles al monopolio de color "
-				+ casillero.getTarjetaCalle().getColorTarjeta());
+				+ casillero.getTarjetaCalle().getColor());
 
 		StringBuffer sf = new StringBuffer(
 				"La calles quedaron de la siguiente manera:\n");
@@ -1580,7 +1586,7 @@ public class TableroController {
 		GestorLogs.registrarDebug("El jugador " + jugador.getNombre()
 				+ " vendió " + cantCasas + " casas " + " y " + cantHoteles
 				+ " hoteles del monopolio de color "
-				+ casillero.getTarjetaCalle().getColorTarjeta());
+				+ casillero.getTarjetaCalle().getColor());
 
 		StringBuffer sf = new StringBuffer(
 				"La calles quedaron de la siguiente manera:\n");
@@ -1653,7 +1659,6 @@ public class TableroController {
 
 		this.getBancoController(jugador.getJuego()).venderPropiedad(jugador,
 				tarjeta);
-		
 
 	}
 

@@ -91,6 +91,7 @@ import monopoly.util.constantes.ConstantesFXML;
 import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.message.game.ChatGameMessage;
+import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
 import monopoly.util.message.game.actions.PayToPlayerMessage;
@@ -266,8 +267,8 @@ public class TableroController extends AnchorPane implements Serializable,
 	private MenuItem btnConstruir;
 
 	@FXML
-    private MenuItem btnBancarrota;
-	
+	private MenuItem btnBancarrota;
+
 	@FXML
 	private ListView<History> lvHistoryChat;
 	private static List<History> historyChatList;
@@ -672,6 +673,9 @@ public class TableroController extends AnchorPane implements Serializable,
 				realizarAccionEnCasillero();
 				break;
 			case ESPERANDO_TURNO:
+				bloquearAcciones(true);
+				mostrarTirarDados(false);
+				finalizarTurno();
 				break;
 			default:
 				throw new CondicionInvalidaException("El estado de Turno "
@@ -1341,6 +1345,12 @@ public class TableroController extends AnchorPane implements Serializable,
 		});
 	}
 
+	private void finalizarTurno() throws Exception {
+		CompleteTurnMessage msg = new CompleteTurnMessage(getJuego()
+				.getUniqueID(), null, null);
+		ConnectionController.getInstance().send(msg);
+	}
+
 	/**
 	 * 
 	 * Dibuje el TitledPane con la información actual del jugador.
@@ -1425,7 +1435,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			propiedad = banco.getTarjetaPropiedad(vTarjeta[0]);
 			if (propiedad != null) {
 				if (propiedad.isPropiedadCalle()) {
-					strStyle = ((TarjetaCalle) (propiedad)).getColorTarjeta();
+					strStyle = ((TarjetaCalle) (propiedad)).getColor();
 				} else {
 					if (propiedad.isPropiedadCompania())
 						strStyle = "blanco";
@@ -1471,7 +1481,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			propiedad = banco.getTarjetaPropiedad(vTarjeta[0]);
 			if (propiedad != null) {
 				if (propiedad.isPropiedadCalle()) {
-					strStyle = ((TarjetaCalle) (propiedad)).getColorTarjeta();
+					strStyle = ((TarjetaCalle) (propiedad)).getColor();
 				} else {
 					if (propiedad.isPropiedadCompania())
 						strStyle = "blanco";
@@ -1519,12 +1529,12 @@ public class TableroController extends AnchorPane implements Serializable,
 				30, 30, false, false);
 
 		Label lblDescripcion;
-		
+
 		hbExtra.getChildren().add(new ImageView(imgCasa));
 		lblDescripcion = new Label("x " + jugador.getNroCasas());
 		lblDescripcion.setStyle("-fx-text-fill: white;");
 		hbExtra.getChildren().add(lblDescripcion);
-		
+
 		hbExtra.getChildren().add(new ImageView(imgHotel));
 		lblDescripcion = new Label("x " + jugador.getNroHoteles());
 		lblDescripcion.setStyle("-fx-text-fill: white;");
@@ -1625,7 +1635,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			propiedad = banco.getTarjetaPropiedad(vTarjeta[0]);
 			if (propiedad != null) {
 				if (propiedad instanceof TarjetaCalle) {
-					strStyle = ((TarjetaCalle) (propiedad)).getColorTarjeta();
+					strStyle = ((TarjetaCalle) (propiedad)).getColor();
 				} else {
 					if (propiedad instanceof TarjetaCompania)
 						strStyle = "blanco";
@@ -1667,7 +1677,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			propiedad = banco.getTarjetaPropiedad(vTarjeta[0]);
 			if (propiedad != null) {
 				if (propiedad instanceof TarjetaCalle) {
-					strStyle = ((TarjetaCalle) (propiedad)).getColorTarjeta();
+					strStyle = ((TarjetaCalle) (propiedad)).getColor();
 				} else {
 					if (propiedad instanceof TarjetaCompania)
 						strStyle = "blanco";
@@ -1975,17 +1985,20 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	@FXML
 	void processfinalizarTurno(ActionEvent event) {
-		// CompleteTurnMessage msg = new CompleteTurnMessage(getJuego()
-		// .getUniqueID(), null, null);
-		// ConnectionController.getInstance().send(msg);
-		// bloquearTablero(true);
+		try {
+			finalizarTurno();
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
+			showMessageBox(AlertType.ERROR, "Error...", null, ex.getMessage(),
+					null);
+		}
 	}
 
 	@FXML
-    void processBancarrota(ActionEvent event) {
+	void processBancarrota(ActionEvent event) {
 
-    }
-	
+	}
+
 	// ======================================================================//
 	// ========================== Getter & Setter ===========================//
 	// ======================================================================//

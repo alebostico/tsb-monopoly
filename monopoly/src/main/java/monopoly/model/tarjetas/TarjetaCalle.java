@@ -53,19 +53,17 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	private int precioCadaHotel;
 
 	@Column(name = "color")
-	private String colorTarjeta;
+	private String color;
 
-	@Transient
-	private Color color;
 
-	public enum Color {
-		C_MARRON("marron"), C_CELESTE("celeste"), C_FUCSIA("fucsia"), C_NARANJA(
-				"naranja"), C_ROJO("rojo"), C_AMARILLO("amarillo"), C_VERDE(
-				"verde"), C_AZUL("azul");
+	public enum EnumColor {
+		C_MARRON("MARRON"), C_CELESTE("CELESTE"), C_FUCSIA("FUCSIA"), C_NARANJA(
+				"NARANJA"), C_ROJO("ROJO"), C_AMARILLO("AMARILLO"), C_VERDE(
+				"VERDE"), C_AZUL("AZUL");
 
 		private final String color;
 
-		Color(String color) {
+		EnumColor(String color) {
 			this.color = color;
 		}
 
@@ -83,7 +81,7 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 			int precioAlquiler, int valorUnaCasa, int valorDosCasas,
 			int valorTresCasas, int valorCuatroCasas, int valorHotel,
 			int precioCadaCasa, int precioCadaHotel, String nombreImagen,
-			int valorPropiedad, Color color, Casillero casillero) {
+			int valorPropiedad, String color, Casillero casillero) {
 		super(jugador, nombre, valorHipotecario, nombreImagen, valorPropiedad,
 				casillero);
 		this.precioAlquiler = precioAlquiler;
@@ -305,33 +303,33 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	/**
 	 * @return the colorTarjeta
 	 */
-	public String getColorTarjeta() {
-		return colorTarjeta;
+	public String getColor() {
+		return color;
 	}
 
 	/**
 	 * @param colorTarjeta
 	 *            the colorTarjeta to set
 	 */
-	public void setColorTarjeta(String colorTarjeta) {
-		this.colorTarjeta = colorTarjeta;
+	public void setColor(String color) {
+		this.color = color;
 	}
 
-	/**
-	 * 
-	 * @param colorTarjeta
-	 */
-	public void setColor(Color colorTarjeta) {
-		this.color = colorTarjeta;
-		// this.colorTarjeta = this.color.getColor();
-	}
-
-	/**
-	 * @return the color
-	 */
-	public Color getColor() {
-		return color;
-	}
+//	/**
+//	 * 
+//	 * @param colorTarjeta
+//	 */
+//	public void setColor(Color colorTarjeta) {
+//		this.color = colorTarjeta;
+//		// this.colorTarjeta = this.color.getColor();
+//	}
+//
+//	/**
+//	 * @return the color
+//	 */
+//	public Color getColor() {
+//		return color;
+//	}
 
 	/**
 	 * Calcula el monto del alquiler
