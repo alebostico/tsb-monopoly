@@ -241,6 +241,7 @@ public class JuegoController {
 
 		historyList.add(new History(StringUtils.getFechaActual(), jugador
 				.getNombre(), mensaje));
+
 		if (estadoJuegoJugadorActual != EstadoJuego.JUGANDO)
 			gestorJugadores.siguienteTurno();
 
@@ -268,13 +269,14 @@ public class JuegoController {
 		sendToOther(senderId, status);
 	}
 
-	public void avanzarDeCasilleroJV(JugadorVirtual jugador, Dado dados)
+	public void avanzarDeCasilleroJV(JugadorVirtual jugador)
 			throws CondicionInvalidaException, SinDineroException, Exception {
 		Casillero casillero;
 		boolean cobraSalida = true;
 		AccionEnCasillero accion;
 		Tarjeta tarjetaSelected = null;
 		TarjetaPropiedad tarjetaPropiedad = null;
+		Dado dados = new Dado();
 		String mensaje;
 		int montoAPagar;
 
@@ -282,8 +284,6 @@ public class JuegoController {
 		CasilleroEstacion casilleroEstacion;
 		CasilleroCompania casilleroCompania;
 		Jugador duenio;
-
-		// History history;
 
 		casillero = gestorTablero.moverAdelante(jugador, dados.getSuma(),
 				cobraSalida);
@@ -297,9 +297,6 @@ public class JuegoController {
 
 		sendToAll(new HistoryGameMessage(new History(
 				StringUtils.getFechaActual(), jugador.getNombre(), mensaje)));
-
-		// historiasList.add(new History(StringUtils.getFechaActual(), jugador
-		// .getNombre(), mensaje));
 
 		switch (accion) {
 		case TARJETA_SUERTE:
@@ -386,13 +383,25 @@ public class JuegoController {
 			throw new CondicionInvalidaException(String.format(
 					"La acción %s es inválida.", accion.toString()));
 		}
+
+		// status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+		// gestorBanco.getBanco(), gestorTablero.getTablero(),
+		// EstadoJuego.ESPERANDO_TURNO, null,
+		// gestorJugadores.getCurrentPlayer(), historyList, null);
+		// sendToAll(status);
+
+		siguienteTurno();
 	}
 
 	public void tirarDadosJugadorVirtual() throws Exception {
-		List<History> historyList = new ArrayList<History>();
 		JugadorVirtual jugadorActual = (JugadorVirtual) this.gestorJugadores
 				.getCurrentPlayer();
-		String mensaje;
+		String mensaje = "";
+
+		// TODO: Agregar la verificacion de deshipoteca.
+
+		mensaje = "";
+
 		try {
 			mensaje = gestorJugadoresVirtuales
 					.construirAleatorio(jugadorActual);
@@ -407,18 +416,16 @@ public class JuegoController {
 							jugadorActual.getNombre());
 		}
 
-		// TODO: Agregar la verificacion de deshipoteca.
-
-		if (mensaje != null) {
+		if (StringUtils.IsNullOrEmpty(mensaje)) {
 			sendToAll(new HistoryGameMessage(new History(
 					StringUtils.getFechaActual(), gestorJugadores
 							.getCurrentPlayer().getNombre(), mensaje)));
 		}
 
-		Dado dados = new Dado();
-
 		try {
-			this.avanzarDeCasilleroJV(jugadorActual, dados);
+
+			this.avanzarDeCasilleroJV(jugadorActual);
+
 		} catch (CondicionInvalidaException | SinDineroException e) {
 			/*
 			 * "SinDineroException" no debería generarse nunca para un
@@ -432,14 +439,6 @@ public class JuegoController {
 			GestorLogs.registrarError(e);
 			e.printStackTrace();
 		}
-
-		status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
-				gestorBanco.getBanco(), gestorTablero.getTablero(),
-				EstadoJuego.ESPERANDO_TURNO, null,
-				gestorJugadores.getCurrentPlayer(), historyList, null);
-		sendToAll(status);
-
-		siguienteTurno();
 	}
 
 	public void siguienteTurno() throws Exception {
@@ -527,19 +526,49 @@ public class JuegoController {
 	}
 
 	/**
-	 * Implementa el objetivo de la tarjeta Comunidad o Suerte
-	 * Cuando un jugador humano saca una de las tarjetas.
+	 * Implementa el objetivo de la tarjeta Comunidad o Suerte Cuando un jugador
+	 * humano saca una de las tarjetas.
 	 * 
-	 * @param senderId id de jugador que envió el mensaje.
-	 * @param tarjeta Tarjeta obtenida en el casillero.
+	 * @param senderId
+	 *            id de jugador que envió el mensaje.
+	 * @param tarjeta
+	 *            Tarjeta obtenida en el casillero.
 	 * 
 	 */
-	public void realizarObjetivoTarjeta(int senderId, Tarjeta tarjeta) throws Exception {
+	public void realizarObjetivoTarjeta(int senderId, Tarjeta tarjeta)
+			throws Exception {
 		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
 		realizarObjetivoTarjeta(jugador, tarjeta);
 	}
 
-	private void realizarObjetivoTarjeta(Jugador jugador, Tarjeta tarjeta) throws Exception{
+	/**
+	 * <ol>
+	 * Acciones tarjeta Comunidad
+	 * <li>AccionEnTarjeta.PAGAR</li>
+	 * <li>AccionEnTarjeta.COBRAR</li>
+	 * <li>AccionEnTarjeta.COBRAR_TODOS</li>
+	 * <li>AccionEnTarjeta.MOVER_A</li>
+	 * <li>AccionEnTarjeta.IR_A_CARCEL</li>
+	 * <li>AccionEnTarjeta.LIBRE_DE_CARCEL</li>
+	 * </ol>
+	 * 
+	 * <ol>
+	 * Acciones tarjeta Suerte
+	 * <li>AccionEnTarjeta.MOVER_A</li>
+	 * <li>AccionEnTarjeta.COBRAR</li>
+	 * <li>AccionEnTarjeta.IR_A_CARCEL</li>
+	 * <li>AccionEnTarjeta.MOVER</li>
+	 * <li>AccionEnTarjeta.PAGAR_POR_CASA_HOTEL</li>
+	 * <li>AccionEnTarjeta.LIBRE_DE_CARCEL</li>
+	 * <li>AccionEnTarjeta.PAGAR</li>
+	 * </ol>
+	 * 
+	 * @param jugador
+	 * @param tarjeta
+	 * @throws Exception
+	 */
+	private void realizarObjetivoTarjeta(Jugador jugador, Tarjeta tarjeta)
+			throws Exception {
 		AccionEnTarjeta accion = null;
 		if (tarjeta.isTarjetaComunidad()) {
 			accion = gestorTablero.getGestorTarjetas().jugarTarjetaComunidad(
@@ -548,16 +577,18 @@ public class JuegoController {
 			accion = gestorTablero.getGestorTarjetas().jugarTarjetaSuerte(
 					jugador, (TarjetaSuerte) tarjeta);
 		}
-		if (this.jugarAccionTarjeta(jugador, accion)){
-			if (jugador.isHumano())
-				this.siguienteTurno();
+		if (this.jugarAccionTarjeta(jugador, accion)) {
+
 		}
 	}
-	
-	public boolean jugarAccionTarjeta(Jugador jugador, AccionEnTarjeta accion) {
+
+	public boolean jugarAccionTarjeta(Jugador jugador, AccionEnTarjeta accion)
+			throws Exception {
 		String mensaje;
+		Casillero casillero = null;
+
 		int senderId = (jugador.isHumano() ? ((JugadorHumano) jugador)
-				.getIdJugador() : -1);
+				.getSenderID() : -1);
 
 		switch (accion) {
 		case COBRAR:
@@ -598,12 +629,12 @@ public class JuegoController {
 			}
 			break;
 		case MOVER:
-			gestorTablero.moverAdelante(jugador, accion.getNroCasilleros(),
-					accion.isCobraSalida());
+			casillero = gestorTablero.moverAdelante(jugador,
+					accion.getNroCasilleros(), accion.isCobraSalida());
 			break;
 		case MOVER_A:
-			gestorTablero.moverACasillero(jugador, accion.getNroCasilleros(),
-					accion.isCobraSalida());
+			casillero = gestorTablero.moverACasillero(jugador,
+					accion.getNroCasilleros(), accion.isCobraSalida());
 			break;
 		case LIBRE_DE_CARCEL:
 			jugador.getTarjetaCarcelList().add(accion.getTarjetaCarcel());
@@ -621,6 +652,21 @@ public class JuegoController {
 				StringUtils.getFechaActual(), jugador.getNombre(), mensaje));
 
 		sendToAll(historias);
+
+		if (jugador.isHumano()) {
+			switch (accion) {
+			case MOVER:
+			case MOVER_A:
+				// TODO: Para hacer
+				break;
+
+			default:
+				break;
+			}
+
+			this.siguienteTurno();
+		}
+
 		return true;
 
 	}

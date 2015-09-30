@@ -210,7 +210,6 @@ public class JugadorVirtualController {
 		return puja;
 	}
 
-		
 	/**
 	 * El jugador decidir&aacute; al caer sobre una propiedad libre si quiere
 	 * comprarla o no. La decisi&oacute;n se tomar&aacute; en funci&oacute;n del
@@ -801,8 +800,7 @@ public class JugadorVirtualController {
 	 * @param jugadorActual
 	 *            El Jugador que va a deshipotecar
 	 */
-	@SuppressWarnings("unused")
-	private void deshipotecarAleatorio(JugadorVirtual jugadorActual) {
+	public String deshipotecarAleatorio(JugadorVirtual jugadorActual) {
 		Random rnd = new Random();
 
 		// 1- Copiar ordenadamente las propiedades hipotecables
@@ -837,7 +835,8 @@ public class JugadorVirtualController {
 
 			}
 		}
-
+		// TODO: Construir el mensaje para la historia.
+		return null;
 	}
 
 	/**
