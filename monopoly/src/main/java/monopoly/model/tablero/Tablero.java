@@ -21,7 +21,7 @@ import monopoly.util.GestorLogs;
  * 
  */
 public class Tablero implements Serializable {
-	
+
 	private static final long serialVersionUID = 6332031540679671323L;
 
 	// CONSTANTES
@@ -32,7 +32,7 @@ public class Tablero implements Serializable {
 	/**
 	 * Constructor por defecto.
 	 */
-	public Tablero(Casillero[] casillerosList){
+	public Tablero(Casillero[] casillerosList) {
 		this.casillerosList = casillerosList; // Cargar los casilleros.
 		GestorLogs.registrarLog("Tablero cargado");
 	}
@@ -45,29 +45,35 @@ public class Tablero implements Serializable {
 	}
 
 	/**
-	 * @param casillerosList the casillerosList to set
+	 * @param casillerosList
+	 *            the casillerosList to set
 	 */
 	public void setCasillerosList(Casillero[] casillerosList) {
 		this.casillerosList = casillerosList;
 	}
-	
-	public Casillero getCasillero(int pNroCasillero)
-	{
+
+	public Casillero getCasillero(int pNroCasillero) {
 		for (Casillero casillero : casillerosList) {
-			if(casillero.getNumeroCasillero() == pNroCasillero)
+			if (casillero.getNumeroCasillero() == pNroCasillero)
 				return casillero;
 		}
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
 	public String toString() {
 
 		StringBuffer toReturn = new StringBuffer();
-		toReturn.append("\n===============================================================================================\n");
-		toReturn.append("|                                         TABLERO                                             |\n");
-		toReturn.append("===============================================================================================\n");
-		toReturn.append("| Nro |   Tipo Casillero    |        Nombre Casillero        |         Nombre Tarjeta         |\n");
-		toReturn.append("|-----|---------------------|--------------------------------|--------------------------------|\n");
+		toReturn.append("\n================================================================================================\n");
+		toReturn.append("|                                         TABLERO                                              |\n");
+		toReturn.append("================================================================================================\n");
+		toReturn.append("| Nro |    Tipo Casillero    |        Nombre Casillero        |         Nombre Tarjeta         |\n");
+		toReturn.append("|-----|----------------------|--------------------------------|--------------------------------|\n");
 
 		for (int i = 0; i < this.cantCasilleros; i++) {
 			// Nro =================================================
@@ -78,8 +84,8 @@ public class Tablero implements Serializable {
 
 			// Tipo Casillero ======================================
 			toReturn.append("| ");
-			toReturn.append(String.format("%1$19s",
-					this.casillerosList[i].getTipoCasillero().getNombreTipoCasillero()));
+			toReturn.append(String.format("%1$20s", this.casillerosList[i]
+					.getTipoCasillero().getNombreTipoCasillero()));
 			toReturn.append(" ");
 
 			// Nombre Casillero ====================================

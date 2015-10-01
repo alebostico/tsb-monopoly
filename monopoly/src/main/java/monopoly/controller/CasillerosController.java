@@ -155,11 +155,11 @@ public class CasillerosController {
 		case GestorLogs.MSG_DEBUG:
 			// Loguea info de los casilleros en forma resumida
 			StringBuffer toReturn = new StringBuffer();
-			toReturn.append("\n===============================================================================================\n");
-			toReturn.append("|                                         TABLERO                                             |\n");
-			toReturn.append("===============================================================================================\n");
-			toReturn.append("| Nro |   Tipo Casillero    |        Nombre Casillero        |         Nombre Tarjeta         |\n");
-			toReturn.append("|-----|---------------------|--------------------------------|--------------------------------|\n");
+			toReturn.append("\n=================================================================================================\n");
+			toReturn.append("|                                          TABLERO                                              |\n");
+			toReturn.append("=================================================================================================\n");
+			toReturn.append("| Nro |    Tipo Casillero     |        Nombre Casillero        |         Nombre Tarjeta         |\n");
+			toReturn.append("|-----|-----------------------|--------------------------------|--------------------------------|\n");
 
 			for (int i = 0; i < cantCasilleros; i++) {
 				// Nro =================================================
@@ -170,7 +170,7 @@ public class CasillerosController {
 
 				// Tipo Casillero ======================================
 				toReturn.append("| ");
-				toReturn.append(String.format("%1$19s", vCasilleros[i]
+				toReturn.append(String.format("%1$21s", vCasilleros[i]
 						.getTipoCasillero().getNombreTipoCasillero()));
 				toReturn.append(" ");
 
@@ -269,7 +269,7 @@ public class CasillerosController {
 				toReturn.append("|\n");
 			}
 
-			toReturn.append("===============================================================================================\n");
+			toReturn.append("=================================================================================================\n");
 
 			GestorLogs.registrarDebug(toReturn.toString());
 			break;

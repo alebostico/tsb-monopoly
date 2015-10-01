@@ -398,8 +398,15 @@ public class JuegoController {
 				.getCurrentPlayer();
 		String mensaje = "";
 
-		// TODO: Agregar la verificacion de deshipoteca.
+		mensaje = gestorJugadoresVirtuales
+					.deshipotecarAleatorio(jugadorActual);
 
+		if (!StringUtils.IsNullOrEmpty(mensaje)) {
+			sendToAll(new HistoryGameMessage(new History(
+					StringUtils.getFechaActual(), gestorJugadores
+							.getCurrentPlayer().getNombre(), mensaje)));
+		}
+		
 		mensaje = "";
 
 		try {
@@ -416,7 +423,7 @@ public class JuegoController {
 							jugadorActual.getNombre());
 		}
 
-		if (StringUtils.IsNullOrEmpty(mensaje)) {
+		if (!StringUtils.IsNullOrEmpty(mensaje)) {
 			sendToAll(new HistoryGameMessage(new History(
 					StringUtils.getFechaActual(), gestorJugadores
 							.getCurrentPlayer().getNombre(), mensaje)));
@@ -585,8 +592,7 @@ public class JuegoController {
 	public boolean jugarAccionTarjeta(Jugador jugador, AccionEnTarjeta accion)
 			throws Exception {
 		String mensaje;
-		Casillero casillero = null;
-
+		
 		int senderId = (jugador.isHumano() ? ((JugadorHumano) jugador)
 				.getSenderID() : -1);
 
@@ -629,11 +635,11 @@ public class JuegoController {
 			}
 			break;
 		case MOVER:
-			casillero = gestorTablero.moverAdelante(jugador,
+			gestorTablero.moverAdelante(jugador,
 					accion.getNroCasilleros(), accion.isCobraSalida());
 			break;
 		case MOVER_A:
-			casillero = gestorTablero.moverACasillero(jugador,
+			gestorTablero.moverACasillero(jugador,
 					accion.getNroCasilleros(), accion.isCobraSalida());
 			break;
 		case LIBRE_DE_CARCEL:

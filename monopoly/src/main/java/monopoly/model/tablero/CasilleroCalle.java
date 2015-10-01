@@ -46,6 +46,10 @@ public class CasilleroCalle extends Casillero implements Serializable {
 		this.nroCasas = nroCasas;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see monopoly.model.tablero.Casillero#toString()
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -58,6 +62,10 @@ public class CasilleroCalle extends Casillero implements Serializable {
 		return sb.toString();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see monopoly.model.tablero.Casillero#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object object) {
 		if (object == this)

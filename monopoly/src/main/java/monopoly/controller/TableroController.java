@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import monopoly.model.AccionEnCasillero;
 import monopoly.model.Banco;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
-import monopoly.model.AccionEnCasillero;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tablero.Casillero.TipoCasillero;
 import monopoly.model.tablero.CasilleroCalle;
@@ -19,7 +19,6 @@ import monopoly.model.tablero.CasilleroEstacion;
 import monopoly.model.tablero.Tablero;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaCalle;
-import monopoly.model.tarjetas.TarjetaCalle.EnumColor;
 import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
@@ -44,7 +43,7 @@ public class TableroController {
 	 * Cantidad total de propiedades del tablero: <br />
 	 * + 22 calles <br />
 	 * + 4 estaciones <br />
-	 * + 2 compañías <br />
+	 * + 2 compañías <br en/chat/>
 	 */
 	private final int CANT_PROPIEDADES = 22 + 4 + 2;
 
@@ -237,7 +236,7 @@ public class TableroController {
 	 * @param jugador
 	 *            El jugador que se quiere mover.
 	 * @param nroCasillero
-	 *            El nÃºmero de casillero al cual se quiere mover el jugador.
+	 *            El número de casillero al cual se quiere mover el jugador.
 	 * @param cobraSalida
 	 *            true en el caso que el jugador deba cobrar los $200 si pasa
 	 *            por la salida. false si no los cobra.
@@ -841,19 +840,25 @@ public class TableroController {
 
 			switch (casi.getTipoCasillero()) {
 			case C_CALLE:
-				if (((CasilleroCalle) casi).getTarjetaCalle().getJugador()
-						.equals(jugador))
-					cantPropCompradas++;
-
+				if (((CasilleroCalle) casi).getTarjetaCalle().getJugador() != null)
+					if (((CasilleroCalle) casi).getTarjetaCalle().getJugador()
+							.equals(jugador))
+						cantPropCompradas++;
+				break;
 			case C_COMPANIA:
 				if (((CasilleroCompania) casi).getTarjetaCompania()
-						.getJugador().equals(jugador))
-					cantPropCompradas++;
-
+						.getJugador() != null)
+					if (((CasilleroCompania) casi).getTarjetaCompania()
+							.getJugador().equals(jugador))
+						cantPropCompradas++;
+				break;
 			case C_ESTACION:
 				if (((CasilleroEstacion) casi).getTarjetaEstacion()
-						.getJugador().equals(jugador))
-					cantPropCompradas++;
+						.getJugador() != null)
+					if (((CasilleroEstacion) casi).getTarjetaEstacion()
+							.getJugador().equals(jugador))
+						cantPropCompradas++;
+				break;
 			default:
 				break;
 			}

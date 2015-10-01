@@ -16,6 +16,7 @@ import monopoly.model.tablero.CasilleroEstacion;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
+import monopoly.util.StringUtils;
 import monopoly.util.TarjetaPropiedadComparator;
 import monopoly.util.exception.SinDineroException;
 import monopoly.util.exception.SinEdificiosException;
@@ -162,7 +163,7 @@ public class JugadorVirtualController {
 				int probabilidad = (dineroJugador - maxActual) * 100
 						/ dineroJugador;
 
-				int resultado = rnd.nextInt() % 100;
+				int resultado = rnd.nextInt(100);
 
 				// Si el numero es menor que la probabilidad, pujo
 				if (resultado < probabilidad) {
@@ -188,7 +189,7 @@ public class JugadorVirtualController {
 				// probabilidad
 				int probabilidad = 50;
 
-				int resultado = rnd.nextInt() % 100;
+				int resultado = rnd.nextInt(100);
 
 				// Si el numero es menor que la probabilidad, pujo
 				if (resultado < probabilidad) {
@@ -471,7 +472,7 @@ public class JugadorVirtualController {
 				// en la función, se compra. Si no, no.
 				int probabilidad = (jugadorActual.getDinero() - propiedad
 						.getValorPropiedad()) * 100 / jugadorActual.getDinero();
-				int resultado = rnd.nextInt() % 100;
+				int resultado = rnd.nextInt(100);
 				if (resultado < probabilidad)
 					return true;
 			}
@@ -502,7 +503,7 @@ public class JugadorVirtualController {
 				// valor aleatorio es menor que el obtenido
 				// en la función, se compra. Si no, no.
 				int probabilidad = 50;
-				int resultado = rnd.nextInt() % 100;
+				int resultado = rnd.nextInt(100);
 				if (resultado < probabilidad)
 					return true;
 			}
@@ -581,7 +582,7 @@ public class JugadorVirtualController {
 				// sale.
 				int probabilidad = (jugadorActual.getCantPropiedades()) * 100
 						/ tableroController.getCantPropiedades();
-				int resultado = rnd.nextInt() % 100;
+				int resultado = rnd.nextInt(100);
 				if (resultado < probabilidad) {
 					GestorLogs.registrarDebug("El jugador "
 							+ jugadorActual.getNombre()
@@ -602,7 +603,7 @@ public class JugadorVirtualController {
 				// Si el valor aleatorio con M.Twister es menor que el numero
 				// sale.
 				int probabilidad = 50;
-				int resultado = rnd.nextInt() % 100;
+				int resultado = rnd.nextInt(100);
 				if (resultado < probabilidad) {
 					GestorLogs.registrarDebug("El jugador "
 							+ jugadorActual.getNombre()
@@ -666,7 +667,7 @@ public class JugadorVirtualController {
 				// sale.
 				int probabilidad = (jugadorActual.getCantPropiedades()) * 100
 						/ tableroController.getCantPropiedades();
-				int resultado = rnd.nextInt() % 100;
+				int resultado = rnd.nextInt(100);
 				if (resultado < probabilidad) {
 					GestorLogs.registrarDebug("El jugador "
 							+ jugadorActual.getNombre()
@@ -687,7 +688,7 @@ public class JugadorVirtualController {
 				// Si el valor aleatorio con M.Twister es menor que el numero
 				// sale.
 				int probabilidad = 50;
-				int resultado = rnd.nextInt() % 100;
+				int resultado = rnd.nextInt(100);
 				if (resultado < probabilidad) {
 					GestorLogs.registrarDebug("El jugador "
 							+ jugadorActual.getNombre()
@@ -826,16 +827,19 @@ public class JugadorVirtualController {
 						.getValorDeshipotecario())
 						* 100
 						/ jugadorActual.getDinero();
-				int resultado = rnd.nextInt() % 100;
+				int resultado = rnd.nextInt(100);
 				// Si el resultado esta dentro de la probabilidad, deshipoteca
 				if (resultado < probabilidad) {
-					jugadorActual.dehipotecarPropiedad(tarjetaPropiedad);
-
+					int monto = jugadorActual
+							.dehipotecarPropiedad(tarjetaPropiedad);
+					return "El jugador " + jugadorActual.getNombre()
+							+ " deshipotecó la propiedad "
+							+ tarjetaPropiedad.getNombre() + " pagando "
+							+ StringUtils.formatearAMoneda(monto);
 				}
 
 			}
 		}
-		// TODO: Construir el mensaje para la historia.
 		return null;
 	}
 
@@ -968,7 +972,7 @@ public class JugadorVirtualController {
 			if (jugadorActual.getDinero() >= tarjetaCalle.getPrecioCadaCasa()) {
 				int probabilidad = (jugadorActual.getDinero() - tarjetaCalle
 						.getPrecioCadaCasa()) * 100 / jugadorActual.getDinero();
-				int resultado = rnd.nextInt() % 100;
+				int resultado = rnd.nextInt(100);
 				if (resultado < probabilidad) {
 
 					int casasMonopolio = tableroController
@@ -983,7 +987,7 @@ public class JugadorVirtualController {
 								.getPrecioCadaCasa())
 								* 100
 								/ jugadorActual.getDinero();
-						resultado = rnd.nextInt() % 100;
+						resultado = rnd.nextInt(100);
 
 						if (resultado < probabilidad) {
 							casasMonopolio++;
@@ -1061,8 +1065,8 @@ public class JugadorVirtualController {
 		// capital). Aumentando si es cobrar
 		if (cantidad <= jugador.getDinero()) {
 			jugador.pagar(cantidad);
-			GestorLogs.registrarDebug("El jugador " + jugador.getNombre()
-					+ " pagó " + cantidad + " €");
+			GestorLogs.registrarDebug("(JVController.java) El jugador virtual" + jugador.getNombre()
+					+ " pagó " + StringUtils.formatearAMoneda(cantidad));
 		}
 		// Declaro al jugador moroso
 		else {

@@ -8,13 +8,14 @@ import java.util.Comparator;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 
 /**
- * Clase para ordenar las propiedades según su valor de menor a mayor. Para
- * ordenar las propiedades de menor a mayor:
+ * Clase para ordenar las propiedades según su valor de menor a mayor.
+ * <ul>
+ * <li>Para ordenar las propiedades de menor a mayor:<br/>
  * {@code Collections.sort(propiedades, new TarjetaPropiedadComparator());}
- * Para ordenarlas de mayor a menor:
+ * <li>Para ordenarlas de mayor a menor: <br/>
  * {@code Collections.sort(propiedades,
  * 			Collections.reverseOrder(new TarjetaPropiedadComparator()));}
- * 
+ * </ul>
  * @author Bostico Alejandro
  * @author Moreno Pablo
  *

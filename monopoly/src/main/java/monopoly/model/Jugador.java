@@ -26,6 +26,7 @@ import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
+import monopoly.util.StringUtils;
 import monopoly.util.exception.SinDineroException;
 
 /**
@@ -258,8 +259,8 @@ public abstract class Jugador implements Serializable {
 	}
 
 	/**
-	 * Incrementa la cantidad de veces en la que el jugador ha estado en la cárcel
-	 * cuando le tocó su turno.
+	 * Incrementa la cantidad de veces en la que el jugador ha estado en la
+	 * cárcel cuando le tocó su turno.
 	 */
 	public void incrementarCantidadTurnosCarcel() {
 		this.contTurnosCarcel++;
@@ -475,8 +476,9 @@ public abstract class Jugador implements Serializable {
 	 */
 	public boolean pagar(int monto) {
 		if (puedePagarConEfectivo(monto)) {
-			GestorLogs.registrarDebug("El jugador " + this.getNombre()
-					+ " pagó $" + monto);
+			GestorLogs.registrarDebug("(Jugador.java) El jugador "
+					+ this.getNombre() + " pagó "
+					+ StringUtils.formatearAMoneda(monto));
 			this.setDinero(this.getDinero() - monto);
 		} else {
 			return false;
@@ -491,8 +493,8 @@ public abstract class Jugador implements Serializable {
 	 *            el monto a cobrar por el jugador
 	 */
 	public void cobrar(int monto) {
-		GestorLogs.registrarDebug("El jugador " + this.getNombre() + " cobró $"
-				+ monto);
+		GestorLogs.registrarDebug("El jugador " + this.getNombre() + " cobró "
+				+ StringUtils.formatearAMoneda(monto));
 		this.setDinero(this.getDinero() + monto);
 	}
 
@@ -507,7 +509,8 @@ public abstract class Jugador implements Serializable {
 			throws SinDineroException {
 		if (this.pagar(monto)) {
 			GestorLogs.registrarDebug("El jugador " + this.getNombre()
-					+ " pagó $" + monto + " al jugador " + jugador.getNombre());
+					+ " pagó " + StringUtils.formatearAMoneda(monto)
+					+ " al jugador " + jugador.getNombre());
 			jugador.cobrar(monto);
 		} else
 			throw new SinDineroException(

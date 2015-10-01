@@ -125,7 +125,7 @@ public class StringUtils {
 		return matcher.matches();
 
 	}
-	
+
 	/**
 	 * 
 	 * @param mensajeContenido
@@ -141,32 +141,57 @@ public class StringUtils {
 		}
 		return tokens;
 	}
-	
+
 	/**
-	 * @return devuelve la  fecha actual
+	 * Devuelve la FECHA actual en el formato {@code "dd/MM/yy HH:mm"}
+	 * 
+	 * @return La fecha actual
 	 */
-	private final static DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm");
-	public static String getFechaActual(){
+	private final static DateFormat dateFormat = new SimpleDateFormat(
+			"dd/MM/yy HH:mm");
+
+	public static String getFechaActual() {
 		Calendar calendar = GregorianCalendar.getInstance();
-		return dateFormat.format(calendar.getTime()); 
+		return dateFormat.format(calendar.getTime());
 	}
 
-	private final static DecimalFormat decimalFormat = new DecimalFormat( "#,###,###,##0' €'" );
+	/**
+	 * Devuelve la HORA actual en el formato {@code "HH:mm"}
+	 * 
+	 * @return La hora actual
+	 */
+	private final static DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
+	public static String getHoraActual() {
+		Calendar calendar = GregorianCalendar.getInstance();
+		return timeFormat.format(calendar.getTime());
+	}
+
+	private final static DecimalFormat decimalFormat = new DecimalFormat(
+			"#,###,###,##0' €'");
+
 	/**
 	 * Método para convertir un entero en moneda
 	 *
-	 * @param monto monto a convertir en moneda
+	 * @param monto
+	 *            monto a convertir en moneda
 	 * @return devuelve el monto convertido en euro.
 	 */
-	public static String formatearAMoneda(int monto){
+	public static String formatearAMoneda(int monto) {
 		return decimalFormat.format(monto);
 	}
-	
-	public static boolean IsNullOrEmpty(String str)
-	{
-		if(str == null || str.trim().isEmpty())
+
+	/**
+	 * Verifica si un String es {@code null} o está vacía.
+	 * 
+	 * @param str
+	 *            El String
+	 * @return true si es null o está vacía
+	 */
+	public static boolean IsNullOrEmpty(String str) {
+		if (str == null || str.trim().isEmpty())
 			return true;
 		return false;
 	}
-	
+
 }

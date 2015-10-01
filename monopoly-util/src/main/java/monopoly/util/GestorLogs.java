@@ -240,10 +240,19 @@ public class GestorLogs {
 				// Si es ERROR o WARNING imprimo en rojo en la cosola
 				switch (tipoMensaje) {
 				case GestorLogs.MSG_ERROR:
-					System.err.println("Logger: ERROR - " + log + "\n");
+					System.err.println("Log[ERROR] " + log + "\n");
 					break;
 				case GestorLogs.MSG_WARNING:
-					System.err.println("Logger: WARN - " + log + "\n");
+					System.err.println("Log[WARN ] " + log + "\n");
+					break;
+				case GestorLogs.MSG_INFO:
+					System.out.println("Log[INFO ] " + log);
+					break;
+				case GestorLogs.MSG_DEBUG:
+					System.out.println("Log[DEBUG] " + log);
+					break;
+				case GestorLogs.MSG_DEBUG_DETAIL:
+					System.out.println("Log[DETAI] " + log);
 					break;
 				default:
 					System.out.println("Logger: " + log);

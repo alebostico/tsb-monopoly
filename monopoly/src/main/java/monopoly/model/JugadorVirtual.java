@@ -69,6 +69,7 @@ public class JugadorVirtual extends Jugador implements Serializable {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{ Jugador Virtual [");
+		sb.append((Jugador) this != null ? super.toString() : "<SIN JUGADOR> ");
 		sb.append((this.tipoJugador != null) ? ", tipo jugador: "
 				+ this.tipoJugador.getNombreTipo() : "<SIN TIPO JUGADOR> ");
 		sb.append("] }");

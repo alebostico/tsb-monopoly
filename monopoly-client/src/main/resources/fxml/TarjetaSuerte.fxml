@@ -26,7 +26,7 @@
                   </Label>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                      <children>
-                        <Label fx:id="lblMensaje" text="LA INSPECCIÓN DE LA CALLE TE OBLIGA\nA REPARACIONES.\nPAGA 40 € POR CADA CASA.\nPAGA 115 € POR HOTEL." wrapText="true" />
+                        <Label fx:id="lblMensaje" text="LA INSPECCIÓN DE LA CALLE TE OBLIGA\nA REPARACIONES.&#10;PAGA 40 € POR CADA CASA.&#10;PAGA 115 € POR HOTEL." wrapText="true" />
                         <ImageView fitHeight="110.0" fitWidth="80.0" pickOnBounds="true">
                            <image>
                               <Image url="@../images/logos/monopoly_chance1.png" />
