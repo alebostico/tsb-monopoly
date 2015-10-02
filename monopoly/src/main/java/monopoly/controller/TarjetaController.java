@@ -328,7 +328,7 @@ public class TarjetaController {
 
 		case 9:
 			accion = AccionEnTarjeta.MOVER;
-			accion.setMonto(-3);
+			accion.setNroCasilleros(-3);
 			accion.setMensaje("Retrocede tres lugares.");
 			break;
 		// return (tableroController.moverAtras(jugador, 3) != null);
