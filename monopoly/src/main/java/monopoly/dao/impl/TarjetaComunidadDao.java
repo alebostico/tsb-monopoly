@@ -66,7 +66,9 @@ public class TarjetaComunidadDao extends CustomHibernateDaoSupport implements
 		List<?> list = getHibernateTemplate().find("from TarjetaComunidad");
 		if (!list.isEmpty()) {
 			for (Object obj : list) {
-				tarjetasList.add((TarjetaComunidad) obj);
+				TarjetaComunidad tc = ((TarjetaComunidad) obj);
+				tc.setObjetivo(tc.getObjetivo().replace("\n", "&#10;"));
+				tarjetasList.add(tc);
 			}
 		}
 		return tarjetasList;

@@ -22,6 +22,7 @@ import monopoly.model.Jugador;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
+import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.actions.BuyPropertyMessage;
 
 /**
@@ -61,7 +62,9 @@ public class VentaPropiedadController extends AnchorPane implements
 		try {
 			if (jugadorComprador.getDinero() >= tarjetaSelected
 					.getValorPropiedad()) {
-				BuyPropertyMessage msg = new BuyPropertyMessage(jugadorComprador.getJuego().getUniqueID(), tarjetaSelected);
+				BuyPropertyMessage msg = new BuyPropertyMessage(
+						jugadorComprador.getJuego().getUniqueID(),
+						tarjetaSelected);
 				ConnectionController.getInstance().send(msg);
 				currentStage.close();
 			} else {
@@ -86,7 +89,19 @@ public class VentaPropiedadController extends AnchorPane implements
 
 	@FXML
 	void processSubasta(ActionEvent event) {
+		// TODO: Por ahora termina el turno sin comprar la propiedad. Cambiar
+		// para iniciar la subasta.
+		try {
+			this.finalizarTurno();
+		} catch (Exception e) {
+			GestorLogs.registrarError(e);
+		}
+	}
 
+	private void finalizarTurno() throws Exception {
+		CompleteTurnMessage msg = new CompleteTurnMessage(getJugadorComprador()
+				.getJuego().getUniqueID(), null, null);
+		ConnectionController.getInstance().send(msg);
 	}
 
 	@Override
@@ -107,7 +122,8 @@ public class VentaPropiedadController extends AnchorPane implements
 						.getResourceAsStream(tarjetaSelected
 								.getPathImagenFrente()));
 		imgTarjetaDetalle.setImage(img);
-		lblPrecioPropiedad.setText(StringUtils.formatearAMoneda( tarjetaSelected.getValorPropiedad()));
+		lblPrecioPropiedad.setText(StringUtils.formatearAMoneda(tarjetaSelected
+				.getValorPropiedad()));
 	}
 
 	public Stage getCurrentStage() {

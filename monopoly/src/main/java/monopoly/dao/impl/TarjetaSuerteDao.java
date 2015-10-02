@@ -70,7 +70,9 @@ public class TarjetaSuerteDao extends CustomHibernateDaoSupport implements
 		List<?> list = getHibernateTemplate().find("from TarjetaSuerte");
 		if (!list.isEmpty()) {
 			for (Object obj : list) {
-				tarjetasList.add((TarjetaSuerte) obj);
+				TarjetaSuerte ts = ((TarjetaSuerte) obj);
+				ts.setObjetivo(ts.getObjetivo().replace("\n", "&#10;"));
+				tarjetasList.add(ts);
 			}
 		}
 		return tarjetasList;
