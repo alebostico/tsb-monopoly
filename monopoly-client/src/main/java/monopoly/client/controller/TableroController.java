@@ -675,7 +675,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			case ESPERANDO_TURNO:
 				bloquearAcciones(true);
 				mostrarTirarDados(false);
-				finalizarTurno();
+				//finalizarTurno();
 				break;
 			default:
 				throw new CondicionInvalidaException("El estado de Turno "
@@ -705,6 +705,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			case DESCANSO:
 				showMessageBox(AlertType.INFORMATION, "Descanso...", null,
 						accionCasillero.getMensaje(), null);
+				finalizarTurno();
 				break;
 
 			case DISPONIBLE_PARA_VENDER:
