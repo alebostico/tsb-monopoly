@@ -894,6 +894,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			public void run() {
 				String msgSinDinero;
 				String idJuego;
+				Alert alert;
 
 				try {
 					idJuego = juego.getUniqueID();
@@ -912,9 +913,12 @@ public class TableroController extends AnchorPane implements Serializable,
 					buttons.add(buttonPorcentaje);
 					buttons.add(buttonMonto);
 
-					result = showMessageBox(AlertType.CONFIRMATION,
-							"Impuesto sobre el capital...",
-							"Debes pagar el impuesto.", mensaje, buttons);
+					alert = new Alert(AlertType.CONFIRMATION);
+					alert.setTitle("Impuesto sobre el capital...");
+					alert.setHeaderText("Debes pagar el impuesto.");
+					alert.setContentText(mensaje);
+					alert.getButtonTypes().setAll(buttons);
+					result = alert.showAndWait();
 
 					if (result.get() == buttonPorcentaje) {
 						msgSuperTax = new SuperTaxMessage(juego.getUniqueID(),

@@ -178,7 +178,7 @@
                                           <MenuItem fx:id="btnVender" mnemonicParsing="false" onAction="#processVender" text="Vender Construccion" />
                                           <MenuItem fx:id="btnHipotecar" mnemonicParsing="false" onAction="#processHipotecar" text="Hipotecar" />
                                           <MenuItem fx:id="btnDeshipotecar" mnemonicParsing="false" onAction="#processDeshipotecar" text="Deshipotecar" />
-                                          <MenuItem fx:id="btnComercializar" mnemonicParsing="false" onAction="#processComercializar" text="Comercializar Propiedad" />
+                                          <MenuItem fx:id="btnComercializar" mnemonicParsing="false" onAction="#processComercializar" text="Ofertar Propiedad" />
                                           <MenuItem fx:id="btnBancarrota" mnemonicParsing="false" onAction="#processBancarrota" text="Declararme en Bancarrota" />
                                        </items>
                                     </MenuButton>
