@@ -88,7 +88,7 @@ public class History implements Serializable {
 		sb.append("(" + fecha.substring(fecha.length() - 5, fecha.length()) + ")");
 		sb.append(" ");
 		sb.append(usuario);
-		sb.append(":\n");
+		sb.append(": ");
 		sb.append(mensaje);
 		return sb.toString();
 	}

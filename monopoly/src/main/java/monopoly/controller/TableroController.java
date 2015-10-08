@@ -1140,11 +1140,7 @@ public class TableroController {
 								.getNombreTipoCasillero()) {
 						case Casillero.CASILLERO_CALLE:
 							montoAPagar = calcularAlquilerCalle((CasilleroCalle) pCasillero);
-							mensaje = String.format(
-									accionEnCasillero.getMensaje(),
-									montoAPagar, pJugador.getNombre());
-							accionEnCasillero.setMensaje(mensaje);
-							accionEnCasillero.setMonto(montoAPagar);
+
 							break;
 						case Casillero.CASILLERO_COMPANIA:
 							montoAPagar = calcularAlquilerCompania(
@@ -1158,6 +1154,10 @@ public class TableroController {
 							montoAPagar = 0;
 							break;
 						}
+						mensaje = String.format(accionEnCasillero.getMensaje(),
+								montoAPagar, nombreJugadorPropietario);
+						accionEnCasillero.setMensaje(mensaje);
+						accionEnCasillero.setMonto(montoAPagar);
 					}
 				}
 			}
