@@ -446,12 +446,6 @@ public class JuegoController {
 					"La acción %s es inválida.", accion.toString()));
 		}
 
-		// status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
-		// gestorBanco.getBanco(), gestorTablero.getTablero(),
-		// EstadoJuego.ESPERANDO_TURNO, null,
-		// gestorJugadores.getCurrentPlayer(), historyList, null);
-		// sendToAll(status);
-
 		siguienteTurno();
 	}
 
@@ -593,9 +587,7 @@ public class JuegoController {
 			accion = gestorTablero.getGestorTarjetas().jugarTarjetaSuerte(
 					jugador, (TarjetaSuerte) tarjeta);
 		}
-		if (this.jugarAccionTarjeta(jugador, accion)) {
-
-		}
+		this.jugarAccionTarjeta(jugador, accion);
 	}
 
 	public boolean jugarAccionTarjeta(Jugador jugador,
@@ -691,7 +683,6 @@ public class JuegoController {
 			}
 		}
 		return true;
-
 	}
 
 	/**

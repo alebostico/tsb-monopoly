@@ -20,44 +20,44 @@ public enum AccionEnCasillero implements Serializable {
 	/**
 	 * Cuando una propiedad es libre para ser comprada String[descripción]
 	 */
-	DISPONIBLE_PARA_VENDER("La propiedad %s está disponible para la venta.",
+	DISPONIBLE_PARA_VENDER("La propiedad está disponible para la venta.",
 			null, 0),
 
 	/**
 	 * Cuando otro jugador compró la propiedad, entonces hay que pagar alquiler.
 	 * String[descripción + monto + nombre jugador][monto a pagar]
 	 */
-	PAGAR_ALQUILER("Debes pagar %s de alquiler al jugador %s.", null, 0),
+	PAGAR_ALQUILER("Pagó %s de alquiler al jugador %s.", null, 0),
 
 	/**
 	 * Cuando el casillero al que avanzó corresponde a una tarjeta de la suerte.
 	 * String[descripción][Id Tarjeta de la Suerte]
 	 */
-	TARJETA_SUERTE("Sacaste una tarjeta de la suerte.", null, 0),
+	TARJETA_SUERTE("Sacó una tarjeta de la suerte.", null, 0),
 
 	/**
 	 * Cuando el casillero al que avanzó corresponde a una tarjeta de comunidad.
 	 * String[descripción][Id Tarjeta de Comunidad]
 	 */
-	TARJETA_COMUNIDAD("Sacaste una tarjeta comunidad.", null, 0),
+	TARJETA_COMUNIDAD("Sacó una tarjeta comunidad.", null, 0),
 
 	/**
 	 * Cuando el casillero corresponde a Ir a la Cárcel. String[descripción]
 	 */
-	IR_A_LA_CARCEL("Debes ir a la cárcel.", null, 0),
+	IR_A_LA_CARCEL("Fue a la cárcel.", null, 0),
 
 	/**
 	 * Cuándo el casillero corresponde a un descanso (Salida, Parking, En la
 	 * Cárcel de visita) String[descripción]
 	 */
-	DESCANSO("Casillero %s, debes descansar.", null, 0),
+	DESCANSO("Casillero %s, debe descansar.", null, 0),
 
 	/**
 	 * Cuándo el casillero corresponde a Impuesto de lujo
 	 * String[Descripción][Monto]
 	 */
 	IMPUESTO_DE_LUJO(String.format(
-			"El banco te cobra %s por el impuesto de lujo.",
+			"El banco te cobró %s por el impuesto de lujo.",
 			StringUtils.formatearAMoneda(100)), null, 100),
 
 	/**
@@ -65,14 +65,14 @@ public enum AccionEnCasillero implements Serializable {
 	 * String[Descripción]
 	 */
 	IMPUESTO_SOBRE_CAPITAL(
-			"Impuesto sobre el capital. El banco te cobra 200 € o el 10% del valor total de su capital",
+			"El banco te cobra 200 € o el 10% del valor total de su capital",
 			null, 0),
 
 	/**
 	 * Cuándo el casillero corresponde a una propiedad comprada anteriormente.
 	 * String[descripción]
 	 */
-	MI_PROPIEDAD("Ya adquiriste esta propiedad.", null, 0),
+	MI_PROPIEDAD("Ya adquirió esta propiedad.", null, 0),
 
 	/*
 	 * Cuándo el casillero corresponde a propiedad de otros jugador que se
