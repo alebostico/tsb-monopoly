@@ -1093,9 +1093,10 @@ public class TableroController {
 	 *             excepción para un tipo de casillero no definido.
 	 */
 	public AccionEnCasillero getAccionEnCasillero(Jugador pJugador,
-			Casillero pCasillero, int resultadoDados)
+			Casillero pCasillero)
 			throws CondicionInvalidaException {
 		int montoAPagar = 0;
+		int resultadoDados = 0;
 		String nombreJugadorActual;
 		String nombreJugadorPropietario;
 		Banco banco;
@@ -1147,6 +1148,7 @@ public class TableroController {
 
 							break;
 						case Casillero.CASILLERO_COMPANIA:
+							resultadoDados = pJugador.getUltimoResultado();
 							montoAPagar = calcularAlquilerCompania(
 									(CasilleroCompania) pCasillero,
 									resultadoDados);
