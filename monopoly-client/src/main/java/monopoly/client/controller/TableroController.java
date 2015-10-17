@@ -666,6 +666,9 @@ public class TableroController extends AnchorPane implements Serializable,
 				mostrarTirarDados(true);
 				showMessageBox(AlertType.INFORMATION, "Turno de juego...",
 						null, "Es tu turno para jugar", null);
+				if (estadoActual.currentPlayer.estaPreso()) {
+					showOpcionesCarcel();
+				}
 				break;
 			case JUGANDO:
 				bloquearAcciones(true);
@@ -675,7 +678,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			case ESPERANDO_TURNO:
 				bloquearAcciones(true);
 				mostrarTirarDados(false);
-				//finalizarTurno();
+				// finalizarTurno();
 				break;
 			default:
 				throw new CondicionInvalidaException("El estado de Turno "
@@ -1090,6 +1093,74 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
+	private void showOpcionesCarcel(){
+		Platform.runLater(new Runnable() {
+
+			@Override
+			public void run() {
+				String msgSinDinero;
+				String idJuego;
+				Alert alert;
+				Jugador jugadorActual;
+
+				try {
+					idJuego = juego.getUniqueID();
+					jugadorActual = estadoActual.currentPlayer;
+					msgSinDinero = "No cuentas con suficiente dinero para pagar %s. Vende hoteles, casas o hipoteca propiedades para continuar con el juego.";
+
+					ButtonType buttonPagar;
+					ButtonType buttonUsarTarjeta;
+					ButtonType buttonTirarDados;
+					List<ButtonType> buttons;
+					Optional<ButtonType> result;
+
+					buttonPagar = new ButtonType(String.format("Pagar %s", StringUtils.formatearAMoneda(50)));
+					buttonUsarTarjeta = new ButtonType("Usar Tarjeta");
+					buttonTirarDados = new ButtonType("Sacar dados dobles");
+					buttons = new ArrayList<ButtonType>();
+					buttons.add(buttonPagar);
+					if(jugadorActual.getTarjetaCarcelList().size()>0){
+						buttons.add(buttonUsarTarjeta);
+					}
+					buttons.add(buttonTirarDados);
+
+					alert = new Alert(AlertType.CONFIRMATION);
+					alert.setTitle("Comisaria");
+					alert.setHeaderText("Estás en la cárcel, debes salir.");
+					alert.setContentText("Elige una opción para salir de la cárcel.");
+					alert.getButtonTypes().setAll(buttons);
+					result = alert.showAndWait();
+
+					if (result.get() == buttonTirarDados) {
+						// TODO: habilitar para tirar dados y verificar que salga doble.
+					} else if (result.get() == buttonUsarTarjeta) {
+						// TODO: eliminar la tarjeta de salida libre de la cárcel.
+					} else{
+
+						if (jugadorActual.getDinero() < 50) {
+							registrarDeuda(50);
+							showMessageBox(AlertType.WARNING,
+									"Comisaria",
+									"Debes pagar para salir de la cárcel.",
+									String.format(msgSinDinero, "la salida de la cárcel"),
+									null);
+							return;
+						}
+					}
+
+				} catch (Exception ex) {
+					GestorLogs.registrarError(ex);
+					showMessageBox(
+							AlertType.ERROR,
+							"Error",
+							"Se ha producido un error al mostrar Opciones de la Cárcel.",
+							ex.getMessage(), null);
+				}
+
+			}
+		});
+	}
+	
 	private Jugador getPropietarioCasillero(Casillero casillero,
 			List<Jugador> turnosList) {
 		for (Jugador jugador : turnosList) {
@@ -1872,38 +1943,37 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * @param message
 	 * @param buttons
 	 */
-	private Optional<ButtonType> showMessageBox(final AlertType type,
-			final String title, final String headerText, final String message,
+	private void showMessageBox(final AlertType type, final String title,
+			final String headerText, final String message,
 			final List<ButtonType> buttons) {
-		FutureTask<Optional<ButtonType>> taskMessage = null;
+		FutureTask<Void> taskMessage = null;
 		try {
-			taskMessage = new FutureTask<Optional<ButtonType>>(
-					new Callable<Optional<ButtonType>>() {
-						@Override
-						public Optional<ButtonType> call() throws Exception {
-							ButtonType buttonAceptar;
+			taskMessage = new FutureTask<Void>(new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
+					ButtonType buttonAceptar;
 
-							final Alert alert = new Alert(type);
+					final Alert alert = new Alert(type);
 
-							alert.setTitle(title);
-							alert.setHeaderText(headerText);
-							alert.setContentText(message);
-							if (buttons != null) {
-								alert.getButtonTypes().setAll(buttons);
-							} else {
-								buttonAceptar = new ButtonType("Aceptar",
-										ButtonData.OK_DONE);
-								alert.getButtonTypes().setAll(buttonAceptar);
-							}
-							return alert.showAndWait();
-						}
-					});
+					alert.setTitle(title);
+					alert.setHeaderText(headerText);
+					alert.setContentText(message);
+					if (buttons != null) {
+						alert.getButtonTypes().setAll(buttons);
+					} else {
+						buttonAceptar = new ButtonType("Aceptar",
+								ButtonData.OK_DONE);
+						alert.getButtonTypes().setAll(buttonAceptar);
+					}
+					alert.showAndWait();
+					return null;
+				}
+			});
 			Platform.runLater(taskMessage);
-			return taskMessage.get();
+			taskMessage.get();
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
 		}
-		return null;
 	}
 
 	// ======================================================================//

@@ -66,6 +66,9 @@ public abstract class Jugador implements Serializable {
 
 	@Transient
 	private Dado tiradaInicial;
+	
+	@Transient
+	private Dado ultimoResultado;
 
 	@Transient
 	private List<Tarjeta> tarjetaCarcelList;
@@ -268,6 +271,14 @@ public abstract class Jugador implements Serializable {
 
 	public void setCantidadTurnosCarcel(int contTurnosCarcel) {
 		this.contTurnosCarcel = contTurnosCarcel;
+	}
+
+	public int getUltimoResultado() {
+		return ultimoResultado.getSuma();
+	}
+
+	public void setUltimoResultado(Dado ultimoResultado) {
+		this.ultimoResultado = ultimoResultado;
 	}
 
 	/**
