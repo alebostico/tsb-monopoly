@@ -605,7 +605,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		timeline.play();
 	}
 
-	public void tirarDatosTurno() {
+	public void tirarDadosTurno() {
 		Platform.runLater(new Runnable() {
 			private Stage tirarDadosStage;
 

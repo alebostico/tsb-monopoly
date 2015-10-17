@@ -236,8 +236,10 @@ public class JuegoController {
 		case DESCANSO:
 		case HIPOTECADA:
 		case MI_PROPIEDAD:
-			estadoJuegoJugadorActual = Estado.EstadoJuego.ESPERANDO_TURNO;
-			estadoJuegoRestoJugadores = EstadoJuego.TIRAR_DADO;
+			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
+			estadoJuegoRestoJugadores = EstadoJuego.ESPERANDO_TURNO;
+			// estadoJuegoJugadorActual = Estado.EstadoJuego.ESPERANDO_TURNO;
+			// estadoJuegoRestoJugadores = EstadoJuego.TIRAR_DADO;
 			break;
 		default:
 			throw new CondicionInvalidaException(String.format(
@@ -551,19 +553,19 @@ public class JuegoController {
 
 	/**
 	 * Busca el objetivo de la tarjeta sacada del mazo y ejecuta el objetivo.
-	 * 
+	 * <p>
+	 * Acciones tarjeta Comunidad:
 	 * <ol>
-	 * Acciones tarjeta Comunidad
 	 * <li>AccionEnTarjeta.PAGAR</li>
 	 * <li>AccionEnTarjeta.COBRAR</li>
 	 * <li>AccionEnTarjeta.COBRAR_TODOS</li>
 	 * <li>AccionEnTarjeta.MOVER_A</li>
 	 * <li>AccionEnTarjeta.IR_A_CARCEL</li>
 	 * <li>AccionEnTarjeta.LIBRE_DE_CARCEL</li>
-	 * </ol>
-	 * 
-	 * <ol>
-	 * Acciones tarjeta Suerte
+	 * </ol></p>
+	 * <p>
+	 * Acciones tarjeta Suerte:
+	 * <ol>	 
 	 * <li>AccionEnTarjeta.MOVER_A</li>
 	 * <li>AccionEnTarjeta.COBRAR</li>
 	 * <li>AccionEnTarjeta.IR_A_CARCEL</li>
@@ -571,7 +573,7 @@ public class JuegoController {
 	 * <li>AccionEnTarjeta.PAGAR_POR_CASA_HOTEL</li>
 	 * <li>AccionEnTarjeta.LIBRE_DE_CARCEL</li>
 	 * <li>AccionEnTarjeta.PAGAR</li>
-	 * </ol>
+	 * </ol></p>
 	 * 
 	 * @param jugador
 	 * @param tarjeta

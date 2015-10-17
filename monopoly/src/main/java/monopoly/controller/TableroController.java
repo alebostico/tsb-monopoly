@@ -900,16 +900,20 @@ public class TableroController {
 			case C_CALLE:
 				if (((CasilleroCalle) casi).getTarjetaCalle().getJugador() == null)
 					cantPropNoCompradas++;
+				break;
 
 			case C_COMPANIA:
 				if (((CasilleroCompania) casi).getTarjetaCompania()
 						.getJugador() == null)
 					cantPropNoCompradas++;
-
+				break;
+				
 			case C_ESTACION:
 				if (((CasilleroEstacion) casi).getTarjetaEstacion()
 						.getJugador() == null)
 					cantPropNoCompradas++;
+				break;
+				
 			default:
 				break;
 			}

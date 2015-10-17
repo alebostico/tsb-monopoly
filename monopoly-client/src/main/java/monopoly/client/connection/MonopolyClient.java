@@ -131,7 +131,7 @@ public class MonopolyClient extends GameClient {
 		switch ((String) message) {
 
 		case ConstantesMensaje.THROW_DICE_TURNS_MESSAGE:
-			TableroController.getInstance().tirarDatosTurno();
+			TableroController.getInstance().tirarDadosTurno();
 			break;
 
 		case ConstantesMensaje.THROW_DICE_ADVANCE_MESSAGE:
