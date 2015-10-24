@@ -556,11 +556,6 @@ public class JuegoController {
 
 	
 	/**
-<<<<<<< HEAD
-	 * Busca el objetivo de la tarjeta sacada del mazo y ejecuta el objetivo.
-	 * <p>
-	 * Acciones tarjeta Comunidad:
-=======
 	 * Implementa el objetivo de la tarjeta Comunidad o Suerte Cuando un jugador
 	 * saca una de las tarjetas.
 	 * @param jugador
@@ -584,7 +579,8 @@ public class JuegoController {
 	 * Busca el objetivo de la tarjeta sacada del mazo
 	 * a partir del Enum y ejecuta el objetivo.
 	 * 
->>>>>>> branch 'master' of https://github.com/ale-bos/tsb-monopoly
+	 * <p>
+	 * Acciones tarjeta Comunidad:
 	 * <ol>
 	 * <li>AccionEnTarjeta.PAGAR</li>
 	 * <li>AccionEnTarjeta.COBRAR</li>

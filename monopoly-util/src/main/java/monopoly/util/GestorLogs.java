@@ -1,6 +1,7 @@
 package monopoly.util;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -73,7 +74,7 @@ public class GestorLogs {
 			System.out.print("\n");
 			// .....................................................
 
-			ps = new PrintStream(fileLog);
+			ps = new PrintStream(new FileOutputStream(fileLog,true));
 
 			if (!fileLog.exists()) {
 				fileLog.createNewFile();
