@@ -21,7 +21,8 @@ public class Estado implements Serializable {
 				"Estableciendo turnos"), INICIADO("iniciado"), TIRAR_DADO(
 				"Tirando dado para avanzar de Casillero"), JUGANDO(
 				"Jugador Jugando"), ESPERANDO_TURNO(
-				"Esperando que el jugador termine su turno"), FINALIZADO(
+				"Esperando que el jugador termine su turno"), PRESO("Jugador en la cárcel"),
+				FINALIZADO(
 				"finalizado");
 
 		private final String nombreEstadoJuego;

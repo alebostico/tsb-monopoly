@@ -15,7 +15,7 @@
          <children>
             <VBox alignment="CENTER" prefHeight="475.0" prefWidth="404.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Label graphicTextGap="15.0" style="-fx-font-size: 35; -fx-font-family: Arial; -fx-text-fill: linear-gradient(white, #d0d0d0);" text="EN VENTA">
+                  <Label graphicTextGap="15.0" styleClass="labelVenta" text="EN VENTA">
                      <font>
                         <Font size="45.0" />
                      </font>
@@ -30,7 +30,7 @@
                      <children>
                         <HBox alignment="CENTER" prefHeight="68.0" prefWidth="284.0">
                            <children>
-                              <Label fx:id="lblPrecioPropiedad" style="-fx-font-size: 30; -fx-font-family: Arial; -fx-text-fill: linear-gradient(white, #d0d0d0); -fx-font-style: Italic;" text="PRECIO" />
+                              <Label fx:id="lblPrecioPropiedad" styleClass="labelVenta" text="PRECIO" />
                            </children>
                         </HBox>
                      </children>
