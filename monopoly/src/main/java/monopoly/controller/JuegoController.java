@@ -238,8 +238,6 @@ public class JuegoController {
 		case MI_PROPIEDAD:
 			estadoJuegoJugadorActual = Estado.EstadoJuego.JUGANDO;
 			estadoJuegoRestoJugadores = EstadoJuego.ESPERANDO_TURNO;
-			// estadoJuegoJugadorActual = Estado.EstadoJuego.ESPERANDO_TURNO;
-			// estadoJuegoRestoJugadores = EstadoJuego.TIRAR_DADO;
 			break;
 		default:
 			throw new CondicionInvalidaException(String.format(
@@ -459,6 +457,7 @@ public class JuegoController {
 		Jugador jugadorActual;
 		Jugador jugadorSiguiente;
 		MonopolyGameStatus status;
+		EstadoJuego estadoJuego;
 		List<History> historyList = new ArrayList<History>();
 
 		jugadorActual = gestorJugadores.getCurrentPlayer();
@@ -481,9 +480,12 @@ public class JuegoController {
 
 			avanzarDeCasilleroJV();
 		} else {
+			estadoJuego = EstadoJuego.TIRAR_DADO;
+			if(gestorJugadores.getCurrentPlayer().estaPreso())
+				estadoJuego = EstadoJuego.PRESO;
 			status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
 					gestorBanco.getBanco(), gestorTablero.getTablero(),
-					EstadoJuego.TIRAR_DADO, null,
+					estadoJuego, null,
 					gestorJugadores.getCurrentPlayer(), historyList, null);
 			sendToOne(((JugadorHumano) jugadorSiguiente).getSenderID(), status);
 
@@ -556,11 +558,6 @@ public class JuegoController {
 
 	
 	/**
-<<<<<<< HEAD
-	 * Busca el objetivo de la tarjeta sacada del mazo y ejecuta el objetivo.
-	 * <p>
-	 * Acciones tarjeta Comunidad:
-=======
 	 * Implementa el objetivo de la tarjeta Comunidad o Suerte Cuando un jugador
 	 * saca una de las tarjetas.
 	 * @param jugador
@@ -584,7 +581,6 @@ public class JuegoController {
 	 * Busca el objetivo de la tarjeta sacada del mazo
 	 * a partir del Enum y ejecuta el objetivo.
 	 * 
->>>>>>> branch 'master' of https://github.com/ale-bos/tsb-monopoly
 	 * <ol>
 	 * <li>AccionEnTarjeta.PAGAR</li>
 	 * <li>AccionEnTarjeta.COBRAR</li>

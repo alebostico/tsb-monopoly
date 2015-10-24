@@ -26,6 +26,7 @@ import monopoly.model.History;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.message.game.AdvanceInBoardMessage;
+import monopoly.util.message.game.StartGameMessage;
 
 /**
  * @author Bostico Alejandro
@@ -33,7 +34,7 @@ import monopoly.util.message.game.AdvanceInBoardMessage;
  *
  */
 public class TirarDadosController extends AnchorPane implements Initializable {
-
+	
 	@FXML
 	private Label lblNombre;
 
@@ -53,6 +54,14 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 
 	private static TirarDadosController instance;
 
+	private TipoTiradaEnum tipoTirada;
+	
+	public enum TipoTiradaEnum{
+		TIRAR_TURNO,
+		TIRAR_AVANCE,
+		TIRAR_CARCEL
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -96,22 +105,48 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 			hbPanel.getChildren().add(new Label(" " + dados.getSuma() + " "));
 
 			btnTirarDados = new Button("Aceptar");
-			btnTirarDados.setOnAction(new EventHandler<ActionEvent>() {
-				@Override
-				public void handle(ActionEvent e) {
-					ConnectionController.getInstance().send(
-							new AdvanceInBoardMessage(TableroController.getInstance()
-									.getJuego().getUniqueID(), dados));
-					if (TirarDadosController.getInstance() != null)
-						TirarDadosController.getInstance().getCurrentStage()
-								.close();
-				}
-			});
-			vbPanel.getChildren().add(btnTirarDados);
+			switch (tipoTirada) {
+			case TIRAR_TURNO:
+				btnTirarDados.setOnAction(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent e) {
+						ConnectionController.getInstance().send(
+								new StartGameMessage(TableroController.getInstance()
+										.getJuego().getUniqueID(), dados));
+						if (TirarDadosController.getInstance() != null)
+							TirarDadosController.getInstance().getCurrentStage()
+									.close();
+					}
+				});
+				mensaje = String
+						.format("Resultado de dados para turno fue %s.",
+								dados.getSuma());
+				break;
+				
+			case TIRAR_AVANCE:
+				btnTirarDados.setOnAction(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent e) {
+						ConnectionController.getInstance().send(
+								new AdvanceInBoardMessage(TableroController.getInstance()
+										.getJuego().getUniqueID(), dados));
+						if (TirarDadosController.getInstance() != null)
+							TirarDadosController.getInstance().getCurrentStage()
+									.close();
+					}
+				});
+				mensaje = String
+						.format("Deberá avanzar %s casilleros.",
+								dados.getSuma());
+				break;
+			case TIRAR_CARCEL:
+				break;			
 
-			mensaje = String
-					.format("Resultado de dados para avanzar de casillero fue %s.",
-							dados.getSuma());
+			default:
+				break;
+			}
+			
+			vbPanel.getChildren().add(btnTirarDados);
 
 			history = new History(StringUtils.getFechaActual(),
 					TableroController.getInstance().getUsuarioLogueado()
@@ -138,6 +173,14 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 
 	public void setCurrentStage(Stage currentStage) {
 		this.currentStage = currentStage;
+	}
+
+	public TipoTiradaEnum getTipoTirada() {
+		return tipoTirada;
+	}
+
+	public void setTipoTirada(TipoTiradaEnum tipoTirada) {
+		this.tipoTirada = tipoTirada;
 	}
 
 	public static TirarDadosController getInstance() {

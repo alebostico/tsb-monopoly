@@ -93,6 +93,9 @@ public class VentaPropiedadController extends AnchorPane implements
 		// para iniciar la subasta.
 		try {
 			this.finalizarTurno();
+			if (VentaPropiedadController.getInstance() != null)
+				VentaPropiedadController.getInstance().getCurrentStage()
+						.close();
 		} catch (Exception e) {
 			GestorLogs.registrarError(e);
 		}

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import java.net.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -7,20 +8,23 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane maxHeight="226.0" maxWidth="539.0" minHeight="178.0" minWidth="350.0" prefHeight="178.0" prefWidth="399.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.TirarDadosController">
+<StackPane maxHeight="226.0" maxWidth="539.0" minHeight="142.0" minWidth="326.0" prefHeight="156.0" prefWidth="326.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.TirarDadosController">
    <children>
       <AnchorPane>
          <children>
             <VBox fx:id="vbPanel" alignment="CENTER" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Label fx:id="lblNombre" alignment="CENTER" text="[Nombre Jugador]">
+                  <Label fx:id="lblNombre" alignment="CENTER" styleClass="labelMensajes" text="[Nombre Jugador]" VBox.vgrow="SOMETIMES">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
+                     <font>
+                        <Font size="20.0" />
+                     </font>
                   </Label>
-                  <HBox fx:id="hbPanel" alignment="CENTER" spacing="40.0">
+                  <HBox fx:id="hbPanel" alignment="CENTER" spacing="20.0">
                      <children>
-                        <ImageView fitHeight="80.0" fitWidth="130.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="61.0" fitWidth="56.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../images/dados/dice.png" />
                            </image>
@@ -28,7 +32,7 @@
                               <Insets />
                            </HBox.margin>
                         </ImageView>
-                        <Button fx:id="btnTirarDados" defaultButton="true" mnemonicParsing="false" onAction="#processTirarDados" text="Tirar Dados" />
+                        <Button fx:id="btnTirarDados" defaultButton="true" mnemonicParsing="false" onAction="#processTirarDados" prefHeight="38.0" prefWidth="154.0" text="Tirar Dados" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
                </children>
@@ -37,7 +41,7 @@
       </AnchorPane>
    </children>
    <stylesheets>
-      <URL value="@../css/Sheet.css" />
       <URL value="@../css/Images_Background.css" />
+      <URL value="@../css/Sheet.css" />
    </stylesheets>
 </StackPane>
