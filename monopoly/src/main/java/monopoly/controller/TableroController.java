@@ -160,7 +160,7 @@ public class TableroController {
 	 *            La cantidad de casilleros a mover el jugador. Si es positivo
 	 *            mueve hacia adelante. Si es negativo hacia atras (es lo mismo
 	 *            que llamar al método 'moverAtras').
-	 * @param cobraSalida
+	 * @param out cobraSalida
 	 *            true en el caso que el jugador deba cobrar los $200 si pasa
 	 *            por la salida. false si no los cobra.
 	 * @return El casillero al cual se movió el jugador.
@@ -187,6 +187,7 @@ public class TableroController {
 			cobroSalida = -1;
 			if (cobraSalida) {
 				// ... los cobra
+
 				// this.banco.cobrar(jugador, 200);
 				cobroSalida = 1;
 			}
@@ -209,6 +210,7 @@ public class TableroController {
 		this.registrarInfo(jugador, casilleroActual, casilleroSiguiente,
 				cobroSalida);
 
+		cobraSalida = cobroSalida == 1 ? true : false;
 		return casilleroSiguiente;
 	}
 
@@ -237,7 +239,7 @@ public class TableroController {
 	 *            El jugador que se quiere mover.
 	 * @param nroCasillero
 	 *            El número de casillero al cual se quiere mover el jugador.
-	 * @param cobraSalida
+	 * @param out cobraSalida
 	 *            true en el caso que el jugador deba cobrar los $200 si pasa
 	 *            por la salida. false si no los cobra.
 	 * @return El casillero al cual se movió el jugador si 'nroCasillero' es
@@ -277,6 +279,7 @@ public class TableroController {
 		this.registrarInfo(jugador, casilleroActual, casilleroSiguiente,
 				cobroSalida);
 
+		cobraSalida = cobroSalida == 1 ? true : false;
 		return casilleroSiguiente;
 	}
 
@@ -907,13 +910,13 @@ public class TableroController {
 						.getJugador() == null)
 					cantPropNoCompradas++;
 				break;
-				
+
 			case C_ESTACION:
 				if (((CasilleroEstacion) casi).getTarjetaEstacion()
 						.getJugador() == null)
 					cantPropNoCompradas++;
 				break;
-				
+
 			default:
 				break;
 			}
@@ -1093,8 +1096,7 @@ public class TableroController {
 	 *             excepción para un tipo de casillero no definido.
 	 */
 	public AccionEnCasillero getAccionEnCasillero(Jugador pJugador,
-			Casillero pCasillero)
-			throws CondicionInvalidaException {
+			Casillero pCasillero) throws CondicionInvalidaException {
 		int montoAPagar = 0;
 		int resultadoDados = 0;
 		String nombreJugadorActual;

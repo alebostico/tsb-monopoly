@@ -96,6 +96,16 @@ public class BancoController {
 		jugador.cobrar(monto);
 		return true;
 	}
+	
+	/**
+	 * suma 200 euros al jugador por pasar por la salida.
+	 * 
+	 * @param jugador jugador que va a cobrar.
+	 * @return
+	 */
+	public void pagarPasoSalida(Jugador jugador) {
+		jugador.cobrar(200);
+	}
 
 	/**
 	 * toma una propiedad en hipoteca y paga al jugador el valor indicado para

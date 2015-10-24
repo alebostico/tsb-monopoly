@@ -195,6 +195,9 @@ public class JuegoController {
 		jugador.setUltimoResultado(dados);
 		casillero = gestorTablero.moverAdelante(jugador, dados.getSuma(),
 				cobraSalida);
+		
+		if(cobraSalida)
+			gestorBanco.pagarPasoSalida(jugador);
 
 		accion = gestorTablero.getAccionEnCasillero(jugador, casillero);
 
@@ -322,6 +325,9 @@ public class JuegoController {
 
 			casillero = gestorTablero.moverAdelante(jugadorActual,
 					dados.getSuma(), cobraSalida);
+			
+			if(cobraSalida)
+				gestorBanco.pagarPasoSalida(jugadorActual);
 
 			accion = gestorTablero.getAccionEnCasillero(jugadorActual,
 					casillero);
@@ -610,6 +616,7 @@ public class JuegoController {
 		String mensaje;
 		Casillero casillero = null;
 		AccionEnCasillero accionEnCasillero;
+		boolean cobraSalida;
 
 		int senderId = (jugador.isHumano() ? ((JugadorHumano) jugador)
 				.getSenderID() : -1);
@@ -671,18 +678,24 @@ public class JuegoController {
 			/*
 			 * Se mueve a un determinado casillero.
 			 */
+			cobraSalida = accionEnTarjeta.isCobraSalida();
 			casillero = gestorTablero.moverAdelante(jugador,
 					accionEnTarjeta.getNroCasilleros(),
-					accionEnTarjeta.isCobraSalida());
+					cobraSalida);
+			if (cobraSalida)
+				gestorBanco.pagarPasoSalida(jugador);
 			break;
 
 		case MOVER_A:
 			/*
 			 * Retrocede casilleros.
 			 */
+			cobraSalida = accionEnTarjeta.isCobraSalida();
 			casillero = gestorTablero.moverACasillero(jugador,
 					accionEnTarjeta.getNroCasilleros(),
-					accionEnTarjeta.isCobraSalida());
+					cobraSalida);
+			if (cobraSalida)
+				gestorBanco.pagarPasoSalida(jugador);
 			break;
 
 		case LIBRE_DE_CARCEL:
