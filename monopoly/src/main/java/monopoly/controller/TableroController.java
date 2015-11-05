@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.mutable.MutableBoolean;
+
 import monopoly.model.AccionEnCasillero;
 import monopoly.model.Banco;
 import monopoly.model.Juego;
@@ -160,13 +162,13 @@ public class TableroController {
 	 *            La cantidad de casilleros a mover el jugador. Si es positivo
 	 *            mueve hacia adelante. Si es negativo hacia atras (es lo mismo
 	 *            que llamar al método 'moverAtras').
-	 * @param out cobraSalida
-	 *            true en el caso que el jugador deba cobrar los $200 si pasa
-	 *            por la salida. false si no los cobra.
+	 * @param out
+	 *            cobraSalida true en el caso que el jugador deba cobrar los
+	 *            $200 si pasa por la salida. false si no los cobra.
 	 * @return El casillero al cual se movió el jugador.
 	 */
 	public Casillero moverAdelante(Jugador jugador, int cantCasilleros,
-			boolean cobraSalida) {
+			MutableBoolean cobraSalida) {
 
 		int cobroSalida = 0;
 		// busco el casillero actual en el que esta el jugador
@@ -185,7 +187,7 @@ public class TableroController {
 			// si el jugador tiene que cobrar los $200 en caso de pasar por la
 			// salida...
 			cobroSalida = -1;
-			if (cobraSalida) {
+			if (cobraSalida.booleanValue()) {
 				// ... los cobra
 
 				// this.banco.cobrar(jugador, 200);
@@ -210,7 +212,7 @@ public class TableroController {
 		this.registrarInfo(jugador, casilleroActual, casilleroSiguiente,
 				cobroSalida);
 
-		cobraSalida = cobroSalida == 1 ? true : false;
+		cobraSalida.setValue(cobroSalida == 1);
 		return casilleroSiguiente;
 	}
 
@@ -228,7 +230,8 @@ public class TableroController {
 	 * @return El casillero al cual se movió el jugador.
 	 */
 	public Casillero moverAtras(Jugador jugador, int cantCasilleros) {
-		return this.moverAdelante(jugador, (cantCasilleros * (-1)), false);
+		return this.moverAdelante(jugador, (cantCasilleros * (-1)),
+				new MutableBoolean(false));
 	}
 
 	/**
@@ -239,14 +242,14 @@ public class TableroController {
 	 *            El jugador que se quiere mover.
 	 * @param nroCasillero
 	 *            El número de casillero al cual se quiere mover el jugador.
-	 * @param out cobraSalida
-	 *            true en el caso que el jugador deba cobrar los $200 si pasa
-	 *            por la salida. false si no los cobra.
+	 * @param out
+	 *            cobraSalida true en el caso que el jugador deba cobrar los
+	 *            $200 si pasa por la salida. false si no los cobra.
 	 * @return El casillero al cual se movió el jugador si 'nroCasillero' es
 	 *         válido (entre 1 y 40). null en caso contrario.
 	 */
 	public Casillero moverACasillero(Jugador jugador, int nroCasillero,
-			boolean cobraSalida) {
+			MutableBoolean cobraSalida) {
 
 		Casillero casilleroActual = jugador.getCasilleroActual();
 		Casillero casilleroSiguiente = this.getCasillero(nroCasillero);
@@ -264,7 +267,7 @@ public class TableroController {
 			// y si el jugador tiene que cobrar los $200 en caso de pasar por la
 			// salida...
 			cobroSalida = -1;
-			if (cobraSalida) {
+			if (cobraSalida.booleanValue()) {
 				// ... los cobra
 				// this.banco.cobrar(jugador, 200);
 				cobroSalida = 1;
@@ -279,7 +282,7 @@ public class TableroController {
 		this.registrarInfo(jugador, casilleroActual, casilleroSiguiente,
 				cobroSalida);
 
-		cobraSalida = cobroSalida == 1 ? true : false;
+		cobraSalida.setValue(cobroSalida == 1);
 		return casilleroSiguiente;
 	}
 
@@ -298,7 +301,7 @@ public class TableroController {
 	 *         existe. null en caso contrario.
 	 */
 	public Casillero moverACasillero(Jugador jugador, String nombreCasillero,
-			boolean cobraSalida) {
+			MutableBoolean cobraSalida) {
 
 		Casillero casilleroAMover = this.getCasillero(nombreCasillero);
 
@@ -321,7 +324,7 @@ public class TableroController {
 	public Casillero irACarcel(Jugador jugador) {
 		// mando al casillero de la carcel y si pasa por la salida no cobra
 		jugador.setPreso(true);
-		return this.moverACasillero(jugador, 11, false);
+		return this.moverACasillero(jugador, 11, new MutableBoolean(false));
 	}
 
 	/**
@@ -336,7 +339,8 @@ public class TableroController {
 	 * @return El casillero en el que queda el jugador.
 	 */
 	public Casillero retrocederA(Jugador jugador, int nroCasillero) {
-		return this.moverACasillero(jugador, nroCasillero, false);
+		return this.moverACasillero(jugador, nroCasillero, new MutableBoolean(
+				false));
 	}
 
 	/**
