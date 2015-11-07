@@ -718,9 +718,6 @@ public class TableroController extends AnchorPane implements Serializable,
 				mostrarTirarDados(true);
 				showMessageBox(AlertType.INFORMATION, "Turno de juego...",
 						null, "Es tu turno para jugar");
-//				if (estadoActual.currentPlayer.estaPreso()) {
-//					showOpcionesCarcel();
-//				}
 				break;
 			case JUGANDO:
 				bloquearAcciones(true);
@@ -730,7 +727,12 @@ public class TableroController extends AnchorPane implements Serializable,
 			case ESPERANDO_TURNO:
 				bloquearAcciones(true);
 				mostrarTirarDados(false);
-				// finalizarTurno();
+				break;
+			case PRESO:
+				showOpcionesCarcel();
+				break;
+			case LIBRE:
+				
 				break;
 			default:
 				throw new CondicionInvalidaException("El estado de Turno "
@@ -1185,7 +1187,8 @@ public class TableroController extends AnchorPane implements Serializable,
 					result = alert.showAndWait();
 
 					if (result.get() == buttonTirarDados) {
-						// TODO: habilitar para tirar dados y verificar que salga doble.
+						bloquearAcciones(false);
+						mostrarTirarDados(true);
 					} else if (result.get() == buttonUsarTarjeta) {
 						// TODO: eliminar la tarjeta de salida libre de la cárcel.
 					} else{

@@ -118,12 +118,15 @@ public class PartidasController {
 	}
 
 	/**
-	 * Método ejecutado para realizar el objetivo de la tarjeta comunidad o suerte
-	 * que salió.
+	 * Método ejecutado para realizar el objetivo de la tarjeta comunidad o
+	 * suerte que salió.
 	 * 
-	 * @param idJuego identificador del juego.
-	 * @param senderId id de conexión del jugador humano.
-	 * @param tarjeta Tarjeta obtenida del mazo.
+	 * @param idJuego
+	 *            identificador del juego.
+	 * @param senderId
+	 *            id de conexión del jugador humano.
+	 * @param tarjeta
+	 *            Tarjeta obtenida del mazo.
 	 * @throws Exception
 	 */
 	public void jugarTarjeta(String idJuego, int senderId, Tarjeta tarjeta)
@@ -197,6 +200,29 @@ public class PartidasController {
 			String mensaje) throws Exception, SinDineroException {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.pagarAlBanco(senderId, monto, mensaje);
+	}
+
+	public void tirarDadosDoblesSalirCarcel(int senderId, String idJuego,
+			Dado dados) throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.tirarDadosDoblesSalirCarcel(senderId, dados);
+	}
+
+	/**
+	 * Envía a todos los jugadores una historia de una acción realizada por un
+	 * jugador en particular.
+	 * 
+	 * @param senderId
+	 *            Id de conección del jugador.
+	 * @param idJuego
+	 *            Identificador del juego.
+	 * @param history
+	 *            Historia de la acción realizada por el jugador.
+	 */
+	public void sendHistoryGame(int senderId, String idJuego, History history)
+			throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.sendHistoryGame(history);
 	}
 
 	// =====================================================================//

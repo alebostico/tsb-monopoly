@@ -16,13 +16,20 @@ public class HistoryGameMessage implements Serializable {
 
 	public final Object message; // Original message from a client.
 
+	public final String idJuego;
 	/**
 	 * Create a ForwadedMessage to wrap a message sent by a client.
 	 * 
 	 * @param message
 	 *            the original message.
 	 */
-	public HistoryGameMessage(Object message) {
+	public HistoryGameMessage(Object message, String idJuego) {
 		this.message = message;
+		this.idJuego = idJuego;
+	}
+	
+	public HistoryGameMessage(Object message){
+		this.message = message;
+		this.idJuego = "";
 	}
 }

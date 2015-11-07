@@ -35,6 +35,7 @@ public class ConstantesMensaje {
 
 	public final static String COMPLETE_TURN_MESSAGE = "CompleteTurnMessage";
 	public final static String PAY_TO_PLAYER_MESSAGE = "PayToPlayerMessage";
+	public final static String DOUBLE_DICE_JAIL_MESSAGE = "DoubleDiceJailMessage";
 	/*************************************************************************************/
 
 	/*************************************************************************************/

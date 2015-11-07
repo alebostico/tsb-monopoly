@@ -239,8 +239,8 @@ public abstract class Jugador implements Serializable {
 		return contDadosDobles;
 	}
 
-	public void setCatidadDadosDobles(int contDadosDobles) {
-		this.contDadosDobles = contDadosDobles;
+	public void resetCatidadDadosDobles() {
+		this.contDadosDobles = 0;
 	}
 
 	/**
@@ -269,8 +269,8 @@ public abstract class Jugador implements Serializable {
 		this.contTurnosCarcel++;
 	}
 
-	public void setCantidadTurnosCarcel(int contTurnosCarcel) {
-		this.contTurnosCarcel = contTurnosCarcel;
+	public void resetCantidadTurnosCarcel() {
+		this.contTurnosCarcel = 0;
 	}
 
 	public int getUltimoResultado() {

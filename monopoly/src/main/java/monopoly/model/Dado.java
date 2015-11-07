@@ -105,4 +105,9 @@ public class Dado implements Serializable {
 	public int getSuma() {
 		return dados[0] + dados[1];
 	}
+
+	public boolean EsDoble() {
+		return dados[0] == dados[1];
+	}
+
 }
