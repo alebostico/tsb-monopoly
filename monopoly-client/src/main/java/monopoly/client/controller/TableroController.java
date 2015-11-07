@@ -89,12 +89,14 @@ import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.constantes.ConstantesFXML;
+import monopoly.util.constantes.EnumSalidaCarcel;
 import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
+import monopoly.util.message.game.actions.PayToLeaveJailMessage;
 import monopoly.util.message.game.actions.PayToPlayerMessage;
 import monopoly.util.message.game.actions.SuperTaxMessage;
 
@@ -706,6 +708,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			}
 
 			// Actualizo la información en el tablero.
+			actualizarTurnoJugador();
 			actualizarGraficoEnElTablero();
 
 			switch (estadoActual.estadoTurno) {
@@ -731,14 +734,21 @@ public class TableroController extends AnchorPane implements Serializable,
 				showOpcionesCarcel();
 				break;
 			case LIBRE:
-
+				bloquearAcciones(false);
+				mostrarTirarDados(true);
+				showMessageBox(AlertType.INFORMATION, "Turno de juego...",
+						"Libre de la Cárcel.", "Continua jugando.");
+				break;
+			case DADOS_DOBLES:
+				bloquearAcciones(false);
+				mostrarTirarDados(true);
+				showMessageBox(AlertType.INFORMATION, "Turno de juego...",
+						"Dados dobles.", "Es tu turno nuevamente.");
 				break;
 			default:
 				throw new CondicionInvalidaException("El estado de Turno "
 						+ estadoActual.estadoTurno + " es inválido.");
 			}
-
-			actualizarTurnoJugador();
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
 			showMessageBox(AlertType.ERROR, "Error...", null, ex.getMessage());
@@ -1157,6 +1167,7 @@ public class TableroController extends AnchorPane implements Serializable,
 				String idJuego;
 				Alert alert;
 				Jugador jugadorActual;
+				PayToLeaveJailMessage msgPayToLeaveJail;
 
 				try {
 					idJuego = juego.getUniqueID();
@@ -1191,8 +1202,8 @@ public class TableroController extends AnchorPane implements Serializable,
 						bloquearAcciones(false);
 						mostrarTirarDados(true);
 					} else if (result.get() == buttonUsarTarjeta) {
-						// TODO: eliminar la tarjeta de salida libre de la
-						// cárcel.
+						msgPayToLeaveJail = new PayToLeaveJailMessage(idJuego, EnumSalidaCarcel.USAR_TARJETA);
+						ConnectionController.getInstance().send(msgPayToLeaveJail);
 					} else {
 
 						if (jugadorActual.getDinero() < 50) {
@@ -1202,6 +1213,11 @@ public class TableroController extends AnchorPane implements Serializable,
 									String.format(msgSinDinero,
 											"la salida de la cárcel"));
 							return;
+						}
+						else
+						{
+							msgPayToLeaveJail = new PayToLeaveJailMessage(idJuego, EnumSalidaCarcel.PAGAR);
+							ConnectionController.getInstance().send(msgPayToLeaveJail);
 						}
 					}
 
