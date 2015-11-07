@@ -39,6 +39,8 @@ import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.actions.PayToPlayerMessage;
 
+import org.apache.commons.lang.mutable.MutableBoolean;
+
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
@@ -196,15 +198,15 @@ public class JuegoController {
 			throws CondicionInvalidaException, Exception {
 		Jugador jugador;
 		Casillero casillero;
-		boolean cobraSalida = true;
+		MutableBoolean cobraSalida = new MutableBoolean(true);
 		AccionEnCasillero accion;
 
 		jugador = gestorJugadores.getJugadorHumano(senderId);
 		jugador.setUltimoResultado(dados);
 		casillero = gestorTablero.moverAdelante(jugador, dados.getSuma(),
 				cobraSalida);
-
-		if (cobraSalida)
+		
+		if(cobraSalida.booleanValue())
 			gestorBanco.pagarPasoSalida(jugador);
 
 		accion = gestorTablero.getAccionEnCasillero(jugador, casillero);
@@ -275,7 +277,7 @@ public class JuegoController {
 		JugadorVirtual jugadorActual = (JugadorVirtual) this.gestorJugadores
 				.getCurrentPlayer();
 		String mensaje = "";
-		boolean cobraSalida = true;
+		MutableBoolean cobraSalida = new MutableBoolean(true);
 
 		mensaje = gestorJugadoresVirtuales.deshipotecarAleatorio(jugadorActual);
 
@@ -313,8 +315,8 @@ public class JuegoController {
 
 			casillero = gestorTablero.moverAdelante(jugadorActual,
 					dados.getSuma(), cobraSalida);
-
-			if (cobraSalida)
+			
+			if(cobraSalida.booleanValue())
 				gestorBanco.pagarPasoSalida(jugadorActual);
 
 			accion = gestorTablero.getAccionEnCasillero(jugadorActual,
@@ -609,7 +611,7 @@ public class JuegoController {
 		String mensaje;
 		Casillero casillero = null;
 		AccionEnCasillero accionEnCasillero;
-		boolean cobraSalida;
+		MutableBoolean cobraSalida;
 
 		int senderId = (jugador.isHumano() ? ((JugadorHumano) jugador)
 				.getSenderID() : -1);
@@ -671,10 +673,11 @@ public class JuegoController {
 			/*
 			 * Se mueve a un determinado casillero.
 			 */
-			cobraSalida = accionEnTarjeta.isCobraSalida();
+			cobraSalida = new MutableBoolean(accionEnTarjeta.isCobraSalida());
 			casillero = gestorTablero.moverAdelante(jugador,
-					accionEnTarjeta.getNroCasilleros(), cobraSalida);
-			if (cobraSalida)
+					accionEnTarjeta.getNroCasilleros(),
+					cobraSalida);
+			if (cobraSalida.booleanValue())
 				gestorBanco.pagarPasoSalida(jugador);
 			break;
 
@@ -682,10 +685,11 @@ public class JuegoController {
 			/*
 			 * Retrocede casilleros.
 			 */
-			cobraSalida = accionEnTarjeta.isCobraSalida();
+			cobraSalida = new MutableBoolean(accionEnTarjeta.isCobraSalida());
 			casillero = gestorTablero.moverACasillero(jugador,
-					accionEnTarjeta.getNroCasilleros(), cobraSalida);
-			if (cobraSalida)
+					accionEnTarjeta.getNroCasilleros(),
+					cobraSalida);
+			if (cobraSalida.booleanValue())
 				gestorBanco.pagarPasoSalida(jugador);
 			break;
 
@@ -827,7 +831,7 @@ public class JuegoController {
 
 	public void tirarDadosDoblesSalirCarcel(int senderId, Dado dados)
 			throws Exception {
-		boolean cobraSalida = true;
+		MutableBoolean cobraSalida = new MutableBoolean(true);
 		Jugador jugador;
 		History history;
 		String mensaje = "";
@@ -854,7 +858,7 @@ public class JuegoController {
 			casillero = gestorTablero.moverAdelante(jugador, dados.getSuma(),
 					cobraSalida);
 			// TODO corregir paso de
-			if (cobraSalida)
+			if (cobraSalida.booleanValue())
 				gestorBanco.pagarPasoSalida(jugador);
 
 			accion = gestorTablero.getAccionEnCasillero(jugador, casillero);
