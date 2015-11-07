@@ -3,6 +3,7 @@
  */
 package monopoly.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +20,7 @@ import monopoly.model.tarjetas.Tarjeta;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.SinDineroException;
+import monopoly.util.message.game.SaveGameMessage;
 
 /**
  * @author Bostico Alejandro
@@ -54,7 +56,7 @@ public class PartidasController {
 	 * crea los jugadores.
 	 * 
 	 * @param senderID
-	 *            . id de conexión del jugador creador
+	 *            id de conexión del jugador creador
 	 * @param juego
 	 *            objecto juego, que posee los datos del juego
 	 */
@@ -71,6 +73,34 @@ public class PartidasController {
 		}
 	}
 
+	/**
+	 * Guarda el estado de un juego para continuar jugándolo más adelante.
+	 * 
+	 * @param uniqueIdJuego
+	 *            El {@code uniqueID} del juego que se quiere guardar
+	 * @throws IOException
+	 *             Si no se pudo guardar el juego.
+	 */
+	public void saveGame(int senderID, String uniqueIdJuego) {
+		juegoController = juegosControllerList.get(uniqueIdJuego);
+		monopolyGame = PartidasController.getInstance().getMonopolyGame();
+		SaveGameMessage saveGameMessage;
+
+		try {
+			SerializerController.saveGame(juegoController);
+			saveGameMessage = new SaveGameMessage(uniqueIdJuego, null);
+			GestorLogs.registrarLog("Se guardó el juego "
+					+ uniqueIdJuego);
+		} catch (IOException e) {
+			saveGameMessage = new SaveGameMessage(uniqueIdJuego, e);
+			GestorLogs.registrarError("Error al guardar el juego "
+					+ uniqueIdJuego);
+			GestorLogs.registrarException(e);
+		}
+
+		monopolyGame.sendToOne(senderID, saveGameMessage);
+	}
+
 	public void establecerTurnoJugador(int senderId, String idJuego, Dado dados)
 			throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
@@ -82,7 +112,10 @@ public class PartidasController {
 	 * 
 	 * @param senderId
 	 *            id de conexión del jugador humano.
-	 * @param message
+	 * @param idJuego
+	 *            El juego en el que se avanza
+	 * @param dados
+	 *            La cantidad de casilleros que se debe avanzar
 	 */
 	public void avanzarDeCasillero(int senderId, String idJuego, Dado dados)
 			throws Exception {
@@ -107,9 +140,9 @@ public class PartidasController {
 	 * Método solicitado por un jugador para comprar una propiedad.
 	 * 
 	 * @param senderId
-	 *            , id de conexión del jugador que desea comprar la propiedad.
-	 * @param tarjeta
-	 *            , tarjeta de la propiedad que desea comprar el jugador.
+	 *            id de conexión del jugador que desea comprar la propiedad.
+	 * @param nombrePropiedad
+	 *            El nombre de la propiedad que desea comprar el jugador.
 	 */
 	public void comprarPropiedad(String idJuego, int senderId,
 			String nombrePropiedad) throws SinDineroException, Exception {
@@ -118,12 +151,15 @@ public class PartidasController {
 	}
 
 	/**
-	 * Método ejecutado para realizar el objetivo de la tarjeta comunidad o suerte
-	 * que salió.
+	 * Método ejecutado para realizar el objetivo de la tarjeta comunidad o
+	 * suerte que salió.
 	 * 
-	 * @param idJuego identificador del juego.
-	 * @param senderId id de conexión del jugador humano.
-	 * @param tarjeta Tarjeta obtenida del mazo.
+	 * @param idJuego
+	 *            identificador del juego.
+	 * @param senderId
+	 *            id de conexión del jugador humano.
+	 * @param tarjeta
+	 *            Tarjeta obtenida del mazo.
 	 * @throws Exception
 	 */
 	public void jugarTarjeta(String idJuego, int senderId, Tarjeta tarjeta)

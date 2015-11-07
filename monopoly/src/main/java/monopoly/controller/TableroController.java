@@ -3,11 +3,10 @@
  */
 package monopoly.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.commons.lang.mutable.MutableBoolean;
 
 import monopoly.model.AccionEnCasillero;
 import monopoly.model.Banco;
@@ -30,12 +29,16 @@ import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.exception.SinDineroException;
 import monopoly.util.exception.SinEdificiosException;
 
+import org.apache.commons.lang.mutable.MutableBoolean;
+
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
  *
  */
-public class TableroController {
+public class TableroController implements Serializable{
+
+	private static final long serialVersionUID = 3508662290350150529L;
 
 	private Tablero tablero;
 

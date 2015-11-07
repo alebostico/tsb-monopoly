@@ -3,6 +3,7 @@
  */
 package monopoly.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +22,9 @@ import monopoly.util.exception.SinDineroException;
  * @author Moreno Pablo
  *
  */
-public class BancoController {
+public class BancoController implements Serializable {
 
+	private static final long serialVersionUID = -8147338284085100737L;
 	private Banco banco;
 
 	public BancoController(Casillero[] casilleros) {

@@ -1,5 +1,6 @@
 package monopoly.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,9 @@ import monopoly.util.list.Node;
  * @author Moreno Pablo
  *
  */
-public class JugadorController {
+public class JugadorController implements Serializable {
+
+	private static final long serialVersionUID = -3807835839032676507L;
 
 	private TreeMap<Integer, JugadorHumano> networkPlayers;
 

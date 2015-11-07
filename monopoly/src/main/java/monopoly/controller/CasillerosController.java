@@ -3,29 +3,33 @@
  */
 package monopoly.controller;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import java.io.Serializable;
 
 import monopoly.dao.ITarjetaCalleDao;
 import monopoly.dao.ITarjetaCompaniaDao;
 import monopoly.dao.ITarjetaEstacionDao;
 import monopoly.model.tablero.Casillero;
+import monopoly.model.tablero.Casillero.TipoCasillero;
 import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tablero.CasilleroCompania;
 import monopoly.model.tablero.CasilleroEstacion;
-import monopoly.model.tablero.Casillero.TipoCasillero;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaCompania;
 import monopoly.model.tarjetas.TarjetaEstacion;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
  *
  */
-public class CasillerosController {
+public class CasillerosController implements Serializable {
+
+	private static final long serialVersionUID = 684614217515869716L;
 
 	private static ApplicationContext appContext;
 

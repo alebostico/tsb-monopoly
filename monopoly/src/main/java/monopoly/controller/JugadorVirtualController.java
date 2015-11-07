@@ -1,5 +1,6 @@
 package monopoly.controller;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +36,9 @@ import monopoly.util.exception.SinEdificiosException;
  * @author Moreno Pablo
  *
  */
-public class JugadorVirtualController {
+public class JugadorVirtualController implements Serializable {
+
+	private static final long serialVersionUID = -6608937852893998730L;
 
 	/**
 	 * porcentaje de puja mínima. La puja inicial será este porcentaje del valor
@@ -1065,7 +1068,7 @@ public class JugadorVirtualController {
 		// capital). Aumentando si es cobrar
 		if (cantidad <= jugador.getDinero()) {
 			jugador.pagar(cantidad);
-			GestorLogs.registrarDebug("(JVController.java) El jugador virtual" + jugador.getNombre()
+			GestorLogs.registrarDebug("(JVController.java) El jugador virtual " + jugador.getNombre()
 					+ " pagó " + StringUtils.formatearAMoneda(cantidad));
 		}
 		// Declaro al jugador moroso
