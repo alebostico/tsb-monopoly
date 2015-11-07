@@ -3,6 +3,7 @@
  */
 package monopoly.client.controller;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
@@ -636,14 +637,13 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
-	private void guardarJuego(){
+	private void guardarJuego() {
 		SaveGameMessage saveMessage = new SaveGameMessage(getJuego()
-				.getUniqueID(),null);
+				.getUniqueID(), null);
 
 		ConnectionController.getInstance().send(saveMessage);
 	}
-	
-	
+
 	/**
 	 * Inicializa el reloj del tablero.
 	 */
@@ -1018,6 +1018,33 @@ public class TableroController extends AnchorPane implements Serializable,
 
 			}
 		});
+	}
+
+	/**
+	 * Muestra un mensaje con el resultado del guardado del juego.
+	 * 
+	 * @param exception
+	 *            Si el juego se guardó, {@code exception} es <code>null</code>.
+	 *            Si hubo algún error, se pasa la excepción que se generó.
+	 */
+	public void showJuegoGuardado(IOException exception) {
+		AlertType alertType;
+		String msgHeader;
+		String msgGuardado;
+		
+		if (exception == null) {
+			alertType = AlertType.INFORMATION;
+			msgHeader = "Juego guardado";
+			msgGuardado = "El juego se guardó correctamente";
+		} else {
+			alertType = AlertType.ERROR;
+			msgHeader = "El juego no se pudo guardar";
+			msgGuardado = exception.getMessage();
+		}
+
+		showMessageBox(alertType, "Estado de Juego",
+				msgHeader, msgGuardado);
+
 	}
 
 	private void showImpuestoDeLujo(Jugador jugadorActual, String mensaje,
@@ -2140,15 +2167,15 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	@FXML
-	void processGuardar(ActionEvent event){
+	void processGuardar(ActionEvent event) {
 		this.guardarJuego();
 	}
-	
+
 	@FXML
-	void processGuardarYSalir(ActionEvent event){
-		
+	void processGuardarYSalir(ActionEvent event) {
+
 	}
-	
+
 	// ======================================================================//
 	// ========================== Getter & Setter ===========================//
 	// ======================================================================//

@@ -26,6 +26,7 @@ import monopoly.util.message.LoginMessage;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.JoinGameMessage;
+import monopoly.util.message.game.SaveGameMessage;
 
 /**
  * @author Bostico Alejandro
@@ -70,6 +71,12 @@ public class MonopolyClient extends GameClient {
 			case ConstantesMensaje.CREATE_GAME_MESSAGE:
 				juego = (Juego) ((CreateGameMessage) message).message;
 				CrearJuegoController.getInstance().showCrearJuego(juego);
+				break;
+				
+			case ConstantesMensaje.SAVE_GAME_MESSAGE:
+				// La IOExceptino ES null si el juego se guardó correctamente
+				IOException exception = (IOException) ((SaveGameMessage) message).exception;
+				TableroController.getInstance().showJuegoGuardado(exception);
 				break;
 
 			case ConstantesMensaje.JOIN_GAME_MESSAGE:
