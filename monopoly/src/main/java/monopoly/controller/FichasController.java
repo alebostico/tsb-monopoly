@@ -1,5 +1,6 @@
 package monopoly.controller;
 
+import java.io.Serializable;
 import java.util.List;
 
 import monopoly.dao.IFichaDao;
@@ -10,34 +11,10 @@ import monopoly.util.GestorLogs;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class FichasController {
+public class FichasController implements Serializable {
 
+	private static final long serialVersionUID = -2015715413188534917L;
 	private static ApplicationContext appContext;
-
-	/**
-	 * Constructor por defecto. Crea las fichas.
-	 */
-	// public FichasController() {
-	// super();
-	// this.cargarFichas();
-	//
-	// }
-	//
-	// private List<Ficha> cargarFichas() {
-	//
-	// ApplicationContext appContext = new ClassPathXmlApplicationContext(
-	// "spring/config/BeanLocations.xml");
-	//
-	// // Cargar las tarjetas de Comunidad
-	// IFichaDao fichaDao = (IFichaDao) appContext.getBean("fichaDao");
-	// this.fichas = fichaDao.getAll();
-	//
-	// GestorLogs.registrarLog("Fichas cargadas");
-	// if (GestorLogs.getLoggingDetailLevel() >= GestorLogs.MSG_DEBUG)
-	// GestorLogs.registrarDebug(this.toString());
-	//
-	// return this.fichas;
-	// }
 
 	public static List<Ficha> getFichas() {
 		appContext = new ClassPathXmlApplicationContext(

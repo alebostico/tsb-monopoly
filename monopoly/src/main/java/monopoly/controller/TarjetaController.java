@@ -3,6 +3,7 @@
  */
 package monopoly.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
@@ -31,7 +32,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Moreno Pablo
  * 
  */
-public class TarjetaController {
+public class TarjetaController implements Serializable {
+
+	private static final long serialVersionUID = -2908148766649662966L;
 
 	private List<TarjetaSuerte> tarjetasSuerteList;
 

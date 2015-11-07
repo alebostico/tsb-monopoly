@@ -30,6 +30,7 @@ import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.JoinGameMessage;
 import monopoly.util.message.game.LoadGameMessage;
+import monopoly.util.message.game.SaveGameMessage;
 import monopoly.util.message.game.StartGameMessage;
 import monopoly.util.message.game.actions.BuyPropertyMessage;
 import monopoly.util.message.game.actions.ChanceCardMessage;
@@ -150,6 +151,12 @@ public class MonopolyGame extends GameServer {
 			case ConstantesMensaje.LOAD_GAME_MESSAGE:
 				juego = (Juego) ((LoadGameMessage) message).message;
 				PartidasController.getInstance().loadGame(senderId, juego);
+				break;
+
+			case ConstantesMensaje.SAVE_GAME_MESSAGE:
+				SaveGameMessage msgSaveGameMessage = (SaveGameMessage) message;
+				PartidasController.getInstance().saveGame(senderId,
+						msgSaveGameMessage.uniqueIdJuego);
 				break;
 
 			case ConstantesMensaje.START_GAME_MESSAGE:

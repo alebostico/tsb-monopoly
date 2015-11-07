@@ -94,6 +94,7 @@ import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
+import monopoly.util.message.game.SaveGameMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
 import monopoly.util.message.game.actions.PayToLeaveJailMessage;
@@ -108,7 +109,7 @@ import monopoly.util.message.game.actions.SuperTaxMessage;
 public class TableroController extends AnchorPane implements Serializable,
 		Initializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2964193640386734389L;
 
 	@FXML
 	private TilePane pCasillero01;
@@ -637,6 +638,14 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
+	private void guardarJuego(){
+		SaveGameMessage saveMessage = new SaveGameMessage(getJuego()
+				.getUniqueID(),null);
+
+		ConnectionController.getInstance().send(saveMessage);
+	}
+	
+	
 	/**
 	 * Inicializa el reloj del tablero.
 	 */
@@ -2146,6 +2155,16 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	}
 
+	@FXML
+	void processGuardar(ActionEvent event){
+		this.guardarJuego();
+	}
+	
+	@FXML
+	void processGuardarYSalir(ActionEvent event){
+		
+	}
+	
 	// ======================================================================//
 	// ========================== Getter & Setter ===========================//
 	// ======================================================================//

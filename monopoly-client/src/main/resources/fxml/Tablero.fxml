@@ -168,8 +168,8 @@
                                  <children>
                                     <MenuButton fx:id="btnMenu" alignment="CENTER" minWidth="140.0" mnemonicParsing="false" onAction="#processMenu" popupSide="TOP" styleClass="context-menu" text="Menú">
                                       <items>
-                                        <MenuItem mnemonicParsing="false" text="Action 1" />
-                                        <MenuItem mnemonicParsing="false" text="Action 2" />
+                                        <MenuItem mnemonicParsing="false" onAction="#processGuardar" text="Guardar juego" />
+                                        <MenuItem mnemonicParsing="false" onAction="#processGuardarYSalir" text="Guardar y salir" />
                                       </items>
                                     </MenuButton>
                                     <MenuButton fx:id="btnAcciones" alignment="CENTER" minWidth="140.0" mnemonicParsing="false" onAction="#processAcciones" popupSide="TOP" styleClass="context-menu" text="Acciones">

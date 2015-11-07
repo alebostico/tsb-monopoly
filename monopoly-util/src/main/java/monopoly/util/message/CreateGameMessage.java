@@ -12,7 +12,7 @@ import java.io.Serializable;
  */
 public class CreateGameMessage implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -4306156755488987109L;
 
 	public final Object message; // Original message from a client.
 	public final int senderID; // The ID of the client who sent that message.

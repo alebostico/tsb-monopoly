@@ -18,6 +18,7 @@ public class ConstantesMensaje {
 	public final static String CREATE_ACCOUNT_MESSAGE = "CreateAccountMessage";
 	public final static String CREATE_GAME_MESSAGE = "CreateGameMessage";
 	public final static String JOIN_GAME_MESSAGE = "JoinGameMessage";
+	public final static String SAVE_GAME_MESSAGE = "SaveGameMessage";
 	public final static String LOAD_GAME_MESSAGE = "LoadGameMessage";
 	public final static String START_GAME_MESSAGE = "StartGameMessage";
 	public final static String STATUS_GAME_MESSAGE = "MonopolyGameStatus";

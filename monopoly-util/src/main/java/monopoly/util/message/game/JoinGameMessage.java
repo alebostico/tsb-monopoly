@@ -12,8 +12,7 @@ import java.io.Serializable;
  */
 public class JoinGameMessage implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = -7439839818328698491L;
 	public final Object message; // Original message from a client.
 
 	/**

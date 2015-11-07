@@ -12,8 +12,7 @@ import java.io.Serializable;
  */
 public class LoginResultMessage implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 8618531386974771665L;
 	public final Object message; // Original message from a client.
 	public final int senderID; // The ID of the client who sent that message.
 

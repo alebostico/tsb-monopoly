@@ -17,7 +17,7 @@ import java.io.Serializable;
  */
 public final class DisconnectMessage implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -594042958086147078L;
 
 	/**
 	 * The message associated with the disconnect. When the Hub sends

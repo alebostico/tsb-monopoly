@@ -1,8 +1,7 @@
-/**
- * 
- */
+
 package monopoly.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +46,9 @@ import org.apache.commons.lang.mutable.MutableBoolean;
  * @author Moreno Pablo
  * 
  */
-public class JuegoController {
+public class JuegoController implements Serializable {
+	
+	private static final long serialVersionUID = 7433262560591847582L;
 
 	private Juego juego;
 
