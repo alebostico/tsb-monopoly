@@ -16,6 +16,7 @@ import monopoly.model.Jugador;
 import monopoly.model.Usuario;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaPropiedad;
+import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.constantes.EnumSalidaCarcel;
@@ -81,7 +82,10 @@ public class MonopolyGame extends GameServer {
 	 * respond by terminating that player's program.
 	 */
 	protected void playerDisconnected(int playerID) {
-		shutdownServer();
+		
+		GestorLogs.registrarLog(String.format(
+				"El jugador \"%s\" se desconectó", playerID));
+		// shutdownServer();
 	}
 
 	/**
@@ -98,7 +102,7 @@ public class MonopolyGame extends GameServer {
 		Jugador jugador;
 		Tarjeta tarjeta;
 		History history;
-		TarjetaPropiedad tarjetaPropiedad ;
+		TarjetaPropiedad tarjetaPropiedad;
 		ChatGameMessage msgChatGameMessage;
 		StartGameMessage msgStartGameMessage;
 		AdvanceInBoardMessage msgAdvanceInBoard;
@@ -110,10 +114,11 @@ public class MonopolyGame extends GameServer {
 		GoToJailMessage msgGoToJailMessage;
 		PayToPlayerMessage msgPayToPlayerMessage;
 		SuperTaxMessage msgSuperTax;
-		DoubleDiceJailMessage msgDoubleDiceJail;		
+		DoubleDiceJailMessage msgDoubleDiceJail;
 		HistoryGameMessage msgHistoryGame;
 		PayToLeaveJailMessage msgPayToLeaveJail;
-		
+		SaveGameMessage msgSaveGameMessage;
+
 		try {
 			switch (message.getClass().getSimpleName()) {
 			case ConstantesMensaje.LOGIN_MESSAGE:
@@ -154,7 +159,7 @@ public class MonopolyGame extends GameServer {
 				break;
 
 			case ConstantesMensaje.SAVE_GAME_MESSAGE:
-				SaveGameMessage msgSaveGameMessage = (SaveGameMessage) message;
+				msgSaveGameMessage = (SaveGameMessage) message;
 				PartidasController.getInstance().saveGame(senderId,
 						msgSaveGameMessage.uniqueIdJuego);
 				break;
@@ -228,25 +233,29 @@ public class MonopolyGame extends GameServer {
 				PartidasController.getInstance().impuestoAlCapital(senderId,
 						msgSuperTax.idJuego, msgSuperTax.tipoImpuesto);
 				break;
-				
+
 			case ConstantesMensaje.DOUBLE_DICE_JAIL_MESSAGE:
 				msgDoubleDiceJail = (DoubleDiceJailMessage) message;
-				PartidasController.getInstance().tirarDadosDoblesSalirCarcel(senderId,
-						msgDoubleDiceJail.idJuego, (Dado)msgDoubleDiceJail.dados);
+				PartidasController.getInstance().tirarDadosDoblesSalirCarcel(
+						senderId, msgDoubleDiceJail.idJuego,
+						(Dado) msgDoubleDiceJail.dados);
 				break;
-				
+
 			case ConstantesMensaje.PAY_TO_LEAVE_JAIL_MESSAGE:
 				msgPayToLeaveJail = (PayToLeaveJailMessage) message;
-				PartidasController.getInstance().pagarSalidaDeCarcel(senderId, msgPayToLeaveJail.idJuego, (EnumSalidaCarcel)msgPayToLeaveJail.message);
+				PartidasController.getInstance().pagarSalidaDeCarcel(senderId,
+						msgPayToLeaveJail.idJuego,
+						(EnumSalidaCarcel) msgPayToLeaveJail.message);
 				break;
 
 			case ConstantesMensaje.HISTORY_GAME_MESSAGE:
 				msgHistoryGame = (HistoryGameMessage) message;
 				history = (History) msgHistoryGame.message;
-				if(!StringUtils.IsNullOrEmpty(msgHistoryGame.idJuego))
-					PartidasController.getInstance().sendHistoryGame(senderId,msgHistoryGame.idJuego, history);
+				if (!StringUtils.IsNullOrEmpty(msgHistoryGame.idJuego))
+					PartidasController.getInstance().sendHistoryGame(senderId,
+							msgHistoryGame.idJuego, history);
 				break;
-				
+
 			case ConstantesMensaje.DISCONNECT_MESSAGE:
 
 				break;
