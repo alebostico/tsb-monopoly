@@ -584,7 +584,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			GestorLogs.registrarException(ex);
 		}
 	}
-	
+
 	public void sendChatMessage() {
 		Usuario usuario = usuarioLogueado;
 		String mensaje = this.txtMessageChat.getText();
@@ -670,17 +670,16 @@ public class TableroController extends AnchorPane implements Serializable,
 			@Override
 			public void run() {
 				String fxml;
-				//TirarDadosTurnoController controller;
+				// TirarDadosTurnoController controller;
 				TirarDadosController controller;
 				try {
 					fxml = ConstantesFXML.FXML_TIRAR_DADOS;
 					tirarDadosStage = new Stage();
-					//controller = (TirarDadosTurnoController) FXUtils
-					controller = (TirarDadosController) FXUtils
-							.cargarStage(tirarDadosStage, fxml,
-									"Monopoly - Tirar Dados para turnos",
-									false, false, Modality.APPLICATION_MODAL,
-									StageStyle.UNDECORATED);
+					// controller = (TirarDadosTurnoController) FXUtils
+					controller = (TirarDadosController) FXUtils.cargarStage(
+							tirarDadosStage, fxml,
+							"Monopoly - Tirar Dados para turnos", false, false,
+							Modality.APPLICATION_MODAL, StageStyle.UNDECORATED);
 					controller.setCurrentStage(tirarDadosStage);
 					controller.settearDatos(usuarioLogueado.getNombre());
 					controller.setTipoTirada(TipoTiradaEnum.TIRAR_TURNO);
@@ -727,9 +726,6 @@ public class TableroController extends AnchorPane implements Serializable,
 				mostrarTirarDados(true);
 				showMessageBox(AlertType.INFORMATION, "Turno de juego...",
 						null, "Es tu turno para jugar");
-//				if (estadoActual.currentPlayer.estaPreso()) {
-//					showOpcionesCarcel();
-//				}
 				break;
 			case JUGANDO:
 				bloquearAcciones(true);
@@ -739,7 +735,12 @@ public class TableroController extends AnchorPane implements Serializable,
 			case ESPERANDO_TURNO:
 				bloquearAcciones(true);
 				mostrarTirarDados(false);
-				// finalizarTurno();
+				break;
+			case PRESO:
+				showOpcionesCarcel();
+				break;
+			case LIBRE:
+
 				break;
 			default:
 				throw new CondicionInvalidaException("El estado de Turno "
@@ -761,13 +762,14 @@ public class TableroController extends AnchorPane implements Serializable,
 		Jugador jugadorActual = estadoActual.currentPlayer;
 		Tarjeta tarjetaSelected = estadoActual.tarjeta;
 		List<Jugador> turnosList = estadoActual.turnos;
-		String mensaje="";
+		String mensaje = "";
 
 		try {
 			switch (accionCasillero) {
 
 			case DESCANSO:
-				mensaje = String.format("Casillero %s, debe descansar.", casilleroActual.getNombreCasillero());
+				mensaje = String.format("Casillero %s, debe descansar.",
+						casilleroActual.getNombreCasillero());
 				showMessageBox(AlertType.INFORMATION, "Descanso...", null,
 						mensaje);
 				finalizarTurno();
@@ -1155,7 +1157,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
-	private void showOpcionesCarcel(){
+	private void showOpcionesCarcel() {
 		Platform.runLater(new Runnable() {
 
 			@Override
@@ -1176,12 +1178,13 @@ public class TableroController extends AnchorPane implements Serializable,
 					List<ButtonType> buttons;
 					Optional<ButtonType> result;
 
-					buttonPagar = new ButtonType(String.format("Pagar %s", StringUtils.formatearAMoneda(50)));
+					buttonPagar = new ButtonType(String.format("Pagar %s",
+							StringUtils.formatearAMoneda(50)));
 					buttonUsarTarjeta = new ButtonType("Usar Tarjeta");
 					buttonTirarDados = new ButtonType("Sacar dados dobles");
 					buttons = new ArrayList<ButtonType>();
 					buttons.add(buttonPagar);
-					if(jugadorActual.getTarjetaCarcelList().size()>0){
+					if (jugadorActual.getTarjetaCarcelList().size() > 0) {
 						buttons.add(buttonUsarTarjeta);
 					}
 					buttons.add(buttonTirarDados);
@@ -1194,17 +1197,19 @@ public class TableroController extends AnchorPane implements Serializable,
 					result = alert.showAndWait();
 
 					if (result.get() == buttonTirarDados) {
-						// TODO: habilitar para tirar dados y verificar que salga doble.
+						bloquearAcciones(false);
+						mostrarTirarDados(true);
 					} else if (result.get() == buttonUsarTarjeta) {
-						// TODO: eliminar la tarjeta de salida libre de la cárcel.
-					} else{
+						// TODO: eliminar la tarjeta de salida libre de la
+						// cárcel.
+					} else {
 
 						if (jugadorActual.getDinero() < 50) {
 							registrarDeuda(50);
-							showMessageBox(AlertType.WARNING,
-									"Comisaria",
+							showMessageBox(AlertType.WARNING, "Comisaria",
 									"Debes pagar para salir de la cárcel.",
-									String.format(msgSinDinero, "la salida de la cárcel"));
+									String.format(msgSinDinero,
+											"la salida de la cárcel"));
 							return;
 						}
 					}
@@ -1221,7 +1226,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			}
 		});
 	}
-	
+
 	private Jugador getPropietarioCasillero(Casillero casillero,
 			List<Jugador> turnosList) {
 		for (Jugador jugador : turnosList) {
@@ -2018,9 +2023,9 @@ public class TableroController extends AnchorPane implements Serializable,
 					alert.setTitle(title);
 					alert.setHeaderText(headerText);
 					alert.setContentText(message);
-						buttonAceptar = new ButtonType("Aceptar",
-								ButtonData.OK_DONE);
-						alert.getButtonTypes().setAll(buttonAceptar);
+					buttonAceptar = new ButtonType("Aceptar",
+							ButtonData.OK_DONE);
+					alert.getButtonTypes().setAll(buttonAceptar);
 					alert.showAndWait();
 					return null;
 				}
@@ -2057,15 +2062,14 @@ public class TableroController extends AnchorPane implements Serializable,
 				try {
 					fxml = ConstantesFXML.FXML_TIRAR_DADOS;
 					tirarDadosStage = new Stage();
-					title = estadoActual.currentPlayer.estaPreso() ? "Monopoly - Tirar Dados dobles." : "Monopoly - Tirar Dados avance de casilleros";
+					title = estadoActual.currentPlayer.estaPreso() ? "Monopoly - Tirar Dados dobles."
+							: "Monopoly - Tirar Dados avance de casilleros";
 					controller = (TirarDadosController) FXUtils.cargarStage(
-							tirarDadosStage, fxml,
-							title,
-							false, false, Modality.APPLICATION_MODAL,
-							StageStyle.DECORATED);
+							tirarDadosStage, fxml, title, false, false,
+							Modality.APPLICATION_MODAL, StageStyle.DECORATED);
 					controller.setCurrentStage(tirarDadosStage);
 					controller.settearDatos(usuarioLogueado.getNombre());
-					if(estadoActual.currentPlayer.estaPreso())
+					if (estadoActual.currentPlayer.estaPreso())
 						controller.setTipoTirada(TipoTiradaEnum.TIRAR_CARCEL);
 					else
 						controller.setTipoTirada(TipoTiradaEnum.TIRAR_AVANCE);

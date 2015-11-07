@@ -16,7 +16,9 @@ import monopoly.model.Jugador;
 import monopoly.model.Usuario;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaPropiedad;
+import monopoly.util.StringUtils;
 import monopoly.util.constantes.ConstantesMensaje;
+import monopoly.util.constantes.EnumSalidaCarcel;
 import monopoly.util.exception.SinDineroException;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
@@ -25,6 +27,7 @@ import monopoly.util.message.LoginMessage;
 import monopoly.util.message.game.AdvanceInBoardMessage;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
+import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.JoinGameMessage;
 import monopoly.util.message.game.LoadGameMessage;
 import monopoly.util.message.game.SaveGameMessage;
@@ -32,8 +35,10 @@ import monopoly.util.message.game.StartGameMessage;
 import monopoly.util.message.game.actions.BuyPropertyMessage;
 import monopoly.util.message.game.actions.ChanceCardMessage;
 import monopoly.util.message.game.actions.CommunityCardMessage;
+import monopoly.util.message.game.actions.DoubleDiceJailMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
+import monopoly.util.message.game.actions.PayToLeaveJailMessage;
 import monopoly.util.message.game.actions.PayToPlayerMessage;
 import monopoly.util.message.game.actions.SuperTaxMessage;
 
@@ -92,7 +97,23 @@ public class MonopolyGame extends GameServer {
 		Juego juego;
 		Jugador jugador;
 		Tarjeta tarjeta;
-
+		History history;
+		TarjetaPropiedad tarjetaPropiedad ;
+		ChatGameMessage msgChatGameMessage;
+		StartGameMessage msgStartGameMessage;
+		AdvanceInBoardMessage msgAdvanceInBoard;
+		BuyPropertyMessage msgBuyProperty;
+		ChanceCardMessage msgChanceCard;
+		CommunityCardMessage msgCommunityCard;
+		PayToBankMessage msgPayToBank;
+		CompleteTurnMessage msgCompleteTurnMessage;
+		GoToJailMessage msgGoToJailMessage;
+		PayToPlayerMessage msgPayToPlayerMessage;
+		SuperTaxMessage msgSuperTax;
+		DoubleDiceJailMessage msgDoubleDiceJail;		
+		HistoryGameMessage msgHistoryGame;
+		PayToLeaveJailMessage msgPayToLeaveJail;
+		
 		try {
 			switch (message.getClass().getSimpleName()) {
 			case ConstantesMensaje.LOGIN_MESSAGE:
@@ -103,21 +124,19 @@ public class MonopolyGame extends GameServer {
 				break;
 
 			case ConstantesMensaje.CHAT_GAME_MESSAGE:
-				ChatGameMessage msgChatGameMessage = (ChatGameMessage) message;
-				History history = (History) msgChatGameMessage.message;
+				msgChatGameMessage = (ChatGameMessage) message;
+				history = (History) msgChatGameMessage.message;
 				PartidasController.getInstance().sendChatMessage(
 						msgChatGameMessage.idJuego, history);
 				break;
 
 			case ConstantesMensaje.CREATE_ACCOUNT_MESSAGE:
-				// tomar el usuario y grabarlo
 				usuario = (Usuario) ((CreateAccountMessage) message).message;
 				UsuarioController.saveUsuario(usuario);
 				sendToOne(senderId, new CreateAccountMessage(senderId, usuario));
 				break;
 
 			case ConstantesMensaje.CREATE_GAME_MESSAGE:
-				// create juego
 				usuario = (Usuario) ((CreateGameMessage) message).message;
 				juego = PartidasController.getInstance()
 						.crearJuego(usuario, "");
@@ -125,7 +144,6 @@ public class MonopolyGame extends GameServer {
 				break;
 
 			case ConstantesMensaje.JOIN_GAME_MESSAGE:
-				// unirse al juego
 				jugador = (Jugador) ((JoinGameMessage) message).message;
 				PartidasController.getInstance().joinPlayerGame(jugador);
 				break;
@@ -142,76 +160,93 @@ public class MonopolyGame extends GameServer {
 				break;
 
 			case ConstantesMensaje.START_GAME_MESSAGE:
-				StartGameMessage msgStartGameMessage = (StartGameMessage) message;
+				msgStartGameMessage = (StartGameMessage) message;
 				PartidasController.getInstance().establecerTurnoJugador(
 						senderId, msgStartGameMessage.UniqueIdJuego,
 						(Dado) msgStartGameMessage.message);
 				break;
 
 			case ConstantesMensaje.ADVANCE_IN_BOARD_MESSAGE:
-				AdvanceInBoardMessage msgAdvanceInBoardMessage = (AdvanceInBoardMessage) message;
+				msgAdvanceInBoard = (AdvanceInBoardMessage) message;
 				PartidasController.getInstance().avanzarDeCasillero(senderId,
-						msgAdvanceInBoardMessage.idJuego,
-						(Dado) msgAdvanceInBoardMessage.dados);
+						msgAdvanceInBoard.idJuego,
+						(Dado) msgAdvanceInBoard.dados);
 				break;
 
 			case ConstantesMensaje.AUCTION_PROPERTY_MESSAGE:
 				break;
 
 			case ConstantesMensaje.BUY_PROPERTY_MESSAGE:
-				BuyPropertyMessage msgBuyPropertyMessage = (BuyPropertyMessage) message;
-				TarjetaPropiedad tarjetaPropiedad = (TarjetaPropiedad) msgBuyPropertyMessage.message;
+				msgBuyProperty = (BuyPropertyMessage) message;
+				tarjetaPropiedad = (TarjetaPropiedad) msgBuyProperty.message;
 				PartidasController.getInstance().comprarPropiedad(
-						msgBuyPropertyMessage.idJuego, senderId,
+						msgBuyProperty.idJuego, senderId,
 						tarjetaPropiedad.getNombrePropiedad());
-
 				break;
 
 			case ConstantesMensaje.CHANCE_CARD_MESSAGE:
-				ChanceCardMessage msgChanceCardMessage = (ChanceCardMessage) message;
-				tarjeta = (Tarjeta) msgChanceCardMessage.message;
+				msgChanceCard = (ChanceCardMessage) message;
+				tarjeta = (Tarjeta) msgChanceCard.message;
 				PartidasController.getInstance().jugarTarjeta(
-						msgChanceCardMessage.idJuego, senderId, tarjeta);
+						msgChanceCard.idJuego, senderId, tarjeta);
 				break;
 
 			case ConstantesMensaje.COMMUNITY_CARD_MESSAGE:
-				CommunityCardMessage msgCommunityCardMessage = (CommunityCardMessage) message;
-				tarjeta = (Tarjeta) msgCommunityCardMessage.message;
+				msgCommunityCard = (CommunityCardMessage) message;
+				tarjeta = (Tarjeta) msgCommunityCard.message;
 				PartidasController.getInstance().jugarTarjeta(
-						msgCommunityCardMessage.idJuego, senderId, tarjeta);
+						msgCommunityCard.idJuego, senderId, tarjeta);
 				break;
 
 			case ConstantesMensaje.PAY_TO_BANK_MESSAGE:
-				PayToBankMessage msgPayToBank = (PayToBankMessage) message;
+				msgPayToBank = (PayToBankMessage) message;
 				PartidasController.getInstance().pagarAlBanco(
 						msgPayToBank.idJuego, senderId, msgPayToBank.monto,
 						msgPayToBank.mensaje);
 				break;
 
 			case ConstantesMensaje.COMPLETE_TURN_MESSAGE:
-				CompleteTurnMessage msgCompleteTurnMessage = (CompleteTurnMessage) message;
+				msgCompleteTurnMessage = (CompleteTurnMessage) message;
 				PartidasController.getInstance().siguienteTurno(
 						msgCompleteTurnMessage.message);
 				break;
 
 			case ConstantesMensaje.GO_TO_JAIL_MESSAGE:
-				GoToJailMessage msgGoToJailMessage = (GoToJailMessage) message;
+				msgGoToJailMessage = (GoToJailMessage) message;
 				PartidasController.getInstance().irALaCarcel(senderId,
 						msgGoToJailMessage.idJuego);
 				break;
 
 			case ConstantesMensaje.PAY_TO_PLAYER_MESSAGE:
-				PayToPlayerMessage msgPayToPlayerMessage = (PayToPlayerMessage) message;
+				msgPayToPlayerMessage = (PayToPlayerMessage) message;
 				PartidasController.getInstance().addContadorPagos(senderId,
 						msgPayToPlayerMessage.idJuego);
 				break;
 
 			case ConstantesMensaje.SUPER_TAX_MESSAGE:
-				SuperTaxMessage msgSuperTax = (SuperTaxMessage) message;
+				msgSuperTax = (SuperTaxMessage) message;
 				PartidasController.getInstance().impuestoAlCapital(senderId,
 						msgSuperTax.idJuego, msgSuperTax.tipoImpuesto);
 				break;
+				
+			case ConstantesMensaje.DOUBLE_DICE_JAIL_MESSAGE:
+				msgDoubleDiceJail = (DoubleDiceJailMessage) message;
+				PartidasController.getInstance().tirarDadosDoblesSalirCarcel(senderId,
+						msgDoubleDiceJail.idJuego, (Dado)msgDoubleDiceJail.dados);
+				break;
+				
+			case ConstantesMensaje.PAY_TO_LEAVE_JAIL_MESSAGE:
+				msgPayToLeaveJail = (PayToLeaveJailMessage) message;
+				PartidasController.getInstance().pagarSalidaDeCarcel(senderId, msgPayToLeaveJail.idJuego, (EnumSalidaCarcel)msgPayToLeaveJail.message);
+				break;
 
+			case ConstantesMensaje.HISTORY_GAME_MESSAGE:
+				msgHistoryGame = (HistoryGameMessage) message;
+				history = (History) msgHistoryGame.message;
+				if(!StringUtils.IsNullOrEmpty(msgHistoryGame.idJuego))
+					PartidasController.getInstance().sendHistoryGame(senderId,msgHistoryGame.idJuego, history);
+				break;
+				
 			case ConstantesMensaje.DISCONNECT_MESSAGE:
 
 				break;

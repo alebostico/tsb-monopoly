@@ -26,7 +26,9 @@ import monopoly.model.History;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.message.game.AdvanceInBoardMessage;
+import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.StartGameMessage;
+import monopoly.util.message.game.actions.DoubleDiceJailMessage;
 
 /**
  * @author Bostico Alejandro
@@ -34,7 +36,7 @@ import monopoly.util.message.game.StartGameMessage;
  *
  */
 public class TirarDadosController extends AnchorPane implements Initializable {
-	
+
 	@FXML
 	private Label lblNombre;
 
@@ -55,13 +57,11 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 	private static TirarDadosController instance;
 
 	private TipoTiradaEnum tipoTirada;
-	
-	public enum TipoTiradaEnum{
-		TIRAR_TURNO,
-		TIRAR_AVANCE,
-		TIRAR_CARCEL
+
+	public enum TipoTiradaEnum {
+		TIRAR_TURNO, TIRAR_AVANCE, TIRAR_CARCEL
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -81,7 +81,7 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 		ImageView imgDado2;
 		History history;
 		String mensaje = "";
-		
+
 		try {
 			dados = new Dado();
 			hbPanel.getChildren().clear();
@@ -111,48 +111,77 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 					@Override
 					public void handle(ActionEvent e) {
 						ConnectionController.getInstance().send(
-								new StartGameMessage(TableroController.getInstance()
-										.getJuego().getUniqueID(), dados));
+								new StartGameMessage(
+										TableroController.getInstance()
+												.getJuego().getUniqueID(),
+										dados));
 						if (TirarDadosController.getInstance() != null)
-							TirarDadosController.getInstance().getCurrentStage()
-									.close();
+							TirarDadosController.getInstance()
+									.getCurrentStage().close();
 					}
 				});
-				mensaje = String
-						.format("Resultado de dados para turno fue %s.",
-								dados.getSuma());
+				mensaje = String.format(
+						"Resultado de dados para turno fue %s.",
+						dados.getSuma());
 				break;
-				
+
 			case TIRAR_AVANCE:
 				btnTirarDados.setOnAction(new EventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent e) {
 						ConnectionController.getInstance().send(
-								new AdvanceInBoardMessage(TableroController.getInstance()
-										.getJuego().getUniqueID(), dados));
+								new AdvanceInBoardMessage(
+										TableroController.getInstance()
+												.getJuego().getUniqueID(),
+										dados));
 						if (TirarDadosController.getInstance() != null)
-							TirarDadosController.getInstance().getCurrentStage()
-									.close();
+							TirarDadosController.getInstance()
+									.getCurrentStage().close();
 					}
 				});
-				mensaje = String
-						.format("Deberá avanzar %s casilleros.",
-								dados.getSuma());
+				mensaje = String.format("Deberá avanzar %s casilleros.",
+						dados.getSuma());
 				break;
 			case TIRAR_CARCEL:
-				break;			
+				btnTirarDados.setOnAction(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent e) {
+						HistoryGameMessage msg = new HistoryGameMessage(
+								new History(
+										StringUtils.getFechaActual(),
+										TableroController.getInstance()
+												.getUsuarioLogueado()
+												.getUserName(),
+										"Tira dados para salir de la cárcel."),
+								TableroController.getInstance().getJuego()
+										.getUniqueID());
+						ConnectionController.getInstance().send(msg);
+						ConnectionController.getInstance().send(
+								new DoubleDiceJailMessage(
+										TableroController.getInstance()
+												.getJuego().getUniqueID(),
+										dados));
+						if (TirarDadosController.getInstance() != null)
+							TirarDadosController.getInstance()
+									.getCurrentStage().close();
+					}
+				});
+				break;
 
 			default:
 				break;
 			}
-			
+
 			vbPanel.getChildren().add(btnTirarDados);
 
-			history = new History(StringUtils.getFechaActual(),
-					TableroController.getInstance().getUsuarioLogueado()
-							.getUserName(), mensaje);
-			TableroController.getInstance().addHistoryGame(history);
-
+			if (!StringUtils.IsNullOrEmpty(mensaje)) {
+				history = new History(StringUtils.getFechaActual(),
+						TableroController.getInstance().getUsuarioLogueado()
+								.getUserName(), mensaje);
+				ConnectionController.getInstance().send(
+						new HistoryGameMessage(history, TableroController
+								.getInstance().getJuego().getUniqueID()));
+			}
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
 			Alert alert = new Alert(AlertType.ERROR);
@@ -161,7 +190,7 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 			alert.showAndWait();
 		}
 	}
-	
+
 	public void settearDatos(String username) {
 		if (lblNombre != null)
 			lblNombre.setText(username);
