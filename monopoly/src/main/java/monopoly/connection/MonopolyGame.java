@@ -18,6 +18,7 @@ import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.StringUtils;
 import monopoly.util.constantes.ConstantesMensaje;
+import monopoly.util.constantes.EnumSalidaCarcel;
 import monopoly.util.exception.SinDineroException;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
@@ -36,6 +37,7 @@ import monopoly.util.message.game.actions.CommunityCardMessage;
 import monopoly.util.message.game.actions.DoubleDiceJailMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
+import monopoly.util.message.game.actions.PayToLeaveJailMessage;
 import monopoly.util.message.game.actions.PayToPlayerMessage;
 import monopoly.util.message.game.actions.SuperTaxMessage;
 
@@ -103,7 +105,13 @@ public class MonopolyGame extends GameServer {
 		ChanceCardMessage msgChanceCard;
 		CommunityCardMessage msgCommunityCard;
 		PayToBankMessage msgPayToBank;
+		CompleteTurnMessage msgCompleteTurnMessage;
+		GoToJailMessage msgGoToJailMessage;
+		PayToPlayerMessage msgPayToPlayerMessage;
+		SuperTaxMessage msgSuperTax;
+		DoubleDiceJailMessage msgDoubleDiceJail;		
 		HistoryGameMessage msgHistoryGame;
+		PayToLeaveJailMessage msgPayToLeaveJail;
 		
 		try {
 			switch (message.getClass().getSimpleName()) {
@@ -122,14 +130,12 @@ public class MonopolyGame extends GameServer {
 				break;
 
 			case ConstantesMensaje.CREATE_ACCOUNT_MESSAGE:
-				// tomar el usuario y grabarlo
 				usuario = (Usuario) ((CreateAccountMessage) message).message;
 				UsuarioController.saveUsuario(usuario);
 				sendToOne(senderId, new CreateAccountMessage(senderId, usuario));
 				break;
 
 			case ConstantesMensaje.CREATE_GAME_MESSAGE:
-				// create juego
 				usuario = (Usuario) ((CreateGameMessage) message).message;
 				juego = PartidasController.getInstance()
 						.crearJuego(usuario, "");
@@ -137,7 +143,6 @@ public class MonopolyGame extends GameServer {
 				break;
 
 			case ConstantesMensaje.JOIN_GAME_MESSAGE:
-				// unirse al juego
 				jugador = (Jugador) ((JoinGameMessage) message).message;
 				PartidasController.getInstance().joinPlayerGame(jugador);
 				break;
@@ -194,33 +199,38 @@ public class MonopolyGame extends GameServer {
 				break;
 
 			case ConstantesMensaje.COMPLETE_TURN_MESSAGE:
-				CompleteTurnMessage msgCompleteTurnMessage = (CompleteTurnMessage) message;
+				msgCompleteTurnMessage = (CompleteTurnMessage) message;
 				PartidasController.getInstance().siguienteTurno(
 						msgCompleteTurnMessage.message);
 				break;
 
 			case ConstantesMensaje.GO_TO_JAIL_MESSAGE:
-				GoToJailMessage msgGoToJailMessage = (GoToJailMessage) message;
+				msgGoToJailMessage = (GoToJailMessage) message;
 				PartidasController.getInstance().irALaCarcel(senderId,
 						msgGoToJailMessage.idJuego);
 				break;
 
 			case ConstantesMensaje.PAY_TO_PLAYER_MESSAGE:
-				PayToPlayerMessage msgPayToPlayerMessage = (PayToPlayerMessage) message;
+				msgPayToPlayerMessage = (PayToPlayerMessage) message;
 				PartidasController.getInstance().addContadorPagos(senderId,
 						msgPayToPlayerMessage.idJuego);
 				break;
 
 			case ConstantesMensaje.SUPER_TAX_MESSAGE:
-				SuperTaxMessage msgSuperTax = (SuperTaxMessage) message;
+				msgSuperTax = (SuperTaxMessage) message;
 				PartidasController.getInstance().impuestoAlCapital(senderId,
 						msgSuperTax.idJuego, msgSuperTax.tipoImpuesto);
 				break;
-
+				
 			case ConstantesMensaje.DOUBLE_DICE_JAIL_MESSAGE:
-				DoubleDiceJailMessage msgDoubleDiceJail = (DoubleDiceJailMessage) message;
+				msgDoubleDiceJail = (DoubleDiceJailMessage) message;
 				PartidasController.getInstance().tirarDadosDoblesSalirCarcel(senderId,
 						msgDoubleDiceJail.idJuego, (Dado)msgDoubleDiceJail.dados);
+				break;
+				
+			case ConstantesMensaje.PAY_TO_LEAVE_JAIL_MESSAGE:
+				msgPayToLeaveJail = (PayToLeaveJailMessage) message;
+				PartidasController.getInstance().pagarSalidaDeCarcel(senderId, msgPayToLeaveJail.idJuego, (EnumSalidaCarcel)msgPayToLeaveJail.message);
 				break;
 
 			case ConstantesMensaje.HISTORY_GAME_MESSAGE:

@@ -22,7 +22,7 @@ public class Estado implements Serializable {
 				"Tirando dado para avanzar de Casillero"), JUGANDO(
 				"Jugador Jugando"), ESPERANDO_TURNO(
 				"Esperando que el jugador termine su turno"), PRESO("Jugador en la cárcel"),
-				LIBRE("Queda libre de la cárcel"),
+				LIBRE("Queda libre de la cárcel"), DADOS_DOBLES("Jugando otro turno por dados dobles"),
 				FINALIZADO(
 				"finalizado");
 

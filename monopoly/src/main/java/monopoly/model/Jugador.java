@@ -280,6 +280,10 @@ public abstract class Jugador implements Serializable {
 	public void setUltimoResultado(Dado ultimoResultado) {
 		this.ultimoResultado = ultimoResultado;
 	}
+	
+	public boolean tiroDobles(){
+		return ultimoResultado.EsDoble();
+	}
 
 	/**
 	 * @return the tarjetaCarcelList

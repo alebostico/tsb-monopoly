@@ -17,6 +17,7 @@ import monopoly.model.Jugador;
 import monopoly.model.Usuario;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.util.GestorLogs;
+import monopoly.util.constantes.EnumSalidaCarcel;
 import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.SinDineroException;
 
@@ -145,7 +146,7 @@ public class PartidasController {
 	 */
 	public void siguienteTurno(String idJuego) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
-		juegoController.siguienteTurno();
+		juegoController.siguienteTurno(true);
 	}
 
 	/**
@@ -166,7 +167,7 @@ public class PartidasController {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.addContadorPagos();
 		if (juegoController.checkPagaronTodos()) {
-			juegoController.siguienteTurno();
+			juegoController.siguienteTurno(true);
 		}
 	}
 
@@ -202,12 +203,32 @@ public class PartidasController {
 		juegoController.pagarAlBanco(senderId, monto, mensaje);
 	}
 
+	/**
+	 * Método que verifica si el jugador ha sacado dados dobles. Si es así
+	 * sale de la  cárcel.
+	 * 
+	 * @param senderId
+	 * @param idJuego
+	 * @param dados
+	 * @throws Exception
+	 */
 	public void tirarDadosDoblesSalirCarcel(int senderId, String idJuego,
 			Dado dados) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.tirarDadosDoblesSalirCarcel(senderId, dados);
 	}
 
+	/**
+	 * Método que paga al banco para quedar en libertad.
+	 * 
+	 * @param senderId
+	 * @param idJuego
+	 */
+	public void pagarSalidaDeCarcel(int senderId, String idJuego, EnumSalidaCarcel tipoSalida) throws Exception, SinDineroException {
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.pagarSalidaDeCarcel(senderId, tipoSalida);
+	}
+	
 	/**
 	 * Envía a todos los jugadores una historia de una acción realizada por un
 	 * jugador en particular.

@@ -14,6 +14,7 @@ import monopoly.dao.ITarjetaEstacionDao;
 import monopoly.dao.ITarjetaSuerteDao;
 import monopoly.model.AccionEnTarjeta;
 import monopoly.model.Jugador;
+import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaComunidad;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
@@ -201,7 +202,6 @@ public class TarjetaController {
 			accion = AccionEnTarjeta.LIBRE_DE_CARCEL;
 			accion.setTarjetaCarcel(tarjetaComunidad);
 			accion.setMensaje("Queda libre de la carcel.");
-			// jugador.getTarjetaCarcelList().add(tarjetaComunidad);
 			break;
 		case 14:
 			accion = AccionEnTarjeta.COBRAR;
@@ -413,6 +413,38 @@ public class TarjetaController {
 		return tmpTarjetaComunidad;
 	}
 
+	public void quitarTarjetaLibreDeCarcel(Tarjeta tarjeta) {
+		if (tarjeta.isTarjetaSuerte()) {
+			for (TarjetaSuerte tarjetaSuerte : tarjetasSuerteList) {
+				if (tarjetaSuerte.getIdTarjeta() == ((TarjetaSuerte) tarjeta)
+						.getIdTarjeta()) {
+					tarjetasSuerteList.remove(tarjetaSuerte);
+					proximaTarjetaSuerte--;
+					break;
+				}
+			}
+		} else {
+			for (TarjetaComunidad tarjetaComunidad : tarjetasComunidadList) {
+				if (tarjetaComunidad.getIdTarjeta() == ((TarjetaComunidad) tarjeta)
+						.getIdTarjeta()) {
+					tarjetasComunidadList.remove(tarjetaComunidad);
+					proximaTarjetaComunidad--;
+					break;
+				}
+			}
+		}
+	}
+
+	public void agregarTarjetaLibreDeCarcel(Tarjeta tarjeta) {
+		if (tarjeta.isTarjetaSuerte()) {
+			tarjetasSuerteList.add(0, (TarjetaSuerte) tarjeta);
+			this.proximaTarjetaSuerte++;
+		} else {
+			tarjetasComunidadList.add(0, (TarjetaComunidad) tarjeta);
+			this.proximaTarjetaComunidad++;
+		}
+	}
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Tarjetas { ");
 
@@ -440,37 +472,37 @@ public class TarjetaController {
 	}
 
 	/**
-	 * Busca la tarjeta de la suerte correspondiente
-	 * al id recibido por parámetro.
-	 * @param idTarjeta id de Tarjeta suerte procedente
-	 * de la base de datos. 
+	 * Busca la tarjeta de la suerte correspondiente al id recibido por
+	 * parámetro.
+	 * 
+	 * @param idTarjeta
+	 *            id de Tarjeta suerte procedente de la base de datos.
 	 * @return objeto Tarjeta Suerte.
 	 */
-	public TarjetaSuerte getTarjetaSuerteById(int idTarjeta)
-	{
+	public TarjetaSuerte getTarjetaSuerteById(int idTarjeta) {
 		for (TarjetaSuerte tarjetaSuerte : tarjetasSuerteList) {
-			if(tarjetaSuerte.getIdTarjeta() == idTarjeta)
+			if (tarjetaSuerte.getIdTarjeta() == idTarjeta)
 				return tarjetaSuerte;
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Busca la tarjeta de la comunidad correspondiente
-	 * al id recibido por parámetro.
-	 * @param idTarjeta id de tarjeta comunidad procedente
-	 * de la base de datos.
+	 * Busca la tarjeta de la comunidad correspondiente al id recibido por
+	 * parámetro.
+	 * 
+	 * @param idTarjeta
+	 *            id de tarjeta comunidad procedente de la base de datos.
 	 * @return objecto Tarjeta Comunidad.
 	 */
-	public TarjetaComunidad getTarjetaComunidadById(int idTarjeta){
+	public TarjetaComunidad getTarjetaComunidadById(int idTarjeta) {
 		for (TarjetaComunidad tarjetaComunidad : tarjetasComunidadList) {
-			if(tarjetaComunidad.getIdTarjeta() == idTarjeta)
+			if (tarjetaComunidad.getIdTarjeta() == idTarjeta)
 				return tarjetaComunidad;
 		}
 		return null;
 	}
-	
-	
+
 	/**
 	 * devuelve todas las tarjetas de la suerte de la base de datos.
 	 * 
