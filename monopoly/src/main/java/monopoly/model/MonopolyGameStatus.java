@@ -23,7 +23,7 @@ public class MonopolyGameStatus implements Serializable {
 
 	public final EstadoJuego estadoTurno;
 
-	public final  AccionEnCasillero accionCasillero;
+	public final AccionEnCasillero accionCasillero;
 
 	public final Banco banco;
 
@@ -32,10 +32,12 @@ public class MonopolyGameStatus implements Serializable {
 	public final Jugador currentPlayer;
 
 	public final List<History> hirtoryList;
-	
+
 	public final Tarjeta tarjeta;
-	
+
 	private String mensajeAux;
+
+	private int monto;
 
 	public MonopolyGameStatus(List<Jugador> _turnos, Banco _banco,
 			Tablero _tablero, EstadoJuego _status, AccionEnCasillero _accion,
@@ -49,6 +51,7 @@ public class MonopolyGameStatus implements Serializable {
 		this.hirtoryList = _hirtoryList;
 		this.tarjeta = _tarjeta;
 		this.mensajeAux = "";
+		this.monto = 0;
 	}
 
 	public String getMensajeAux() {
@@ -58,6 +61,13 @@ public class MonopolyGameStatus implements Serializable {
 	public void setMensajeAux(String mensajeAux) {
 		this.mensajeAux = mensajeAux;
 	}
-	
+
+	public int getMonto() {
+		return monto;
+	}
+
+	public void setMonto(int monto) {
+		this.monto = monto;
+	}
 
 }

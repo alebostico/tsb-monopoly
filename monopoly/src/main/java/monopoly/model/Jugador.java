@@ -66,7 +66,7 @@ public abstract class Jugador implements Serializable {
 
 	@Transient
 	private Dado tiradaInicial;
-	
+
 	@Transient
 	private Dado ultimoResultado;
 
@@ -277,11 +277,16 @@ public abstract class Jugador implements Serializable {
 		return ultimoResultado.getSuma();
 	}
 
+	public String getParDados() {
+		return String.format("(%s - %s)", ultimoResultado.getValorDado(1),
+				ultimoResultado.getValorDado(2));
+	}
+
 	public void setUltimoResultado(Dado ultimoResultado) {
 		this.ultimoResultado = ultimoResultado;
 	}
-	
-	public boolean tiroDobles(){
+
+	public boolean tiroDobles() {
 		return ultimoResultado.EsDoble();
 	}
 

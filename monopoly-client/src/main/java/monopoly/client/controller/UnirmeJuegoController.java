@@ -17,100 +17,116 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import monopoly.client.util.ScreensFramework;
+import javafx.stage.StageStyle;
+import monopoly.client.util.FXUtils;
 import monopoly.model.Juego;
 import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesFXML;
-
-import org.controlsfx.dialog.Dialogs;
 
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
  *
  */
-@SuppressWarnings("deprecation")
 public class UnirmeJuegoController extends AnchorPane implements Initializable {
 
-    @FXML
-    private TableView<JuegoSimpleProperty> tblJuegos;
-    private List<Juego> juegosList;
-    private List<JuegoSimpleProperty> filtersJuegosList;
-    private ObservableList<JuegoSimpleProperty> obsJuegosList;
-
-    @FXML
-    private TextField txtUserName;
-
-    @FXML
-    private TableColumn<JuegoSimpleProperty, String> colNombre;
-    
 	@FXML
-    private TableColumn<JuegoSimpleProperty, String> colFecha;
+	private TableView<JuegoSimpleProperty> tblJuegos;
+	private List<Juego> juegosList;
+	private List<JuegoSimpleProperty> filtersJuegosList;
+	private ObservableList<JuegoSimpleProperty> obsJuegosList;
 
-    @FXML
-    private TableColumn<JuegoSimpleProperty, String> colCreador;
-    
-    @FXML
-    private TableColumn<JuegoSimpleProperty, String> colParticipantes;
-    
-    @FXML
-    private Button btnUnirmeJuego;
+	@FXML
+	private TextField txtUserName;
 
-    @FXML
-    private TextField txtNombreJuego;
+	@FXML
+	private TableColumn<JuegoSimpleProperty, String> colNombre;
 
-    @FXML
-    private Button btnCancelar;
+	@FXML
+	private TableColumn<JuegoSimpleProperty, String> colFecha;
 
-    @FXML
-    private TextField txtFechaHasta;
+	@FXML
+	private TableColumn<JuegoSimpleProperty, String> colCreador;
 
-    @FXML
-    private TextField txtFechaDesde;
+	@FXML
+	private TableColumn<JuegoSimpleProperty, String> colParticipantes;
 
-    @FXML
-    private Button btnBuscar;
-    
-    @FXML
+	@FXML
+	private Button btnUnirmeJuego;
+
+	@FXML
+	private TextField txtNombreJuego;
+
+	@FXML
+	private Button btnCancelar;
+
+	@FXML
+	private TextField txtFechaHasta;
+
+	@FXML
+	private TextField txtFechaDesde;
+
+	@FXML
+	private Button btnBuscar;
+
+	@FXML
 	private Stage currentStage;
 
 	@FXML
 	private Stage prevStage;
 
 	private Usuario usuarioLogueado = null;
-	
+
 	private Juego juegoSelected;
 
 	private static UnirmeJuegoController instance;
-	
-	/* (non-Javadoc)
-	 * @see javafx.fxml.Initializable#initialize(java.net.URL, java.util.ResourceBundle)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javafx.fxml.Initializable#initialize(java.net.URL,
+	 * java.util.ResourceBundle)
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		instance = this;
 		juegosList = new ArrayList<Juego>();
-		filtersJuegosList= new ArrayList<JuegoSimpleProperty>();
+		filtersJuegosList = new ArrayList<JuegoSimpleProperty>();
 		obsJuegosList = FXCollections.observableArrayList(filtersJuegosList);
+		if (tblJuegos != null) {
+			tblJuegos.setRowFactory(tv -> {
+				TableRow<JuegoSimpleProperty> row = new TableRow<>();
+				row.setOnMouseClicked(event -> {
+					if (event.getClickCount() == 2 && (!row.isEmpty())) {
+						JuegoSimpleProperty rowData = row.getItem();
+						unirmeAlJuego(rowData);
+					}
+				});
+				return row;
+			});
+		}
 	}
-	
+
 	public void showUnirmeJuego(List<Juego> juegosList) {
 		this.juegosList = juegosList;
-		if(filtersJuegosList == null)
+		if (filtersJuegosList == null)
 			filtersJuegosList = new ArrayList<JuegoSimpleProperty>();
-		for(Juego juego : this.juegosList){
+		for (Juego juego : this.juegosList) {
 			filtersJuegosList.add(new JuegoSimpleProperty(juego));
 		}
 		Platform.runLater(new Runnable() {
@@ -123,161 +139,187 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 			}
 		});
 	}
-	
-	private void configurarTabla(){
+
+	private void configurarTabla() {
 		// Columna Nombre
-		colNombre = new TableColumn<>(
-				"Juego");
+		colNombre = new TableColumn<>("Juego");
 		colNombre
 				.setCellValueFactory(new PropertyValueFactory<JuegoSimpleProperty, String>(
 						"nombre"));
-		
+
 		// Column Fecha
-		colFecha = new TableColumn<>(
-				"Fecha");
-		colFecha
-				.setCellValueFactory(new PropertyValueFactory<JuegoSimpleProperty, String>(
-						"fecha"));
-		
+		colFecha = new TableColumn<>("Fecha");
+		colFecha.setCellValueFactory(new PropertyValueFactory<JuegoSimpleProperty, String>(
+				"fecha"));
+
 		// Columna Creador
-		colCreador = new TableColumn<>(
-				"Creador");
+		colCreador = new TableColumn<>("Creador");
 		colCreador
 				.setCellValueFactory(new PropertyValueFactory<JuegoSimpleProperty, String>(
 						"creador"));
-		
+
 		// Columna Participantes
-		colParticipantes = new TableColumn<>(
-				"Participantes");
+		colParticipantes = new TableColumn<>("Participantes");
 		colParticipantes
 				.setCellValueFactory(new PropertyValueFactory<JuegoSimpleProperty, String>(
 						"participantes"));
-		
-		colNombre.prefWidthProperty().bind(tblJuegos.widthProperty().multiply(0.30));
-		colFecha.prefWidthProperty().bind(tblJuegos.widthProperty().multiply(0.15));
-		colCreador.prefWidthProperty().bind(tblJuegos.widthProperty().multiply(0.25));
-		colParticipantes.prefWidthProperty().bind(tblJuegos.widthProperty().multiply(0.30));
-		
+
+		colNombre.prefWidthProperty().bind(
+				tblJuegos.widthProperty().multiply(0.30));
+		colFecha.prefWidthProperty().bind(
+				tblJuegos.widthProperty().multiply(0.15));
+		colCreador.prefWidthProperty().bind(
+				tblJuegos.widthProperty().multiply(0.25));
+		colParticipantes.prefWidthProperty().bind(
+				tblJuegos.widthProperty().multiply(0.30));
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private void cargarTabla(){
-		obsJuegosList = FXCollections
-				.observableArrayList(filtersJuegosList);
+	private void cargarTabla() {
+		obsJuegosList = FXCollections.observableArrayList(filtersJuegosList);
 		tblJuegos.setItems(obsJuegosList);
-		tblJuegos.getColumns().setAll(
-				colNombre, colFecha, colCreador,
+		tblJuegos.getColumns().setAll(colNombre, colFecha, colCreador,
 				colParticipantes);
 	}
-	
+
 	@FXML
-    void processJoinGame(ActionEvent event) {
-    	final JuegoSimpleProperty juegoSelected = tblJuegos.getSelectionModel().getSelectedItem();
-    	String fxml = ConstantesFXML.FXML_UNIR_JUGADOR;
-		Parent root;
-		Stage stage = new Stage();
-		FXMLLoader loader = null;
+	void processJoinGame(ActionEvent event) {
+		JuegoSimpleProperty juegoSelected = null;
 		try {
-
-				loader = ScreensFramework.getLoader(fxml);
-
-				root = (Parent) loader.load();
-				UnirJugadorController controller = (UnirJugadorController) loader
-						.getController();
-
-				Scene scene = new Scene(root);
-				stage.setScene(scene);
-				stage.setTitle("Monopoly - Unirme a Juego");
-				stage.centerOnScreen();
-				controller.setPrevStage(currentStage);
-				controller.setCurrentStage(stage);
-				controller.setJuegoSelected(juegoSelected.getJuego());
-				controller.setUsuarioLogueado(usuarioLogueado);
-				stage.show();
+			juegoSelected = tblJuegos.getSelectionModel().getSelectedItem();
+			unirmeAlJuego(juegoSelected);
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
-			Dialogs.create().owner(currentStage).title("Error")
-			.masthead("Error mediante una excepción").message(ex.getMessage())
-			.showError();
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setContentText(ex.getMessage());
+			alert.getButtonTypes().setAll(
+					new ButtonType("Aceptar", ButtonData.OK_DONE));
+			alert.showAndWait();
 		}
-    	
-    }
+	}
 
-    @FXML
-    void processCancel(ActionEvent event) {
+	@FXML
+	void processCancel(ActionEvent event) {
 
-    }
+	}
 
-    @FXML
-    void processSearch(ActionEvent event) {
+	@FXML
+	void processSearch(ActionEvent event) {
 
-    }
-    
+	}
+
+	/**
+	 * Método para unirme al juego seleccionado.
+	 * 
+	 * @param juegoSelected
+	 *            Juego seleccionado.
+	 */
+	private void unirmeAlJuego(final JuegoSimpleProperty juegoSelected) {
+		Platform.runLater(new Runnable() {
+			private Stage unirmeJuegoStage;
+
+			@Override
+			public void run() {
+				String fxml;
+				UnirJugadorController controller;
+				try {
+					fxml = ConstantesFXML.FXML_UNIR_JUGADOR;
+					unirmeJuegoStage = new Stage();
+					// controller = (TirarDadosTurnoController) FXUtils
+					controller = (UnirJugadorController) FXUtils.cargarStage(
+							unirmeJuegoStage, fxml,
+							"Monopoly - Unirme a Juego", false, false,
+							Modality.APPLICATION_MODAL, StageStyle.UNDECORATED);
+					controller.setPrevStage(currentStage);
+					controller.setCurrentStage(unirmeJuegoStage);
+					controller.setJuegoSelected(juegoSelected.getJuego());
+					controller.setUsuarioLogueado(usuarioLogueado);
+					unirmeJuegoStage.showAndWait();
+				} catch (Exception ex) {
+					GestorLogs.registrarError(ex);
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setTitle("Error");
+					alert.setContentText(ex.getMessage());
+					alert.getButtonTypes().setAll(
+							new ButtonType("Aceptar", ButtonData.OK_DONE));
+					alert.showAndWait();
+				}
+			}
+		});
+	}
+
 	/**
 	 * @return the currentStage
 	 */
 	public Stage getCurrentStage() {
 		return currentStage;
 	}
-	
+
 	/**
-	 * @param currentStage the currentStage to set
+	 * @param currentStage
+	 *            the currentStage to set
 	 */
 	public void setCurrentStage(Stage currentStage) {
 		this.currentStage = currentStage;
 	}
-	
+
 	/**
 	 * @return the prevStage
 	 */
 	public Stage getPrevStage() {
 		return prevStage;
 	}
-	
+
 	/**
-	 * @param prevStage the prevStage to set
+	 * @param prevStage
+	 *            the prevStage to set
 	 */
 	public void setPrevStage(Stage prevStage) {
 		this.prevStage = prevStage;
 	}
-	
+
 	/**
 	 * @return the usuarioLogueado
 	 */
 	public Usuario getUsuarioLogueado() {
 		return usuarioLogueado;
 	}
-	
+
 	/**
-	 * @param usuarioLogueado the usuarioLogueado to set
+	 * @param usuarioLogueado
+	 *            the usuarioLogueado to set
 	 */
 	public void setUsuarioLogueado(Usuario usuarioLogueado) {
 		this.usuarioLogueado = usuarioLogueado;
 	}
-	
+
 	/**
 	 * @return the juegoUnido
 	 */
 	public Juego getJuegoSelected() {
 		return juegoSelected;
 	}
-	
+
 	/**
-	 * @param juegoUnido the juegoUnido to set
+	 * @param juegoUnido
+	 *            the juegoUnido to set
 	 */
 	public void setJuegoSelected(Juego juegoUnido) {
 		this.juegoSelected = juegoUnido;
 	}
+
 	/**
 	 * @return the instance
 	 */
 	public static UnirmeJuegoController getInstance() {
-		if(instance == null)
+		if (instance == null)
 			instance = new UnirmeJuegoController();
 		return instance;
 	}
-    
-	public static class JuegoSimpleProperty{
+
+	public static class JuegoSimpleProperty {
 		private final SimpleStringProperty nombre;
 		private final SimpleStringProperty fecha;
 		private final SimpleStringProperty creador;
@@ -286,10 +328,13 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
 		private JuegoSimpleProperty(Juego juego) {
-			String aux = juego.getJugadoresList().size() + " de " + juego.getCantJugadores();
+			String aux = juego.getJugadoresList().size() + " de "
+					+ juego.getCantJugadores();
 			this.nombre = new SimpleStringProperty(juego.getNombreJuego());
-			this.fecha = new SimpleStringProperty(dateFormat.format(juego.getFechaCreacion()));
-			this.creador = new SimpleStringProperty(juego.getOwner().getUserName());
+			this.fecha = new SimpleStringProperty(dateFormat.format(juego
+					.getFechaCreacion()));
+			this.creador = new SimpleStringProperty(juego.getOwner()
+					.getUserName());
 			this.participantes = new SimpleStringProperty(aux);
 			this.juego = new SimpleObjectProperty<Juego>(juego);
 		}
@@ -297,7 +342,7 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 		public String getNombre() {
 			return nombre.get();
 		}
-		
+
 		public String getFecha() {
 			return fecha.get();
 		}
@@ -309,15 +354,15 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 		public String getParticipantes() {
 			return participantes.get();
 		}
-		
+
 		public Juego getJuego() {
 			return juego.get();
 		}
-		
+
 		public void getNombre(String fNombre) {
 			nombre.set(fNombre);
 		}
-		
+
 		public void getFecha(String fFecha) {
 			fecha.set(fFecha);
 		}
@@ -329,12 +374,11 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 		public void getParticipantes(String fParticipantes) {
 			participantes.set(fParticipantes);
 		}
-		
-		public void setJuego(Juego fJuego)
-		{
+
+		public void setJuego(Juego fJuego) {
 			juego.set(fJuego);
 		}
-		
+
 	}
 
 }

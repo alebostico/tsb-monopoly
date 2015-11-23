@@ -78,7 +78,7 @@ public enum AccionEnCasillero implements Serializable {
 	 * Cuándo el casillero corresponde a propiedad de otros jugador que se
 	 * encuentra hipotecada. String[descripción]
 	 */
-	HIPOTECADA("Propiedad del jugador %s.",
+	HIPOTECADA("La Propiedad %s del jugador %s se encuentra hipotecada.",
 			"La propiedad %s se encuentra hipotecada", 0);
 
 	private String mensaje;

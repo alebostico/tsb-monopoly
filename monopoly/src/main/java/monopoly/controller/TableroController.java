@@ -25,6 +25,7 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.CasilleroComparator;
 import monopoly.util.GestorLogs;
+import monopoly.util.StringUtils;
 import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.exception.SinDineroException;
 import monopoly.util.exception.SinEdificiosException;
@@ -1121,33 +1122,27 @@ public class TableroController implements Serializable{
 			banco = getBancoController(pJugador.getJuego()).getBanco();
 			tarjetaCasillero = banco.getTarjetaPropiedadByCasillero(pCasillero);
 			tarjetaPropiedad = (TarjetaPropiedad) tarjetaCasillero;
-			// Nadie es propietario de la tarjeta.
+			//~~~> Nadie es propietario de la tarjeta.
 			if (tarjetaPropiedad.getJugador() == null) {
 				accionEnCasillero = AccionEnCasillero.DISPONIBLE_PARA_VENDER;
-				accionEnCasillero.setMensaje("La propiedad "
-						+ pCasillero.getNombreCasillero()
-						+ " está disponible para la venta.");
+				accionEnCasillero.setMensaje("Disponible para la venta.");
 			} else {
 				nombreJugadorActual = pJugador.getNombre().toLowerCase();
 				nombreJugadorPropietario = tarjetaPropiedad.getJugador()
 						.getNombre().toLowerCase();
 
-				// Si la propiedad pertenece al Jugador actual no hago nada.
+				//~~~> Si la propiedad pertenece al Jugador actual no hago nada.
 				if (nombreJugadorPropietario.equals(nombreJugadorActual)) {
 					accionEnCasillero = AccionEnCasillero.MI_PROPIEDAD;
-				} else // Si la propiedad pertenece a otro jugador
+				} else //~~~> Si la propiedad pertenece a otro jugador
 				{
-					// Si está hipotecada
+					//~~~> Si está hipotecada
 					if (tarjetaPropiedad.isHipotecada()) {
 						accionEnCasillero = AccionEnCasillero.HIPOTECADA;
 						mensaje = String.format(accionEnCasillero.getMensaje(),
-								nombreJugadorPropietario);
+								pCasillero.getNombreCasillero(), nombreJugadorPropietario);
 						accionEnCasillero.setMensaje(mensaje);
-						mensaje = String.format(
-								accionEnCasillero.getDescripcion(),
-								pCasillero.getNombreCasillero());
-						accionEnCasillero.setDescripcion(mensaje);
-					} else // calculo el alquiler
+					} else //~~~> calculo el alquiler
 					{
 						accionEnCasillero = AccionEnCasillero.PAGAR_ALQUILER;
 						switch (pCasillero.getTipoCasillero()
@@ -1170,7 +1165,7 @@ public class TableroController implements Serializable{
 							break;
 						}
 						mensaje = String.format(accionEnCasillero.getMensaje(),
-								montoAPagar, nombreJugadorPropietario);
+								StringUtils.formatearAMoneda(montoAPagar), nombreJugadorPropietario);
 						accionEnCasillero.setMensaje(mensaje);
 						accionEnCasillero.setMonto(montoAPagar);
 					}
@@ -1197,7 +1192,13 @@ public class TableroController implements Serializable{
 			accionEnCasillero = AccionEnCasillero.TARJETA_COMUNIDAD;
 			break;
 		case Casillero.CASILLERO_CARCEL:
+			accionEnCasillero = AccionEnCasillero.DESCANSO;
+			accionEnCasillero.setMensaje("En cárcel sólo de visita.");
+			break;
 		case Casillero.CASILLERO_DESCANSO:
+			accionEnCasillero = AccionEnCasillero.DESCANSO;
+			accionEnCasillero.setMensaje("Parking Gratuito");
+			break;
 		case Casillero.CASILLERO_SALIDA:
 			accionEnCasillero = AccionEnCasillero.DESCANSO;
 			mensaje = String.format(accionEnCasillero.getMensaje(),
