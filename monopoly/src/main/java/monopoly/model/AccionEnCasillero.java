@@ -27,19 +27,19 @@ public enum AccionEnCasillero implements Serializable {
 	 * Cuando otro jugador compró la propiedad, entonces hay que pagar alquiler.
 	 * String[descripción + monto + nombre jugador][monto a pagar]
 	 */
-	PAGAR_ALQUILER("Pagó %s de alquiler al jugador %s.", null, 0),
+	PAGAR_ALQUILER("Debe pagar %s de alquiler al jugador %s.", null, 0),
 
 	/**
 	 * Cuando el casillero al que avanzó corresponde a una tarjeta de la suerte.
 	 * String[descripción][Id Tarjeta de la Suerte]
 	 */
-	TARJETA_SUERTE("Sacó una tarjeta de la suerte.", null, 0),
+	TARJETA_SUERTE("Saca una tarjeta de la suerte.", null, 0),
 
 	/**
 	 * Cuando el casillero al que avanzó corresponde a una tarjeta de comunidad.
 	 * String[descripción][Id Tarjeta de Comunidad]
 	 */
-	TARJETA_COMUNIDAD("Sacó una tarjeta comunidad.", null, 0),
+	TARJETA_COMUNIDAD("Saca una tarjeta comunidad.", null, 0),
 
 	/**
 	 * Cuando el casillero corresponde a Ir a la Cárcel. String[descripción]

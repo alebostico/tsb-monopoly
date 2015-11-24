@@ -97,6 +97,7 @@ import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.SaveGameMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
+import monopoly.util.message.game.actions.PayRentMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
 import monopoly.util.message.game.actions.PayToLeaveJailMessage;
 import monopoly.util.message.game.actions.PayToPlayerMessage;
@@ -1015,7 +1016,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		AlertType alertType;
 		String msgHeader;
 		String msgGuardado;
-		
+
 		if (exception == null) {
 			alertType = AlertType.INFORMATION;
 			msgHeader = "Juego guardado";
@@ -1026,8 +1027,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			msgGuardado = exception.getMessage();
 		}
 
-		showMessageBox(alertType, "Estado de Juego",
-				msgHeader, msgGuardado);
+		showMessageBox(alertType, "Estado de Juego", msgHeader, msgGuardado);
 
 	}
 
@@ -1116,10 +1116,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			final Casillero casilleroActual, final List<Jugador> turnosList,
 			final String mensaje, final int monto) {
 
-		// Platform.runLater(new Runnable() {
-		//
-		// @Override
-		// public void run() {
+		PayRentMessage msgPayRent;
 		PayToPlayerMessage msgPayToPlayer;
 		Jugador jugadorPropietario;
 		String msgSinDinero;
@@ -1132,24 +1129,9 @@ public class TableroController extends AnchorPane implements Serializable,
 			showMessageBox(AlertType.INFORMATION, "Pagar...",
 					"Pagar alquiler.", mensaje);
 			if (jugadorActual.getDinero() >= monto) {
-				jugadorPropietario = getPropietarioCasillero(casilleroActual,
-						turnosList);
-				if (jugadorPropietario != null) {
-					mensajeAux = String
-							.format("Ha pagado %s al jugador %s en concepto de alquiler.",
-									StringUtils.formatearAMoneda(monto),
-									jugadorPropietario.getNombre());
-					msgPayToPlayer = new PayToPlayerMessage(mensajeAux,
-							jugadorPropietario, monto, idJuego);
-					ConnectionController.getInstance().send(msgPayToPlayer);
-				} else
-					showMessageBox(
-							AlertType.ERROR,
-							"Error",
-							null,
-							String.format(
-									"Se produjo un error, propietario inexistente para el casillero %s.",
-									casilleroActual.getNombreCasillero()));
+				msgPayRent = new PayRentMessage(idJuego,
+						casilleroActual.getNumeroCasillero());
+				ConnectionController.getInstance().send(msgPayRent);
 			} else {
 				registrarDeuda(monto);
 				showMessageBox(AlertType.WARNING, "Alquiler...",
@@ -1162,31 +1144,23 @@ public class TableroController extends AnchorPane implements Serializable,
 					"Se ha producido un error al Pagar el Alquiler.",
 					ex.getMessage());
 		}
-		// }
-		// });
 	}
 
 	private void irALaCarcel(final String mensaje) {
-//		Platform.runLater(new Runnable() {
-//			@Override
-//			public void run() {
-				try {
-					GoToJailMessage msgGoToJailMessage;
+		try {
+			GoToJailMessage msgGoToJailMessage;
 
-					showMessageBox(AlertType.INFORMATION, "Marche preso...",
-							null, mensaje);
-					// enviar mensaje;
-					msgGoToJailMessage = new GoToJailMessage(juego
-							.getUniqueID());
-					ConnectionController.getInstance().send(msgGoToJailMessage);
-				} catch (Exception ex) {
-					GestorLogs.registrarError(ex);
-					showMessageBox(AlertType.ERROR, "Error...",
-							"Se ha producido un error al Ir a la Cárcel.",
-							ex.getMessage());
-				}
-//			}
-//		});
+			showMessageBox(AlertType.INFORMATION, "Marche preso...", null,
+					mensaje);
+			// enviar mensaje;
+			msgGoToJailMessage = new GoToJailMessage(juego.getUniqueID());
+			ConnectionController.getInstance().send(msgGoToJailMessage);
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
+			showMessageBox(AlertType.ERROR, "Error...",
+					"Se ha producido un error al Ir a la Cárcel.",
+					ex.getMessage());
+		}
 	}
 
 	private void showOpcionesCarcel() {
@@ -1278,6 +1252,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private Jugador getPropietarioCasillero(Casillero casillero,
 			List<Jugador> turnosList) {
 		for (Jugador jugador : turnosList) {

@@ -21,7 +21,10 @@ import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tablero.CasilleroCompania;
 import monopoly.model.tablero.CasilleroEstacion;
 import monopoly.model.tarjetas.Tarjeta;
+import monopoly.model.tarjetas.TarjetaCalle;
+import monopoly.model.tarjetas.TarjetaCompania;
 import monopoly.model.tarjetas.TarjetaComunidad;
+import monopoly.model.tarjetas.TarjetaEstacion;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
@@ -241,14 +244,15 @@ public class JuegoController implements Serializable {
 			accion.setMonto(((TarjetaComunidad) tarjetaSelected).getIdTarjeta());
 			break;
 		case DISPONIBLE_PARA_VENDER:
+		case PAGAR_ALQUILER:
 		case IMPUESTO_DE_LUJO:
 		case IMPUESTO_SOBRE_CAPITAL:
 		case IR_A_LA_CARCEL:
-		case PAGAR_ALQUILER:
 		case DESCANSO:
 		case HIPOTECADA:
 		case MI_PROPIEDAD:
 			break;
+
 		default:
 			throw new CondicionInvalidaException(String.format(
 					"La acción %s es inválida.", accion.toString()));
@@ -782,10 +786,10 @@ public class JuegoController implements Serializable {
 
 		mensaje = accionEnTarjeta.getMensaje();
 
-		//~~~> Se manda las historias a los demás participantes.
+		// ~~~> Se manda las historias a los demás participantes.
 		sendToAll(new HistoryGameMessage(new History(
 				StringUtils.getFechaActual(), jugador.getNombre(), mensaje)));
-		
+
 		switch (accionEnTarjeta) {
 		case MOVER:
 		case MOVER_A:
@@ -827,9 +831,10 @@ public class JuegoController implements Serializable {
 	private void irALaCarcel(Jugador jugador) throws Exception {
 		gestorTablero.irACarcel(jugador);
 
-		sendToAll(new HistoryGameMessage(new History(StringUtils.getFechaActual(),
-				jugador.getNombre(), "Fue a la cárcel")));
-		
+		sendToAll(new HistoryGameMessage(new History(
+				StringUtils.getFechaActual(), jugador.getNombre(),
+				"Fue a la cárcel")));
+
 		if (jugador.isHumano())
 			siguienteTurno(false);
 	}
@@ -1016,7 +1021,51 @@ public class JuegoController implements Serializable {
 
 	}
 
-	public void sendChatMessage(History history) {
+	/**
+	 * Método para pagar el alquiler por haber caído en el casillero del jugador
+	 * propietario.
+	 * 
+	 * @param senderId
+	 * @param tarjetaPropiedad
+	 * @throws Exception
+	 */
+	public void pagarAlquiler(int senderId, int propiedadId)
+			throws SinDineroException, Exception {
+		Jugador jugador;
+		Jugador jugadorPropietario;
+		Casillero casillero;
+		TarjetaPropiedad tarjeta;
+		int monto;
+
+		jugador = gestorJugadores.getJugadorHumano(senderId);
+		casillero = gestorTablero.getCasillero(propiedadId);
+		tarjeta= gestorBanco.getBanco().getTarjetaPropiedadByCasillero(casillero);
+		
+		jugadorPropietario = tarjeta.getJugador();
+
+		if (tarjeta.isPropiedadCalle()) {
+			monto = ((TarjetaCalle) tarjeta).calcularAlquiler();
+		} else if (tarjeta.isPropiedadCompania()) {
+			monto = ((TarjetaCompania) tarjeta).calcularAlquiler(jugador
+					.getUltimoResultado());
+		} else {
+			monto = ((TarjetaEstacion) tarjeta).calcularAlquiler();
+		}
+
+		jugador.pagarAJugador(jugadorPropietario, monto);
+
+		sendToAll(new HistoryGameMessage(new History(
+				StringUtils.getFechaActual(), jugador.getNombre(),
+				String.format("Pagó %s al jugador %s en concepto de alquiler de la propiedad.",
+						StringUtils.formatearAMoneda(monto),
+						jugadorPropietario.getNombre(),
+						tarjeta.getNombre()))));
+		
+		siguienteTurno(true);
+
+	}
+
+	public void sendChatMessage(History history) throws Exception {
 		ChatGameMessage msgChatGameMessage = new ChatGameMessage(null, history);
 		sendToAll(msgChatGameMessage);
 	}
@@ -1029,7 +1078,7 @@ public class JuegoController implements Serializable {
 	// ============= Métodos para envío de mensaje al cliente. =============//
 	// =====================================================================//
 
-	private void sendToOne(int recipientID, Object message) throws Exception{
+	private void sendToOne(int recipientID, Object message) throws Exception {
 		PartidasController.getInstance().getMonopolyGame()
 				.sendToOne(recipientID, message);
 	}
@@ -1042,7 +1091,7 @@ public class JuegoController implements Serializable {
 	 * @param message
 	 *            Objeto mensaje que recibirán los jugadores humanos.
 	 */
-	private void sendToAll(Object message) throws Exception{
+	private void sendToAll(Object message) throws Exception {
 		for (int key : gestorJugadores.getIdConnectionClient()) {
 			PartidasController.getInstance().getMonopolyGame()
 					.sendToOne(key, message);
@@ -1060,7 +1109,7 @@ public class JuegoController implements Serializable {
 	 * @param senderId
 	 *            Jugador que envía mensaje al resto de los participantes.
 	 */
-	private void sendToOther(int senderId, Object message) throws Exception{
+	private void sendToOther(int senderId, Object message) throws Exception {
 		for (int key : gestorJugadores.getIdConnectionClient()) {
 			if (key != senderId)
 				PartidasController.getInstance().getMonopolyGame()
