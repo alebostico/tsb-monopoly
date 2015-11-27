@@ -34,6 +34,7 @@
 				<value>monopoly.model.tarjetas.TarjetaSuerte</value>
 				<value>monopoly.model.tarjetas.TarjetaComunidad</value>
 				<value>monopoly.model.Usuario</value>
+				<value>monopoly.model.Juego</value>
 			</list>
 		</property>
 

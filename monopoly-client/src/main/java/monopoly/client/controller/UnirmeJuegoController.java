@@ -195,7 +195,7 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 				controller.setUsuarioLogueado(usuarioLogueado);
 				stage.show();
 		} catch (Exception ex) {
-			GestorLogs.registrarError(ex);
+			GestorLogs.registrarException(ex);
 			Dialogs.create().owner(currentStage).title("Error")
 			.masthead("Error mediante una excepción").message(ex.getMessage())
 			.showError();
@@ -205,7 +205,8 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 
     @FXML
     void processCancel(ActionEvent event) {
-
+		currentStage.close();
+		prevStage.show();
     }
 
     @FXML

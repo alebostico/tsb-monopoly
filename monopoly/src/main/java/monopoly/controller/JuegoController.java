@@ -1,10 +1,11 @@
-
 package monopoly.controller;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import monopoly.dao.IJuegoDao;
 import monopoly.model.AccionEnCasillero;
 import monopoly.model.AccionEnTarjeta;
 import monopoly.model.Dado;
@@ -37,9 +38,12 @@ import monopoly.util.message.ExceptionMessage;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.HistoryGameMessage;
+import monopoly.util.message.game.ReloadSavedGameMessage;
 import monopoly.util.message.game.actions.PayToPlayerMessage;
 
 import org.apache.commons.lang.mutable.MutableBoolean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @author Bostico Alejandro
@@ -47,8 +51,11 @@ import org.apache.commons.lang.mutable.MutableBoolean;
  * 
  */
 public class JuegoController implements Serializable {
-	
+
 	private static final long serialVersionUID = 7433262560591847582L;
+
+	static ApplicationContext appContext = new ClassPathXmlApplicationContext(
+			"spring/config/BeanLocations.xml");
 
 	private Juego juego;
 
@@ -103,6 +110,28 @@ public class JuegoController implements Serializable {
 			estadoJuego.actualizarEstadoJuego();
 			gestorJugadores.establecerTurnos();
 		}
+	}
+
+	/**
+	 * Restaura un juego serializado.
+	 * 
+	 * @throws IOException
+	 *             Si no se encuentra el juego.
+	 */
+	public void reloadGame(int senderID) throws IOException {
+
+		for (JugadorHumano jugador : this.gestorJugadores.getListaJugadoresHumanos()) {
+			jugador.setSenderID(senderID);
+		}
+		
+		List<History> historia = new ArrayList<History>();
+		historia.add(new History(StringUtils.getFechaActual(), gestorJugadores
+				.getCurrentPlayer().getNombre(), "Restauró el juego."));
+		MonopolyGameStatus status = new MonopolyGameStatus(
+				gestorJugadores.getTurnoslist(), gestorBanco.getBanco(),
+				gestorTablero.getTablero(), EstadoJuego.TIRAR_DADO, null,
+				gestorJugadores.getCurrentPlayer(), historia, null);
+		sendToOne(senderID, new ReloadSavedGameMessage(senderID, this.getJuego(), status));
 	}
 
 	/**
@@ -312,8 +341,8 @@ public class JuegoController implements Serializable {
 		}
 
 		try {
-			//TODO hacer la lógica de salida de cárcel del jugador virtual.
-			
+			// TODO hacer la lógica de salida de cárcel del jugador virtual.
+
 			dados = new Dado();
 			jugadorActual.setUltimoResultado(dados);
 
@@ -464,37 +493,38 @@ public class JuegoController implements Serializable {
 		List<History> historyList = new ArrayList<History>();
 
 		jugadorActual = gestorJugadores.getCurrentPlayer();
-		if(validaDadosDobles && jugadorActual.tiroDobles()){
+		if (validaDadosDobles && jugadorActual.tiroDobles()) {
 			history = new History(StringUtils.getFechaActual(),
-					jugadorActual.getNombre(), "Juega otro turno por sacar dados dobles.");
+					jugadorActual.getNombre(),
+					"Juega otro turno por sacar dados dobles.");
 			historyList.add(history);
-			
+
 			if (jugadorActual.isVirtual()) {
-				status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+				status = new MonopolyGameStatus(
+						gestorJugadores.getTurnoslist(),
 						gestorBanco.getBanco(), gestorTablero.getTablero(),
 						EstadoJuego.ESPERANDO_TURNO, null,
 						gestorJugadores.getCurrentPlayer(), historyList, null);
 				sendToAll(status);
 
 				avanzarDeCasilleroJV();
-			}
-			else {
-				status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+			} else {
+				status = new MonopolyGameStatus(
+						gestorJugadores.getTurnoslist(),
 						gestorBanco.getBanco(), gestorTablero.getTablero(),
-						EstadoJuego.DADOS_DOBLES, null, gestorJugadores.getCurrentPlayer(),
-						historyList, null);
+						EstadoJuego.DADOS_DOBLES, null,
+						gestorJugadores.getCurrentPlayer(), historyList, null);
 				sendToOne(((JugadorHumano) jugadorActual).getSenderID(), status);
 
-				status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+				status = new MonopolyGameStatus(
+						gestorJugadores.getTurnoslist(),
 						gestorBanco.getBanco(), gestorTablero.getTablero(),
 						EstadoJuego.ESPERANDO_TURNO, null,
 						gestorJugadores.getCurrentPlayer(), historyList, null);
 				sendToOther(((JugadorHumano) jugadorActual).getSenderID(),
 						status);
 			}
-		}
-		else
-		{
+		} else {
 			jugadorSiguiente = gestorJugadores.siguienteTurno();
 
 			history = new History(StringUtils.getFechaActual(),
@@ -502,11 +532,13 @@ public class JuegoController implements Serializable {
 			historyList.add(history);
 			history = new History(StringUtils.getFechaActual(),
 					jugadorSiguiente.getNombre(), String.format(
-							"Turno del jugador %s.", jugadorSiguiente.getNombre()));
+							"Turno del jugador %s.",
+							jugadorSiguiente.getNombre()));
 			historyList.add(history);
 
 			if (jugadorSiguiente.isVirtual()) {
-				status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+				status = new MonopolyGameStatus(
+						gestorJugadores.getTurnoslist(),
 						gestorBanco.getBanco(), gestorTablero.getTablero(),
 						EstadoJuego.ESPERANDO_TURNO, null,
 						gestorJugadores.getCurrentPlayer(), historyList, null);
@@ -517,13 +549,16 @@ public class JuegoController implements Serializable {
 				estadoJuego = EstadoJuego.TIRAR_DADO;
 				if (gestorJugadores.getCurrentPlayer().estaPreso())
 					estadoJuego = EstadoJuego.PRESO;
-				status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+				status = new MonopolyGameStatus(
+						gestorJugadores.getTurnoslist(),
 						gestorBanco.getBanco(), gestorTablero.getTablero(),
 						estadoJuego, null, gestorJugadores.getCurrentPlayer(),
 						historyList, null);
-				sendToOne(((JugadorHumano) jugadorSiguiente).getSenderID(), status);
+				sendToOne(((JugadorHumano) jugadorSiguiente).getSenderID(),
+						status);
 
-				status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+				status = new MonopolyGameStatus(
+						gestorJugadores.getTurnoslist(),
 						gestorBanco.getBanco(), gestorTablero.getTablero(),
 						EstadoJuego.ESPERANDO_TURNO, null,
 						gestorJugadores.getCurrentPlayer(), historyList, null);
@@ -959,7 +994,7 @@ public class JuegoController implements Serializable {
 								: "Caja de la Comunidad");
 			}
 		}
-		
+
 		jugador.setPreso(false);
 
 		if (!StringUtils.IsNullOrEmpty(mensaje)) {
@@ -991,6 +1026,69 @@ public class JuegoController implements Serializable {
 
 	public void sendHistoryGame(History history) throws Exception {
 		sendToAll(new HistoryGameMessage(history));
+	}
+
+	/**
+	 * Actualiza los datos de un juego guardado
+	 * 
+	 * @param juego
+	 *            El juego a actualizar
+	 * @return El juego actualizado
+	 */
+	public static Juego updateJuego(Juego juego) {
+		IJuegoDao juegoDao = (IJuegoDao) appContext.getBean("juegoDao");
+		juegoDao.update(juego);
+		return juego;
+	}
+
+	/**
+	 * Guarda un juego en la base de datos
+	 * 
+	 * @param juego
+	 *            El juego que se quiere guardar
+	 * @return El juego guardado
+	 */
+	public static Juego saveJuego(Juego juego) {
+		IJuegoDao juegoDao = (IJuegoDao) appContext.getBean("juegoDao");
+		juegoDao.save(juego);
+		return juego;
+	}
+
+	/**
+	 * Borra un juego de la base de datos
+	 * 
+	 * @param juego
+	 *            El juego que se quiere borrar
+	 * @return El juego que se borro
+	 */
+	public static Juego deleteJuego(Juego juego) {
+		IJuegoDao juegoDao = (IJuegoDao) appContext.getBean("juegoDao");
+		juegoDao.delete(juego);
+		return juego;
+	}
+
+	/**
+	 * Busca en la base de datos todos los juegos guardados de un usuario.
+	 * 
+	 * @param usuario
+	 *            El usuario creador de los juegos que se quiere buscar.
+	 * @return Los Juegos creados por el {@code usuario}
+	 */
+	public static List<Juego> buscarJuegosGuardados(Usuario usuario) {
+		IJuegoDao juegoDao = (IJuegoDao) appContext.getBean("juegoDao");
+		return juegoDao.getJuegoGuardados(usuario);
+	}
+
+	/**
+	 * Busca un juego guardado en la base de datos
+	 * 
+	 * @param nombre
+	 *            El nombre del juego guardado
+	 * @return El juego
+	 */
+	public static Juego buscarJuegoGuardado(String nombre) {
+		IJuegoDao juegoDao = (IJuegoDao) appContext.getBean("juegoDao");
+		return juegoDao.findJuegoByName(nombre);
 	}
 
 	// =====================================================================//

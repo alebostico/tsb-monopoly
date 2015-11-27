@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="530.0" minWidth="650.0" prefHeight="530.0" prefWidth="650.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.ReanudarJuegoController">
+   <children>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <VBox alignment="CENTER" minHeight="200.0" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <ImageView fitHeight="196.0" fitWidth="476.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/logos/Logo.png" />
+                     </image>
+                  </ImageView>
+                  <HBox alignment="CENTER">
+                     <children>
+                        <TableView id="tblJuegos" fx:id="tblJuegos" minWidth="590.0">
+                           <columns>
+                              <TableColumn id="collumnNombre" fx:id="colNombre" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" resizable="false" text="Nombre" />
+                              <TableColumn id="collumnFecha" fx:id="colFecha" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" resizable="false" text="Fecha" />
+                              <TableColumn id="collumnParticipantes" fx:id="colParticipantes" maxWidth="140.0" minWidth="140.0" prefWidth="140.0" resizable="false" text="Participantes" />
+                           </columns>
+                        </TableView>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" minHeight="80.0" spacing="20.0">
+                     <children>
+                        <Button id="btnCancelar" fx:id="btnCancelar" mnemonicParsing="false" onAction="#processCancel" text="Cancelar" />
+                        <Button fx:id="btnUnirmeJuego" contentDisplay="CENTER" mnemonicParsing="false" onAction="#processLoadGame" text="Reanudar Juego" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </AnchorPane>
+   </children>
+   <stylesheets>
+      <URL value="@../css/Images_Background.css" />
+      <URL value="@../css/Sheet_tablero.css" />
+   </stylesheets>
+</StackPane>
