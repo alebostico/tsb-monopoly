@@ -37,7 +37,7 @@ import org.apache.commons.lang.mutable.MutableBoolean;
  * @author Moreno Pablo
  *
  */
-public class TableroController implements Serializable{
+public class TableroController implements Serializable {
 
 	private static final long serialVersionUID = 3508662290350150529L;
 
@@ -1122,27 +1122,30 @@ public class TableroController implements Serializable{
 			banco = getBancoController(pJugador.getJuego()).getBanco();
 			tarjetaCasillero = banco.getTarjetaPropiedadByCasillero(pCasillero);
 			tarjetaPropiedad = (TarjetaPropiedad) tarjetaCasillero;
-			//~~~> Nadie es propietario de la tarjeta.
+			// ~~~> Nadie es propietario de la tarjeta.
 			if (tarjetaPropiedad.getJugador() == null) {
 				accionEnCasillero = AccionEnCasillero.DISPONIBLE_PARA_VENDER;
 				accionEnCasillero.setMensaje("Disponible para la venta.");
+
 			} else {
 				nombreJugadorActual = pJugador.getNombre().toLowerCase();
 				nombreJugadorPropietario = tarjetaPropiedad.getJugador()
 						.getNombre().toLowerCase();
 
-				//~~~> Si la propiedad pertenece al Jugador actual no hago nada.
+				// ~~~> Si la propiedad pertenece al Jugador actual no hago
+				// nada.
 				if (nombreJugadorPropietario.equals(nombreJugadorActual)) {
 					accionEnCasillero = AccionEnCasillero.MI_PROPIEDAD;
-				} else //~~~> Si la propiedad pertenece a otro jugador
+				} else // ~~~> Si la propiedad pertenece a otro jugador
 				{
-					//~~~> Si está hipotecada
+					// ~~~> Si está hipotecada
 					if (tarjetaPropiedad.isHipotecada()) {
 						accionEnCasillero = AccionEnCasillero.HIPOTECADA;
 						mensaje = String.format(accionEnCasillero.getMensaje(),
-								pCasillero.getNombreCasillero(), nombreJugadorPropietario);
+								pCasillero.getNombreCasillero(),
+								nombreJugadorPropietario);
 						accionEnCasillero.setMensaje(mensaje);
-					} else //~~~> calculo el alquiler
+					} else // ~~~> calculo el alquiler
 					{
 						accionEnCasillero = AccionEnCasillero.PAGAR_ALQUILER;
 						switch (pCasillero.getTipoCasillero()
@@ -1165,7 +1168,8 @@ public class TableroController implements Serializable{
 							break;
 						}
 						mensaje = String.format(accionEnCasillero.getMensaje(),
-								StringUtils.formatearAMoneda(montoAPagar), nombreJugadorPropietario);
+								StringUtils.formatearAMoneda(montoAPagar),
+								nombreJugadorPropietario);
 						accionEnCasillero.setMensaje(mensaje);
 						accionEnCasillero.setMonto(montoAPagar);
 					}
@@ -1209,6 +1213,11 @@ public class TableroController implements Serializable{
 			throw new CondicionInvalidaException(
 					"Tipo de Casillero inexistente.");
 		}
+
+		GestorLogs.registrarLog(String.format(
+				"Jugador: %s ~~~> acción : %s ~~~> Mensaje %s.",
+				pJugador.getNombre(), accionEnCasillero.toString(),
+				accionEnCasillero.getMensaje()));
 
 		return accionEnCasillero;
 	}

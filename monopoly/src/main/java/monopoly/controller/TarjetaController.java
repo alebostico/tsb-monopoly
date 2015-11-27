@@ -217,6 +217,12 @@ public class TarjetaController implements Serializable {
 		default:
 			break;
 		}
+		
+		GestorLogs.registrarLog(String.format(
+				"Jugador: %s ~~~> acción : %s ~~~> Mensaje %s ~~~> Objetivo: %s.",
+				jugador.getNombre(), accion.toString(),
+				accion.getMensaje(), tarjetaComunidad.getObjetivo()));
+		
 		return accion;
 	}
 
@@ -378,11 +384,13 @@ public class TarjetaController implements Serializable {
 			accion.setCobraSalida(true);
 			accion.setMensaje("Va al casillero ESTACIÓN DE LAS DELICIAS.");
 			break;
-		// return (tableroController.moverACasillero(jugador, 16, true) !=
-		// null);
 		default:
 			break;
 		}
+		GestorLogs.registrarLog(String.format(
+				"Jugador: %s ~~~> acción : %s ~~~> Mensaje %s ~~~> Objetivo: %s.",
+				jugador.getNombre(), accion.toString(),
+				accion.getMensaje(), tarjetaSuerte.getObjetivo()));
 		return accion;
 	}
 

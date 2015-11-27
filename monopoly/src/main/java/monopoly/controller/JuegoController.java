@@ -291,6 +291,8 @@ public class JuegoController implements Serializable {
 				.getCurrentPlayer();
 		String mensaje = "";
 		MutableBoolean cobraSalida = new MutableBoolean(true);
+		
+		// ~~~> 
 
 		mensaje = gestorJugadoresVirtuales.deshipotecarAleatorio(jugadorActual);
 
@@ -329,14 +331,11 @@ public class JuegoController implements Serializable {
 
 			if (cobraSalida.booleanValue())
 				gestorBanco.pagarPasoSalida(jugadorActual);
-
-			accion = gestorTablero.getAccionEnCasillero(jugadorActual,
-					casillero);
-
+			
 			mensaje = String.format(
 					"Avanzó %s casilleros. Se encuentra en el casillero %s.",
 					dados.getSuma(), casillero.getNombreCasillero());
-
+			
 			history = new History(StringUtils.getFechaActual(),
 					jugadorActual.getNombre(), mensaje);
 			historyList = new ArrayList<History>();
@@ -347,8 +346,10 @@ public class JuegoController implements Serializable {
 					EstadoJuego.ESPERANDO_TURNO, null, jugadorActual,
 					historyList, null);
 			sendToAll(status);
+			
 
-			// Espero 2 segundo para mostrar al cliente el primer mensaje.
+			accion = gestorTablero.getAccionEnCasillero(jugadorActual,
+					casillero);
 
 			sendToAll(new HistoryGameMessage(new History(
 					StringUtils.getFechaActual(), jugadorActual.getNombre(),
@@ -922,6 +923,7 @@ public class JuegoController implements Serializable {
 		jugador.setUltimoResultado(dados);
 
 		if (dados.EsDoble()) {
+			//~~~>
 			jugador.resetCantidadTurnosCarcel();
 			jugador.setPreso(false);
 			mensaje = String.format(
@@ -932,7 +934,7 @@ public class JuegoController implements Serializable {
 			msgHistory = new HistoryGameMessage(history);
 			sendToAll(msgHistory);
 
-			// Sigue jugando
+			//~~> Sigue jugando
 			casillero = gestorTablero.moverAdelante(jugador, dados.getSuma(),
 					cobraSalida);
 			// TODO corregir paso de

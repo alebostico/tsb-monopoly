@@ -38,6 +38,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -465,63 +466,6 @@ public class TableroController extends AnchorPane implements Serializable,
 			GestorLogs.registrarException(ex);
 		}
 	}
-
-	/**
-	 * Método que agrega un mensaje de chat al panel de chat. Mantiene un
-	 * historial de todos lo mensajes que se intercambian entre los usuarios.f
-	 * 
-	 * @param history
-	 *            objeto que contiene información sobre el usuario que escribió
-	 *            el mensaje, el mensaje y la fecha y hora.
-	 */
-	// public void addHistoryChat(final History history) {
-	// FutureTask<Void> taskAddHistory = null;
-	// try {
-	// taskAddHistory = new FutureTask<Void>(new Callable<Void>() {
-	// @Override
-	// public Void call() throws Exception {
-	// historyChatList.add(history);
-	//
-	// oHistoryChatList = FXCollections
-	// .observableArrayList(historyChatList);
-	//
-	// if (lvHistoryChat != null) {
-	// lvHistoryChat.getItems().clear();
-	// lvHistoryChat.setItems(oHistoryChatList);
-	// lvHistoryChat
-	// .setCellFactory(new Callback<ListView<History>,
-	// javafx.scene.control.ListCell<History>>() {
-	// @Override
-	// public ListCell<History> call(
-	// ListView<History> listView) {
-	// return new ListCell<History>() {
-	//
-	// @Override
-	// protected void updateItem(
-	// History item, boolean bln) {
-	// super.updateItem(item, bln);
-	// if (item != null) {
-	// Text txtHistory = new Text(
-	// item.toString());
-	// txtHistory
-	// .setFill(Color.RED);
-	// setGraphic(txtHistory);
-	// }
-	// }
-	//
-	// };
-	// }
-	// });
-	// }
-	// return null;
-	// }
-	// });
-	// Platform.runLater(taskAddHistory);
-	//
-	// } catch (Exception ex) {
-	// GestorLogs.registrarException(ex);
-	// }
-	// }
 
 	public void addChatHistoryGame(final History chatHistory) {
 
@@ -2056,6 +2000,11 @@ public class TableroController extends AnchorPane implements Serializable,
 					buttonAceptar = new ButtonType("Aceptar",
 							ButtonData.OK_DONE);
 					alert.getButtonTypes().setAll(buttonAceptar);
+					
+					DialogPane dialogPane = alert.getDialogPane();
+					dialogPane.getStylesheets().add(getClass().getResource("/css/Sheet_tablero.css").toExternalForm());
+					dialogPane.getStyleClass().add("myDialog");
+					
 					alert.showAndWait();
 					return null;
 
