@@ -40,6 +40,7 @@ public class ConstantesMensaje {
 	public final static String PAY_TO_PLAYER_MESSAGE = "PayToPlayerMessage";
 	public final static String DOUBLE_DICE_JAIL_MESSAGE = "DoubleDiceJailMessage";
 	public final static String PAY_TO_LEAVE_JAIL_MESSAGE = "PayToLeaveJailMessage";
+	public final static String PAY_RENT_MESSAGE = "PayRentMessage";
 
 	/*************************************************************************************/
 
@@ -61,6 +62,7 @@ public class ConstantesMensaje {
 	public final static String GET_PENDING_GAMES_MESSAGE = "GetPendingGamesMessage";
 	public final static String THROW_DICE_TURNS_MESSAGE = "ThrowDiceTurnsMessage";
 	public final static String THROW_DICE_ADVANCE_MESSAGE = "ThrowDiceAdvanceMessage";
+	public final static String DOUBLE_DICE_MESSAGE = "DoubleDiceMessage";
 
 	/*************************************************************************************/
 }

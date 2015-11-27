@@ -23,7 +23,10 @@ import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tablero.CasilleroCompania;
 import monopoly.model.tablero.CasilleroEstacion;
 import monopoly.model.tarjetas.Tarjeta;
+import monopoly.model.tarjetas.TarjetaCalle;
+import monopoly.model.tarjetas.TarjetaCompania;
 import monopoly.model.tarjetas.TarjetaComunidad;
+import monopoly.model.tarjetas.TarjetaEstacion;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
@@ -96,7 +99,7 @@ public class JuegoController implements Serializable {
 	 * 
 	 * @param jugador
 	 */
-	public void addPlayer(Jugador jugador) {
+	public void addPlayer(Jugador jugador) throws Exception {
 		this.gestorJugadores.addPlayer(jugador);
 		jugador.setCasilleroActual(gestorTablero.getCasillero(1));
 
@@ -118,7 +121,7 @@ public class JuegoController implements Serializable {
 	 * @throws IOException
 	 *             Si no se encuentra el juego.
 	 */
-	public void reloadGame(int senderID) throws IOException {
+	public void reloadGame(int senderID) throws Exception {
 
 		for (JugadorHumano jugador : this.gestorJugadores.getListaJugadoresHumanos()) {
 			jugador.setSenderID(senderID);
@@ -166,7 +169,11 @@ public class JuegoController implements Serializable {
 			for (int i = 0; i < gestorJugadores.getTurnoslist().size(); i++) {
 				history = new History(StringUtils.getFechaActual(),
 						gestorJugadores.getTurnoslist().get(i).getNombre(),
-						(i + 1) + "°" + "Orden en la ronda");
+						(i + 1)
+								+ "°"
+								+ " Orden en la ronda. Suma de dados: "
+								+ gestorJugadores.getTurnoslist().get(i)
+										.getTiradaInicial().getSuma());
 				historyList.add(history);
 			}
 
@@ -210,7 +217,7 @@ public class JuegoController implements Serializable {
 	 * turno de los mismos en base a los resultados de los dados arrojados. Una
 	 * vez ordenados informa a los jugadores el orden establecido.
 	 */
-	private void ordenarTurnos() {
+	private void ordenarTurnos() throws Exception {
 		this.gestorJugadores.ordenarTurnos();
 
 		for (Jugador jug : gestorJugadores.getTurnoslist()) {
@@ -254,6 +261,7 @@ public class JuegoController implements Serializable {
 		MonopolyGameStatus status;
 		Tarjeta tarjetaSelected = null;
 		String mensaje;
+		List<Jugador> turnosList;
 		List<History> historyList = new ArrayList<History>();
 
 		switch (accion) {
@@ -266,14 +274,15 @@ public class JuegoController implements Serializable {
 			accion.setMonto(((TarjetaComunidad) tarjetaSelected).getIdTarjeta());
 			break;
 		case DISPONIBLE_PARA_VENDER:
+		case PAGAR_ALQUILER:
 		case IMPUESTO_DE_LUJO:
 		case IMPUESTO_SOBRE_CAPITAL:
 		case IR_A_LA_CARCEL:
-		case PAGAR_ALQUILER:
 		case DESCANSO:
 		case HIPOTECADA:
 		case MI_PROPIEDAD:
 			break;
+
 		default:
 			throw new CondicionInvalidaException(String.format(
 					"La acción %s es inválida.", accion.toString()));
@@ -285,17 +294,17 @@ public class JuegoController implements Serializable {
 		historyList.add(new History(StringUtils.getFechaActual(), jugador
 				.getNombre(), mensaje));
 
-		status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
-				gestorBanco.getBanco(), gestorTablero.getTablero(),
-				estadoJuegoJugadorActual, accion,
+		turnosList = gestorJugadores.getTurnoslist();
+		status = new MonopolyGameStatus(turnosList, gestorBanco.getBanco(),
+				gestorTablero.getTablero(), estadoJuegoJugadorActual, accion,
 				gestorJugadores.getCurrentPlayer(), historyList,
 				tarjetaSelected);
 		status.setMensajeAux(accion.getMensaje());
+		status.setMonto(accion.getMonto());
 		sendToOne(senderId, status);
 
-		status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
-				gestorBanco.getBanco(), gestorTablero.getTablero(),
-				estadoJuegoRestoJugadores, accion,
+		status = new MonopolyGameStatus(turnosList, gestorBanco.getBanco(),
+				gestorTablero.getTablero(), estadoJuegoRestoJugadores, accion,
 				gestorJugadores.getCurrentPlayer(), historyList,
 				tarjetaSelected);
 		sendToOther(senderId, status);
@@ -303,8 +312,11 @@ public class JuegoController implements Serializable {
 
 	public void avanzarDeCasilleroJV() throws Exception {
 		AccionEnCasillero accion;
+		MonopolyGameStatus status;
 		Dado dados = null;
 		Casillero casillero;
+		History history;
+		List<History> historyList;
 		JugadorVirtual jugadorActual = (JugadorVirtual) this.gestorJugadores
 				.getCurrentPlayer();
 		String mensaje = "";
@@ -325,13 +337,9 @@ public class JuegoController implements Serializable {
 					.construirAleatorio(jugadorActual);
 
 		} catch (SinEdificiosException e) {
-			mensaje = String
-					.format("El jugador %s no pudo comprar edificios porque no tiene disponibilidad en el banco",
-							jugadorActual.getNombre());
+			mensaje = "No pudo comprar edificios porque no tiene disponibilidad en el banco";
 		} catch (SinDineroException e) {
-			mensaje = String
-					.format("El jugador %s no pudo comprar edificios porque no tiene dinero suficiente",
-							jugadorActual.getNombre());
+			mensaje = "No pudo comprar edificios porque no tiene dinero suficiente";
 		}
 
 		if (!StringUtils.IsNullOrEmpty(mensaje)) {
@@ -355,12 +363,22 @@ public class JuegoController implements Serializable {
 			accion = gestorTablero.getAccionEnCasillero(jugadorActual,
 					casillero);
 
-			mensaje = String.format("El Jugador %s avanzó al casillero %s.",
-					jugadorActual.getNombre(), casillero.getNombreCasillero());
+			mensaje = String.format(
+					"Avanzó %s casilleros. Se encuentra en el casillero %s.",
+					dados.getSuma(), casillero.getNombreCasillero());
 
-			sendToAll(new HistoryGameMessage(new History(
-					StringUtils.getFechaActual(), jugadorActual.getNombre(),
-					mensaje)));
+			history = new History(StringUtils.getFechaActual(),
+					jugadorActual.getNombre(), mensaje);
+			historyList = new ArrayList<History>();
+			historyList.add(history);
+
+			status = new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+					gestorBanco.getBanco(), gestorTablero.getTablero(),
+					EstadoJuego.ESPERANDO_TURNO, null, jugadorActual,
+					historyList, null);
+			sendToAll(status);
+
+			// Espero 2 segundo para mostrar al cliente el primer mensaje.
 
 			sendToAll(new HistoryGameMessage(new History(
 					StringUtils.getFechaActual(), jugadorActual.getNombre(),
@@ -488,57 +506,85 @@ public class JuegoController implements Serializable {
 		History history;
 		Jugador jugadorActual;
 		Jugador jugadorSiguiente;
-		MonopolyGameStatus status;
-		EstadoJuego estadoJuego;
+		MonopolyGameStatus gameStatus;
+		int senderId;
+		List<Jugador> turnosList;
 		List<History> historyList = new ArrayList<History>();
+		EstadoJuego estadoJuego;
 
 		jugadorActual = gestorJugadores.getCurrentPlayer();
+
+		// ~~> Válida q haya sacado dobles y si está habilitado
+		// para tirar de nuevo en caso q sean dobles.
 		if (validaDadosDobles && jugadorActual.tiroDobles()) {
-			history = new History(StringUtils.getFechaActual(),
-					jugadorActual.getNombre(),
-					"Juega otro turno por sacar dados dobles.");
-			historyList.add(history);
 
-			if (jugadorActual.isVirtual()) {
-				status = new MonopolyGameStatus(
-						gestorJugadores.getTurnoslist(),
-						gestorBanco.getBanco(), gestorTablero.getTablero(),
-						EstadoJuego.ESPERANDO_TURNO, null,
-						gestorJugadores.getCurrentPlayer(), historyList, null);
-				sendToAll(status);
+			// ~~~> Sacó dobles, incremento el contador.
+			jugadorActual.incrementarCantidadDadosDobles();
 
-				avanzarDeCasilleroJV();
+			// ~~~> Si es la tercera vez q saca dobles, va a la cárcel.
+			if (jugadorActual.getCatidadDadosDobles() < 3) {
+				history = new History(StringUtils.getFechaActual(),
+						jugadorActual.getNombre(), String.format(
+								"Juega otro turno por sacar dados dobles %s",
+								jugadorActual.getParDados()));
+				historyList.add(history);
+
+				// ~~~> Envío los mensajes a todos los clientes
+				if (jugadorActual.isVirtual()) {
+					gameStatus = new MonopolyGameStatus(
+							gestorJugadores.getTurnoslist(),
+							gestorBanco.getBanco(), gestorTablero.getTablero(),
+							EstadoJuego.ESPERANDO_TURNO, null, jugadorActual,
+							historyList, null);
+					sendToAll(gameStatus);
+					avanzarDeCasilleroJV();
+				} else {
+					senderId = ((JugadorHumano) jugadorActual).getSenderID();
+					gameStatus = new MonopolyGameStatus(
+							gestorJugadores.getTurnoslist(),
+							gestorBanco.getBanco(), gestorTablero.getTablero(),
+							EstadoJuego.DADOS_DOBLES, null, jugadorActual,
+							historyList, null);
+					sendToOne(senderId, gameStatus);
+
+					gameStatus = new MonopolyGameStatus(
+							gestorJugadores.getTurnoslist(),
+							gestorBanco.getBanco(), gestorTablero.getTablero(),
+							EstadoJuego.ESPERANDO_TURNO, null, jugadorActual,
+							historyList, null);
+					sendToOther(senderId, gameStatus);
+				}
 			} else {
-				status = new MonopolyGameStatus(
-						gestorJugadores.getTurnoslist(),
-						gestorBanco.getBanco(), gestorTablero.getTablero(),
-						EstadoJuego.DADOS_DOBLES, null,
-						gestorJugadores.getCurrentPlayer(), historyList, null);
-				sendToOne(((JugadorHumano) jugadorActual).getSenderID(), status);
-
-				status = new MonopolyGameStatus(
-						gestorJugadores.getTurnoslist(),
-						gestorBanco.getBanco(), gestorTablero.getTablero(),
-						EstadoJuego.ESPERANDO_TURNO, null,
-						gestorJugadores.getCurrentPlayer(), historyList, null);
-				sendToOther(((JugadorHumano) jugadorActual).getSenderID(),
-						status);
+				jugadorActual.resetCatidadDadosDobles();
+				if (jugadorActual.isHumano()) {
+					senderId = ((JugadorHumano) jugadorActual).getSenderID();
+					irALaCarcel(senderId);
+				} else {
+					irALaCarcel(jugadorActual);
+				}
 			}
 		} else {
+			jugadorActual.resetCatidadDadosDobles();
 			jugadorSiguiente = gestorJugadores.siguienteTurno();
 
 			history = new History(StringUtils.getFechaActual(),
 					jugadorActual.getNombre(), "Finalizó su turno.");
 			historyList.add(history);
+
+			// ~~> Historia del siguiente turno
 			history = new History(StringUtils.getFechaActual(),
 					jugadorSiguiente.getNombre(), String.format(
 							"Turno del jugador %s.",
 							jugadorSiguiente.getNombre()));
 			historyList.add(history);
 
+			turnosList = gestorJugadores.getTurnoslist();
+
+			// ~~~> Pregunto si es virtual. Si lo es envío un sendToAll
+			// a todos los jugadores humanos. Si no, un mensaje al jugador
+			// que le tocó el turno y otro mensaje al resto.
 			if (jugadorSiguiente.isVirtual()) {
-				status = new MonopolyGameStatus(
-						gestorJugadores.getTurnoslist(),
+				status = new MonopolyGameStatus(turnosList,
 						gestorBanco.getBanco(), gestorTablero.getTablero(),
 						EstadoJuego.ESPERANDO_TURNO, null,
 						gestorJugadores.getCurrentPlayer(), historyList, null);
@@ -547,18 +593,19 @@ public class JuegoController implements Serializable {
 				avanzarDeCasilleroJV();
 			} else {
 				estadoJuego = EstadoJuego.TIRAR_DADO;
+				// ~~~> Pregunto si está preso. Si lo está le cambio el estado
+				// a preso.
 				if (gestorJugadores.getCurrentPlayer().estaPreso())
 					estadoJuego = EstadoJuego.PRESO;
-				status = new MonopolyGameStatus(
-						gestorJugadores.getTurnoslist(),
+
+				status = new MonopolyGameStatus(turnosList,
 						gestorBanco.getBanco(), gestorTablero.getTablero(),
 						estadoJuego, null, gestorJugadores.getCurrentPlayer(),
 						historyList, null);
 				sendToOne(((JugadorHumano) jugadorSiguiente).getSenderID(),
 						status);
 
-				status = new MonopolyGameStatus(
-						gestorJugadores.getTurnoslist(),
+				status = new MonopolyGameStatus(turnosList,
 						gestorBanco.getBanco(), gestorTablero.getTablero(),
 						EstadoJuego.ESPERANDO_TURNO, null,
 						gestorJugadores.getCurrentPlayer(), historyList, null);
@@ -567,7 +614,6 @@ public class JuegoController implements Serializable {
 			}
 		}
 	}
-
 	public void comprarPropiedad(int senderId, String nombrePropiedad)
 			throws SinDineroException, Exception {
 		TarjetaPropiedad tarjeta = gestorBanco.getBanco().getTarjetaPropiedad(
@@ -688,17 +734,13 @@ public class JuegoController implements Serializable {
 
 		switch (accionEnTarjeta) {
 
+		// ~~~> El jugador cobra, el banco paga
 		case COBRAR:
-			/*
-			 * El jugador cobra, el banco paga
-			 */
 			gestorBanco.pagar(jugador, accionEnTarjeta.getMonto());
 			break;
 
+		// ~~~> El jugador paga, el banco cobra
 		case PAGAR:
-			/*
-			 * El jugador paga, el banco cobra
-			 */
 			try {
 				gestorBanco.cobrar(jugador, accionEnTarjeta.getMonto());
 			} catch (SinDineroException e) {
@@ -708,10 +750,8 @@ public class JuegoController implements Serializable {
 			}
 			break;
 
+		// ~~~> Cobra a todos los jugadores de la partida.
 		case COBRAR_TODOS:
-			/*
-			 * Cobra a todos los jugadores de la partida.
-			 */
 			this.contadorPagos = 0;
 			String msgString = String.format("Debe pagar %s al jugador %s",
 					StringUtils.formatearAMoneda(accionEnTarjeta.getMonto()),
@@ -724,10 +764,8 @@ public class JuegoController implements Serializable {
 				sendToOther(senderId, msg);
 			break;
 
+		// ~~~> Debe pagar por cada casa u hotel
 		case PAGAR_POR_CASA_HOTEL:
-			/*
-			 * Debe pagar por cada casa u hotel
-			 */
 			try {
 				gestorBanco.cobrarPorCasaYHotel(jugador,
 						accionEnTarjeta.getPrecioPorCasa(),
@@ -739,10 +777,8 @@ public class JuegoController implements Serializable {
 			}
 			break;
 
+		// ~~~> Se mueve a un determinado casillero.
 		case MOVER:
-			/*
-			 * Se mueve a un determinado casillero.
-			 */
 			cobraSalida = new MutableBoolean(accionEnTarjeta.isCobraSalida());
 			casillero = gestorTablero.moverAdelante(jugador,
 					accionEnTarjeta.getNroCasilleros(), cobraSalida);
@@ -750,10 +786,8 @@ public class JuegoController implements Serializable {
 				gestorBanco.pagarPasoSalida(jugador);
 			break;
 
+		// ~~~> Retrocede casilleros.
 		case MOVER_A:
-			/*
-			 * Retrocede casilleros.
-			 */
 			cobraSalida = new MutableBoolean(accionEnTarjeta.isCobraSalida());
 			casillero = gestorTablero.moverACasillero(jugador,
 					accionEnTarjeta.getNroCasilleros(), cobraSalida);
@@ -761,10 +795,8 @@ public class JuegoController implements Serializable {
 				gestorBanco.pagarPasoSalida(jugador);
 			break;
 
+		// ~~~> Tarjeta que deja libre de la cárcel.
 		case LIBRE_DE_CARCEL:
-			/*
-			 * Tarjeta que deja libre de la cárcel.
-			 */
 			jugador.getTarjetaCarcelList().add(
 					accionEnTarjeta.getTarjetaCarcel());
 			gestorTablero.getGestorTarjetas().quitarTarjetaLibreDeCarcel(
@@ -772,10 +804,8 @@ public class JuegoController implements Serializable {
 
 			break;
 
+		// ~~~> Ir a la cárcel.
 		case IR_A_CARCEL:
-			/*
-			 * Ir a la cárcel.
-			 */
 			gestorTablero.irACarcel(jugador);
 			break;
 
@@ -785,11 +815,9 @@ public class JuegoController implements Serializable {
 
 		mensaje = accionEnTarjeta.getMensaje();
 
-		HistoryGameMessage historias = new HistoryGameMessage(new History(
-				StringUtils.getFechaActual(), jugador.getNombre(), mensaje));
-
-		// Se manda las historias a los demás participantes.
-		sendToAll(historias);
+		// ~~~> Se manda las historias a los demás participantes.
+		sendToAll(new HistoryGameMessage(new History(
+				StringUtils.getFechaActual(), jugador.getNombre(), mensaje)));
 
 		switch (accionEnTarjeta) {
 		case MOVER:
@@ -826,11 +854,16 @@ public class JuegoController implements Serializable {
 	 */
 	public void irALaCarcel(int senderId) throws Exception {
 		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
+		irALaCarcel(jugador);
+	}
+
+	private void irALaCarcel(Jugador jugador) throws Exception {
 		gestorTablero.irACarcel(jugador);
 
-		History history = new History(StringUtils.getFechaActual(),
-				jugador.getNombre(), "Fue a la cárcel");
-		sendToAll(new HistoryGameMessage(history));
+		sendToAll(new HistoryGameMessage(new History(
+				StringUtils.getFechaActual(), jugador.getNombre(),
+				"Fue a la cárcel")));
+
 		if (jugador.isHumano())
 			siguienteTurno(false);
 	}
@@ -918,7 +951,6 @@ public class JuegoController implements Serializable {
 		jugador.setUltimoResultado(dados);
 
 		if (dados.EsDoble()) {
-			jugador.incrementarCantidadDadosDobles();
 			jugador.resetCantidadTurnosCarcel();
 			jugador.setPreso(false);
 			mensaje = String.format(
@@ -940,7 +972,6 @@ public class JuegoController implements Serializable {
 
 			jugarAccionCasillero(accion, jugador, casillero, senderId);
 		} else {
-			jugador.resetCatidadDadosDobles();
 			jugador.incrementarCantidadTurnosCarcel();
 			mensaje = String.format(
 					"No sacó dobles (%s - %s). Queda en la cárcel.",
@@ -1019,7 +1050,51 @@ public class JuegoController implements Serializable {
 
 	}
 
-	public void sendChatMessage(History history) {
+	/**
+	 * Método para pagar el alquiler por haber caído en el casillero del jugador
+	 * propietario.
+	 * 
+	 * @param senderId
+	 * @param tarjetaPropiedad
+	 * @throws Exception
+	 */
+	public void pagarAlquiler(int senderId, int propiedadId)
+			throws SinDineroException, Exception {
+		Jugador jugador;
+		Jugador jugadorPropietario;
+		Casillero casillero;
+		TarjetaPropiedad tarjeta;
+		int monto;
+
+		jugador = gestorJugadores.getJugadorHumano(senderId);
+		casillero = gestorTablero.getCasillero(propiedadId);
+		tarjeta= gestorBanco.getBanco().getTarjetaPropiedadByCasillero(casillero);
+		
+		jugadorPropietario = tarjeta.getJugador();
+
+		if (tarjeta.isPropiedadCalle()) {
+			monto = ((TarjetaCalle) tarjeta).calcularAlquiler();
+		} else if (tarjeta.isPropiedadCompania()) {
+			monto = ((TarjetaCompania) tarjeta).calcularAlquiler(jugador
+					.getUltimoResultado());
+		} else {
+			monto = ((TarjetaEstacion) tarjeta).calcularAlquiler();
+		}
+
+		jugador.pagarAJugador(jugadorPropietario, monto);
+
+		sendToAll(new HistoryGameMessage(new History(
+				StringUtils.getFechaActual(), jugador.getNombre(),
+				String.format("Pagó %s al jugador %s en concepto de alquiler de la propiedad.",
+						StringUtils.formatearAMoneda(monto),
+						jugadorPropietario.getNombre(),
+						tarjeta.getNombre()))));
+		
+		siguienteTurno(true);
+
+	}
+
+	public void sendChatMessage(History history) throws Exception {
 		ChatGameMessage msgChatGameMessage = new ChatGameMessage(null, history);
 		sendToAll(msgChatGameMessage);
 	}
@@ -1095,7 +1170,7 @@ public class JuegoController implements Serializable {
 	// ============= Métodos para envío de mensaje al cliente. =============//
 	// =====================================================================//
 
-	private void sendToOne(int recipientID, Object message) {
+	private void sendToOne(int recipientID, Object message) throws Exception {
 		PartidasController.getInstance().getMonopolyGame()
 				.sendToOne(recipientID, message);
 	}
@@ -1108,11 +1183,12 @@ public class JuegoController implements Serializable {
 	 * @param message
 	 *            Objeto mensaje que recibirán los jugadores humanos.
 	 */
-	private void sendToAll(Object message) {
+	private void sendToAll(Object message) throws Exception {
 		for (int key : gestorJugadores.getIdConnectionClient()) {
 			PartidasController.getInstance().getMonopolyGame()
 					.sendToOne(key, message);
 		}
+		Thread.sleep(1000);
 	}
 
 	/**
@@ -1125,12 +1201,13 @@ public class JuegoController implements Serializable {
 	 * @param senderId
 	 *            Jugador que envía mensaje al resto de los participantes.
 	 */
-	private void sendToOther(int senderId, Object message) {
+	private void sendToOther(int senderId, Object message) throws Exception {
 		for (int key : gestorJugadores.getIdConnectionClient()) {
 			if (key != senderId)
 				PartidasController.getInstance().getMonopolyGame()
 						.sendToOne(key, message);
 		}
+		Thread.sleep(1000);
 	}
 
 	// =====================================================================//

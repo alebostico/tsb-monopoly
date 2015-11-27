@@ -211,6 +211,20 @@ public class PartidasController {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.irALaCarcel(senderId);
 	}
+	
+	/**
+	 * Método para pagar el alquiler de un jugador humano a otro
+	 * jugador.
+	 * 
+	 * @param senderId
+	 * @param idJuego
+	 * @param tarjetaPropiedad
+	 * @throws Exception
+	 */
+	public void pagarAlquiler(int senderId, String idJuego, int propiedadId) throws Exception{
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.pagarAlquiler(senderId, propiedadId);
+	}
 
 	public void addContadorPagos(int senderId, String idJuego) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);

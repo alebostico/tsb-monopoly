@@ -40,6 +40,7 @@ import monopoly.util.message.game.actions.ChanceCardMessage;
 import monopoly.util.message.game.actions.CommunityCardMessage;
 import monopoly.util.message.game.actions.DoubleDiceJailMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
+import monopoly.util.message.game.actions.PayRentMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
 import monopoly.util.message.game.actions.PayToLeaveJailMessage;
 import monopoly.util.message.game.actions.PayToPlayerMessage;
@@ -122,6 +123,7 @@ public class MonopolyGame extends GameServer {
 		HistoryGameMessage msgHistoryGame;
 		PayToLeaveJailMessage msgPayToLeaveJail;
 		SaveGameMessage msgSaveGameMessage;
+		PayRentMessage msgPayRent;
 
 		try {
 			switch (message.getClass().getSimpleName()) {
@@ -243,6 +245,11 @@ public class MonopolyGame extends GameServer {
 				msgPayToPlayerMessage = (PayToPlayerMessage) message;
 				PartidasController.getInstance().addContadorPagos(senderId,
 						msgPayToPlayerMessage.idJuego);
+				break;
+				
+			case ConstantesMensaje.PAY_RENT_MESSAGE:
+				msgPayRent = (PayRentMessage) message;
+				PartidasController.getInstance().pagarAlquiler(senderId, msgPayRent.idJuego, msgPayRent.propiedadId);
 				break;
 
 			case ConstantesMensaje.SUPER_TAX_MESSAGE:

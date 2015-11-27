@@ -176,6 +176,10 @@ public class MonopolyClient extends GameClient {
 		case ConstantesMensaje.THROW_DICE_ADVANCE_MESSAGE:
 			TableroController.getInstance().processTirarDados(null);
 			break;
+			
+		case ConstantesMensaje.DOUBLE_DICE_MESSAGE:
+			TableroController.getInstance().showDadosDobles();
+			break;
 
 		default:
 			break;
@@ -194,6 +198,9 @@ public class MonopolyClient extends GameClient {
 		case TIRAR_DADO:
 		case ESPERANDO_TURNO:
 		case JUGANDO:
+		case DADOS_DOBLES:
+		case PRESO:
+		case LIBRE:
 			TableroController.getInstance().actualizarEstadoJuego(status);
 			break;
 

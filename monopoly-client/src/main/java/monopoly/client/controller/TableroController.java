@@ -1082,6 +1082,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	}
 
+	
 	/**
 	 * Muestra un mensaje de error.
 	 * 
