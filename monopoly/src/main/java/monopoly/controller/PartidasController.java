@@ -108,7 +108,7 @@ public class PartidasController {
 	 *            El nombre del juego
 	 * @return El {@code JuegoController} del juego restaurado
 	 */
-	public JuegoController loadGame(int senderID, String nombre)
+	public JuegoController reloadGame(int senderID, String nombre)
 			throws Exception {
 		JuegoController juegoController = null;
 		juegoController = SerializerController.loadGame(nombre);
@@ -211,17 +211,17 @@ public class PartidasController {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.irALaCarcel(senderId);
 	}
-	
+
 	/**
-	 * Método para pagar el alquiler de un jugador humano a otro
-	 * jugador.
+	 * Método para pagar el alquiler de un jugador humano a otro jugador.
 	 * 
 	 * @param senderId
 	 * @param idJuego
 	 * @param tarjetaPropiedad
 	 * @throws Exception
 	 */
-	public void pagarAlquiler(int senderId, String idJuego, int propiedadId) throws Exception{
+	public void pagarAlquiler(int senderId, String idJuego, int propiedadId)
+			throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.pagarAlquiler(senderId, propiedadId);
 	}
@@ -474,6 +474,19 @@ public class PartidasController {
 	 */
 	public List<Juego> buscarJuegosGuardados(Usuario creador) {
 		return JuegoController.buscarJuegosGuardados(creador);
+	}
+
+	/**
+	 * Confirma que un juego se restauró correctamente. Actualiza la fecha de
+	 * restauración del juego en la base de datos. Previene que un juego se
+	 * pueda restaurar mas de una vez por cada vez que se guarda
+	 * 
+	 * @param juego
+	 *            El juego que se quiere guardar
+	 * @return El juego actualizado o {@code null} si no se pudo guardar.
+	 */
+	public Juego confirmarJuegoRestaurado(Juego juego) {
+		return SerializerController.updateRestoreDate(juego);
 	}
 
 	/**

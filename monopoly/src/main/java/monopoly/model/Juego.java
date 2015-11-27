@@ -110,6 +110,8 @@ public class Juego implements Serializable {
 		this.cantJugadores = 0;
 		this.owner = creador;
 		this.fechaCreacion = new Date();
+		this.fechaGuardado = null;
+		this.fechaRestaurado = null;
 		this.jugadoresList = new ArrayList<Jugador>();
 		this.fichasPlayerList = FichasController.getFichas();
 //		this.tarjetasPropiedadList = TarjetaController

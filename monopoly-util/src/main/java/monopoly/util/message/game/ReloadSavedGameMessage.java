@@ -6,7 +6,8 @@ package monopoly.util.message.game;
 import java.io.Serializable;
 
 /**
- * @author alejandro
+ * @author Bostico Alejandro
+ * @author Moreno Pablo
  *
  */
 public class ReloadSavedGameMessage implements Serializable {

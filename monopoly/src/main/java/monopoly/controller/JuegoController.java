@@ -123,10 +123,11 @@ public class JuegoController implements Serializable {
 	 */
 	public void reloadGame(int senderID) throws Exception {
 
-		for (JugadorHumano jugador : this.gestorJugadores.getListaJugadoresHumanos()) {
+		for (JugadorHumano jugador : this.gestorJugadores
+				.getListaJugadoresHumanos()) {
 			jugador.setSenderID(senderID);
 		}
-		
+
 		List<History> historia = new ArrayList<History>();
 		historia.add(new History(StringUtils.getFechaActual(), gestorJugadores
 				.getCurrentPlayer().getNombre(), "Restauró el juego."));
@@ -134,7 +135,8 @@ public class JuegoController implements Serializable {
 				gestorJugadores.getTurnoslist(), gestorBanco.getBanco(),
 				gestorTablero.getTablero(), EstadoJuego.TIRAR_DADO, null,
 				gestorJugadores.getCurrentPlayer(), historia, null);
-		sendToOne(senderID, new ReloadSavedGameMessage(senderID, this.getJuego(), status));
+		sendToOne(senderID,
+				new ReloadSavedGameMessage(senderID, this.getJuego(), status));
 	}
 
 	/**
@@ -614,6 +616,7 @@ public class JuegoController implements Serializable {
 			}
 		}
 	}
+
 	public void comprarPropiedad(int senderId, String nombrePropiedad)
 			throws SinDineroException, Exception {
 		TarjetaPropiedad tarjeta = gestorBanco.getBanco().getTarjetaPropiedad(
@@ -1068,8 +1071,9 @@ public class JuegoController implements Serializable {
 
 		jugador = gestorJugadores.getJugadorHumano(senderId);
 		casillero = gestorTablero.getCasillero(propiedadId);
-		tarjeta= gestorBanco.getBanco().getTarjetaPropiedadByCasillero(casillero);
-		
+		tarjeta = gestorBanco.getBanco().getTarjetaPropiedadByCasillero(
+				casillero);
+
 		jugadorPropietario = tarjeta.getJugador();
 
 		if (tarjeta.isPropiedadCalle()) {
@@ -1083,13 +1087,16 @@ public class JuegoController implements Serializable {
 
 		jugador.pagarAJugador(jugadorPropietario, monto);
 
-		sendToAll(new HistoryGameMessage(new History(
-				StringUtils.getFechaActual(), jugador.getNombre(),
-				String.format("Pagó %s al jugador %s en concepto de alquiler de la propiedad.",
-						StringUtils.formatearAMoneda(monto),
-						jugadorPropietario.getNombre(),
-						tarjeta.getNombre()))));
-		
+		sendToAll(new HistoryGameMessage(
+				new History(
+						StringUtils.getFechaActual(),
+						jugador.getNombre(),
+						String.format(
+								"Pagó %s al jugador %s en concepto de alquiler de la propiedad.",
+								StringUtils.formatearAMoneda(monto),
+								jugadorPropietario.getNombre(),
+								tarjeta.getNombre()))));
+
 		siguienteTurno(true);
 
 	}
@@ -1114,6 +1121,18 @@ public class JuegoController implements Serializable {
 		IJuegoDao juegoDao = (IJuegoDao) appContext.getBean("juegoDao");
 		juegoDao.update(juego);
 		return juego;
+	}
+
+	/**
+	 * Busca un juego en la base de datos
+	 * 
+	 * @param juego
+	 *            El {@code UniqueID} del juego que se quiere buscar
+	 * @return El juego o {@code null} si no se encontró.
+	 */
+	public static Juego findJuegoByUniqueId(String uniqueID) {
+		IJuegoDao juegoDao = (IJuegoDao) appContext.getBean("juegoDao");
+		return juegoDao.findJuegoByUniqueId(uniqueID);
 	}
 
 	/**
@@ -1157,13 +1176,13 @@ public class JuegoController implements Serializable {
 	/**
 	 * Busca un juego guardado en la base de datos
 	 * 
-	 * @param nombre
+	 * @param UniqueID
 	 *            El nombre del juego guardado
 	 * @return El juego
 	 */
-	public static Juego buscarJuegoGuardado(String nombre) {
+	public static Juego buscarJuegoGuardado(String UniqueID) {
 		IJuegoDao juegoDao = (IJuegoDao) appContext.getBean("juegoDao");
-		return juegoDao.findJuegoByName(nombre);
+		return juegoDao.findJuegoByUniqueId(UniqueID);
 	}
 
 	// =====================================================================//

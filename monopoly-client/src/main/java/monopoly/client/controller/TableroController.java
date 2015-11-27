@@ -395,7 +395,7 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * jugador que debe esperar a que se unan al juego otros oponentes.
 	 * 
 	 */
-	public void restaurarJuego(MonopolyGameStatus monopolyGameStatus) {
+	public void restaurarJuego(MonopolyGameStatus monopolyGameStatus) throws Exception {
 
 		Platform.runLater(new Runnable() {
 

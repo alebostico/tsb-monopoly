@@ -23,5 +23,7 @@ public interface IJuegoDao {
 	
 	List<Juego> getJuegoGuardados(Usuario usuario);
 	
-	Juego findJuegoByName(String nombre); 
+	Juego findJuegoByName(String nombre);
+
+	Juego findJuegoByUniqueId(String uniqueID); 
 }

@@ -35,6 +35,7 @@ import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesFXML;
+import monopoly.util.message.game.ConfirmGameReloadedMessage;
 import monopoly.util.message.game.ReloadSavedGameMessage;
 
 /**
@@ -116,11 +117,12 @@ public class ReanudarJuegoController extends AnchorPane implements
 			controller.setCurrentStage(stage);
 			controller.setPrevStage(currentStage);
 		} catch (Exception ex) {
+			TableroController.getInstance().showException(ex);
 			GestorLogs.registrarError(ex);
 		}
 
 		ReloadSavedGameMessage msg = new ReloadSavedGameMessage(senderID,
-				juegoSelected.getNombre(), null);
+				juegoSelected.getJuego().getUniqueID(), null);
 		ConnectionController.getInstance().send(msg);
 
 	}
@@ -136,9 +138,21 @@ public class ReanudarJuegoController extends AnchorPane implements
 	@FXML
 	public void finishLoadGame(Juego juego,
 			MonopolyGameStatus monopolyGameStatus) {
-		controller.setPrevStage(currentStage);
-		controller.setJuego(juego);
-		controller.restaurarJuego(monopolyGameStatus);
+		try {
+			controller.setPrevStage(currentStage);
+			controller.setJuego(juego);
+			controller.restaurarJuego(monopolyGameStatus);
+
+			// Si todo va bien, envío un mensaje de confirmación...
+			int senderID = ConnectionController.getInstance().getIdPlayer();
+			ConfirmGameReloadedMessage msg = new ConfirmGameReloadedMessage(
+					senderID, juego);
+			ConnectionController.getInstance().send(msg);
+		} catch (Exception ex) {
+			TableroController.getInstance().showException(ex);
+			GestorLogs.registrarError(ex);
+		}
+
 	}
 
 	/*
