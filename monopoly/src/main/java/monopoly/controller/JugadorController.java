@@ -2,6 +2,7 @@ package monopoly.controller;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -10,6 +11,7 @@ import monopoly.model.Dado;
 import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.JugadorVirtual;
+import monopoly.util.TurnoComparator;
 import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.exception.IlegalJugadorException;
 import monopoly.util.list.CircularList;
@@ -29,14 +31,14 @@ public class JugadorController implements Serializable {
 
 	private List<Jugador> jugadoresList;
 
-	private CircularList<Jugador> turnosList;
+	private CircularList<Integer> indexList;
 
-	private Node<Jugador> currentPlayer;
+	private Node<Integer> currentPlayer;
 
 	public JugadorController() {
 		super();
 		this.networkPlayers = new TreeMap<Integer, JugadorHumano>();
-		this.turnosList = new CircularList<Jugador>();
+		this.indexList = new CircularList<Integer>();
 		this.jugadoresList = new ArrayList<Jugador>();
 	}
 
@@ -52,7 +54,6 @@ public class JugadorController implements Serializable {
 
 		if (!jugadoresList.contains(jugador)) {
 			jugadoresList.add(jugador);
-			turnosList.push_back(jugador);
 		}
 
 	}
@@ -73,34 +74,17 @@ public class JugadorController implements Serializable {
 	}
 
 	public void ordenarTurnos() {
-
-		Node<Jugador> primero = (Node<Jugador>) turnosList.getHeader();
-		Node<Jugador> tmp = null;
-		Jugador aux;
-
-		do {
-			tmp = primero.getNext();
-			while (tmp != (Node<Jugador>) turnosList.getHeader()) {
-				if (primero.getKey().getTiradaInicial().getSuma() < tmp
-						.getKey().getTiradaInicial().getSuma()) {
-					aux = primero.getKey();
-					primero.setKey(tmp.getKey());
-					tmp.setKey(aux);
-
-				}
-				tmp = tmp.getNext();
-			}
-			primero = primero.getNext();
-
-		} while (tmp != (Node<Jugador>) turnosList.getHeader());
-
-		currentPlayer = (Node<Jugador>) turnosList.getHeader();
-
+		Collections.sort(jugadoresList,
+				Collections.reverseOrder(new TurnoComparator()));
+		for (Jugador jugador : jugadoresList) {
+			indexList.push_back(jugadoresList.indexOf(jugador));
+		}
+		currentPlayer = indexList.getHeader();
 	}
 
 	public Jugador siguienteTurno() {
 		currentPlayer = currentPlayer.getNext();
-		return currentPlayer.getKey();
+		return jugadoresList.get(currentPlayer.getKey());
 	}
 
 	public int cantJugadoresConectados() {
@@ -120,22 +104,32 @@ public class JugadorController implements Serializable {
 	}
 
 	public List<Jugador> getTurnoslist() {
-		List<Jugador> turnos = new ArrayList<Jugador>();		
-		Node<Jugador> head = currentPlayer;		
-		Node<Jugador> aux = head;
-		turnos.add(aux.getKey());
-		for(;aux.getNext() != null;){
-			if(aux.getNext() != head)
-				turnos.add(aux.getNext().getKey());
-			else
-				break;
-			aux= aux.getNext();
+		List<Jugador> turnos = new ArrayList<Jugador>();
+
+		Node<Integer> aux = currentPlayer;
+
+		do{
+			turnos.add(jugadoresList.get(aux.getKey()));
+			aux = aux.getNext();
 		}
+		while (currentPlayer != aux);
+
+//		int index = 0;
+//		int jugadorActual = jugadoresList.get(currentPlayer.getKey());
+//
+//		while (index < jugadoresList.size()) {
+//			if (jugadorActual >= jugadoresList.size())
+//				jugadorActual = 0;
+//			turnos.add(jugadoresList.get(jugadorActual));
+//			jugadorActual++;
+//			index++;
+//		}
+
 		return turnos;
 	}
 
 	public Jugador getCurrentPlayer() {
-		return this.currentPlayer.getKey();
+		return jugadoresList.get(currentPlayer.getKey());
 	}
 
 	public int[] getIdConnectionClient() {

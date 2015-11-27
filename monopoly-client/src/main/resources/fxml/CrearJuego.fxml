@@ -67,8 +67,8 @@
                   </VBox>
                   <HBox alignment="CENTER" spacing="20.0">
                      <children>
-                        <Button id="btnCancelar" fx:id="btnCancelar" mnemonicParsing="false" onAction="#processCancel" prefHeight="50.0" prefWidth="200.0" text="Cancelar" />
-                        <Button id="btnCrearJuego" fx:id="btnCrearJuego" mnemonicParsing="false" onAction="#processCreateGame" prefHeight="50.0" prefWidth="200.0" text="Crear Juego" />
+                        <Button id="btnCancelar" fx:id="btnCancelar" cancelButton="true" mnemonicParsing="false" onAction="#processCancel" prefHeight="50.0" prefWidth="200.0" text="Cancelar" />
+                        <Button id="btnCrearJuego" fx:id="btnCrearJuego" defaultButton="true" mnemonicParsing="false" onAction="#processCreateGame" prefHeight="50.0" prefWidth="200.0" text="Crear Juego" />
                      </children>
                   </HBox>
                </children>

@@ -41,8 +41,6 @@ public class ConstantesMensaje {
 	public final static String DOUBLE_DICE_JAIL_MESSAGE = "DoubleDiceJailMessage";
 	public final static String PAY_TO_LEAVE_JAIL_MESSAGE = "PayToLeaveJailMessage";
 	public final static String PAY_RENT_MESSAGE = "PayRentMessage";
-	public final static String PAY_RENT_MESSAGE = "PayRentMessage";
-	public final static String PAY_RENT_MESSAGE = "PayRentMessage";
 
 	/*************************************************************************************/
 

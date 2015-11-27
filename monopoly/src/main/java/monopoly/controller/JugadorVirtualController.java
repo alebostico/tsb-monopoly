@@ -835,8 +835,7 @@ public class JugadorVirtualController implements Serializable {
 				if (resultado < probabilidad) {
 					int monto = jugadorActual
 							.dehipotecarPropiedad(tarjetaPropiedad);
-					return "El jugador " + jugadorActual.getNombre()
-							+ " deshipotecó la propiedad "
+					return "Deshipotecó la propiedad "
 							+ tarjetaPropiedad.getNombre() + " pagando "
 							+ StringUtils.formatearAMoneda(monto);
 				}
@@ -1003,8 +1002,8 @@ public class JugadorVirtualController implements Serializable {
 					tableroController.comprarEdificio(casasMonopolio,
 							(CasilleroCalle) tarjetaCalle.getCasillero());
 					return String
-							.format("El jugador %s compró %s edificios para le monopolio color %s",
-									jugadorActual.getNombre(), casasMonopolio,
+							.format("Compró %s edificios para el monopolio color %s",
+									casasMonopolio,
 									tarjetaCalle.getColor());
 				}
 			}
