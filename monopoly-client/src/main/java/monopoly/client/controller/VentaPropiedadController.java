@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package monopoly.client.controller;
 
 import java.net.URL;

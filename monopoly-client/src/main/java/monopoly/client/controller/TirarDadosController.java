@@ -147,8 +147,7 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 					@Override
 					public void handle(ActionEvent e) {
 						HistoryGameMessage msg = new HistoryGameMessage(
-								new History(
-										StringUtils.getFechaActual(),
+								new History(StringUtils.getFechaActual(),
 										TableroController.getInstance()
 												.getUsuarioLogueado()
 												.getUserName(),
@@ -183,7 +182,7 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 								.getInstance().getJuego().getUniqueID()));
 			}
 		} catch (Exception ex) {
-			GestorLogs.registrarError(ex);
+			GestorLogs.registrarException(ex);
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setContentText(ex.getMessage());
 			alert.setTitle("Error...");

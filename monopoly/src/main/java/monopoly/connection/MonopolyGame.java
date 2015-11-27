@@ -28,9 +28,11 @@ import monopoly.util.message.LoginMessage;
 import monopoly.util.message.game.AdvanceInBoardMessage;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
+import monopoly.util.message.game.GetSavedGamesMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.JoinGameMessage;
 import monopoly.util.message.game.LoadGameMessage;
+import monopoly.util.message.game.ReloadSavedGameMessage;
 import monopoly.util.message.game.SaveGameMessage;
 import monopoly.util.message.game.StartGameMessage;
 import monopoly.util.message.game.actions.BuyPropertyMessage;
@@ -83,7 +85,7 @@ public class MonopolyGame extends GameServer {
 	 * respond by terminating that player's program.
 	 */
 	protected void playerDisconnected(int playerID) {
-		
+
 		GestorLogs.registrarLog(String.format(
 				"El jugador \"%s\" se desconectó", playerID));
 		// shutdownServer();
@@ -100,9 +102,11 @@ public class MonopolyGame extends GameServer {
 	protected void messageReceived(int senderId, Object message) {
 		Usuario usuario;
 		Juego juego;
+		// JuegoController juegoController;
 		Jugador jugador;
 		Tarjeta tarjeta;
 		History history;
+		List<Juego> juegosList;
 		TarjetaPropiedad tarjetaPropiedad;
 		ChatGameMessage msgChatGameMessage;
 		StartGameMessage msgStartGameMessage;
@@ -153,6 +157,19 @@ public class MonopolyGame extends GameServer {
 			case ConstantesMensaje.JOIN_GAME_MESSAGE:
 				jugador = (Jugador) ((JoinGameMessage) message).message;
 				PartidasController.getInstance().joinPlayerGame(jugador);
+				break;
+
+			case ConstantesMensaje.GET_SAVED_GAMES_MESSAGES:
+				usuario = (Usuario) ((GetSavedGamesMessage) message).message;
+				juegosList = PartidasController.getInstance()
+						.buscarJuegosGuardados(usuario);
+				sendToOne(senderId, new GetSavedGamesMessage(senderId,
+						juegosList));
+				break;
+
+			case ConstantesMensaje.RELOAD_SAVED_GAME_MESSAGE:
+				String nombre = (String) ((ReloadSavedGameMessage) message).juego;
+				PartidasController.getInstance().loadGame(senderId, nombre);
 				break;
 
 			case ConstantesMensaje.LOAD_GAME_MESSAGE:
@@ -276,8 +293,10 @@ public class MonopolyGame extends GameServer {
 				break;
 			}
 		} catch (SinDineroException sde) {
+			GestorLogs.registrarException(sde);
 			sendToOne(senderId, new ExceptionMessage(sde));
 		} catch (Exception ex) {
+			GestorLogs.registrarException(ex);
 			sendToOne(senderId, new ExceptionMessage(ex));
 		}
 
@@ -301,5 +320,4 @@ public class MonopolyGame extends GameServer {
 
 		}
 	}
-
 }

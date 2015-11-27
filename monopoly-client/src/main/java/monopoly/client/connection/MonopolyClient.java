@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import monopoly.client.controller.CrearJuegoController;
 import monopoly.client.controller.LoginController;
+import monopoly.client.controller.ReanudarJuegoController;
 import monopoly.client.controller.RegistrarmeController;
 import monopoly.client.controller.TableroController;
 import monopoly.client.controller.UnirmeJuegoController;
@@ -22,10 +22,13 @@ import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
+import monopoly.util.message.ExceptionMessage;
 import monopoly.util.message.LoginMessage;
 import monopoly.util.message.game.ChatGameMessage;
+import monopoly.util.message.game.GetSavedGamesMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.JoinGameMessage;
+import monopoly.util.message.game.ReloadSavedGameMessage;
 import monopoly.util.message.game.SaveGameMessage;
 
 /**
@@ -56,6 +59,8 @@ public class MonopolyClient extends GameClient {
 	 * SwingUtilities.invokeLater() so that it will run in the GUI event thread.
 	 */
 	protected void messageReceived(final Object message) {
+		List<?> list;
+
 		try {
 			switch (message.getClass().getSimpleName()) {
 			case ConstantesMensaje.LOGIN_MESSAGE:
@@ -72,15 +77,44 @@ public class MonopolyClient extends GameClient {
 				juego = (Juego) ((CreateGameMessage) message).message;
 				CrearJuegoController.getInstance().showCrearJuego(juego);
 				break;
-				
+
 			case ConstantesMensaje.SAVE_GAME_MESSAGE:
 				// La IOExceptino ES null si el juego se guardó correctamente
 				IOException exception = (IOException) ((SaveGameMessage) message).exception;
 				TableroController.getInstance().showJuegoGuardado(exception);
 				break;
 
+			case ConstantesMensaje.GET_SAVED_GAMES_MESSAGES:
+				list = (List<?>) ((GetSavedGamesMessage) message).message;
+				juegosList = new ArrayList<Juego>();
+				if (list != null && !list.isEmpty()) {
+					for (Object obj : list) {
+						juegosList.add((Juego) obj);
+					}
+					ReanudarJuegoController.getInstance().showReanudarJuego(
+							juegosList);
+				} else {
+					usuario = TableroController.getInstance()
+							.getUsuarioLogueado();
+					TableroController
+							.getInstance()
+							.showMessageBox(AlertType.INFORMATION,
+									"Información", "No hay juegos",
+									"No se encontró ningún juego guardado para el usuario.");
+				}
+				break;
+
+			case ConstantesMensaje.RELOAD_SAVED_GAME_MESSAGE:
+
+				ReloadSavedGameMessage savedGame = (ReloadSavedGameMessage) message;
+				this.juego = (Juego) savedGame.juego;
+				MonopolyGameStatus status = (MonopolyGameStatus) savedGame.juegoStatus;
+				ReanudarJuegoController.getInstance().finishLoadGame(juego,
+						status);
+				break;
+
 			case ConstantesMensaje.JOIN_GAME_MESSAGE:
-				List<?> list = (List<?>) ((JoinGameMessage) message).message;
+				list = (List<?>) ((JoinGameMessage) message).message;
 				juegosList = new ArrayList<Juego>();
 				if (!list.isEmpty()) {
 					for (Object obj : list) {
@@ -103,7 +137,7 @@ public class MonopolyClient extends GameClient {
 				History chatHistory = (History) ((ChatGameMessage) message).message;
 				TableroController.getInstance().addChatHistoryGame(chatHistory);
 				break;
-				
+
 			case ConstantesMensaje.COMPLETE_TURN_MESSAGE:
 				// CompleteTurnMessage msgCompleteTurnMessage =
 				// (CompleteTurnMessage) message;
@@ -114,7 +148,8 @@ public class MonopolyClient extends GameClient {
 				break;
 
 			case ConstantesMensaje.EXCEPTION_MESSAGE:
-
+				Exception ex = (Exception) ((ExceptionMessage) message).message;
+				TableroController.getInstance().showException(ex);
 				break;
 
 			case "String":
@@ -125,11 +160,8 @@ public class MonopolyClient extends GameClient {
 				break;
 			}
 		} catch (Exception ex) {
-			GestorLogs.registrarError(ex);
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error...");
-			alert.setContentText(ex.getMessage());
-			alert.showAndWait();
+			GestorLogs.registrarException(ex);
+			TableroController.getInstance().showException(ex);
 		}
 
 	}

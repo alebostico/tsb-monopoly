@@ -391,6 +391,42 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	/**
+	 * 
+	 * Éste método muestra el tablero y muestra un messagebox informando al
+	 * jugador que debe esperar a que se unan al juego otros oponentes.
+	 * 
+	 */
+	public void restaurarJuego(MonopolyGameStatus monopolyGameStatus) {
+
+		Platform.runLater(new Runnable() {
+
+			@Override
+			public void run() {
+				// currentStage.setFullScreen(true);
+				Screen screen = Screen.getPrimary();
+				Rectangle2D bounds = screen.getVisualBounds();
+				currentStage.setX(bounds.getMinX());
+				currentStage.setY(bounds.getMinY());
+				currentStage.setWidth(bounds.getWidth());
+				currentStage.setHeight(bounds.getHeight());
+				currentStage.show();
+				prevStage.close(); // cierra la ventana de restauración
+				MenuOpcionesController.getInstance().getCurrentStage().hide(); // oculta el menú
+				currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+					public void handle(WindowEvent we) {
+						ConnectionController.getInstance().cerrarConexion();
+					}
+				});
+				clockLabelTextProperty = lblStopwatch.textProperty();
+				createDigitalClock();
+			}
+		});
+		
+		this.actualizarEstadoJuego(monopolyGameStatus);
+
+	}
+
+	/**
 	 * Método que agrega un history al panel de información que se utilizará
 	 * para llevar un registro sobre jugadas o acciones que se realizan en el
 	 * juego.
@@ -975,6 +1011,25 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	}
 
+	/**
+	 * Muestra un mensaje de error.
+	 * 
+	 * @param exception
+	 *            La {@code Exception} con el error.
+	 */
+	public void showException(Exception exception) {
+		AlertType alertType = AlertType.ERROR;
+		String msgHeader = "Error desconocido";
+		String msgGuardado = "Se ha producido un error desconocido";
+
+		if (exception != null) {
+			msgHeader = "Se ha producido un error";
+			msgGuardado = exception.toString();
+		}
+
+		showMessageBox(alertType, "Error", msgHeader, msgGuardado);
+	}
+
 	private void showImpuestoDeLujo(final Jugador jugadorActual,
 			final String mensaje, final int monto) {
 		// Platform.runLater(new Runnable() {
@@ -1113,6 +1168,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			@Override
 			public void run() {
 				String msgSinDinero;
+				@SuppressWarnings("unused")
 				String idJuego;
 				Alert alert;
 				Jugador jugadorActual;
@@ -1975,12 +2031,16 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * Método para mostrar un mensaje en la pantalla.
 	 * 
 	 * @param type
+	 *            El tipo de mensaje. Es del tipo
+	 *            {@link javafx.scene.control.Alert.AlertType}
 	 * @param title
+	 *            El título del mensaje
 	 * @param headerText
+	 *            El encabezado del mensaje
 	 * @param message
-	 * @param buttons
+	 *            El mensaje a mostrar
 	 */
-	private void showMessageBox(final AlertType type, final String title,
+	public void showMessageBox(final AlertType type, final String title,
 			final String headerText, final String message) {
 		FutureTask<Void> taskMessage = null;
 		try {
@@ -2014,7 +2074,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			taskMessage.get();
 
 		} catch (Exception ex) {
-			GestorLogs.registrarError(ex);
+			GestorLogs.registrarException(ex);
 		}
 	}
 

@@ -200,14 +200,14 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 		}
 	}
 
-	@FXML
-	void processCancel(ActionEvent event) {
-
-	}
+    @FXML
+    void processCancel(ActionEvent event) {
+		currentStage.close();
+		prevStage.show();
+    }
 
 	@FXML
 	void processSearch(ActionEvent event) {
-
 	}
 
 	/**
@@ -219,6 +219,7 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 	private void unirmeAlJuego(final JuegoSimpleProperty juegoSelected) {
 		Platform.runLater(new Runnable() {
 			private Stage unirmeJuegoStage;
+
 
 			@Override
 			public void run() {

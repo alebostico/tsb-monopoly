@@ -6,15 +6,16 @@ package monopoly.util.message.game;
 import java.io.Serializable;
 
 /**
- * @author Bostico Alejandro
- * @author Moreno Pablo
+ * @author alejandro
  *
  */
-public class LoadGameMessage implements Serializable {
+public class ReloadSavedGameMessage implements Serializable {
 
-	private static final long serialVersionUID = -9074283536571385267L;
+	private static final long serialVersionUID = 5062728760709246684L;
 
-	public final Object message; // Original message from a client.
+
+	public final Object juego; // Original message from a client.
+	public final Object juegoStatus; // El Status del juego
 	public final int senderID; // The ID of the client who sent that message.
 
 	/**
@@ -25,8 +26,10 @@ public class LoadGameMessage implements Serializable {
 	 * @param juego
 	 *            el juego que se quiere restaurar.
 	 */
-	public LoadGameMessage(int senderID, Object juego) {
+	public ReloadSavedGameMessage(int senderID, Object juego, Object gameStatus) {
 		this.senderID = senderID;
-		this.message = juego;
+		this.juego = juego;
+		this.juegoStatus = gameStatus;
 	}
+
 }

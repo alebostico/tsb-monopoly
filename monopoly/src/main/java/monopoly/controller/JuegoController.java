@@ -1,9 +1,11 @@
 package monopoly.controller;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import monopoly.dao.IJuegoDao;
 import monopoly.model.AccionEnCasillero;
 import monopoly.model.AccionEnTarjeta;
 import monopoly.model.Dado;
@@ -39,9 +41,12 @@ import monopoly.util.message.ExceptionMessage;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.HistoryGameMessage;
+import monopoly.util.message.game.ReloadSavedGameMessage;
 import monopoly.util.message.game.actions.PayToPlayerMessage;
 
 import org.apache.commons.lang.mutable.MutableBoolean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @author Bostico Alejandro
@@ -51,6 +56,9 @@ import org.apache.commons.lang.mutable.MutableBoolean;
 public class JuegoController implements Serializable {
 
 	private static final long serialVersionUID = 7433262560591847582L;
+
+	static ApplicationContext appContext = new ClassPathXmlApplicationContext(
+			"spring/config/BeanLocations.xml");
 
 	private Juego juego;
 
@@ -105,6 +113,28 @@ public class JuegoController implements Serializable {
 			estadoJuego.actualizarEstadoJuego();
 			gestorJugadores.establecerTurnos();
 		}
+	}
+
+	/**
+	 * Restaura un juego serializado.
+	 * 
+	 * @throws IOException
+	 *             Si no se encuentra el juego.
+	 */
+	public void reloadGame(int senderID) throws Exception {
+
+		for (JugadorHumano jugador : this.gestorJugadores.getListaJugadoresHumanos()) {
+			jugador.setSenderID(senderID);
+		}
+		
+		List<History> historia = new ArrayList<History>();
+		historia.add(new History(StringUtils.getFechaActual(), gestorJugadores
+				.getCurrentPlayer().getNombre(), "Restauró el juego."));
+		MonopolyGameStatus status = new MonopolyGameStatus(
+				gestorJugadores.getTurnoslist(), gestorBanco.getBanco(),
+				gestorTablero.getTablero(), EstadoJuego.TIRAR_DADO, null,
+				gestorJugadores.getCurrentPlayer(), historia, null);
+		sendToOne(senderID, new ReloadSavedGameMessage(senderID, this.getJuego(), status));
 	}
 
 	/**
@@ -585,7 +615,6 @@ public class JuegoController implements Serializable {
 			}
 		}
 	}
-
 	public void comprarPropiedad(int senderId, String nombrePropiedad)
 			throws SinDineroException, Exception {
 		TarjetaPropiedad tarjeta = gestorBanco.getBanco().getTarjetaPropiedad(
@@ -1074,6 +1103,69 @@ public class JuegoController implements Serializable {
 
 	public void sendHistoryGame(History history) throws Exception {
 		sendToAll(new HistoryGameMessage(history));
+	}
+
+	/**
+	 * Actualiza los datos de un juego guardado
+	 * 
+	 * @param juego
+	 *            El juego a actualizar
+	 * @return El juego actualizado
+	 */
+	public static Juego updateJuego(Juego juego) {
+		IJuegoDao juegoDao = (IJuegoDao) appContext.getBean("juegoDao");
+		juegoDao.update(juego);
+		return juego;
+	}
+
+	/**
+	 * Guarda un juego en la base de datos
+	 * 
+	 * @param juego
+	 *            El juego que se quiere guardar
+	 * @return El juego guardado
+	 */
+	public static Juego saveJuego(Juego juego) {
+		IJuegoDao juegoDao = (IJuegoDao) appContext.getBean("juegoDao");
+		juegoDao.save(juego);
+		return juego;
+	}
+
+	/**
+	 * Borra un juego de la base de datos
+	 * 
+	 * @param juego
+	 *            El juego que se quiere borrar
+	 * @return El juego que se borro
+	 */
+	public static Juego deleteJuego(Juego juego) {
+		IJuegoDao juegoDao = (IJuegoDao) appContext.getBean("juegoDao");
+		juegoDao.delete(juego);
+		return juego;
+	}
+
+	/**
+	 * Busca en la base de datos todos los juegos guardados de un usuario.
+	 * 
+	 * @param usuario
+	 *            El usuario creador de los juegos que se quiere buscar.
+	 * @return Los Juegos creados por el {@code usuario}
+	 */
+	public static List<Juego> buscarJuegosGuardados(Usuario usuario) {
+		IJuegoDao juegoDao = (IJuegoDao) appContext.getBean("juegoDao");
+		return juegoDao.getJuegoGuardados(usuario);
+	}
+
+	/**
+	 * Busca un juego guardado en la base de datos
+	 * 
+	 * @param nombre
+	 *            El nombre del juego guardado
+	 * @return El juego
+	 */
+	public static Juego buscarJuegoGuardado(String nombre) {
+		IJuegoDao juegoDao = (IJuegoDao) appContext.getBean("juegoDao");
+		return juegoDao.findJuegoByName(nombre);
 	}
 
 	// =====================================================================//

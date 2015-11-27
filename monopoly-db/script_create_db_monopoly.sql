@@ -52,6 +52,42 @@ VALUES ('ale','IKIppp','Ale','alebostico@gmail.com');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
+--
+-- Table structure for table `juego_guardado`
+--
+
+DROP TABLE IF EXISTS `juego_guardado`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `juego_guardado` (
+  `juegoGuardadoID` int(11) NOT NULL AUTO_INCREMENT,
+  `juegoID` varchar(150) NOT NULL,
+  `fecha_creacion` datetime DEFAULT NULL,
+  `fecha_guardado` datetime DEFAULT NULL,
+  `fecha_restaurado` datetime DEFAULT NULL,
+  `nombre_juego` varchar(150) DEFAULT NULL,
+  `usuarioID` bigint(20) DEFAULT NULL,
+  `cant_jugadores` tinyint unsigned DEFAULT NULL,
+  `nombre_archivo` varchar(150) DEFAULT NULL,
+  PRIMARY KEY (`juegoGuardadoID`),
+  KEY `fk_juego_guardado_usuario` (`usuarioID`),
+  CONSTRAINT `fk_juego_guardado_usuario` FOREIGN KEY (`usuarioID`) REFERENCES `usuario` (`usuarioID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `juego_guardado`
+--
+
+LOCK TABLES `juego_guardado` WRITE;
+/*!40000 ALTER TABLE `juego_guardado` DISABLE KEYS */;
+INSERT INTO `monopoly_db`.`juego_guardado` (`juegoID`,`fecha_creacion`,`fecha_guardado`,`fecha_restaurado`,`nombre_juego`,`usuarioID`,`cant_jugadores`,`nombre_archivo`)
+VALUES ('ale_201511071441',STR_TO_DATE('2015-11-07 14:41:00','%Y-%m-%d %T'),STR_TO_DATE('2015-11-07 14:42:00','%Y-%m-%d %T'),NULL,'Juego1',2,2,'ale_201511071441.game');
+
+INSERT INTO `monopoly_db`.`juego_guardado` (`juegoID`,`fecha_creacion`,`fecha_guardado`,`fecha_restaurado`,`nombre_juego`,`usuarioID`,`cant_jugadores`,`nombre_archivo`)
+VALUES ('ale_201511071552',STR_TO_DATE('2015-11-07 15:52:00','%Y-%m-%d %T'),STR_TO_DATE('2015-11-07 15:53:00','%Y-%m-%d %T'),NULL,'Juego2',2,2,'ale_201511071552.game');
+/*!40000 ALTER TABLE `juego_guardado` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `tarjeta_comunidad`

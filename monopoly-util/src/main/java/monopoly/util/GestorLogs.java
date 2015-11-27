@@ -37,12 +37,13 @@ public class GestorLogs {
 	 */
 	// En este caso loguea MSG_INFO, MSG_WARNING y MSG_ERROR.
 	// private static int loggingDetailLevel = GestorLogs.MSG_INFO;
-	
+
 	// En este caso loguea MSG_DEBUG, MSG_INFO, MSG_WARNING y MSG_ERROR.
 	private static int loggingDetailLevel = GestorLogs.MSG_DEBUG;
-	
-	// En este caso loguea MSG_DEBUG_DETAIL, MSG_DEBUG, MSG_INFO, MSG_WARNING y MSG_ERROR.
-		// private static int loggingDetailLevel = GestorLogs.MSG_DEBUG_DETAIL;
+
+	// En este caso loguea MSG_DEBUG_DETAIL, MSG_DEBUG, MSG_INFO, MSG_WARNING y
+	// MSG_ERROR.
+	// private static int loggingDetailLevel = GestorLogs.MSG_DEBUG_DETAIL;
 
 	private static final String pathFolderLog = System.getProperty("user.home")
 			+ File.separator + "monopoly_logs";;
@@ -74,7 +75,7 @@ public class GestorLogs {
 			System.out.print("\n");
 			// .....................................................
 
-			ps = new PrintStream(new FileOutputStream(fileLog,true));
+			ps = new PrintStream(new FileOutputStream(fileLog, true));
 
 			if (!fileLog.exists()) {
 				fileLog.createNewFile();
@@ -100,16 +101,23 @@ public class GestorLogs {
 		GestorLogs.registrar(GestorLogs.MSG_ERROR, error);
 	}
 
+	/**
+	 * Registra una Exception en el log. Usar el método
+	 * {@link #registrarException(exception)}
+	 * 
+	 * @param error
+	 *            La {@code Exception} para loguear.
+	 */
 	public static void registrarError(Exception error) {
-		StringBuilder sb = new StringBuilder();
-
-		if (!StringUtils.IsNullOrEmpty(error.getMessage()))
-			sb.append("Message Error: " + error.getMessage());
-		if (error.getStackTrace() != null) {
-			if (!StringUtils.IsNullOrEmpty(error.getStackTrace().toString()))
-				sb.append("Stack Trace: " + error.getStackTrace().toString());
-		}
-		GestorLogs.registrar(GestorLogs.MSG_ERROR, sb.toString());
+		registrarException(error);
+		// StringBuilder sb = new StringBuilder();
+		// if (!StringUtils.IsNullOrEmpty(error.getMessage()))
+		// sb.append("Message Error: " + error.getMessage());
+		// if (error.getStackTrace() != null) {
+		// if (!StringUtils.IsNullOrEmpty(error.getStackTrace().toString()))
+		// sb.append("Stack Trace: " + error.getStackTrace().toString());
+		// }
+		// GestorLogs.registrar(GestorLogs.MSG_ERROR, sb.toString());
 	}
 
 	/**
@@ -163,17 +171,19 @@ public class GestorLogs {
 	}
 
 	/**
+	 * Registra una Exception en el log.
 	 * 
-	 * @param e
+	 * @param exception
+	 *            La {@code Exception} para loguear.
 	 */
-	public static void registrarException(Exception e) {
+	public static void registrarException(Exception exception) {
 		GestorLogs.registrar(GestorLogs.MSG_ERROR, "Exception: ");
 		// GestorLogs.registrar(GestorLogs.MSG_ERROR, e.toString());
 		// GestorLogs.registrar(GestorLogs.MSG_ERROR, e.getMessage());
-		e.printStackTrace(ps);
+		exception.printStackTrace(ps);
 		ps.flush();
 		if (GestorLogs.printToConsole) {
-			e.printStackTrace();
+			exception.printStackTrace();
 		}
 	}
 

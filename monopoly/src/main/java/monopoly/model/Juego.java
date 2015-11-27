@@ -3,11 +3,22 @@
  */
 package monopoly.model;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import monopoly.controller.FichasController;
 import monopoly.model.tablero.Tablero;
@@ -18,13 +29,21 @@ import monopoly.util.GestorLogs;
  * @author Moreno Pablo
  * 
  */
+@Entity
+@Table(name = "juego_guardado", catalog = "monopoly_db")
 public class Juego implements Serializable {
 
 	private static final long serialVersionUID = 634594719477426095L;
 
+	@Id
+	@GeneratedValue(strategy = IDENTITY)
+	@Column(name = "juegoGuardadoID")
+	private int juegoGuardadoID;
+	
 	/**
 	 * Nombre unico que identifica al juego
 	 */
+	@Column(name = "nombre_juego")
 	private String nombreJuego;
 
 	/**
@@ -32,25 +51,51 @@ public class Juego implements Serializable {
 	 * formado por varios campos de la clase. Se genera solo en base a los
 	 * datos.
 	 */
+	@Column(name = "juegoID")
 	private String uniqueID;
 
 	/**
 	 * El "dueño" del Juego. Es el jugador que creó el juego. No se puede
 	 * cambiar.
 	 */
+	@ManyToOne
+	@JoinColumn(name = "usuarioID")
 	private Usuario owner;
 
+	@Column(name = "fecha_creacion")
 	private Date fechaCreacion;
+	
+	@Column(name = "fecha_guardado")
+	private Date fechaGuardado;
+	
+	@Column(name = "fecha_restaurado")
+	private Date fechaRestaurado;
 
+	@Transient
 	private List<Jugador> jugadoresList; // cambiar por lista circular
 
+	@Transient
 	private Dado dado;
 
+	@Column(name = "cant_jugadores")
 	private int cantJugadores;
+	
+	@Column(name = "nombre_archivo")
+	private String nombreArchivo;
 
+	@Transient
 	private List<Ficha> fichasPlayerList;
 	
+	@Transient
 	private Tablero tablero;
+
+	/**
+	 * Constructor por defecto
+	 * 
+	 */
+	public Juego() {
+		super();
+	}
 
 	/**
 	 * Constructor con parametros
@@ -255,6 +300,50 @@ public class Juego implements Serializable {
 	 */
 	public void setTablero(Tablero tablero) {
 		this.tablero = tablero;
+	}
+
+	public int getJuegoGuardadoID() {
+		return juegoGuardadoID;
+	}
+
+	public void setJuegoGuardadoID(int juegoGuardadoID) {
+		this.juegoGuardadoID = juegoGuardadoID;
+	}
+
+	public Date getFechaGuardado() {
+		return fechaGuardado;
+	}
+
+	public void setFechaGuardado(Date fechaGuardado) {
+		this.fechaGuardado = fechaGuardado;
+	}
+
+	public Date getFechaRestaurado() {
+		return fechaRestaurado;
+	}
+
+	public void setFechaRestaurado(Date fechaRestaurado) {
+		this.fechaRestaurado = fechaRestaurado;
+	}
+
+	public void setUniqueID(String uniqueID) {
+		this.uniqueID = uniqueID;
+	}
+
+	public void setOwner(Usuario owner) {
+		this.owner = owner;
+	}
+
+	public void setFechaCreacion(Date fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
+	}
+
+	public String getNombreArchivo() {
+		return nombreArchivo;
+	}
+
+	public void setNombreArchivo(String nombreArchivo) {
+		this.nombreArchivo = nombreArchivo;
 	}
 
 	/**

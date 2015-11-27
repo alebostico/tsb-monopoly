@@ -136,7 +136,7 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 			alert.setContentText(cve.getMessage());
 			alert.showAndWait();
 		} catch (Exception ex) {
-			GestorLogs.registrarError(ex);
+			GestorLogs.registrarException(ex);
 			alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error...");
 			alert.setHeaderText("Error mediante una excepción");

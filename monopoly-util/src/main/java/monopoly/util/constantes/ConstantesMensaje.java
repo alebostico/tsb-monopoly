@@ -19,7 +19,9 @@ public class ConstantesMensaje {
 	public final static String CREATE_GAME_MESSAGE = "CreateGameMessage";
 	public final static String JOIN_GAME_MESSAGE = "JoinGameMessage";
 	public final static String SAVE_GAME_MESSAGE = "SaveGameMessage";
+	public final static String GET_SAVED_GAMES_MESSAGES = "GetSavedGamesMessage";
 	public final static String LOAD_GAME_MESSAGE = "LoadGameMessage";
+	public final static String RELOAD_SAVED_GAME_MESSAGE = "ReloadSavedGameMessage";
 	public final static String START_GAME_MESSAGE = "StartGameMessage";
 	public final static String STATUS_GAME_MESSAGE = "MonopolyGameStatus";
 	public final static String HISTORY_GAME_MESSAGE = "HistoryGameMessage";
@@ -39,7 +41,7 @@ public class ConstantesMensaje {
 	public final static String DOUBLE_DICE_JAIL_MESSAGE = "DoubleDiceJailMessage";
 	public final static String PAY_TO_LEAVE_JAIL_MESSAGE = "PayToLeaveJailMessage";
 	public final static String PAY_RENT_MESSAGE = "PayRentMessage";
-	
+
 	/*************************************************************************************/
 
 	/*************************************************************************************/

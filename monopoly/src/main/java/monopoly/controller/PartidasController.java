@@ -90,8 +90,7 @@ public class PartidasController {
 		try {
 			SerializerController.saveGame(juegoController);
 			saveGameMessage = new SaveGameMessage(uniqueIdJuego, null);
-			GestorLogs.registrarLog("Se guardó el juego "
-					+ uniqueIdJuego);
+			GestorLogs.registrarLog("Se guardó el juego " + uniqueIdJuego);
 		} catch (IOException e) {
 			saveGameMessage = new SaveGameMessage(uniqueIdJuego, e);
 			GestorLogs.registrarError("Error al guardar el juego "
@@ -100,6 +99,23 @@ public class PartidasController {
 		}
 
 		monopolyGame.sendToOne(senderID, saveGameMessage);
+	}
+
+	/**
+	 * Busca un juego en la base de datos y lo restaura
+	 * 
+	 * @param nombre
+	 *            El nombre del juego
+	 * @return El {@code JuegoController} del juego restaurado
+	 */
+	public JuegoController loadGame(int senderID, String nombre)
+			throws Exception {
+		JuegoController juegoController = null;
+		juegoController = SerializerController.loadGame(nombre);
+		this.juegosControllerList.put(juegoController.getJuego().getUniqueID(),
+				juegoController);
+		juegoController.reloadGame(senderID);
+		return juegoController;
 	}
 
 	public void establecerTurnoJugador(int senderId, String idJuego, Dado dados)
@@ -251,8 +267,8 @@ public class PartidasController {
 	}
 
 	/**
-	 * Método que verifica si el jugador ha sacado dados dobles. Si es así
-	 * sale de la  cárcel.
+	 * Método que verifica si el jugador ha sacado dados dobles. Si es así sale
+	 * de la cárcel.
 	 * 
 	 * @param senderId
 	 * @param idJuego
@@ -271,11 +287,12 @@ public class PartidasController {
 	 * @param senderId
 	 * @param idJuego
 	 */
-	public void pagarSalidaDeCarcel(int senderId, String idJuego, EnumSalidaCarcel tipoSalida) throws Exception, SinDineroException {
+	public void pagarSalidaDeCarcel(int senderId, String idJuego,
+			EnumSalidaCarcel tipoSalida) throws Exception, SinDineroException {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.pagarSalidaDeCarcel(senderId, tipoSalida);
 	}
-	
+
 	/**
 	 * Envía a todos los jugadores una historia de una acción realizada por un
 	 * jugador en particular.
@@ -445,6 +462,18 @@ public class PartidasController {
 				juegos.add(jc.getJuego());
 		}
 		return juegos;
+	}
+
+	/**
+	 * Busca todos los juegos guardados que se crearon por el usuario
+	 * {@code creador}
+	 * 
+	 * @param creador
+	 *            El creador de los juegos que se deben buscar
+	 * @return Los juegos guardados del usuario {@code creador}
+	 */
+	public List<Juego> buscarJuegosGuardados(Usuario creador) {
+		return JuegoController.buscarJuegosGuardados(creador);
 	}
 
 	/**
