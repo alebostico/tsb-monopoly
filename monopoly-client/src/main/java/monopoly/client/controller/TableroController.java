@@ -395,7 +395,8 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * jugador que debe esperar a que se unan al juego otros oponentes.
 	 * 
 	 */
-	public void restaurarJuego(MonopolyGameStatus monopolyGameStatus) throws Exception {
+	public void restaurarJuego(MonopolyGameStatus monopolyGameStatus)
+			throws Exception {
 
 		Platform.runLater(new Runnable() {
 
@@ -410,7 +411,9 @@ public class TableroController extends AnchorPane implements Serializable,
 				currentStage.setHeight(bounds.getHeight());
 				currentStage.show();
 				prevStage.close(); // cierra la ventana de restauración
-				MenuOpcionesController.getInstance().getCurrentStage().hide(); // oculta el menú
+				MenuOpcionesController.getInstance().getCurrentStage().hide(); // oculta
+																				// el
+																				// menú
 				currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 					public void handle(WindowEvent we) {
 						ConnectionController.getInstance().cerrarConexion();
@@ -420,7 +423,7 @@ public class TableroController extends AnchorPane implements Serializable,
 				createDigitalClock();
 			}
 		});
-		
+
 		this.actualizarEstadoJuego(monopolyGameStatus);
 
 	}
@@ -659,11 +662,43 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
+	/**
+	 * Envía al servidor un mensaje para guardar en juego en un archivo para
+	 * continuarlo más adelante
+	 * 
+	 */
 	private void guardarJuego() {
 		SaveGameMessage saveMessage = new SaveGameMessage(getJuego()
 				.getUniqueID(), null);
 
 		ConnectionController.getInstance().send(saveMessage);
+	}
+
+	/**
+	 * Cierra la ventana del tablero y se desconecta
+	 * 
+	 * @param force
+	 *            Especifica si se fuerza el cierre.
+	 *            <ul>
+	 *            <li>{@code false}: muestra un mensaje preguntando al usuario
+	 *            si realmente desea salir del juego</li>
+	 *            <li>{@code true}: sale del juego sin preguntarle al usuario</li>
+	 *            </ul>
+	 */
+	private void cerrar(boolean force) {
+		boolean answer = false;
+
+		if (!force) {
+			ButtonType result = showYesNoMsgBox("Abandonar juego", null,
+					"¿Está seguro que desea abandonar el juego? Se perderá el progreso del juego.");
+			if (result.getButtonData() == ButtonData.YES)
+				answer = true;
+		}
+		if (force || answer) {
+			ConnectionController.getInstance().cerrarConexion();
+			currentStage.close();
+			System.exit(0);
+		}
 	}
 
 	/**
@@ -1065,6 +1100,10 @@ public class TableroController extends AnchorPane implements Serializable,
 
 		showMessageBox(alertType, "Estado de Juego", msgHeader, msgGuardado);
 
+		// Una vez que le informamos al usuario que el juego se guardó
+		// correctamente, cerramos el juego
+		if (exception == null)
+			this.cerrar(true);
 	}
 
 	/**
@@ -2129,6 +2168,39 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
+	/**
+	 * Método para mostrar un mensaje en la pantalla que requiere de una
+	 * respuesta SI/NO
+	 * 
+	 * @param title
+	 *            El título del mensaje
+	 * @param headerText
+	 *            El encabezado del mensaje
+	 * @param message
+	 *            El mensaje a mostrar
+	 * @return La respuesta del usuario
+	 */
+	public ButtonType showYesNoMsgBox(final String title,
+			final String headerText, final String message) {
+
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle(title);
+		alert.setHeaderText(headerText);
+		alert.setContentText(message);
+		
+		ButtonType buttonYes;
+		ButtonType buttonNo;
+		
+		buttonYes = new ButtonType("Si", ButtonData.YES);
+		buttonNo = new ButtonType("No", ButtonData.NO);
+		alert.getButtonTypes().setAll(buttonYes,buttonNo);
+		
+		Optional<ButtonType> result = alert.showAndWait();
+
+		return result.get();
+
+	}
+
 	// ======================================================================//
 	// ============================== Event Fx ==============================//
 	// ======================================================================//
@@ -2235,11 +2307,16 @@ public class TableroController extends AnchorPane implements Serializable,
 	@FXML
 	void processGuardar(ActionEvent event) {
 		this.guardarJuego();
+		// this.cerrar(true);
+		/*
+		 * Cierro la ventana cuando llega la confirmación de que el juego se
+		 * guardó sin problemas
+		 */
 	}
 
 	@FXML
-	void processGuardarYSalir(ActionEvent event) {
-
+	void processAbandonar(ActionEvent event) {
+		this.cerrar(false);
 	}
 
 	// ======================================================================//
