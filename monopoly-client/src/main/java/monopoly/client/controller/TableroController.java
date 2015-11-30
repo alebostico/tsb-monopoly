@@ -363,21 +363,7 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * 
 	 */
 	public void showTableroDeJuego() {
-		// currentStage.setFullScreen(true);
-		Screen screen = Screen.getPrimary();
-		Rectangle2D bounds = screen.getVisualBounds();
-		currentStage.setX(bounds.getMinX());
-		currentStage.setY(bounds.getMinY());
-		currentStage.setWidth(bounds.getWidth());
-		currentStage.setHeight(bounds.getHeight());
-		currentStage.show();
-		prevStage.close();
-		MenuOpcionesController.getInstance().getCurrentStage().hide();
-		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-			public void handle(WindowEvent we) {
-				ConnectionController.getInstance().cerrarConexion();
-			}
-		});
+		loadStage();
 		this.clockLabelTextProperty = lblStopwatch.textProperty();
 
 		createDigitalClock();
@@ -402,23 +388,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 			@Override
 			public void run() {
-				// currentStage.setFullScreen(true);
-				Screen screen = Screen.getPrimary();
-				Rectangle2D bounds = screen.getVisualBounds();
-				currentStage.setX(bounds.getMinX());
-				currentStage.setY(bounds.getMinY());
-				currentStage.setWidth(bounds.getWidth());
-				currentStage.setHeight(bounds.getHeight());
-				currentStage.show();
-				prevStage.close(); // cierra la ventana de restauración
-				MenuOpcionesController.getInstance().getCurrentStage().hide(); // oculta
-																				// el
-																				// menú
-				currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-					public void handle(WindowEvent we) {
-						ConnectionController.getInstance().cerrarConexion();
-					}
-				});
+				loadStage();
 				clockLabelTextProperty = lblStopwatch.textProperty();
 				createDigitalClock();
 			}
@@ -426,6 +396,29 @@ public class TableroController extends AnchorPane implements Serializable,
 
 		this.actualizarEstadoJuego(monopolyGameStatus);
 
+	}
+	
+	private Stage loadStage(){
+		// currentStage.setFullScreen(true);
+		Screen screen = Screen.getPrimary();
+		Rectangle2D bounds = screen.getVisualBounds();
+		currentStage.setX(bounds.getMinX());
+		currentStage.setY(bounds.getMinY());
+		currentStage.setWidth(bounds.getWidth());
+		currentStage.setHeight(bounds.getHeight());
+		currentStage.show();
+		prevStage.close(); // cierra la ventana de restauración
+		MenuOpcionesController.getInstance().getCurrentStage().hide(); // oculta
+																		// el
+																		// menú
+		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			public void handle(WindowEvent we) {
+				cerrar(false);
+				we.consume();
+			}
+		});
+		
+		return currentStage;
 	}
 
 	/**
@@ -695,8 +688,10 @@ public class TableroController extends AnchorPane implements Serializable,
 				answer = true;
 		}
 		if (force || answer) {
+			GestorLogs.registrarLog("Saliendo de monopolio...");
 			ConnectionController.getInstance().cerrarConexion();
 			currentStage.close();
+			Platform.exit();
 			System.exit(0);
 		}
 	}
@@ -2187,14 +2182,14 @@ public class TableroController extends AnchorPane implements Serializable,
 		alert.setTitle(title);
 		alert.setHeaderText(headerText);
 		alert.setContentText(message);
-		
+
 		ButtonType buttonYes;
 		ButtonType buttonNo;
-		
+
 		buttonYes = new ButtonType("Si", ButtonData.YES);
 		buttonNo = new ButtonType("No", ButtonData.NO);
-		alert.getButtonTypes().setAll(buttonYes,buttonNo);
-		
+		alert.getButtonTypes().setAll(buttonYes, buttonNo);
+
 		Optional<ButtonType> result = alert.showAndWait();
 
 		return result.get();

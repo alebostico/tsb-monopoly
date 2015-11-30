@@ -22,9 +22,10 @@
                      <children>
                         <TableView id="tblJuegos" fx:id="tblJuegos" minWidth="590.0">
                            <columns>
-                              <TableColumn id="collumnNombre" fx:id="colNombre" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" resizable="false" text="Nombre" />
-                              <TableColumn id="collumnFecha" fx:id="colFecha" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" resizable="false" text="Fecha" />
-                              <TableColumn id="collumnParticipantes" fx:id="colParticipantes" maxWidth="140.0" minWidth="140.0" prefWidth="140.0" resizable="false" text="Participantes" />
+                              <TableColumn id="collumnNombre" fx:id="colNombre" maxWidth="190.0" minWidth="190.0" prefWidth="190.0" resizable="false" text="Nombre" />
+                              <TableColumn id="collumnFecha" fx:id="colFecha" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" resizable="false" text="Creado" />
+                              <TableColumn id="collumnGuardado" fx:id="colGuardado" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" resizable="false" text="Guardado" />
+                              <TableColumn id="collumnParticipantes" fx:id="colParticipantes" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" text="Jugadores" />
                            </columns>
                         </TableView>
                      </children>

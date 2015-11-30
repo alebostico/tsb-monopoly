@@ -64,7 +64,6 @@ public class SerializerController {
 			gameName = juegoController.getJuego().getUniqueID();
 			file = new FileOutputStream(SAVES_PATH + File.separator + gameName
 					+ FILE_EXTENSION);
-			// file = new FileOutputStream("test.game");
 			buffer = new BufferedOutputStream(file);
 			output = new ObjectOutputStream(buffer);
 			output.writeObject(juegoController);
@@ -72,8 +71,7 @@ public class SerializerController {
 			// -------------------------------------------
 			// Guardo en la base información del juego
 			Juego savedGame = JuegoController
-					.buscarJuegoGuardado(juegoController.getJuego()
-							.getNombreJuego());
+					.buscarJuegoGuardado(juegoController.getJuego().getUniqueID());
 
 			if (savedGame == null) {
 				juegoController.getJuego().setNombreArchivo(
@@ -85,7 +83,7 @@ public class SerializerController {
 				// savedGame.setNombreArchivo(gameName + FILE_EXTENSION);
 				savedGame.setFechaRestaurado(null);
 				savedGame.setFechaGuardado(new Date());
-				JuegoController.saveJuego(savedGame);
+				JuegoController.updateJuego(savedGame);
 			}
 			// -------------------------------------------
 		} finally {

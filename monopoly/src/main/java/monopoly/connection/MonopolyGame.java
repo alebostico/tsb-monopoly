@@ -175,7 +175,8 @@ public class MonopolyGame extends GameServer {
 				
 			case ConstantesMensaje.CONFIRM_GAME_RELOADED_MESSAGE:
 				juego = (Juego) ((ConfirmGameReloadedMessage) message).juego;
-				PartidasController.getInstance().confirmarJuegoRestaurado(juego);
+				//TODO: OJO!!! Descomentar la linea siguente. Es solo debug.
+				//PartidasController.getInstance().confirmarJuegoRestaurado(juego);
 				break;
 
 			case ConstantesMensaje.LOAD_GAME_MESSAGE:
