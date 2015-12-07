@@ -91,7 +91,7 @@ public class JuegoDao extends CustomHibernateDaoSupport implements IJuegoDao {
 		List<Juego> juegosLista = new ArrayList<Juego>();
 		List<?> list = session.createCriteria(Juego.class)
 				.add(Restrictions.eq("owner", usuario))
-				.list();
+				.add(Restrictions.isNull("fechaRestaurado")).list();
 		if (list.isEmpty()) {
 			String log = "No existen juegos en la base de datos para el usuario "
 					+ usuario.getUserName() + " (" + usuario.getNombre() + ").";
@@ -109,11 +109,30 @@ public class JuegoDao extends CustomHibernateDaoSupport implements IJuegoDao {
 	public Juego findJuegoByName(String nombre) {
 		Session session = this.getSession();
 		List<?> list = session.createCriteria(Juego.class)
-				.add(Restrictions.eq("nombreJuego", nombre))
-				.list();
+				.add(Restrictions.eq("nombreJuego", nombre)).list();
 		if (list.isEmpty()) {
-			String log = "No existen juegos con el nombre "
-					+ nombre + ".";
+			String log = "No existen juegos con el nombre " + nombre + ".";
+			GestorLogs.registrarWarning(log);
+			return null;
+		} else {
+			return (Juego) list.get(0);
+		}
+	}
+
+	/**
+	 * Busca un juego en la base de datos a partir de uniqueID
+	 * 
+	 * @param uniqueID
+	 *            El {@code uniqueID} del juego que se quiere buscar
+	 * @return El {@code Juego} o {@code null} si no se encuentra
+	 */
+	@Override
+	public Juego findJuegoByUniqueId(String uniqueID) {
+		Session session = this.getSession();
+		List<?> list = session.createCriteria(Juego.class)
+				.add(Restrictions.eq("uniqueID", uniqueID)).list();
+		if (list.isEmpty()) {
+			String log = "No existen juegos con el ID " + uniqueID + ".";
 			GestorLogs.registrarWarning(log);
 			return null;
 		} else {

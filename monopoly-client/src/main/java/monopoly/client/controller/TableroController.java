@@ -364,21 +364,7 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * 
 	 */
 	public void showTableroDeJuego() {
-		// currentStage.setFullScreen(true);
-		Screen screen = Screen.getPrimary();
-		Rectangle2D bounds = screen.getVisualBounds();
-		currentStage.setX(bounds.getMinX());
-		currentStage.setY(bounds.getMinY());
-		currentStage.setWidth(bounds.getWidth());
-		currentStage.setHeight(bounds.getHeight());
-		currentStage.show();
-		prevStage.close();
-		MenuOpcionesController.getInstance().getCurrentStage().hide();
-		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-			public void handle(WindowEvent we) {
-				ConnectionController.getInstance().cerrarConexion();
-			}
-		});
+		loadStage();
 		this.clockLabelTextProperty = lblStopwatch.textProperty();
 
 		createDigitalClock();
@@ -396,29 +382,14 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * jugador que debe esperar a que se unan al juego otros oponentes.
 	 * 
 	 */
-	public void restaurarJuego(MonopolyGameStatus monopolyGameStatus) {
+	public void restaurarJuego(MonopolyGameStatus monopolyGameStatus)
+			throws Exception {
 
 		Platform.runLater(new Runnable() {
 
 			@Override
 			public void run() {
-				// currentStage.setFullScreen(true);
-				Screen screen = Screen.getPrimary();
-				Rectangle2D bounds = screen.getVisualBounds();
-				currentStage.setX(bounds.getMinX());
-				currentStage.setY(bounds.getMinY());
-				currentStage.setWidth(bounds.getWidth());
-				currentStage.setHeight(bounds.getHeight());
-				currentStage.show();
-				prevStage.close(); // cierra la ventana de restauración
-				MenuOpcionesController.getInstance().getCurrentStage().hide(); // oculta
-																				// el
-																				// menú
-				currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-					public void handle(WindowEvent we) {
-						ConnectionController.getInstance().cerrarConexion();
-					}
-				});
+				loadStage();
 				clockLabelTextProperty = lblStopwatch.textProperty();
 				createDigitalClock();
 			}
@@ -426,6 +397,29 @@ public class TableroController extends AnchorPane implements Serializable,
 
 		this.actualizarEstadoJuego(monopolyGameStatus);
 
+	}
+
+	private Stage loadStage() {
+		// currentStage.setFullScreen(true);
+		Screen screen = Screen.getPrimary();
+		Rectangle2D bounds = screen.getVisualBounds();
+		currentStage.setX(bounds.getMinX());
+		currentStage.setY(bounds.getMinY());
+		currentStage.setWidth(bounds.getWidth());
+		currentStage.setHeight(bounds.getHeight());
+		currentStage.show();
+		prevStage.close(); // cierra la ventana de restauración
+		MenuOpcionesController.getInstance().getCurrentStage().hide(); // oculta
+																		// el
+																		// menú
+		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			public void handle(WindowEvent we) {
+				cerrar(false);
+				we.consume();
+			}
+		});
+
+		return currentStage;
 	}
 
 	/**
@@ -605,11 +599,45 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
+	/**
+	 * Envía al servidor un mensaje para guardar en juego en un archivo para
+	 * continuarlo más adelante
+	 * 
+	 */
 	private void guardarJuego() {
 		SaveGameMessage saveMessage = new SaveGameMessage(getJuego()
 				.getUniqueID(), null);
 
 		ConnectionController.getInstance().send(saveMessage);
+	}
+
+	/**
+	 * Cierra la ventana del tablero y se desconecta
+	 * 
+	 * @param force
+	 *            Especifica si se fuerza el cierre.
+	 *            <ul>
+	 *            <li>{@code false}: muestra un mensaje preguntando al usuario
+	 *            si realmente desea salir del juego</li>
+	 *            <li>{@code true}: sale del juego sin preguntarle al usuario</li>
+	 *            </ul>
+	 */
+	private void cerrar(boolean force) {
+		boolean answer = false;
+
+		if (!force) {
+			ButtonType result = showYesNoMsgBox("Abandonar juego", null,
+					"¿Está seguro que desea abandonar el juego? Se perderá el progreso del juego.");
+			if (result.getButtonData() == ButtonData.YES)
+				answer = true;
+		}
+		if (force || answer) {
+			GestorLogs.registrarLog("Saliendo de monopolio...");
+			ConnectionController.getInstance().cerrarConexion();
+			currentStage.close();
+			Platform.exit();
+			System.exit(0);
+		}
 	}
 
 	/**
@@ -1011,6 +1039,10 @@ public class TableroController extends AnchorPane implements Serializable,
 
 		showMessageBox(alertType, "Estado de Juego", msgHeader, msgGuardado);
 
+		// Una vez que le informamos al usuario que el juego se guardó
+		// correctamente, cerramos el juego
+		if (exception == null)
+			this.cerrar(true);
 	}
 
 	/**
@@ -1034,7 +1066,8 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	/**
 	 * Muestra un mensaje para pagar el impuesto de lujo.
-	 * @param jugadorActual 
+	 * 
+	 * @param jugadorActual
 	 * @param mensaje
 	 * @param monto
 	 */
@@ -1073,8 +1106,8 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	/**
-	 * Muestra un mensaje con información sobre la propiedad que
-	 * se encuentra en venta.
+	 * Muestra un mensaje con información sobre la propiedad que se encuentra en
+	 * venta.
 	 * 
 	 * @param jugadorActual
 	 * @param casilleroActual
@@ -1122,9 +1155,9 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	/**
-	 * Muestra un mensaje informando cuando debe pagar
-	 * al alquiler al jugador propietario.
-	 *  
+	 * Muestra un mensaje informando cuando debe pagar al alquiler al jugador
+	 * propietario.
+	 * 
 	 * @param jugadorActual
 	 * @param casilleroActual
 	 * @param turnosList
@@ -1163,8 +1196,8 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	/**
-	 * Muestra un mensaje informando que el jugador
-	 * irá a la cárcel.
+	 * Muestra un mensaje informando que el jugador irá a la cárcel.
+	 * 
 	 * @param mensaje
 	 */
 	private void irALaCarcel(final String mensaje) {
@@ -1185,8 +1218,8 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	/**
-	 * Muestra las opción que tiene el jugador para salir
-	 * de la cárcel. Pueden ser:
+	 * Muestra las opción que tiene el jugador para salir de la cárcel. Pueden
+	 * ser:
 	 * <ol>
 	 * <li>Pagar un monto fijo</li>
 	 * <li>Tirar dados dobles</li>
@@ -2091,13 +2124,13 @@ public class TableroController extends AnchorPane implements Serializable,
 							ButtonData.OK_DONE);
 					alert.getButtonTypes().setAll(buttonAceptar);
 
-					 DialogPane dialogPane = alert.getDialogPane();
-					 dialogPane.getStyleClass().remove("alert");
-					 dialogPane.getStylesheets().add(
-					 getClass().getResource("/css/Dialog.css")
-					 .toExternalForm());
-					 dialogPane.getStyleClass().add("dialog");
-					//setearEstiloMessageBox(alert);
+					DialogPane dialogPane = alert.getDialogPane();
+					dialogPane.getStyleClass().remove("alert");
+					dialogPane.getStylesheets().add(
+							getClass().getResource("/css/Dialog.css")
+									.toExternalForm());
+					dialogPane.getStyleClass().add("dialog");
+					// setearEstiloMessageBox(alert);
 
 					alert.showAndWait();
 					return null;
@@ -2154,7 +2187,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		ButtonBar buttonBar = (ButtonBar) alert.getDialogPane().lookup(
 				".button-bar");
 		buttonBar.setStyle(styleBg);
-		
+
 		final String styleButton = "-fx-background-color:rgb(255, 255, 255, 0.08),rgb(0, 0, 0, 0.8)"
 				+ ",#090a0c,linear-gradient(#4a5661 0%, #1f2429 20%, #1f242a 100%)"
 				+ ",linear-gradient(#242a2e, #23282e)"
@@ -2168,6 +2201,39 @@ public class TableroController extends AnchorPane implements Serializable,
 				+ "-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 0.1 );"
 				+ "-fx-padding: 5 5 5 5;";
 		buttonBar.getButtons().forEach(b -> b.setStyle(styleButton));
+	}
+
+	/**
+	 * Método para mostrar un mensaje en la pantalla que requiere de una
+	 * respuesta SI/NO
+	 * 
+	 * @param title
+	 *            El título del mensaje
+	 * @param headerText
+	 *            El encabezado del mensaje
+	 * @param message
+	 *            El mensaje a mostrar
+	 * @return La respuesta del usuario
+	 */
+	public ButtonType showYesNoMsgBox(final String title,
+			final String headerText, final String message) {
+
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle(title);
+		alert.setHeaderText(headerText);
+		alert.setContentText(message);
+
+		ButtonType buttonYes;
+		ButtonType buttonNo;
+
+		buttonYes = new ButtonType("Si", ButtonData.YES);
+		buttonNo = new ButtonType("No", ButtonData.NO);
+		alert.getButtonTypes().setAll(buttonYes, buttonNo);
+
+		Optional<ButtonType> result = alert.showAndWait();
+
+		return result.get();
+
 	}
 
 	// ======================================================================//
@@ -2276,11 +2342,16 @@ public class TableroController extends AnchorPane implements Serializable,
 	@FXML
 	void processGuardar(ActionEvent event) {
 		this.guardarJuego();
+		// this.cerrar(true);
+		/*
+		 * Cierro la ventana cuando llega la confirmación de que el juego se
+		 * guardó sin problemas
+		 */
 	}
 
 	@FXML
-	void processGuardarYSalir(ActionEvent event) {
-
+	void processAbandonar(ActionEvent event) {
+		this.cerrar(false);
 	}
 
 	// ======================================================================//

@@ -1172,6 +1172,18 @@ public class JuegoController implements Serializable {
 	}
 
 	/**
+	 * Busca un juego en la base de datos
+	 * 
+	 * @param juego
+	 *            El {@code UniqueID} del juego que se quiere buscar
+	 * @return El juego o {@code null} si no se encontró.
+	 */
+	public static Juego findJuegoByUniqueId(String uniqueID) {
+		IJuegoDao juegoDao = (IJuegoDao) appContext.getBean("juegoDao");
+		return juegoDao.findJuegoByUniqueId(uniqueID);
+	}
+
+	/**
 	 * Guarda un juego en la base de datos
 	 * 
 	 * @param juego
@@ -1212,13 +1224,13 @@ public class JuegoController implements Serializable {
 	/**
 	 * Busca un juego guardado en la base de datos
 	 * 
-	 * @param nombre
+	 * @param UniqueID
 	 *            El nombre del juego guardado
 	 * @return El juego
 	 */
-	public static Juego buscarJuegoGuardado(String nombre) {
+	public static Juego buscarJuegoGuardado(String UniqueID) {
 		IJuegoDao juegoDao = (IJuegoDao) appContext.getBean("juegoDao");
-		return juegoDao.findJuegoByName(nombre);
+		return juegoDao.findJuegoByUniqueId(UniqueID);
 	}
 
 	// =====================================================================//

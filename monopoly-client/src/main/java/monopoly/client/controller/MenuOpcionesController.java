@@ -171,7 +171,7 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 			controller = (ReanudarJuegoController) FXUtils.cargarStage(
 					reanudarJuegoStage, fxml, "Monopoly - Reanudar juego",
 					false, false, Modality.APPLICATION_MODAL,
-					StageStyle.DECORATED);
+					StageStyle.UTILITY);
 			controller.setCurrentStage(reanudarJuegoStage);
 			controller.setPrevStage(currentStage);
 			controller.setUsuarioLogueado(usuarioLogueado);

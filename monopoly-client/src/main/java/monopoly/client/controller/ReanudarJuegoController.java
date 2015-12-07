@@ -35,6 +35,7 @@ import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesFXML;
+import monopoly.util.message.game.ConfirmGameReloadedMessage;
 import monopoly.util.message.game.ReloadSavedGameMessage;
 
 /**
@@ -52,7 +53,11 @@ public class ReanudarJuegoController extends AnchorPane implements
 	private TableColumn<JuegoSimpleProperty, String> colFecha;
 
 	@FXML
+	private TableColumn<JuegoSimpleProperty, String> colGuardado;
+
+	@FXML
 	private TableColumn<JuegoSimpleProperty, String> colParticipantes;
+
 	private List<JuegoSimpleProperty> filtersJuegosList;
 	private ObservableList<JuegoSimpleProperty> obsJuegosList;
 
@@ -116,11 +121,12 @@ public class ReanudarJuegoController extends AnchorPane implements
 			controller.setCurrentStage(stage);
 			controller.setPrevStage(currentStage);
 		} catch (Exception ex) {
+			TableroController.getInstance().showException(ex);
 			GestorLogs.registrarError(ex);
 		}
 
 		ReloadSavedGameMessage msg = new ReloadSavedGameMessage(senderID,
-				juegoSelected.getNombre(), null);
+				juegoSelected.getJuego().getUniqueID(), null);
 		ConnectionController.getInstance().send(msg);
 
 	}
@@ -136,9 +142,21 @@ public class ReanudarJuegoController extends AnchorPane implements
 	@FXML
 	public void finishLoadGame(Juego juego,
 			MonopolyGameStatus monopolyGameStatus) {
-		controller.setPrevStage(currentStage);
-		controller.setJuego(juego);
-		controller.restaurarJuego(monopolyGameStatus);
+		try {
+			controller.setPrevStage(currentStage);
+			controller.setJuego(juego);
+			controller.restaurarJuego(monopolyGameStatus);
+
+			// Si todo va bien, envío un mensaje de confirmación...
+			int senderID = ConnectionController.getInstance().getIdPlayer();
+			ConfirmGameReloadedMessage msg = new ConfirmGameReloadedMessage(
+					senderID, juego);
+			ConnectionController.getInstance().send(msg);
+		} catch (Exception ex) {
+			TableroController.getInstance().showException(ex);
+			GestorLogs.registrarError(ex);
+		}
+
 	}
 
 	/*
@@ -226,7 +244,11 @@ public class ReanudarJuegoController extends AnchorPane implements
 						"nombre"));
 
 		colFecha.setCellValueFactory(new PropertyValueFactory<JuegoSimpleProperty, String>(
-				"fecha"));
+				"fechaCreacion"));
+
+		colGuardado
+				.setCellValueFactory(new PropertyValueFactory<JuegoSimpleProperty, String>(
+						"fechaGuardado"));
 
 		colParticipantes
 				.setCellValueFactory(new PropertyValueFactory<JuegoSimpleProperty, String>(
@@ -237,12 +259,14 @@ public class ReanudarJuegoController extends AnchorPane implements
 	private void cargarTabla() {
 		obsJuegosList = FXCollections.observableArrayList(filtersJuegosList);
 		tblJuegos.setItems(obsJuegosList);
-		tblJuegos.getColumns().setAll(colNombre, colFecha, colParticipantes);
+		tblJuegos.getColumns().setAll(colNombre, colFecha, colGuardado,
+				colParticipantes);
 	}
 
 	public static class JuegoSimpleProperty {
 		private final SimpleStringProperty nombre;
-		private final SimpleStringProperty fecha;
+		private final SimpleStringProperty fechaCreacion;
+		private final SimpleStringProperty fechaGuardado;
 		private final SimpleStringProperty creador;
 		private final SimpleIntegerProperty participantes;
 		private final SimpleObjectProperty<Juego> juego;
@@ -250,8 +274,10 @@ public class ReanudarJuegoController extends AnchorPane implements
 
 		private JuegoSimpleProperty(Juego juego) {
 			this.nombre = new SimpleStringProperty(juego.getNombreJuego());
-			this.fecha = new SimpleStringProperty(dateFormat.format(juego
-					.getFechaCreacion()));
+			this.fechaCreacion = new SimpleStringProperty(
+					dateFormat.format(juego.getFechaCreacion()));
+			this.fechaGuardado = new SimpleStringProperty(
+					dateFormat.format(juego.getFechaGuardado()));
 			this.creador = new SimpleStringProperty(juego.getOwner()
 					.getUserName());
 			this.participantes = new SimpleIntegerProperty(
@@ -263,8 +289,12 @@ public class ReanudarJuegoController extends AnchorPane implements
 			return nombre.get();
 		}
 
-		public String getFecha() {
-			return fecha.get();
+		public String getFechaCreacion() {
+			return fechaCreacion.get();
+		}
+
+		public String getFechaGuardado() {
+			return fechaGuardado.get();
 		}
 
 		public String getCreador() {
@@ -283,8 +313,12 @@ public class ReanudarJuegoController extends AnchorPane implements
 			nombre.set(fNombre);
 		}
 
-		public void getFecha(String fFecha) {
-			fecha.set(fFecha);
+		public void getFechaCreacion(String fFecha) {
+			fechaCreacion.set(fFecha);
+		}
+		
+		public void getFechaGuardado(String fFecha){
+			fechaCreacion.set(fFecha);
 		}
 
 		public void getCreador(String fCreador) {

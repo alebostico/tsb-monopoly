@@ -28,6 +28,7 @@ import monopoly.util.message.LoginMessage;
 import monopoly.util.message.game.AdvanceInBoardMessage;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
+import monopoly.util.message.game.ConfirmGameReloadedMessage;
 import monopoly.util.message.game.GetSavedGamesMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.JoinGameMessage;
@@ -169,7 +170,13 @@ public class MonopolyGame extends GameServer {
 
 			case ConstantesMensaje.RELOAD_SAVED_GAME_MESSAGE:
 				String nombre = (String) ((ReloadSavedGameMessage) message).juego;
-				PartidasController.getInstance().loadGame(senderId, nombre);
+				PartidasController.getInstance().reloadGame(senderId, nombre);
+				break;
+				
+			case ConstantesMensaje.CONFIRM_GAME_RELOADED_MESSAGE:
+				juego = (Juego) ((ConfirmGameReloadedMessage) message).juego;
+				//TODO: OJO!!! Descomentar la linea siguente. Es solo debug.
+				//PartidasController.getInstance().confirmarJuegoRestaurado(juego);
 				break;
 
 			case ConstantesMensaje.LOAD_GAME_MESSAGE:

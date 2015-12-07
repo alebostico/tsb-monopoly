@@ -81,11 +81,13 @@ CREATE TABLE `juego_guardado` (
 
 LOCK TABLES `juego_guardado` WRITE;
 /*!40000 ALTER TABLE `juego_guardado` DISABLE KEYS */;
+/*
 INSERT INTO `monopoly_db`.`juego_guardado` (`juegoID`,`fecha_creacion`,`fecha_guardado`,`fecha_restaurado`,`nombre_juego`,`usuarioID`,`cant_jugadores`,`nombre_archivo`)
 VALUES ('ale_201511071441',STR_TO_DATE('2015-11-07 14:41:00','%Y-%m-%d %T'),STR_TO_DATE('2015-11-07 14:42:00','%Y-%m-%d %T'),NULL,'Juego1',2,2,'ale_201511071441.game');
 
 INSERT INTO `monopoly_db`.`juego_guardado` (`juegoID`,`fecha_creacion`,`fecha_guardado`,`fecha_restaurado`,`nombre_juego`,`usuarioID`,`cant_jugadores`,`nombre_archivo`)
 VALUES ('ale_201511071552',STR_TO_DATE('2015-11-07 15:52:00','%Y-%m-%d %T'),STR_TO_DATE('2015-11-07 15:53:00','%Y-%m-%d %T'),NULL,'Juego2',2,2,'ale_201511071552.game');
+*/
 /*!40000 ALTER TABLE `juego_guardado` ENABLE KEYS */;
 UNLOCK TABLES;
 

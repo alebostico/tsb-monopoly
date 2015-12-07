@@ -22,6 +22,7 @@ public class ConstantesMensaje {
 	public final static String GET_SAVED_GAMES_MESSAGES = "GetSavedGamesMessage";
 	public final static String LOAD_GAME_MESSAGE = "LoadGameMessage";
 	public final static String RELOAD_SAVED_GAME_MESSAGE = "ReloadSavedGameMessage";
+	public final static String CONFIRM_GAME_RELOADED_MESSAGE = "ConfirmGameReloadedMessage";
 	public final static String START_GAME_MESSAGE = "StartGameMessage";
 	public final static String STATUS_GAME_MESSAGE = "MonopolyGameStatus";
 	public final static String HISTORY_GAME_MESSAGE = "HistoryGameMessage";
