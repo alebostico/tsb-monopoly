@@ -36,6 +36,7 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
@@ -101,7 +102,6 @@ import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.PayRentMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
 import monopoly.util.message.game.actions.PayToLeaveJailMessage;
-import monopoly.util.message.game.actions.PayToPlayerMessage;
 import monopoly.util.message.game.actions.SuperTaxMessage;
 
 /**
@@ -411,7 +411,9 @@ public class TableroController extends AnchorPane implements Serializable,
 				currentStage.setHeight(bounds.getHeight());
 				currentStage.show();
 				prevStage.close(); // cierra la ventana de restauración
-				MenuOpcionesController.getInstance().getCurrentStage().hide(); // oculta el menú
+				MenuOpcionesController.getInstance().getCurrentStage().hide(); // oculta
+																				// el
+																				// menú
 				currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 					public void handle(WindowEvent we) {
 						ConnectionController.getInstance().cerrarConexion();
@@ -421,7 +423,7 @@ public class TableroController extends AnchorPane implements Serializable,
 				createDigitalClock();
 			}
 		});
-		
+
 		this.actualizarEstadoJuego(monopolyGameStatus);
 
 	}
@@ -1030,12 +1032,14 @@ public class TableroController extends AnchorPane implements Serializable,
 		showMessageBox(alertType, "Error", msgHeader, msgGuardado);
 	}
 
+	/**
+	 * Muestra un mensaje para pagar el impuesto de lujo.
+	 * @param jugadorActual 
+	 * @param mensaje
+	 * @param monto
+	 */
 	private void showImpuestoDeLujo(final Jugador jugadorActual,
 			final String mensaje, final int monto) {
-		// Platform.runLater(new Runnable() {
-		//
-		// @Override
-		// public void run() {
 		PayToBankMessage msgPayToBank;
 		String msgSinDinero;
 		String idJuego;
@@ -1066,10 +1070,16 @@ public class TableroController extends AnchorPane implements Serializable,
 					"Se ha producido un error al Pagar el Impuesto de Lujo.",
 					ex.getMessage());
 		}
-		// }
-		// });
 	}
 
+	/**
+	 * Muestra un mensaje con información sobre la propiedad que
+	 * se encuentra en venta.
+	 * 
+	 * @param jugadorActual
+	 * @param casilleroActual
+	 * @param mensaje
+	 */
 	private void disponibleParalaVenta(Jugador jugadorActual,
 			Casillero casilleroActual, String mensaje) {
 
@@ -1111,16 +1121,23 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
+	/**
+	 * Muestra un mensaje informando cuando debe pagar
+	 * al alquiler al jugador propietario.
+	 *  
+	 * @param jugadorActual
+	 * @param casilleroActual
+	 * @param turnosList
+	 * @param mensaje
+	 * @param monto
+	 */
 	private void pagarAlquiler(final Jugador jugadorActual,
 			final Casillero casilleroActual, final List<Jugador> turnosList,
 			final String mensaje, final int monto) {
 
 		PayRentMessage msgPayRent;
-		PayToPlayerMessage msgPayToPlayer;
-		Jugador jugadorPropietario;
 		String msgSinDinero;
 		String idJuego;
-		String mensajeAux;
 		try {
 			idJuego = juego.getUniqueID();
 			msgSinDinero = "No cuentas con suficiente dinero para pagar %s. Vende hoteles, casas o hipoteca propiedades para continuar con el juego.";
@@ -1145,6 +1162,11 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
+	/**
+	 * Muestra un mensaje informando que el jugador
+	 * irá a la cárcel.
+	 * @param mensaje
+	 */
 	private void irALaCarcel(final String mensaje) {
 		try {
 			GoToJailMessage msgGoToJailMessage;
@@ -1162,13 +1184,21 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
+	/**
+	 * Muestra las opción que tiene el jugador para salir
+	 * de la cárcel. Pueden ser:
+	 * <ol>
+	 * <li>Pagar un monto fijo</li>
+	 * <li>Tirar dados dobles</li>
+	 * <li>Utilizar una tarjeta de la cárcel</li>
+	 * </ol>
+	 */
 	private void showOpcionesCarcel() {
 		Platform.runLater(new Runnable() {
 
 			@Override
 			public void run() {
 				String msgSinDinero;
-				@SuppressWarnings("unused")
 				String idJuego;
 				Alert alert;
 				Jugador jugadorActual;
@@ -2060,11 +2090,15 @@ public class TableroController extends AnchorPane implements Serializable,
 					buttonAceptar = new ButtonType("Aceptar",
 							ButtonData.OK_DONE);
 					alert.getButtonTypes().setAll(buttonAceptar);
-					
-					DialogPane dialogPane = alert.getDialogPane();
-					dialogPane.getStylesheets().add(getClass().getResource("/css/Sheet_tablero.css").toExternalForm());
-					dialogPane.getStyleClass().add("myDialog");
-					
+
+					 DialogPane dialogPane = alert.getDialogPane();
+					 dialogPane.getStyleClass().remove("alert");
+					 dialogPane.getStylesheets().add(
+					 getClass().getResource("/css/Dialog.css")
+					 .toExternalForm());
+					 dialogPane.getStyleClass().add("dialog");
+					//setearEstiloMessageBox(alert);
+
 					alert.showAndWait();
 					return null;
 
@@ -2076,6 +2110,64 @@ public class TableroController extends AnchorPane implements Serializable,
 		} catch (Exception ex) {
 			GestorLogs.registrarException(ex);
 		}
+	}
+
+	@SuppressWarnings("unused")
+	private void setearEstiloMessageBox(final Alert alert) {
+		String styleBg;
+		String style;
+		DialogPane dialogPane = alert.getDialogPane();
+		// root
+		styleBg = "-fx-background-image: url(\"../images/background/Grey-background.png\"); ";
+		styleBg += "-fx-background-repeat: repeat; ";
+		styleBg += "-fx-background-color:";
+		styleBg += "linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),";
+		styleBg += "linear-gradient(#20262b, #191d22),";
+		styleBg += "radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));";
+
+		dialogPane.setStyle(styleBg);
+
+		// 1. Grid
+		// remove style to customize header
+		dialogPane.getStyleClass().remove("alert");
+
+		GridPane grid = (GridPane) dialogPane.lookup(".header-panel");
+		grid.setStyle(styleBg);
+
+		style = "-fx-font-family: \"Arial\";";
+		style += "-fx-font-size: 20px;";
+		style += "-fx-font-weight: bold;";
+		style += "-fx-text-fill: rgb(255,255,255);";
+		style += "-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 1.9 );";
+		if (grid.lookup(".label") != null)
+			grid.lookup(".label").setStyle(style);
+
+		// 2. ContentText with just a Label
+		style = "-fx-font-family: \"Arial\";";
+		style += "-fx-font-size: 18px;";
+		style += "-fx-font-style: italic;";
+		style += "-fx-text-fill: rgb(255,255,255);";
+		style += "-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 1.9 );";
+		dialogPane.lookup(".content.label").setStyle(style);
+
+		// 3- ButtonBar
+		ButtonBar buttonBar = (ButtonBar) alert.getDialogPane().lookup(
+				".button-bar");
+		buttonBar.setStyle(styleBg);
+		
+		final String styleButton = "-fx-background-color:rgb(255, 255, 255, 0.08),rgb(0, 0, 0, 0.8)"
+				+ ",#090a0c,linear-gradient(#4a5661 0%, #1f2429 20%, #1f242a 100%)"
+				+ ",linear-gradient(#242a2e, #23282e)"
+				+ ",radial-gradient(center 50% 0%, radius 100%, rgba(135,142,148,0.9)"
+				+ ",rgba(255,255,255,0));"
+				+ "-fx-background-radius: 7, 6, 5, 4, 3, 5;"
+				+ "-fx-background-insets: -3 -3 -4 -3, -3, 0, 1, 2, 0;"
+				+ "-fx-font-family: \"Arial\";"
+				+ "-fx-font-size: 18;"
+				+ "-fx-text-fill: rgb(255,255,255);"
+				+ "-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 0.1 );"
+				+ "-fx-padding: 5 5 5 5;";
+		buttonBar.getButtons().forEach(b -> b.setStyle(styleButton));
 	}
 
 	// ======================================================================//

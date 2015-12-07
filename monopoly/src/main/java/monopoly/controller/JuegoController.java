@@ -123,10 +123,11 @@ public class JuegoController implements Serializable {
 	 */
 	public void reloadGame(int senderID) throws Exception {
 
-		for (JugadorHumano jugador : this.gestorJugadores.getListaJugadoresHumanos()) {
+		for (JugadorHumano jugador : this.gestorJugadores
+				.getListaJugadoresHumanos()) {
 			jugador.setSenderID(senderID);
 		}
-		
+
 		List<History> historia = new ArrayList<History>();
 		historia.add(new History(StringUtils.getFechaActual(), gestorJugadores
 				.getCurrentPlayer().getNombre(), "Restauró el juego."));
@@ -134,7 +135,8 @@ public class JuegoController implements Serializable {
 				gestorJugadores.getTurnoslist(), gestorBanco.getBanco(),
 				gestorTablero.getTablero(), EstadoJuego.TIRAR_DADO, null,
 				gestorJugadores.getCurrentPlayer(), historia, null);
-		sendToOne(senderID, new ReloadSavedGameMessage(senderID, this.getJuego(), status));
+		sendToOne(senderID,
+				new ReloadSavedGameMessage(senderID, this.getJuego(), status));
 	}
 
 	/**
@@ -313,6 +315,7 @@ public class JuegoController implements Serializable {
 	public void avanzarDeCasilleroJV() throws Exception {
 		AccionEnCasillero accion;
 		MonopolyGameStatus status;
+		Tarjeta tarjeta;
 		Dado dados = null;
 		Casillero casillero;
 		History history;
@@ -321,8 +324,6 @@ public class JuegoController implements Serializable {
 				.getCurrentPlayer();
 		String mensaje = "";
 		MutableBoolean cobraSalida = new MutableBoolean(true);
-		
-		// ~~~> 
 
 		mensaje = gestorJugadoresVirtuales.deshipotecarAleatorio(jugadorActual);
 
@@ -351,7 +352,44 @@ public class JuegoController implements Serializable {
 		}
 
 		try {
-			// TODO hacer la lógica de salida de cárcel del jugador virtual.
+			// ~~~> pregunto si el jugador está preso.
+			if (jugadorActual.estaPreso()) {
+				// ~~~> Si el jugador está preso pregunto si decide salir con
+				// una tarjeta.
+				if (jugadorActual.getTarjetaCarcelList().size() > 0
+						&& gestorJugadoresVirtuales
+								.decidirSalirTarjeta(jugadorActual)) {
+					tarjeta = jugadorActual.getTarjetaCarcelList().get(0);
+					jugadorActual.getTarjetaCarcelList().remove(tarjeta);
+					gestorTablero.getGestorTarjetas()
+							.agregarTarjetaLibreDeCarcel(tarjeta);
+					mensaje = String
+							.format("Usó una tarjeta de la %s para salir de la cárcel.",
+									tarjeta.isTarjetaSuerte() ? "Suerte"
+											: "Caja de la Comunidad");
+				} else {
+					// ~~~> Si el jugador no decide usar la tarjeta por no
+					// poseer una o no le conviene.
+					// ~~~> Pregunto si quiere salir de la cárcel pagando.
+					if (gestorJugadoresVirtuales
+							.decidirSalirPagando(jugadorActual)) {
+						jugadorActual.pagar(50);
+						jugadorActual.setPreso(false);
+						mensaje = String.format("Pagó %s para salir de la cárcel.",
+								StringUtils.formatearAMoneda(50));						
+					} else {
+						dados = new Dado();
+						tirarDadosDoblesSalirCarcel(jugadorActual, dados);
+						return;
+					}
+				}
+			}
+			
+			if (!StringUtils.IsNullOrEmpty(mensaje)) {
+				history = new History(StringUtils.getFechaActual(),
+						jugadorActual.getNombre(), mensaje);
+				sendToAll(new HistoryGameMessage(history));
+			}
 
 			dados = new Dado();
 			jugadorActual.setUltimoResultado(dados);
@@ -361,11 +399,11 @@ public class JuegoController implements Serializable {
 
 			if (cobraSalida.booleanValue())
 				gestorBanco.pagarPasoSalida(jugadorActual);
-			
+
 			mensaje = String.format(
 					"Avanzó %s casilleros. Se encuentra en el casillero %s.",
 					dados.getSuma(), casillero.getNombreCasillero());
-			
+
 			history = new History(StringUtils.getFechaActual(),
 					jugadorActual.getNombre(), mensaje);
 			historyList = new ArrayList<History>();
@@ -376,7 +414,6 @@ public class JuegoController implements Serializable {
 					EstadoJuego.ESPERANDO_TURNO, null, jugadorActual,
 					historyList, null);
 			sendToAll(status);
-			
 
 			accion = gestorTablero.getAccionEnCasillero(jugadorActual,
 					casillero);
@@ -615,6 +652,7 @@ public class JuegoController implements Serializable {
 			}
 		}
 	}
+
 	public void comprarPropiedad(int senderId, String nombrePropiedad)
 			throws SinDineroException, Exception {
 		TarjetaPropiedad tarjeta = gestorBanco.getBanco().getTarjetaPropiedad(
@@ -940,19 +978,25 @@ public class JuegoController implements Serializable {
 
 	public void tirarDadosDoblesSalirCarcel(int senderId, Dado dados)
 			throws Exception {
-		MutableBoolean cobraSalida = new MutableBoolean(true);
 		Jugador jugador;
+		jugador = gestorJugadores.getJugadorHumano(senderId);
+		tirarDadosDoblesSalirCarcel(jugador, dados);
+	}
+
+	private void tirarDadosDoblesSalirCarcel(Jugador jugador, Dado dados)
+			throws Exception {
+		MutableBoolean cobraSalida = new MutableBoolean(true);
+
 		History history;
 		String mensaje = "";
 		Casillero casillero;
 		AccionEnCasillero accion;
 		HistoryGameMessage msgHistory;
 
-		jugador = gestorJugadores.getJugadorHumano(senderId);
 		jugador.setUltimoResultado(dados);
 
 		if (dados.EsDoble()) {
-			//~~~>
+			// ~~~> Sacó dobles, sale de la carcel.
 			jugador.resetCantidadTurnosCarcel();
 			jugador.setPreso(false);
 			mensaje = String.format(
@@ -963,7 +1007,7 @@ public class JuegoController implements Serializable {
 			msgHistory = new HistoryGameMessage(history);
 			sendToAll(msgHistory);
 
-			//~~> Sigue jugando
+			// ~~> Sigue jugando
 			casillero = gestorTablero.moverAdelante(jugador, dados.getSuma(),
 					cobraSalida);
 			// TODO corregir paso de
@@ -972,7 +1016,12 @@ public class JuegoController implements Serializable {
 
 			accion = gestorTablero.getAccionEnCasillero(jugador, casillero);
 
-			jugarAccionCasillero(accion, jugador, casillero, senderId);
+			if (jugador.isHumano())
+				jugarAccionCasillero(accion, jugador, casillero,
+						((JugadorHumano) jugador).getSenderID());
+			else
+				jugarAccionEnCasilleroJV(accion, (JugadorVirtual) jugador,
+						casillero);
 		} else {
 			jugador.incrementarCantidadTurnosCarcel();
 			mensaje = String.format(
@@ -1070,8 +1119,9 @@ public class JuegoController implements Serializable {
 
 		jugador = gestorJugadores.getJugadorHumano(senderId);
 		casillero = gestorTablero.getCasillero(propiedadId);
-		tarjeta= gestorBanco.getBanco().getTarjetaPropiedadByCasillero(casillero);
-		
+		tarjeta = gestorBanco.getBanco().getTarjetaPropiedadByCasillero(
+				casillero);
+
 		jugadorPropietario = tarjeta.getJugador();
 
 		if (tarjeta.isPropiedadCalle()) {
@@ -1085,13 +1135,16 @@ public class JuegoController implements Serializable {
 
 		jugador.pagarAJugador(jugadorPropietario, monto);
 
-		sendToAll(new HistoryGameMessage(new History(
-				StringUtils.getFechaActual(), jugador.getNombre(),
-				String.format("Pagó %s al jugador %s en concepto de alquiler de la propiedad.",
-						StringUtils.formatearAMoneda(monto),
-						jugadorPropietario.getNombre(),
-						tarjeta.getNombre()))));
-		
+		sendToAll(new HistoryGameMessage(
+				new History(
+						StringUtils.getFechaActual(),
+						jugador.getNombre(),
+						String.format(
+								"Pagó %s al jugador %s en concepto de alquiler de la propiedad.",
+								StringUtils.formatearAMoneda(monto),
+								jugadorPropietario.getNombre(),
+								tarjeta.getNombre()))));
+
 		siguienteTurno(true);
 
 	}
