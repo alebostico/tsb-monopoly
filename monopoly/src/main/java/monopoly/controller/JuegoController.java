@@ -126,6 +126,8 @@ public class JuegoController implements Serializable {
 		for (JugadorHumano jugador : this.gestorJugadores
 				.getListaJugadoresHumanos()) {
 			jugador.setSenderID(senderID);
+			this.gestorJugadores.cleanNetworkPlayers();
+			this.gestorJugadores.addNetworkPlayer(jugador);
 		}
 
 		List<History> historia = new ArrayList<History>();

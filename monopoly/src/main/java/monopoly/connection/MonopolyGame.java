@@ -172,11 +172,12 @@ public class MonopolyGame extends GameServer {
 				String nombre = (String) ((ReloadSavedGameMessage) message).juego;
 				PartidasController.getInstance().reloadGame(senderId, nombre);
 				break;
-				
+
 			case ConstantesMensaje.CONFIRM_GAME_RELOADED_MESSAGE:
 				juego = (Juego) ((ConfirmGameReloadedMessage) message).juego;
-				//TODO: OJO!!! Descomentar la linea siguente. Es solo debug.
-				//PartidasController.getInstance().confirmarJuegoRestaurado(juego);
+				 // TODO: Para debug comentar la linea siguiente, no borra el juego
+				PartidasController.getInstance()
+						.confirmarJuegoRestaurado(juego);
 				break;
 
 			case ConstantesMensaje.LOAD_GAME_MESSAGE:
@@ -253,10 +254,11 @@ public class MonopolyGame extends GameServer {
 				PartidasController.getInstance().addContadorPagos(senderId,
 						msgPayToPlayerMessage.idJuego);
 				break;
-				
+
 			case ConstantesMensaje.PAY_RENT_MESSAGE:
 				msgPayRent = (PayRentMessage) message;
-				PartidasController.getInstance().pagarAlquiler(senderId, msgPayRent.idJuego, msgPayRent.propiedadId);
+				PartidasController.getInstance().pagarAlquiler(senderId,
+						msgPayRent.idJuego, msgPayRent.propiedadId);
 				break;
 
 			case ConstantesMensaje.SUPER_TAX_MESSAGE:
