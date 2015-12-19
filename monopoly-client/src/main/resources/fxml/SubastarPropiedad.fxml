@@ -18,7 +18,7 @@
                      <children>
                         <VBox alignment="CENTER" maxWidth="220.0" minWidth="220.0" prefWidth="220.0" spacing="15.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <ImageView fx:id="imgPropiedad" fitHeight="250.0" fitWidth="200.0" pickOnBounds="true">
+                              <ImageView fx:id="imgPropiedad" fitHeight="250.0" fitWidth="200.0" pickOnBounds="true" VBox.vgrow="ALWAYS">
                                  <image>
                                     <Image url="@../images/tarjetas/frente/tarjeta02.jpg" />
                                  </image>
@@ -27,23 +27,23 @@
                                  <children>
                                     <GridPane alignment="CENTER" hgap="10.0" vgap="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <columnConstraints>
-                                        <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="142.0" minWidth="86.0" prefWidth="91.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="10.0" prefWidth="79.0" />
+                                        <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="142.0" minWidth="86.0" prefWidth="108.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="10.0" prefWidth="62.0" />
                                       </columnConstraints>
                                       <rowConstraints>
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Label text="Mejor Oferta" textFill="#00000003" />
-                                          <TextField fx:id="txtMejorOferta" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" promptText="0 €" GridPane.columnIndex="1" />
-                                          <Label text="Mi oferta" GridPane.rowIndex="1" />
-                                          <TextField fx:id="txtMiOferta" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" promptText="1 €" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <Label text="Mejor Oferta €" textFill="#00000003" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+                                          <TextField fx:id="txtMejorOferta" editable="false" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" promptText="S/D" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+                                          <Label text="Mi oferta €" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+                                          <TextField fx:id="txtMiOferta" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" promptText="1 " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
                                        </children>
                                     </GridPane>
                                  </children>
                                  <padding>
-                                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                    <Insets bottom="20.0" right="20.0" top="20.0" />
                                  </padding>
                               </AnchorPane>
                            </children>

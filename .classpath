@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="monopoly-client/src/main/java"/>
+	<classpathentry kind="src" path="monopoly-util/src/main/java"/>
+	<classpathentry kind="src" path="monopoly/src/main/java"/>
+	<classpathentry kind="lib" path="monopoly-client/lib/javafx-dialogs-0.0.4.jar"/>
+	<classpathentry kind="lib" path="monopoly-client/lib/jfxmessagebox-1.1.0.jar"/>
+	<classpathentry kind="lib" path="monopoly-util/lib/jdom-2.0.5.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="monopoly-util/bin"/>
+</classpath>
