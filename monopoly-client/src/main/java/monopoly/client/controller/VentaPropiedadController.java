@@ -23,7 +23,6 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.constantes.ConstantesFXML;
-import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.actions.BuyPropertyMessage;
 
 /**
@@ -106,8 +105,9 @@ public class VentaPropiedadController extends AnchorPane implements
 							subastaStage, fxml, "Monopoly - Subasta", false,
 							false, Modality.APPLICATION_MODAL,
 							StageStyle.DECORATED);
-					//subastaStage.show();
-					finalizarTurno();
+					controller.setTarjetaSubasta(tarjetaSelected);
+					subastaStage.show();
+					//finalizarTurno();
 					if (VentaPropiedadController.getInstance() != null)
 						VentaPropiedadController.getInstance()
 								.getCurrentStage().close();
@@ -117,13 +117,6 @@ public class VentaPropiedadController extends AnchorPane implements
 				}
 			}
 		});
-
-	}
-
-	private void finalizarTurno() throws Exception {
-		CompleteTurnMessage msg = new CompleteTurnMessage(getJugadorComprador()
-				.getJuego().getUniqueID(), null, null);
-		ConnectionController.getInstance().send(msg);
 	}
 
 	@Override

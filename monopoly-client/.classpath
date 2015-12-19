@@ -9,7 +9,7 @@
 	<classpathentry excluding="css/|fxml/|images/" including="**/*.java" kind="src" path="src/main/resources"/>
 	<classpathentry exported="true" kind="con" path="at.bestsolution.efxclipse.tooling.jdt.core.JAVAFX_CONTAINER"/>
 	<classpathentry exported="true" kind="src" path="/monopoly-util"/>
-	<classpathentry kind="lib" path="/usr/lib/jvm/jdk1.8.0_20/jre/lib/ext/jfxrt.jar">
+	<classpathentry exported="true" kind="lib" path="/usr/lib/jvm/jdk1.8.0_20/jre/lib/ext/jfxrt.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://docs.oracle.com/javafx/2/api/"/>
 		</attributes>
@@ -20,16 +20,12 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
 		<attributes>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
