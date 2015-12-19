@@ -57,6 +57,26 @@ public class JugadorController implements Serializable {
 		}
 
 	}
+	
+	/**
+	 * Elimina todos los Network Players
+	 */
+	public void cleanNetworkPlayers(){
+		networkPlayers.clear();
+	}
+	
+	/**
+	 * Agrega un Network Player al Juego 
+	 * @param jugador El jugador que se va a agregar
+	 */
+	public void addNetworkPlayer(Jugador jugador){
+		if (jugador instanceof JugadorHumano) {
+			JugadorHumano jh = (JugadorHumano) jugador;
+			if (!networkPlayers.containsKey(jh.getSenderID())) {
+				networkPlayers.put(jh.getSenderID(), (JugadorHumano) jugador);
+			}
+		}
+	}
 
 	public void establecerTurnos() {
 		for (Jugador jugador : jugadoresList) {
