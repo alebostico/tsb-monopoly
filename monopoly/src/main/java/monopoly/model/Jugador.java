@@ -24,6 +24,7 @@ import monopoly.model.tablero.Casillero.TipoCasillero;
 import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaCalle;
+import monopoly.model.tarjetas.TarjetaCalle.EnumColor;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
@@ -303,8 +304,7 @@ public abstract class Jugador implements Serializable {
 
 		for (TarjetaPropiedad tarjetaPropiedad : this.tarjPropiedadList) {
 			if (!tarjetaPropiedad.isHipotecada()) {
-				if (tarjetaPropiedad.getCasillero().getTipoCasillero()
-						.equals(TipoCasillero.C_CALLE)) {
+				if (tarjetaPropiedad.isPropiedadCalle()) {
 					if (((CasilleroCalle) tarjetaPropiedad.getCasillero())
 							.getNroCasas() == 0) {
 						list.add(tarjetaPropiedad);
@@ -342,13 +342,17 @@ public abstract class Jugador implements Serializable {
 	 */
 	public List<String> getCallesConstruibles() {
 		List<String> list = new ArrayList<String>();
+		TarjetaCalle tarjetaCalle;
+		EnumColor color;
 
 		for (TarjetaPropiedad tarjetaPropiedad : this.tarjPropiedadList) {
-			if (tarjetaPropiedad.getCasillero().getTipoCasillero() == TipoCasillero.C_CALLE) {
-				// TODO: buscar todos los monopolios que tiene el jugador y que
-				// no tengan todas las edificaciones construidas
-
-				list.add(((TarjetaCalle) tarjetaPropiedad).getColor());
+			if (tarjetaPropiedad.isPropiedadCalle()) {
+				tarjetaCalle = (TarjetaCalle) tarjetaPropiedad;
+				color = tarjetaCalle.getEnumColor();
+			
+				if (this.poseeColorCompleto(color))
+					if (!list.contains(color))
+						list.add(color.getColor());
 			}
 
 		}
@@ -367,7 +371,7 @@ public abstract class Jugador implements Serializable {
 		CasilleroCalle casilleroCalle;
 
 		for (TarjetaPropiedad tarjetaPropiedad : this.tarjPropiedadList) {
-			if (tarjetaPropiedad.getCasillero().getTipoCasillero() == TipoCasillero.C_CALLE) {
+			if (tarjetaPropiedad.isPropiedadCalle()) {
 				casilleroCalle = (CasilleroCalle) tarjetaPropiedad
 						.getCasillero();
 				if (casilleroCalle.getNroCasas() > 0)
@@ -375,6 +379,27 @@ public abstract class Jugador implements Serializable {
 			}
 		}
 		return list;
+	}
+
+	/**
+	 * Retorna si el jugador posee todas las calles de un color
+	 * 
+	 * @param color
+	 *            El Color de las tarjetas
+	 * @return {@code true} si el jugador posee todas las terjetas del color
+	 */
+	public boolean poseeColorCompleto(TarjetaCalle.EnumColor color) {
+		int contador = 0;
+		TarjetaCalle tarjetaCalle;
+		
+		for (TarjetaPropiedad tarjetaPropiedad : this.getTarjPropiedadList()) {
+			if (tarjetaPropiedad.isPropiedadCalle()){
+				tarjetaCalle = (TarjetaCalle) tarjetaPropiedad;
+				if(tarjetaCalle.getEnumColor().getColor().equals(color.getColor()))
+					contador++;
+			}
+		}
+		return (color.getCantMonopoly() == contador);
 	}
 
 	/**

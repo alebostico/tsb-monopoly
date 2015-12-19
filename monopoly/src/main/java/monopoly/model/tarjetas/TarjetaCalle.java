@@ -334,6 +334,7 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	 */
 	public void setColor(String color) {
 		this.color = color;
+		this.setEnumColor();
 	}
 
 	// /**
