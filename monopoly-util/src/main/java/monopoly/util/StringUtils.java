@@ -169,6 +169,10 @@ public class StringUtils {
 
 	private final static DecimalFormat decimalFormat = new DecimalFormat(
 			"#,###,###,##0' €'");
+	
+	public static DecimalFormat getFormatoDecimal(){
+		return decimalFormat;
+	}
 
 	/**
 	 * Método para convertir un entero en moneda
