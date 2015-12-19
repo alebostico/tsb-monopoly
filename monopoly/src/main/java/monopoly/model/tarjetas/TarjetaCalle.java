@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import monopoly.model.Jugador;
 import monopoly.model.tablero.Casillero;
@@ -54,24 +55,44 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	@Column(name = "color")
 	private String color;
 
+	@Transient
+	private EnumColor enumColor;
 
 	public enum EnumColor {
-		C_MARRON("MARRON"), C_CELESTE("CELESTE"), C_FUCSIA("FUCSIA"), C_NARANJA(
-				"NARANJA"), C_ROJO("ROJO"), C_AMARILLO("AMARILLO"), C_VERDE(
-				"VERDE"), C_AZUL("AZUL");
+		C_MARRON("MARRON", 2), C_CELESTE("CELESTE", 3), C_FUCSIA("FUCSIA", 3), C_NARANJA(
+				"NARANJA", 3), C_ROJO("ROJO", 3), C_AMARILLO("AMARILLO", 3), C_VERDE(
+				"VERDE", 3), C_AZUL("AZUL", 2);
 
 		private final String color;
+		private final int cantMonopoly;
 
-		EnumColor(String color) {
+		EnumColor(String color, int cantMonopoly) {
 			this.color = color;
+			this.cantMonopoly = cantMonopoly;
 		}
 
 		public String getColor() {
 			return color;
 		}
 
+		public int getCantMonopoly() {
+			return cantMonopoly;
+		}
 	}
 
+	private void setEnumColor() {
+		for (EnumColor color : EnumColor.values()) {
+			if (color.getColor().equals(this.getColor())) {
+				this.enumColor = color;
+				return;
+			}
+		}
+	}
+
+	public EnumColor getEnumColor(){
+		return this.enumColor;
+	}
+	
 	public TarjetaCalle() {
 		super();
 	}
@@ -92,6 +113,7 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 		this.precioCadaCasa = precioCadaCasa;
 		this.precioCadaHotel = precioCadaHotel;
 		this.color = color;
+		this.setEnumColor();
 	}
 
 	/**
@@ -314,21 +336,21 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 		this.color = color;
 	}
 
-//	/**
-//	 * 
-//	 * @param colorTarjeta
-//	 */
-//	public void setColor(Color colorTarjeta) {
-//		this.color = colorTarjeta;
-//		// this.colorTarjeta = this.color.getColor();
-//	}
-//
-//	/**
-//	 * @return the color
-//	 */
-//	public Color getColor() {
-//		return color;
-//	}
+	// /**
+	// *
+	// * @param colorTarjeta
+	// */
+	// public void setColor(Color colorTarjeta) {
+	// this.color = colorTarjeta;
+	// // this.colorTarjeta = this.color.getColor();
+	// }
+	//
+	// /**
+	// * @return the color
+	// */
+	// public Color getColor() {
+	// return color;
+	// }
 
 	/**
 	 * Calcula el monto del alquiler

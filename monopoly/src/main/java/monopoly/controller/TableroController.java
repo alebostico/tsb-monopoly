@@ -1131,6 +1131,7 @@ public class TableroController implements Serializable {
 			if (tarjetaPropiedad.getJugador() == null) {
 				accionEnCasillero = AccionEnCasillero.DISPONIBLE_PARA_VENDER;
 				accionEnCasillero.setMensaje("Disponible para la venta.");
+
 			} else {
 				nombreJugadorActual = pJugador.getNombre().toLowerCase();
 				nombreJugadorPropietario = tarjetaPropiedad.getJugador()
@@ -1217,6 +1218,11 @@ public class TableroController implements Serializable {
 			throw new CondicionInvalidaException(
 					"Tipo de Casillero inexistente.");
 		}
+
+		GestorLogs.registrarLog(String.format(
+				"Jugador: %s ~~~> acción : %s ~~~> Mensaje %s.",
+				pJugador.getNombre(), accionEnCasillero.toString(),
+				accionEnCasillero.getMensaje()));
 
 		return accionEnCasillero;
 	}

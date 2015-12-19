@@ -36,8 +36,10 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -52,6 +54,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
@@ -100,7 +103,6 @@ import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.PayRentMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
 import monopoly.util.message.game.actions.PayToLeaveJailMessage;
-import monopoly.util.message.game.actions.PayToPlayerMessage;
 import monopoly.util.message.game.actions.SuperTaxMessage;
 
 /**
@@ -112,6 +114,9 @@ public class TableroController extends AnchorPane implements Serializable,
 		Initializable {
 
 	private static final long serialVersionUID = 2964193640386734389L;
+
+	@FXML
+	private BorderPane pTablero;
 
 	@FXML
 	private TilePane pCasillero01;
@@ -397,8 +402,8 @@ public class TableroController extends AnchorPane implements Serializable,
 		this.actualizarEstadoJuego(monopolyGameStatus);
 
 	}
-	
-	private Stage loadStage(){
+
+	private Stage loadStage() {
 		// currentStage.setFullScreen(true);
 		Screen screen = Screen.getPrimary();
 		Rectangle2D bounds = screen.getVisualBounds();
@@ -417,7 +422,7 @@ public class TableroController extends AnchorPane implements Serializable,
 				we.consume();
 			}
 		});
-		
+
 		return currentStage;
 	}
 
@@ -497,63 +502,6 @@ public class TableroController extends AnchorPane implements Serializable,
 			GestorLogs.registrarException(ex);
 		}
 	}
-
-	/**
-	 * Método que agrega un mensaje de chat al panel de chat. Mantiene un
-	 * historial de todos lo mensajes que se intercambian entre los usuarios.f
-	 * 
-	 * @param history
-	 *            objeto que contiene información sobre el usuario que escribió
-	 *            el mensaje, el mensaje y la fecha y hora.
-	 */
-	// public void addHistoryChat(final History history) {
-	// FutureTask<Void> taskAddHistory = null;
-	// try {
-	// taskAddHistory = new FutureTask<Void>(new Callable<Void>() {
-	// @Override
-	// public Void call() throws Exception {
-	// historyChatList.add(history);
-	//
-	// oHistoryChatList = FXCollections
-	// .observableArrayList(historyChatList);
-	//
-	// if (lvHistoryChat != null) {
-	// lvHistoryChat.getItems().clear();
-	// lvHistoryChat.setItems(oHistoryChatList);
-	// lvHistoryChat
-	// .setCellFactory(new Callback<ListView<History>,
-	// javafx.scene.control.ListCell<History>>() {
-	// @Override
-	// public ListCell<History> call(
-	// ListView<History> listView) {
-	// return new ListCell<History>() {
-	//
-	// @Override
-	// protected void updateItem(
-	// History item, boolean bln) {
-	// super.updateItem(item, bln);
-	// if (item != null) {
-	// Text txtHistory = new Text(
-	// item.toString());
-	// txtHistory
-	// .setFill(Color.RED);
-	// setGraphic(txtHistory);
-	// }
-	// }
-	//
-	// };
-	// }
-	// });
-	// }
-	// return null;
-	// }
-	// });
-	// Platform.runLater(taskAddHistory);
-	//
-	// } catch (Exception ex) {
-	// GestorLogs.registrarException(ex);
-	// }
-	// }
 
 	public void addChatHistoryGame(final History chatHistory) {
 
@@ -1120,12 +1068,15 @@ public class TableroController extends AnchorPane implements Serializable,
 		showMessageBox(alertType, "Error", msgHeader, msgGuardado);
 	}
 
+	/**
+	 * Muestra un mensaje para pagar el impuesto de lujo.
+	 * 
+	 * @param jugadorActual
+	 * @param mensaje
+	 * @param monto
+	 */
 	private void showImpuestoDeLujo(final Jugador jugadorActual,
 			final String mensaje, final int monto) {
-		// Platform.runLater(new Runnable() {
-		//
-		// @Override
-		// public void run() {
 		PayToBankMessage msgPayToBank;
 		String msgSinDinero;
 		String idJuego;
@@ -1156,10 +1107,16 @@ public class TableroController extends AnchorPane implements Serializable,
 					"Se ha producido un error al Pagar el Impuesto de Lujo.",
 					ex.getMessage());
 		}
-		// }
-		// });
 	}
 
+	/**
+	 * Muestra un mensaje con información sobre la propiedad que se encuentra en
+	 * venta.
+	 * 
+	 * @param jugadorActual
+	 * @param casilleroActual
+	 * @param mensaje
+	 */
 	private void disponibleParalaVenta(Jugador jugadorActual,
 			Casillero casilleroActual, String mensaje) {
 
@@ -1201,16 +1158,23 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
+	/**
+	 * Muestra un mensaje informando cuando debe pagar al alquiler al jugador
+	 * propietario.
+	 * 
+	 * @param jugadorActual
+	 * @param casilleroActual
+	 * @param turnosList
+	 * @param mensaje
+	 * @param monto
+	 */
 	private void pagarAlquiler(final Jugador jugadorActual,
 			final Casillero casilleroActual, final List<Jugador> turnosList,
 			final String mensaje, final int monto) {
 
 		PayRentMessage msgPayRent;
-		PayToPlayerMessage msgPayToPlayer;
-		Jugador jugadorPropietario;
 		String msgSinDinero;
 		String idJuego;
-		String mensajeAux;
 		try {
 			idJuego = juego.getUniqueID();
 			msgSinDinero = "No cuentas con suficiente dinero para pagar %s. Vende hoteles, casas o hipoteca propiedades para continuar con el juego.";
@@ -1235,6 +1199,11 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
+	/**
+	 * Muestra un mensaje informando que el jugador irá a la cárcel.
+	 * 
+	 * @param mensaje
+	 */
 	private void irALaCarcel(final String mensaje) {
 		try {
 			GoToJailMessage msgGoToJailMessage;
@@ -1252,13 +1221,21 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
+	/**
+	 * Muestra las opción que tiene el jugador para salir de la cárcel. Pueden
+	 * ser:
+	 * <ol>
+	 * <li>Pagar un monto fijo</li>
+	 * <li>Tirar dados dobles</li>
+	 * <li>Utilizar una tarjeta de la cárcel</li>
+	 * </ol>
+	 */
 	private void showOpcionesCarcel() {
 		Platform.runLater(new Runnable() {
 
 			@Override
 			public void run() {
 				String msgSinDinero;
-				@SuppressWarnings("unused")
 				String idJuego;
 				Alert alert;
 				Jugador jugadorActual;
@@ -1369,6 +1346,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	private void actualizarGraficoEnElTablero() throws Exception {
 		displayFichas(estadoActual.turnos);
+		displayCasasYHoteles(estadoActual.tablero.getCasillerosList());
 		showAccordionJugadores(estadoActual.turnos, estadoActual.banco);
 	}
 
@@ -1410,150 +1388,121 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * @throws Exception
 	 */
 	private void displayFichas(List<Jugador> turnosList) throws Exception {
-
-		TilePane tpCasilleroSelected = null;
-
 		limpiarCasilleros();
 
-		for (Jugador jugadorTurno : turnosList) {
-			final Image img = new Image(
-					TableroController.class.getResourceAsStream(jugadorTurno
-							.getFicha().getPathImgSmall()), 25, 25, true, true);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				TilePane tpCasilleroSelected = null;
+				Casillero casilleroActual;
+				try {
+					for (Jugador jugadorTurno : turnosList) {
+						casilleroActual = jugadorTurno.getCasilleroActual();
+						final Image img = new Image(TableroController.class
+								.getResourceAsStream(jugadorTurno.getFicha()
+										.getPathImgSmall()), 25, 25, true, true);
 
-			switch (jugadorTurno.getCasilleroActual().getNumeroCasillero()) {
-			case 1:
-				tpCasilleroSelected = pCasillero01;
-				break;
-			case 2:
-				tpCasilleroSelected = pCasillero02;
-				break;
-			case 3:
-				tpCasilleroSelected = pCasillero03;
-				break;
-			case 4:
-				tpCasilleroSelected = pCasillero04;
-				break;
-			case 5:
-				tpCasilleroSelected = pCasillero05;
-				break;
-			case 6:
-				tpCasilleroSelected = pCasillero06;
-				break;
-			case 7:
-				tpCasilleroSelected = pCasillero07;
-				break;
-			case 8:
-				tpCasilleroSelected = pCasillero08;
-				break;
-			case 9:
-				tpCasilleroSelected = pCasillero01;
-				break;
-			case 10:
-				tpCasilleroSelected = pCasillero10;
-				break;
-			case 11:
-				tpCasilleroSelected = pCasillero11;
-				break;
-			case 12:
-				tpCasilleroSelected = pCasillero12;
-				break;
-			case 13:
-				tpCasilleroSelected = pCasillero13;
-				break;
-			case 14:
-				tpCasilleroSelected = pCasillero14;
-				break;
-			case 15:
-				tpCasilleroSelected = pCasillero15;
-				break;
-			case 16:
-				tpCasilleroSelected = pCasillero16;
-				break;
-			case 17:
-				tpCasilleroSelected = pCasillero17;
-				break;
-			case 18:
-				tpCasilleroSelected = pCasillero18;
-				break;
-			case 19:
-				tpCasilleroSelected = pCasillero19;
-				break;
-			case 20:
-				tpCasilleroSelected = pCasillero20;
-				break;
-			case 21:
-				tpCasilleroSelected = pCasillero21;
-				break;
-			case 22:
-				tpCasilleroSelected = pCasillero22;
-				break;
-			case 23:
-				tpCasilleroSelected = pCasillero23;
-				break;
-			case 24:
-				tpCasilleroSelected = pCasillero24;
-				break;
-			case 25:
-				tpCasilleroSelected = pCasillero25;
-				break;
-			case 26:
-				tpCasilleroSelected = pCasillero26;
-				break;
-			case 27:
-				tpCasilleroSelected = pCasillero27;
-				break;
-			case 28:
-				tpCasilleroSelected = pCasillero28;
-				break;
-			case 29:
-				tpCasilleroSelected = pCasillero29;
-				break;
-			case 30:
-				tpCasilleroSelected = pCasillero30;
-				break;
-			case 31:
-				tpCasilleroSelected = pCasillero31;
-				break;
-			case 32:
-				tpCasilleroSelected = pCasillero32;
-				break;
-			case 33:
-				tpCasilleroSelected = pCasillero33;
-				break;
-			case 34:
-				tpCasilleroSelected = pCasillero34;
-				break;
-			case 35:
-				tpCasilleroSelected = pCasillero35;
-				break;
-			case 36:
-				tpCasilleroSelected = pCasillero36;
-				break;
-			case 37:
-				tpCasilleroSelected = pCasillero37;
-				break;
-			case 38:
-				tpCasilleroSelected = pCasillero38;
-				break;
-			case 39:
-				tpCasilleroSelected = pCasillero39;
-				break;
-			case 40:
-				tpCasilleroSelected = pCasillero40;
-				break;
-			default:
-				break;
-			}
-
-			final TilePane tpCasilleroSel = tpCasilleroSelected;
-			Platform.runLater(new Runnable() {
-				@Override
-				public void run() {
-					tpCasilleroSel.getChildren().add(new ImageView(img));
+						tpCasilleroSelected = (TilePane) pTablero
+								.lookup("#pCasillero"
+										+ String.format("%02d", casilleroActual
+												.getNumeroCasillero()));
+						if (tpCasilleroSelected != null) {
+							tpCasilleroSelected.getChildren().add(
+									new ImageView(img));
+						} else {
+							throw new CondicionInvalidaException(String.format(
+									"Casillero inválido: %s", jugadorTurno
+											.getCasilleroActual()
+											.getNumeroCasillero()));
+						}
+					}
+				} catch (Exception ex) {
+					GestorLogs.registrarException(ex);
 				}
-			});
+			}
+		});
+	}
 
-		}
+	private void displayCasasYHoteles(Casillero[] casilleros) {
+		Platform.runLater(new Runnable() {
+
+			@Override
+			public void run() {
+				Image imgCasa;
+				TilePane tpCasilleroSelected = null;
+
+				try {
+					for (Casillero casillero : casilleros) {
+						if (casillero.isCasilleroCalle()
+								&& ((CasilleroCalle) casillero).getNroCasas() > 0) {
+							
+							tpCasilleroSelected = (TilePane) pTablero
+									.lookup("#pCasillero"
+											+ String.format("%02d", casillero
+													.getNumeroCasillero()));
+							if (tpCasilleroSelected != null) {
+								
+								switch (((CasilleroCalle) casillero).getNroCasas()) {
+								case 1:
+									imgCasa = new Image(
+											TableroController.class
+													.getResourceAsStream("/images/fichas/CasaS01.png"),
+											18, 18, false, false);
+									tpCasilleroSelected.getChildren().add(
+											new ImageView(imgCasa));
+									break;
+								case 2:
+									imgCasa = new Image(
+											TableroController.class
+													.getResourceAsStream("/images/fichas/CasaS02.png"),
+											32, 18, false, false);
+									tpCasilleroSelected.getChildren().add(
+											new ImageView(imgCasa));
+									break;
+								case 3:
+									imgCasa = new Image(
+											TableroController.class
+													.getResourceAsStream("/images/fichas/CasaS03.png"),
+											40, 18, false, false);
+									tpCasilleroSelected.getChildren().add(
+											new ImageView(imgCasa));
+									break;
+								case 4:
+									imgCasa = new Image(
+											TableroController.class
+													.getResourceAsStream("/images/fichas/CasaS04.png"),
+											50, 18, false, false);
+									tpCasilleroSelected.getChildren().add(
+											new ImageView(imgCasa));
+									break;
+								case 5:
+									imgCasa = new Image(
+											TableroController.class
+													.getResourceAsStream("/images/fichas/CasaS05.png"),
+											30, 24, false, false);
+									tpCasilleroSelected.getChildren().add(
+											new ImageView(imgCasa));
+									break;
+								default:
+
+									break;
+								}
+								
+								
+								
+								
+							} else {
+								throw new CondicionInvalidaException(String.format(
+										"Casillero inválido: %s", casillero.getNumeroCasillero()));
+							}
+							
+						}
+					}
+				} catch (Exception ex) {
+					GestorLogs.registrarException(ex);
+				}
+			}
+		});
 	}
 
 	private void bloquearAcciones(final boolean bloquear) {
@@ -2150,6 +2099,15 @@ public class TableroController extends AnchorPane implements Serializable,
 					buttonAceptar = new ButtonType("Aceptar",
 							ButtonData.OK_DONE);
 					alert.getButtonTypes().setAll(buttonAceptar);
+
+					DialogPane dialogPane = alert.getDialogPane();
+					// dialogPane.getStyleClass().remove("alert");
+					dialogPane.getStylesheets().add(
+							getClass().getResource("/css/Dialog.css")
+									.toExternalForm());
+					dialogPane.getStyleClass().add("dialog");
+					// setearEstiloMessageBox(alert);
+
 					alert.showAndWait();
 					return null;
 
@@ -2161,6 +2119,64 @@ public class TableroController extends AnchorPane implements Serializable,
 		} catch (Exception ex) {
 			GestorLogs.registrarException(ex);
 		}
+	}
+
+	@SuppressWarnings("unused")
+	private void setearEstiloMessageBox(final Alert alert) {
+		String styleBg;
+		String style;
+		DialogPane dialogPane = alert.getDialogPane();
+		// root
+		styleBg = "-fx-background-image: url(\"../images/background/Grey-background.png\"); ";
+		styleBg += "-fx-background-repeat: repeat; ";
+		styleBg += "-fx-background-color:";
+		styleBg += "linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),";
+		styleBg += "linear-gradient(#20262b, #191d22),";
+		styleBg += "radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));";
+
+		dialogPane.setStyle(styleBg);
+
+		// 1. Grid
+		// remove style to customize header
+		dialogPane.getStyleClass().remove("alert");
+
+		GridPane grid = (GridPane) dialogPane.lookup(".header-panel");
+		grid.setStyle(styleBg);
+
+		style = "-fx-font-family: \"Arial\";";
+		style += "-fx-font-size: 20px;";
+		style += "-fx-font-weight: bold;";
+		style += "-fx-text-fill: rgb(255,255,255);";
+		style += "-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 1.9 );";
+		if (grid.lookup(".label") != null)
+			grid.lookup(".label").setStyle(style);
+
+		// 2. ContentText with just a Label
+		style = "-fx-font-family: \"Arial\";";
+		style += "-fx-font-size: 18px;";
+		style += "-fx-font-style: italic;";
+		style += "-fx-text-fill: rgb(255,255,255);";
+		style += "-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 1.9 );";
+		dialogPane.lookup(".content.label").setStyle(style);
+
+		// 3- ButtonBar
+		ButtonBar buttonBar = (ButtonBar) alert.getDialogPane().lookup(
+				".button-bar");
+		buttonBar.setStyle(styleBg);
+
+		final String styleButton = "-fx-background-color:rgb(255, 255, 255, 0.08),rgb(0, 0, 0, 0.8)"
+				+ ",#090a0c,linear-gradient(#4a5661 0%, #1f2429 20%, #1f242a 100%)"
+				+ ",linear-gradient(#242a2e, #23282e)"
+				+ ",radial-gradient(center 50% 0%, radius 100%, rgba(135,142,148,0.9)"
+				+ ",rgba(255,255,255,0));"
+				+ "-fx-background-radius: 7, 6, 5, 4, 3, 5;"
+				+ "-fx-background-insets: -3 -3 -4 -3, -3, 0, 1, 2, 0;"
+				+ "-fx-font-family: \"Arial\";"
+				+ "-fx-font-size: 18;"
+				+ "-fx-text-fill: rgb(255,255,255);"
+				+ "-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 0.1 );"
+				+ "-fx-padding: 5 5 5 5;";
+		buttonBar.getButtons().forEach(b -> b.setStyle(styleButton));
 	}
 
 	/**

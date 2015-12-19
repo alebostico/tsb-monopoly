@@ -1,4 +1,3 @@
-
 package monopoly.client.controller;
 
 import java.net.URL;
@@ -14,13 +13,16 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import monopoly.client.connection.ConnectionController;
+import monopoly.client.util.FXUtils;
 import monopoly.model.Jugador;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
-import monopoly.util.message.game.CompleteTurnMessage;
+import monopoly.util.constantes.ConstantesFXML;
 import monopoly.util.message.game.actions.BuyPropertyMessage;
 
 /**
@@ -87,22 +89,34 @@ public class VentaPropiedadController extends AnchorPane implements
 
 	@FXML
 	void processSubasta(ActionEvent event) {
-		// TODO: Por ahora termina el turno sin comprar la propiedad. Cambiar
-		// para iniciar la subasta.
-		try {
-			this.finalizarTurno();
-			if (VentaPropiedadController.getInstance() != null)
-				VentaPropiedadController.getInstance().getCurrentStage()
-						.close();
-		} catch (Exception e) {
-			GestorLogs.registrarError(e);
-		}
-	}
+		javafx.application.Platform.runLater(new Runnable() {
+			private Stage subastaStage = null;
 
-	private void finalizarTurno() throws Exception {
-		CompleteTurnMessage msg = new CompleteTurnMessage(getJugadorComprador()
-				.getJuego().getUniqueID(), null, null);
-		ConnectionController.getInstance().send(msg);
+			@Override
+			public void run() {
+				String fxml;
+				SubastaController controller;
+
+				try {
+
+					fxml = ConstantesFXML.FXML_SUBASTA;
+					subastaStage = new Stage();
+					controller = (SubastaController) FXUtils.cargarStage(
+							subastaStage, fxml, "Monopoly - Subasta", false,
+							false, Modality.APPLICATION_MODAL,
+							StageStyle.DECORATED);
+					controller.setTarjetaSubasta(tarjetaSelected);
+					subastaStage.show();
+					//finalizarTurno();
+					if (VentaPropiedadController.getInstance() != null)
+						VentaPropiedadController.getInstance()
+								.getCurrentStage().close();
+
+				} catch (Exception e) {
+					GestorLogs.registrarError(e);
+				}
+			}
+		});
 	}
 
 	@Override

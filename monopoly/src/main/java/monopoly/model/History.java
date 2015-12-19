@@ -5,6 +5,8 @@ package monopoly.model;
 
 import java.io.Serializable;
 
+import monopoly.util.GestorLogs;
+
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
@@ -31,6 +33,7 @@ public class History implements Serializable {
 		this.fecha = fecha;
 		this.usuario = usuario;
 		this.mensaje = mensaje;
+		GestorLogs.registrarLog(this.toChatString());
 	}
 
 	/**

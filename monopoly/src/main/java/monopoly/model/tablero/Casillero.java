@@ -41,7 +41,7 @@ public class Casillero implements Serializable {
 	private int numeroCasillero;
 	private TipoCasillero tipoCasillero;
 	private String nombreCasillero;
-														// cant casilleros
+	// cant casilleros
 	public final static String CASILLERO_CALLE = "casillero calle"; // 22
 	public final static String CASILLERO_ESTACION = "casillero estación"; // 4
 	public final static String CASILLERO_COMPANIA = "casillero compañia"; // 2
@@ -84,7 +84,8 @@ public class Casillero implements Serializable {
 	 * @param tipoCasillero
 	 *            El tipo de casillero.
 	 */
-	public Casillero(int numeroCasillero, String nombre, TipoCasillero tipoCasillero) {
+	public Casillero(int numeroCasillero, String nombre,
+			TipoCasillero tipoCasillero) {
 		super();
 		this.numeroCasillero = numeroCasillero;
 		this.tipoCasillero = tipoCasillero;
@@ -175,6 +176,36 @@ public class Casillero implements Serializable {
 		this.nombreCasillero = nombreCasillero;
 	}
 
+	/**
+	 * Pregunta si es un casillero calle.
+	 * 
+	 * @return <code>True</code> si es casillero calle. 
+	 * <code>False</code> caso contrario.
+	 */
+	public boolean isCasilleroCalle() {
+		return this instanceof CasilleroCalle;
+	}
+
+	/**
+	 * Pregunta si es un casillero estación
+	 * 
+	 * @return <code>True</code> si es casillero estación.
+	 * <code>False</code> caso contrario.
+	 */
+	public boolean isCasilleroEstacion() {
+		return this instanceof CasilleroEstacion;
+	}
+
+	/**
+	 * Pregunta si es un casillero companía.
+	 * 
+	 * @return <code>True</code> si es casillero companía.
+	 * <code>False</code> caso contrario.
+	 */
+	public boolean isCasilleroCompania() {
+		return this instanceof CasilleroCompania;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -195,9 +226,10 @@ public class Casillero implements Serializable {
 		Casillero c = (Casillero) o;
 		return this.numeroCasillero == c.getNumeroCasillero();
 	}
-	
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
