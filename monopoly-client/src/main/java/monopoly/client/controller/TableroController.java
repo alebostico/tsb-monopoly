@@ -54,6 +54,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
@@ -113,6 +114,9 @@ public class TableroController extends AnchorPane implements Serializable,
 		Initializable {
 
 	private static final long serialVersionUID = 2964193640386734389L;
+
+	@FXML
+	private BorderPane pTablero;
 
 	@FXML
 	private TilePane pCasillero01;
@@ -1342,6 +1346,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	private void actualizarGraficoEnElTablero() throws Exception {
 		displayFichas(estadoActual.turnos);
+		displayCasasYHoteles(estadoActual.tablero.getCasillerosList());
 		showAccordionJugadores(estadoActual.turnos, estadoActual.banco);
 	}
 
@@ -1383,150 +1388,121 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * @throws Exception
 	 */
 	private void displayFichas(List<Jugador> turnosList) throws Exception {
-
-		TilePane tpCasilleroSelected = null;
-
 		limpiarCasilleros();
 
-		for (Jugador jugadorTurno : turnosList) {
-			final Image img = new Image(
-					TableroController.class.getResourceAsStream(jugadorTurno
-							.getFicha().getPathImgSmall()), 25, 25, true, true);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				TilePane tpCasilleroSelected = null;
+				Casillero casilleroActual;
+				try {
+					for (Jugador jugadorTurno : turnosList) {
+						casilleroActual = jugadorTurno.getCasilleroActual();
+						final Image img = new Image(TableroController.class
+								.getResourceAsStream(jugadorTurno.getFicha()
+										.getPathImgSmall()), 25, 25, true, true);
 
-			switch (jugadorTurno.getCasilleroActual().getNumeroCasillero()) {
-			case 1:
-				tpCasilleroSelected = pCasillero01;
-				break;
-			case 2:
-				tpCasilleroSelected = pCasillero02;
-				break;
-			case 3:
-				tpCasilleroSelected = pCasillero03;
-				break;
-			case 4:
-				tpCasilleroSelected = pCasillero04;
-				break;
-			case 5:
-				tpCasilleroSelected = pCasillero05;
-				break;
-			case 6:
-				tpCasilleroSelected = pCasillero06;
-				break;
-			case 7:
-				tpCasilleroSelected = pCasillero07;
-				break;
-			case 8:
-				tpCasilleroSelected = pCasillero08;
-				break;
-			case 9:
-				tpCasilleroSelected = pCasillero01;
-				break;
-			case 10:
-				tpCasilleroSelected = pCasillero10;
-				break;
-			case 11:
-				tpCasilleroSelected = pCasillero11;
-				break;
-			case 12:
-				tpCasilleroSelected = pCasillero12;
-				break;
-			case 13:
-				tpCasilleroSelected = pCasillero13;
-				break;
-			case 14:
-				tpCasilleroSelected = pCasillero14;
-				break;
-			case 15:
-				tpCasilleroSelected = pCasillero15;
-				break;
-			case 16:
-				tpCasilleroSelected = pCasillero16;
-				break;
-			case 17:
-				tpCasilleroSelected = pCasillero17;
-				break;
-			case 18:
-				tpCasilleroSelected = pCasillero18;
-				break;
-			case 19:
-				tpCasilleroSelected = pCasillero19;
-				break;
-			case 20:
-				tpCasilleroSelected = pCasillero20;
-				break;
-			case 21:
-				tpCasilleroSelected = pCasillero21;
-				break;
-			case 22:
-				tpCasilleroSelected = pCasillero22;
-				break;
-			case 23:
-				tpCasilleroSelected = pCasillero23;
-				break;
-			case 24:
-				tpCasilleroSelected = pCasillero24;
-				break;
-			case 25:
-				tpCasilleroSelected = pCasillero25;
-				break;
-			case 26:
-				tpCasilleroSelected = pCasillero26;
-				break;
-			case 27:
-				tpCasilleroSelected = pCasillero27;
-				break;
-			case 28:
-				tpCasilleroSelected = pCasillero28;
-				break;
-			case 29:
-				tpCasilleroSelected = pCasillero29;
-				break;
-			case 30:
-				tpCasilleroSelected = pCasillero30;
-				break;
-			case 31:
-				tpCasilleroSelected = pCasillero31;
-				break;
-			case 32:
-				tpCasilleroSelected = pCasillero32;
-				break;
-			case 33:
-				tpCasilleroSelected = pCasillero33;
-				break;
-			case 34:
-				tpCasilleroSelected = pCasillero34;
-				break;
-			case 35:
-				tpCasilleroSelected = pCasillero35;
-				break;
-			case 36:
-				tpCasilleroSelected = pCasillero36;
-				break;
-			case 37:
-				tpCasilleroSelected = pCasillero37;
-				break;
-			case 38:
-				tpCasilleroSelected = pCasillero38;
-				break;
-			case 39:
-				tpCasilleroSelected = pCasillero39;
-				break;
-			case 40:
-				tpCasilleroSelected = pCasillero40;
-				break;
-			default:
-				break;
-			}
-
-			final TilePane tpCasilleroSel = tpCasilleroSelected;
-			Platform.runLater(new Runnable() {
-				@Override
-				public void run() {
-					tpCasilleroSel.getChildren().add(new ImageView(img));
+						tpCasilleroSelected = (TilePane) pTablero
+								.lookup("#pCasillero"
+										+ String.format("%02d", casilleroActual
+												.getNumeroCasillero()));
+						if (tpCasilleroSelected != null) {
+							tpCasilleroSelected.getChildren().add(
+									new ImageView(img));
+						} else {
+							throw new CondicionInvalidaException(String.format(
+									"Casillero inválido: %s", jugadorTurno
+											.getCasilleroActual()
+											.getNumeroCasillero()));
+						}
+					}
+				} catch (Exception ex) {
+					GestorLogs.registrarException(ex);
 				}
-			});
+			}
+		});
+	}
 
-		}
+	private void displayCasasYHoteles(Casillero[] casilleros) {
+		Platform.runLater(new Runnable() {
+
+			@Override
+			public void run() {
+				Image imgCasa;
+				TilePane tpCasilleroSelected = null;
+
+				try {
+					for (Casillero casillero : casilleros) {
+						if (casillero.isCasilleroCalle()
+								&& ((CasilleroCalle) casillero).getNroCasas() > 0) {
+							
+							tpCasilleroSelected = (TilePane) pTablero
+									.lookup("#pCasillero"
+											+ String.format("%02d", casillero
+													.getNumeroCasillero()));
+							if (tpCasilleroSelected != null) {
+								
+								switch (((CasilleroCalle) casillero).getNroCasas()) {
+								case 1:
+									imgCasa = new Image(
+											TableroController.class
+													.getResourceAsStream("/images/fichas/CasaS01.png"),
+											18, 18, false, false);
+									tpCasilleroSelected.getChildren().add(
+											new ImageView(imgCasa));
+									break;
+								case 2:
+									imgCasa = new Image(
+											TableroController.class
+													.getResourceAsStream("/images/fichas/CasaS02.png"),
+											32, 18, false, false);
+									tpCasilleroSelected.getChildren().add(
+											new ImageView(imgCasa));
+									break;
+								case 3:
+									imgCasa = new Image(
+											TableroController.class
+													.getResourceAsStream("/images/fichas/CasaS03.png"),
+											40, 18, false, false);
+									tpCasilleroSelected.getChildren().add(
+											new ImageView(imgCasa));
+									break;
+								case 4:
+									imgCasa = new Image(
+											TableroController.class
+													.getResourceAsStream("/images/fichas/CasaS04.png"),
+											50, 18, false, false);
+									tpCasilleroSelected.getChildren().add(
+											new ImageView(imgCasa));
+									break;
+								case 5:
+									imgCasa = new Image(
+											TableroController.class
+													.getResourceAsStream("/images/fichas/CasaS05.png"),
+											30, 24, false, false);
+									tpCasilleroSelected.getChildren().add(
+											new ImageView(imgCasa));
+									break;
+								default:
+
+									break;
+								}
+								
+								
+								
+								
+							} else {
+								throw new CondicionInvalidaException(String.format(
+										"Casillero inválido: %s", casillero.getNumeroCasillero()));
+							}
+							
+						}
+					}
+				} catch (Exception ex) {
+					GestorLogs.registrarException(ex);
+				}
+			}
+		});
 	}
 
 	private void bloquearAcciones(final boolean bloquear) {
@@ -2125,7 +2101,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					alert.getButtonTypes().setAll(buttonAceptar);
 
 					DialogPane dialogPane = alert.getDialogPane();
-					dialogPane.getStyleClass().remove("alert");
+					// dialogPane.getStyleClass().remove("alert");
 					dialogPane.getStylesheets().add(
 							getClass().getResource("/css/Dialog.css")
 									.toExternalForm());
