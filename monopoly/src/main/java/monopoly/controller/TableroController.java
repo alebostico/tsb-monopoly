@@ -933,6 +933,11 @@ public class TableroController implements Serializable {
 
 	}
 
+	/**
+	 * Devuelve el porcentaje de casilleros libres (sin comprar) del tablero
+	 * 
+	 * @return El porcentaje de propiedades del tablero sin comprar
+	 */
 	public int porcPropiedadesLibres() {
 
 		int cantPropiedades = 0;

@@ -24,6 +24,7 @@ import monopoly.model.tablero.Casillero.TipoCasillero;
 import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaCalle;
+import monopoly.model.tarjetas.TarjetaCalle.EnumColor;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
@@ -295,6 +296,117 @@ public abstract class Jugador implements Serializable {
 	}
 
 	/**
+	 * Devuelve todas las propiedades del jugador que pueden ser hipotecadas.
+	 * Una propiedad puede ser hipotecada si no está hipotecada y si no tiene
+	 * edificaciones (casas u hoteles construídos).
+	 * 
+	 * @return Una lista con las propiedades del jugador que pueden ser
+	 *         hipotecadas
+	 */
+	public List<TarjetaPropiedad> getPropiedadesHipotecables() {
+		List<TarjetaPropiedad> list = new ArrayList<TarjetaPropiedad>();
+
+		for (TarjetaPropiedad tarjetaPropiedad : this.tarjPropiedadList) {
+			if (!tarjetaPropiedad.isHipotecada()) {
+				if (tarjetaPropiedad.isPropiedadCalle()) {
+					if (((CasilleroCalle) tarjetaPropiedad.getCasillero())
+							.getNroCasas() == 0) {
+						list.add(tarjetaPropiedad);
+					}
+				} else {
+					list.add(tarjetaPropiedad);
+				}
+			}
+		}
+		return list;
+	}
+
+	/**
+	 * Devuelve un listado de las propiedades del jugador que están hipotecadas.
+	 * 
+	 * @return Una lista con las propiedades del jugador que están hipotecadas y
+	 *         pueden ser deshipotecadas
+	 */
+	public List<TarjetaPropiedad> getPropiedadesDeshipotecables() {
+		List<TarjetaPropiedad> list = new ArrayList<TarjetaPropiedad>();
+
+		for (TarjetaPropiedad tarjetaPropiedad : this.tarjPropiedadList) {
+			if (tarjetaPropiedad.isHipotecada())
+				list.add(tarjetaPropiedad);
+		}
+
+		return list;
+	}
+
+	/**
+	 * Devuelve todos los colores de las propiedades del jugador que se pueden
+	 * contruir
+	 * 
+	 * @return Una lista de colores construibles
+	 */
+	public List<String> getCallesConstruibles() {
+		List<String> list = new ArrayList<String>();
+		TarjetaCalle tarjetaCalle;
+		EnumColor color;
+
+		for (TarjetaPropiedad tarjetaPropiedad : this.tarjPropiedadList) {
+			if (tarjetaPropiedad.isPropiedadCalle()) {
+				tarjetaCalle = (TarjetaCalle) tarjetaPropiedad;
+				color = tarjetaCalle.getEnumColor();
+			
+				if (this.poseeColorCompleto(color))
+					if (!list.contains(color))
+						list.add(color.getColor());
+			}
+
+		}
+
+		return list;
+	}
+
+	/**
+	 * Devuelve todos los conjuntos de calles del jugador que tienen
+	 * construcciones y se pueden vender
+	 * 
+	 * @return Los monopolios con construcciones
+	 */
+	public List<String> getCallesDesconstruibles() {
+		List<String> list = new ArrayList<String>();
+		CasilleroCalle casilleroCalle;
+
+		for (TarjetaPropiedad tarjetaPropiedad : this.tarjPropiedadList) {
+			if (tarjetaPropiedad.isPropiedadCalle()) {
+				casilleroCalle = (CasilleroCalle) tarjetaPropiedad
+						.getCasillero();
+				if (casilleroCalle.getNroCasas() > 0)
+					list.add(((TarjetaCalle) tarjetaPropiedad).getColor());
+			}
+		}
+		return list;
+	}
+
+	/**
+	 * Retorna si el jugador posee todas las calles de un color
+	 * 
+	 * @param color
+	 *            El Color de las tarjetas
+	 * @return {@code true} si el jugador posee todas las terjetas del color
+	 */
+	public boolean poseeColorCompleto(TarjetaCalle.EnumColor color) {
+		int contador = 0;
+		TarjetaCalle tarjetaCalle;
+		
+		for (TarjetaPropiedad tarjetaPropiedad : this.getTarjPropiedadList()) {
+			if (tarjetaPropiedad.isPropiedadCalle()){
+				tarjetaCalle = (TarjetaCalle) tarjetaPropiedad;
+				if(tarjetaCalle.getEnumColor().getColor().equals(color.getColor()))
+					contador++;
+			}
+		}
+		return (color.getCantMonopoly() == contador);
+	}
+
+	/**
 	 * @return the tarjetaCarcelList
 	 */
 	public List<Tarjeta> getTarjetaCarcelList() {
@@ -343,7 +455,7 @@ public abstract class Jugador implements Serializable {
 	}
 
 	/**
-	 * Suma uno al contador de turnos que el jugador está en la carcel.
+	 * Suma uno al contador de turnos que el jugador está en la carcel.casas
 	 * 
 	 * @return Devuelve la cantidad de turnos que el jugador estuvo en la
 	 *         carcel.
@@ -384,21 +496,28 @@ public abstract class Jugador implements Serializable {
 	}
 
 	/**
-	 * Le vende una propiedad a otro jugador.
+	 * Le vende una propiedad a otro jugador. Si la propiedad es una calle, no
+	 * debe tener construcciones para ser vendida.
 	 * 
 	 * @param tarjeta
 	 *            La tarjeta de la propiedad que se vende
 	 * @param jugador
-	 *            El jugamontodor al cual se le vende la propiedad
+	 *            El jugador al cual se le vende la propiedad
 	 * @return true si puede vender
 	 * @throws SinDineroException
+	 *             Si el jugador que compra no tiene dinero suficiente para
+	 *             pagar la propiedad, se lanza una {@code SinDineroException}
 	 */
 	public boolean venderPropiedad(TarjetaPropiedad tarjeta, Jugador jugador,
 			int monto) throws SinDineroException {
+		if (tarjeta.getCasillero().getTipoCasillero() == TipoCasillero.C_CALLE
+				&& ((CasilleroCalle) tarjeta.getCasillero()).getNroCasas() != 0)
+			return false;
+
 		jugador.pagarAJugador(this, monto);
 		this.getTarjPropiedadList().remove(tarjeta);
 		GestorLogs.registrarDebug("El jugador " + this.getNombre() + " vendió "
-				+ tarjeta.getNombre());
+				+ tarjeta.getNombre() + " al jugador " + jugador.getNombre());
 		return jugador.adquirirPropiedad(tarjeta);
 
 	}
@@ -569,6 +688,11 @@ public abstract class Jugador implements Serializable {
 		return cantCasas;
 	}
 
+	/**
+	 * Calcula la cantidad de hoteles que tiene el jugador en todo el tablero
+	 * 
+	 * @return La cantidad total de hoteles que tiene el jugador
+	 */
 	public int getNroHoteles() {
 		int cantHoteles = 0;
 
@@ -582,15 +706,34 @@ public abstract class Jugador implements Serializable {
 		return cantHoteles;
 	}
 
+	/**
+	 * Devuelve la cantidad de total de propiedades que tiene el jugador
+	 * 
+	 * @return La cantidad de propiedades que tiene el jugador
+	 */
 	public int getCantPropiedades() {
 		return this.tarjPropiedadList.size();
 	}
 
+	/**
+	 * Aumenta la cantidad de casas en "{@code cantidad}"
+	 * 
+	 * @param cantidad
+	 *            La cantidad de casas que se quiere sumar
+	 * @return El nuevo nro de casas
+	 */
 	public int incrementNroCasas(int cantidad) {
 		nroCasas += cantidad;
 		return nroCasas;
 	}
 
+	/**
+	 * Aumenta la cantidad de hoteles en "{@code cantidad}"
+	 * 
+	 * @param cantidad
+	 *            La cantidad de hoteles que se quiere sumar
+	 * @return El nuevo nro de hoteles
+	 */
 	public int incrementNroHoteles(int cantidad) {
 		nroHoteles += cantidad;
 		return nroHoteles;
