@@ -17,6 +17,7 @@ import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.JugadorVirtual;
 import monopoly.model.MonopolyGameStatus;
+import monopoly.model.SubastaStatus;
 import monopoly.model.Usuario;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tablero.CasilleroCalle;
@@ -75,6 +76,8 @@ public class JuegoController implements Serializable {
 	private JugadorVirtualController gestorJugadoresVirtuales;
 
 	private MonopolyGameStatus status;
+
+	private SubastaController gestorSubasta;
 
 	private int contadorPagos;
 
@@ -377,8 +380,9 @@ public class JuegoController implements Serializable {
 							.decidirSalirPagando(jugadorActual)) {
 						jugadorActual.pagar(50);
 						jugadorActual.setPreso(false);
-						mensaje = String.format("Pagó %s para salir de la cárcel.",
-								StringUtils.formatearAMoneda(50));						
+						mensaje = String.format(
+								"Pagó %s para salir de la cárcel.",
+								StringUtils.formatearAMoneda(50));
 					} else {
 						dados = new Dado();
 						tirarDadosDoblesSalirCarcel(jugadorActual, dados);
@@ -386,7 +390,7 @@ public class JuegoController implements Serializable {
 					}
 				}
 			}
-			
+
 			if (!StringUtils.IsNullOrEmpty(mensaje)) {
 				history = new History(StringUtils.getFechaActual(),
 						jugadorActual.getNombre(), mensaje);
@@ -1149,6 +1153,21 @@ public class JuegoController implements Serializable {
 
 		siguienteTurno(true);
 
+	}
+
+	public void IniciarSubasta(int senderId, SubastaStatus subastaStatus)
+			throws Exception {
+		gestorSubasta = new SubastaController(subastaStatus.propiedadSubastada);
+		for (Jugador jugador : gestorJugadores.getTurnoslist()) {
+			if (jugador.getDinero() > subastaStatus.montoSubasta)
+				gestorSubasta.agregarJugadorASubasta(jugador);
+		}
+		if (gestorSubasta.cantidadJugadores() > 1) {
+			gestorSubasta.siguienteTurno();
+			
+		} else {
+
+		}
 	}
 
 	public void sendChatMessage(History history) throws Exception {

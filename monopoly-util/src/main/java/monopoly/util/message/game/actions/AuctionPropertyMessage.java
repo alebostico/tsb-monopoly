@@ -14,9 +14,11 @@ public class AuctionPropertyMessage implements Serializable {
 
 	private static final long serialVersionUID = -81024719452379087L;
 
-	public final Object message; // Original message from a client.
+	public final String idJuego;
+	public final Object subastaStatus; // Original message from a client.
 
-	public AuctionPropertyMessage(Object message) {
-		this.message = message;
+	public AuctionPropertyMessage(String idJuego, Object subastaStatus) {
+		this.subastaStatus = subastaStatus;
+		this.idJuego= idJuego;
 	}
 }
