@@ -44,6 +44,14 @@ public class SubastaController implements Serializable {
 		return indexList[indexActual];
 	}
 	
+	public TarjetaPropiedad getPropiedadSubastada() {
+		return propiedadSubastada;
+	}
+
+	public void setPropiedadSubastada(TarjetaPropiedad propiedadSubastada) {
+		this.propiedadSubastada = propiedadSubastada;
+	}
+
 	public Jugador jugadorActual() throws Exception
 	{
 		return indexList[indexActual];
