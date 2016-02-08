@@ -15,6 +15,7 @@ import monopoly.model.Estado.EstadoJuego;
 import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
+import monopoly.model.SubastaStatus;
 import monopoly.model.Usuario;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaPropiedad;
@@ -315,6 +316,12 @@ public class PartidasController {
 			throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.sendHistoryGame(history);
+	}
+	
+	public void IniciarSubasta(String idJuego, int senderId,
+			SubastaStatus subastaStatus) throws Exception{
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.IniciarSubasta(senderId, subastaStatus);
 	}
 
 	// =====================================================================//

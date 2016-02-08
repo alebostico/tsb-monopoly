@@ -11,12 +11,22 @@ import java.io.Serializable;
  * @author pablo
  *
  */
-public enum EnumEstadoSubasta implements Serializable{
+public enum EnumEstadoSubasta implements Serializable {
 
-	CREADA,
-	INICIADA,
-	FINALIZADA;
-	
-	private EnumEstadoSubasta(){}
-	
+	CREADA("creada"), INICIADA("Iniciada"),
+	JUGANDO("Jugando"), FINALIZADA("Finalizada");
+
+	private final String estadoSubasta;
+
+	private EnumEstadoSubasta(String nombre) {
+		estadoSubasta = nombre;
+	}
+
+	/**
+	 * @return the nombreEstadoJuego
+	 */
+	public String getNombreEstadoJuego() {
+		return estadoSubasta;
+	}
+
 }

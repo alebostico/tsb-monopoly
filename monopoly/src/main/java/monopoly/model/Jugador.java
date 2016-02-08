@@ -91,6 +91,9 @@ public abstract class Jugador implements Serializable {
 
 	@Transient
 	private EstadoJugador estadoJugador;
+	
+	@Transient
+	private boolean enSubasta;
 
 	/**
 	 * Constructor por defecto. inicializa el arraylist tarjetaCarcelList, que
@@ -111,6 +114,7 @@ public abstract class Jugador implements Serializable {
 		this.isPreso = false;
 		this.contDadosDobles = 0;
 		this.contTurnosCarcel = 0;
+		this.enSubasta = false;
 	}
 
 	/**
@@ -431,6 +435,14 @@ public abstract class Jugador implements Serializable {
 	 */
 	public void setEstadoJugador(EstadoJugador estadoJugador) {
 		this.estadoJugador = estadoJugador;
+	}
+
+	public boolean isEnSubasta() {
+		return enSubasta;
+	}
+
+	public void setEnSubasta(boolean enSubasta) {
+		this.enSubasta = enSubasta;
 	}
 
 	/**

@@ -17,6 +17,7 @@ import monopoly.model.Jugador;
 import monopoly.model.JugadorHumano;
 import monopoly.model.JugadorVirtual;
 import monopoly.model.MonopolyGameStatus;
+import monopoly.model.SubastaStatus;
 import monopoly.model.Usuario;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tablero.CasilleroCalle;
@@ -75,6 +76,8 @@ public class JuegoController implements Serializable {
 	private JugadorVirtualController gestorJugadoresVirtuales;
 
 	private MonopolyGameStatus status;
+
+	private SubastaController gestorSubasta;
 
 	private int contadorPagos;
 
@@ -236,6 +239,18 @@ public class JuegoController implements Serializable {
 		}
 	}
 
+	/**
+	 * Método para avanzar de casillero en base al suma de datos que arrojó el
+	 * jugador.
+	 * 
+	 * @param senderId
+	 *            Id de conexión de un jugador humano.
+	 * @param dados
+	 *            dados arrojados en la tirada.
+	 * 
+	 * @throws CondicionInvalidaException
+	 * @throws Exception
+	 */
 	public void avanzarDeCasillero(int senderId, Dado dados)
 			throws CondicionInvalidaException, Exception {
 		Jugador jugador;
@@ -256,6 +271,23 @@ public class JuegoController implements Serializable {
 		jugarAccionCasillero(accion, jugador, casillero, senderId);
 	}
 
+	/**
+	 * Método utilizado para realizar la acción correspondiente al casillero en
+	 * que un jugador humano cayó.
+	 * 
+	 * @param accion
+	 *            Acción a realizar según el casillero que cayó.
+	 * @param jugador
+	 *            a realizar la acción.
+	 * @param casillero
+	 *            al que se avanzó.
+	 * @param senderId
+	 *            Id de conexión de un jugador humano.
+	 * 
+	 * @throws CondicionInvalidaException
+	 * @throws SinDineroException
+	 * @throws Exception
+	 */
 	private void jugarAccionCasillero(AccionEnCasillero accion,
 			Jugador jugador, Casillero casillero, int senderId)
 			throws CondicionInvalidaException, SinDineroException, Exception {
@@ -314,6 +346,11 @@ public class JuegoController implements Serializable {
 		sendToOther(senderId, status);
 	}
 
+	/**
+	 * Método utilizado por un jugador virtual para avanzar de casillero.
+	 * 
+	 * @throws Exception
+	 */
 	public void avanzarDeCasilleroJV() throws Exception {
 		AccionEnCasillero accion;
 		MonopolyGameStatus status;
@@ -377,8 +414,9 @@ public class JuegoController implements Serializable {
 							.decidirSalirPagando(jugadorActual)) {
 						jugadorActual.pagar(50);
 						jugadorActual.setPreso(false);
-						mensaje = String.format("Pagó %s para salir de la cárcel.",
-								StringUtils.formatearAMoneda(50));						
+						mensaje = String.format(
+								"Pagó %s para salir de la cárcel.",
+								StringUtils.formatearAMoneda(50));
 					} else {
 						dados = new Dado();
 						tirarDadosDoblesSalirCarcel(jugadorActual, dados);
@@ -386,7 +424,7 @@ public class JuegoController implements Serializable {
 					}
 				}
 			}
-			
+
 			if (!StringUtils.IsNullOrEmpty(mensaje)) {
 				history = new History(StringUtils.getFechaActual(),
 						jugadorActual.getNombre(), mensaje);
@@ -442,6 +480,21 @@ public class JuegoController implements Serializable {
 		}
 	}
 
+	/**
+	 * Método utilizado para realizar la acción correspondiente al casillero en
+	 * que un jugador cayó.
+	 * 
+	 * @param accion
+	 *            accion Acción a realizar según el casillero que cayó.
+	 * @param jugador
+	 *            jugador jugador a realizar la acción.
+	 * @param casillero
+	 *            al que se avanzó.
+	 * 
+	 * @throws CondicionInvalidaException
+	 * @throws SinDineroException
+	 * @throws Exception
+	 */
 	private void jugarAccionEnCasilleroJV(AccionEnCasillero accion,
 			JugadorVirtual jugador, Casillero casillero)
 			throws CondicionInvalidaException, SinDineroException, Exception {
@@ -542,6 +595,12 @@ public class JuegoController implements Serializable {
 		}
 	}
 
+	/**
+	 * Método para determinar el siguiente turno de un jugador.
+	 * 
+	 * @param validaDadosDobles
+	 * @throws Exception
+	 */
 	public void siguienteTurno(boolean validaDadosDobles) throws Exception {
 		History history;
 		Jugador jugadorActual;
@@ -655,6 +714,17 @@ public class JuegoController implements Serializable {
 		}
 	}
 
+	/**
+	 * Método solicitado por un jugador humano para comprar una propiedad.
+	 * 
+	 * @param senderId
+	 *            id de conexión de un jugador humano.
+	 * @param nombrePropiedad
+	 *            que se comprará.
+	 * 
+	 * @throws SinDineroException
+	 * @throws Exception
+	 */
 	public void comprarPropiedad(int senderId, String nombrePropiedad)
 			throws SinDineroException, Exception {
 		TarjetaPropiedad tarjeta = gestorBanco.getBanco().getTarjetaPropiedad(
@@ -662,7 +732,18 @@ public class JuegoController implements Serializable {
 		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
 		comprarPropiedad(jugador, tarjeta);
 	}
-	
+
+	/**
+	 * Método para comprar una propiedad.
+	 * 
+	 * @param jugador
+	 *            que realizará la compra.
+	 * @param tarjeta
+	 *            propiedad que se comprará.
+	 * 
+	 * @throws SinDineroException
+	 * @throws Exception
+	 */
 	private void comprarPropiedad(Jugador jugador, TarjetaPropiedad tarjeta)
 			throws SinDineroException, Exception {
 		History history;
@@ -892,7 +973,7 @@ public class JuegoController implements Serializable {
 	}
 
 	/**
-	 * Método para llevar preso al jugador.
+	 * Método para llevar preso a un jugador.
 	 * 
 	 * @param senderId
 	 *            id de conexión del jugador humano
@@ -902,6 +983,13 @@ public class JuegoController implements Serializable {
 		irALaCarcel(jugador);
 	}
 
+	/**
+	 * Método para llevar preso a un jugador.
+	 * 
+	 * @param jugador
+	 *            que irá preso.
+	 * @throws Exception
+	 */
 	private void irALaCarcel(Jugador jugador) throws Exception {
 		gestorTablero.irACarcel(jugador);
 
@@ -982,6 +1070,16 @@ public class JuegoController implements Serializable {
 			siguienteTurno(true);
 	}
 
+	/**
+	 * Método ejecutado por un jugador humano para determinar si tiró dados
+	 * dobles para salir de la cárcel.
+	 * 
+	 * @param senderId
+	 *            Id de conexión de un jugador humano.
+	 * @param dados
+	 *            resultado de la tirada del jugador.
+	 * @throws Exception
+	 */
 	public void tirarDadosDoblesSalirCarcel(int senderId, Dado dados)
 			throws Exception {
 		Jugador jugador;
@@ -989,6 +1087,16 @@ public class JuegoController implements Serializable {
 		tirarDadosDoblesSalirCarcel(jugador, dados);
 	}
 
+	/**
+	 * Método para determinar si un jugador tiró dados dobles para salir de la
+	 * cárcel.
+	 * 
+	 * @param jugador
+	 *            que tiró los dados.
+	 * @param dados
+	 *            resultado obtenido de la tirada.
+	 * @throws Exception
+	 */
 	private void tirarDadosDoblesSalirCarcel(Jugador jugador, Dado dados)
 			throws Exception {
 		MutableBoolean cobraSalida = new MutableBoolean(true);
@@ -1112,6 +1220,7 @@ public class JuegoController implements Serializable {
 	 * propietario.
 	 * 
 	 * @param senderId
+	 *            Id de conexión de un jugador humano.
 	 * @param tarjetaPropiedad
 	 * @throws Exception
 	 */
@@ -1155,14 +1264,57 @@ public class JuegoController implements Serializable {
 
 	}
 
+	/**
+	 * Método para llevar a cabo la subasta de una propiedad.
+	 * 
+	 * @param senderId
+	 *            Id de conexión de un jugador humano.
+	 * @param subastaStatus
+	 *            Estado de la subasta.
+	 * 
+	 * @throws Exception
+	 */
+	public void IniciarSubasta(int senderId, SubastaStatus subastaStatus)
+			throws Exception {
+		gestorSubasta = new SubastaController(subastaStatus.propiedadSubastada);
+		for (Jugador jugador : gestorJugadores.getTurnoslist()) {
+			if (jugador.getDinero() > subastaStatus.montoSubasta)
+				gestorSubasta.agregarJugadorASubasta(jugador);
+		}
+		if (gestorSubasta.cantidadJugadores() > 1) {
+			gestorSubasta.siguienteTurno();
+
+		} else {
+
+		}
+	}
+
+	/**
+	 * Método para enviar un mensaje por el chat.
+	 * 
+	 * @param history
+	 *            mensaje del chat.
+	 * 
+	 * @throws Exception
+	 */
 	public void sendChatMessage(History history) throws Exception {
 		ChatGameMessage msgChatGameMessage = new ChatGameMessage(null, history);
 		sendToAll(msgChatGameMessage);
 	}
 
+	/**
+	 * Método para mostrar la historia del juego.
+	 * 
+	 * @param history
+	 * @throws Exception
+	 */
 	public void sendHistoryGame(History history) throws Exception {
 		sendToAll(new HistoryGameMessage(history));
 	}
+
+	// =====================================================================//
+	// ================= Métodos para determinar el juego. =================//
+	// =====================================================================//
 
 	/**
 	 * Actualiza los datos de un juego guardado
@@ -1243,6 +1395,16 @@ public class JuegoController implements Serializable {
 	// ============= Métodos para envío de mensaje al cliente. =============//
 	// =====================================================================//
 
+	/**
+	 * Método para enviar un mensaje a un jugador en particular.
+	 * 
+	 * @param recipientID
+	 *            Id de conexión de un jugador humano.
+	 * @param message
+	 *            Objecto mensaje.
+	 * 
+	 * @throws Exception
+	 */
 	private void sendToOne(int recipientID, Object message) throws Exception {
 		PartidasController.getInstance().getMonopolyGame()
 				.sendToOne(recipientID, message);
