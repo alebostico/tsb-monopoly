@@ -776,9 +776,48 @@ public class JuegoController implements Serializable {
 		if (jugador.isHumano())
 			siguienteTurno(true);
 	}
-	
-	public TarjetaPropiedad hipotecarPropiedad(TarjetaPropiedad propiedad) {
-		return gestorTablero.hipotecarPropiedad(propiedad);
+
+	/**
+	 * Hipoteca una propiedad y le paga el monto de la hipteca a su dueño.
+	 * 
+	 * @param propiedad
+	 *            La propiedad que se va a hipotecar
+	 * @return La {@code propiedad} hipotecada si se hipotecó. {@code null} si
+	 *         no se pudo hipotecar. Ver
+	 *         {@link TableroController#hipotecarPropiedad(TarjetaPropiedad, Jugador)}.
+	 * @throws Exception Si no se puede enviar el mensaje al cliente.
+	 */
+	public TarjetaPropiedad hipotecarPropiedad(TarjetaPropiedad propiedad)
+			throws Exception {
+
+		Jugador jugador = gestorJugadores.getCurrentPlayer();
+		TarjetaPropiedad propiedadToReturn = gestorTablero.hipotecarPropiedad(
+				propiedad, jugador);
+
+		String mensaje;
+		EstadoJuego estadoJuegoJugadorActual = EstadoJuego.ACTUALIZANDO_ESTADO;
+		List<Jugador> turnosList;
+		List<History> historyList = new ArrayList<History>();
+
+		if (propiedadToReturn != null)
+			mensaje = String.format("Hipotecó la propiedad %s y cobró %s.",
+					propiedad.getNombre(), StringUtils
+							.formatearAMoneda(propiedad.getValorHipotecario()));
+		else
+			mensaje = String.format("No pudo hiṕotecar la propiedad %s",
+					propiedad.getNombre());
+
+		historyList.add(new History(StringUtils.getFechaActual(), jugador
+				.getNombre(), mensaje));
+
+		turnosList = gestorJugadores.getTurnoslist();
+		status = new MonopolyGameStatus(turnosList, gestorBanco.getBanco(),
+				gestorTablero.getTablero(), estadoJuegoJugadorActual, null,
+				gestorJugadores.getCurrentPlayer(), historyList, null);
+		sendToAll(status);
+
+		return propiedadToReturn;
+
 	}
 
 	/**
@@ -1496,7 +1535,5 @@ public class JuegoController implements Serializable {
 	public boolean checkPagaronTodos() {
 		return contadorPagos == this.getCantJugadores();
 	}
-
-	
 
 }

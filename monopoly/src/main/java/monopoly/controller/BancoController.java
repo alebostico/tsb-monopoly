@@ -14,7 +14,9 @@ import monopoly.model.tablero.Casillero;
 import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tablero.CasilleroCompania;
 import monopoly.model.tablero.CasilleroEstacion;
+import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
+import monopoly.util.exception.PropiedadNoHipotecableException;
 import monopoly.util.exception.SinDineroException;
 
 /**
@@ -141,20 +143,50 @@ public class BancoController implements Serializable {
 	 * 
 	 * @param propiedad
 	 *            La propiedad que se quiere hipotecar
-	 * @return
+	 * @return La propiedad hipotecada
+	 * @throws PropiedadNoHipotecableException
+	 *             Si la propiedad no se puede hipotecar por alguno de los
+	 *             siguientes motivos:
+	 *             <ul>
+	 *             <li>La propiedad ya está hipotecada. No se puede volver a
+	 *             hipotecar.</li>
+	 *             <li>La propiedad tiene construcciones. No se puede hipotecar.
+	 *             </li>
+	 *             <li>La propiedad no tiene dueño. No se puede hipotecar.</li>
+	 *             </ul>
 	 */
-	public int hipotecarPropiedad(TarjetaPropiedad propiedad) {
-		// Verificamos que la propiedad se pueda hipotecar...
-		if (!propiedad.isHipotecable())
-			return 0;
+	public TarjetaPropiedad hipotecarPropiedad(TarjetaPropiedad propiedad)
+			throws PropiedadNoHipotecableException {
+		// Controlamos que la propiedad no esté hipotecada...
+		if (propiedad.isHipotecada())
+			throw new PropiedadNoHipotecableException(
+					String.format(
+							"La propiedad %s ya está hipotecada. No se puede volver a hipotecar.",
+							propiedad.getNombre()));
+
+		// Si es calle, controlamos que no tenga construcciones...
+		if (propiedad.isPropiedadCalle()) {
+			TarjetaCalle calle = (TarjetaCalle) propiedad;
+			if (calle.getNroCasas() != 0)
+				throw new PropiedadNoHipotecableException(
+						String.format(
+								"La propiedad %s tiene construcciones. No se puede hipotecar.",
+								propiedad.getNombre()));
+		}
+
+		// Controlamos que la propiedad tenga dueño...
+		if (propiedad.getJugador() == null)
+			throw new PropiedadNoHipotecableException(String.format(
+					"La propiedad %s no tiene dueño. No se puede hipotecar.",
+					propiedad.getNombre()));
 
 		// Si se puede hipotecar, hipotecamos...
 		Jugador jugador = propiedad.getJugador();
 		if (this.pagar(jugador, propiedad.getValorHipotecario())) {
 			propiedad.setHipotecada(true);
-			return propiedad.getValorHipotecario();
+			return propiedad;
 		} else
-			return 0;
+			return null;
 	}
 
 	/**

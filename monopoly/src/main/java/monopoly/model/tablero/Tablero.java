@@ -52,6 +52,16 @@ public class Tablero implements Serializable {
 		this.casillerosList = casillerosList;
 	}
 
+	/**
+	 * Devuelve el casillero pasado por par&aacute;metro. El par&aacute;metro es
+	 * el N&uacute;mero de casillero [1-40], NO el indice del vector. Si el
+	 * 'nroCasillero' es inv&aacute;lido (menor a 1 o mayor a 40) devuelve null.
+	 * 
+	 * @param nroCasillero
+	 *            El n&uacute;mero del casillero a devolver.
+	 * @return El casillero correspondiente al n&uacute;mero pasado por
+	 *         par&aacute;metro o null si no existe.
+	 */
 	public Casillero getCasillero(int pNroCasillero) {
 		for (Casillero casillero : casillerosList) {
 			if (casillero.getNumeroCasillero() == pNroCasillero)

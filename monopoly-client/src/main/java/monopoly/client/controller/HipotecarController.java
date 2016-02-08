@@ -83,6 +83,9 @@ public class HipotecarController extends AnchorPane implements Initializable {
 			filtersPropiedadesList.add(new PropiedadSimpleProperty(propiedad));
 		}
 
+		// configurarTabla();
+		// cargarTabla();
+
 		Platform.runLater(new Runnable() {
 
 			@Override
@@ -120,15 +123,17 @@ public class HipotecarController extends AnchorPane implements Initializable {
 		MortgageMessage msg = new MortgageMessage(senderID, idJuego,
 				propiedadSelected.getTarjetaPropiedad());
 		ConnectionController.getInstance().send(msg);
+
+		currentStage.close();
+		prevStage.show();
 	}
 
 	/**
-	 * Segunda etapa en la carga del juego. Cuando el server devuelve el juego,
-	 * se carga el tablero con el juego.
+	 * Muestra un mensaje que informa si la propiedad se hipotecó correctamente
+	 * o hubo algún error
 	 * 
-	 * @param juego
-	 *            El juego que se quiere cargar. Viene desde el servidor
-	 *            deserializado.
+	 * @param propiedad
+	 *            La propiedad que se hipoteca.
 	 */
 	@FXML
 	public void finishMortgage(TarjetaPropiedad propiedad) {
@@ -139,7 +144,7 @@ public class HipotecarController extends AnchorPane implements Initializable {
 					"Información",
 					"Propiedad hipotecada",
 					String.format("La propiedad %s se hipotecó por %s",
-							propiedad.getNombrePropiedad(),
+							propiedad.getNombre(),
 							propiedad.getValorHipotecario()));
 		} else {
 			TableroController.getInstance().showMessageBox(
@@ -147,10 +152,8 @@ public class HipotecarController extends AnchorPane implements Initializable {
 					"Error",
 					"Error de hipoteca",
 					String.format("La propiedad %s no se pudo hipotecar",
-							propiedad.getNombrePropiedad()));
+							propiedad.getNombre()));
 		}
-
-		currentStage.close();
 	}
 
 	public static HipotecarController getInstance() {

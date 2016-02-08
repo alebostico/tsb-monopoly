@@ -718,7 +718,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			actualizarGraficoEnElTablero();
 
 			switch (estadoActual.estadoTurno) {
-			/**
+			/*
 			 * opción cuando al jugador le toca tirar el dado.
 			 */
 			case TIRAR_DADO:
@@ -727,6 +727,11 @@ public class TableroController extends AnchorPane implements Serializable,
 				showMessageBox(AlertType.INFORMATION, "Turno de juego...",
 						null, "Es tu turno para jugar");
 				break;
+				
+			case ACTUALIZANDO_ESTADO:
+				bloquearAcciones(false);
+				break;
+				
 			case JUGANDO:
 				bloquearAcciones(true);
 				mostrarTirarDados(false);

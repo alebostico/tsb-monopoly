@@ -170,7 +170,7 @@ public class PartidasController {
 	}
 
 	public TarjetaPropiedad hipotecarPropiedad(String idJuego, int senderId,
-			TarjetaPropiedad propiedad) {
+			TarjetaPropiedad propiedad) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
 		return juegoController.hipotecarPropiedad(propiedad);
 	}

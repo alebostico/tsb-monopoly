@@ -21,6 +21,7 @@ import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.constantes.EnumSalidaCarcel;
+import monopoly.util.exception.PropiedadNoHipotecableException;
 import monopoly.util.exception.SinDineroException;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
@@ -331,6 +332,9 @@ public class MonopolyGame extends GameServer {
 		} catch (SinDineroException sde) {
 			GestorLogs.registrarException(sde);
 			sendToOne(senderId, new ExceptionMessage(sde));
+		} catch (PropiedadNoHipotecableException pnhe){
+			GestorLogs.registrarException(pnhe);
+			sendToOne(senderId, new ExceptionMessage(pnhe));
 		} catch (Exception ex) {
 			GestorLogs.registrarException(ex);
 			sendToOne(senderId, new ExceptionMessage(ex));

@@ -131,7 +131,7 @@ public abstract class TarjetaPropiedad extends Tarjeta implements Serializable {
 	 * @return {@code true} si la propiedad se puede hipotecar.
 	 */
 	public boolean isHipotecable() {
-		// Controlamos que la propuiedad no esté hipotecada...
+		// Controlamos que la propiedad no esté hipotecada...
 		if (this.isHipotecada())
 			return false;
 

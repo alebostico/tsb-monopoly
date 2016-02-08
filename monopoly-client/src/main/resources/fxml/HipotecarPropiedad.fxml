@@ -24,7 +24,7 @@
                   </Label>
                   <HBox alignment="CENTER">
                      <children>
-                        <TableView id="tblPropiedades" fx:id="tblJuegos" minWidth="650.0">
+                        <TableView id="tblPropiedades" fx:id="tblPropiedades" minWidth="650.0">
                            <columns>
                               <TableColumn id="collumnNombre" fx:id="colNombre" maxWidth="250.0" minWidth="250.0" prefWidth="250.0" resizable="false" text="Nombre Propiedad" />
                               <TableColumn id="collumnColor" fx:id="colColor" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" resizable="false" text="Color" />

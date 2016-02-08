@@ -47,7 +47,7 @@ public class MonopolyClient extends GameClient {
 	private Juego juego;
 
 	private TarjetaPropiedad propiedad;
-	
+
 	private List<Juego> juegosList;
 	private List<TarjetaPropiedad> propiedadesList;
 
@@ -111,12 +111,6 @@ public class MonopolyClient extends GameClient {
 				}
 				break;
 
-			case ConstantesMensaje.MORTGAGE_MESSAGE:
-				MortgageMessage hipoteca = (MortgageMessage) message;
-				propiedad = (TarjetaPropiedad) hipoteca.message;
-				HipotecarController.getInstance().finishMortgage(propiedad);
-				break;
-				
 			case ConstantesMensaje.RELOAD_SAVED_GAME_MESSAGE:
 
 				ReloadSavedGameMessage savedGame = (ReloadSavedGameMessage) message;
@@ -179,6 +173,12 @@ public class MonopolyClient extends GameClient {
 				}
 				break;
 
+			case ConstantesMensaje.MORTGAGE_MESSAGE:
+				MortgageMessage hipoteca = (MortgageMessage) message;
+				propiedad = (TarjetaPropiedad) hipoteca.message;
+				HipotecarController.getInstance().finishMortgage(propiedad);
+				break;
+
 			case ConstantesMensaje.EXCEPTION_MESSAGE:
 				Exception ex = (Exception) ((ExceptionMessage) message).message;
 				TableroController.getInstance().showException(ex);
@@ -222,24 +222,27 @@ public class MonopolyClient extends GameClient {
 	private void determinarAccion(Object message) {
 		MonopolyGameStatus status = (MonopolyGameStatus) message;
 
-		switch (status.estadoTurno) {
-		case INICIADO:
-			TableroController.getInstance().actualizarEstadoJuego(status);
-			break;
+		TableroController.getInstance().actualizarEstadoJuego(status);
 
-		case TIRAR_DADO:
-		case ESPERANDO_TURNO:
-		case JUGANDO:
-		case DADOS_DOBLES:
-		case PRESO:
-		case LIBRE:
-			TableroController.getInstance().actualizarEstadoJuego(status);
-			break;
-
-		default:
-			break;
-
-		}
+		// switch (status.estadoTurno) {
+		// case INICIADO:
+		// TableroController.getInstance().actualizarEstadoJuego(status);
+		// break;
+		//
+		// case ACTUALIZANDO_ESTADO:
+		// case TIRAR_DADO:
+		// case ESPERANDO_TURNO:
+		// case JUGANDO:
+		// case DADOS_DOBLES:
+		// case PRESO:
+		// case LIBRE:
+		// TableroController.getInstance().actualizarEstadoJuego(status);
+		// break;
+		//
+		// default:
+		// break;
+		//
+		// }
 	}
 
 	/**
