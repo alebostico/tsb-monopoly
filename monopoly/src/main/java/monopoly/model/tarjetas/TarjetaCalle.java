@@ -78,6 +78,10 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 		public int getCantMonopoly() {
 			return cantMonopoly;
 		}
+
+		public String getColorCant() {
+			return color + " (" + String.valueOf(cantMonopoly) + ")";
+		}
 	}
 
 	private void setEnumColor() {
@@ -89,10 +93,35 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 		}
 	}
 
-	public EnumColor getEnumColor(){
+	/**
+	 * Devuelve el {@code EnumColor} asociado a la calle. Si es {@code null}
+	 * previamente lo asigna.
+	 * 
+	 * @return El {@code EnumColor} de la calle.
+	 */
+	public EnumColor getEnumColor() {
+		if (this.enumColor == null)
+			this.setEnumColor();
 		return this.enumColor;
 	}
-	
+
+	/**
+	 * Devuelve el {@code EnumColor} correspondiende al {@code color} pasado por
+	 * parámetro
+	 * 
+	 * @param color
+	 *            El nombre del color
+	 * @return El {@code EnumColor} correspondiende al color
+	 */
+	public static EnumColor getEnumColor(String color) {
+		for (EnumColor colorAux : EnumColor.values()) {
+			if (colorAux.getColor().equals(color)) {
+				return colorAux;
+			}
+		}
+		return null;
+	}
+
 	public TarjetaCalle() {
 		super();
 	}
@@ -114,6 +143,20 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 		this.precioCadaHotel = precioCadaHotel;
 		this.color = color;
 		this.setEnumColor();
+	}
+
+	/**
+	 * Devuelve la cantidad de edificios construídos:
+	 * <ul>
+	 * <li>0 - No tiene nada construído</li>
+	 * <li>1 a 4 - La cantdidad de casas</li>
+	 * <li>5 - Un hotel</li>
+	 * </ul>
+	 * 
+	 * @return La cantidad de casas u hoteles construídos
+	 */
+	public int getNroCasas() {
+		return ((CasilleroCalle) this.getCasillero()).getNroCasas();
 	}
 
 	/**

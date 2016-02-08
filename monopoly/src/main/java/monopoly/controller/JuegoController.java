@@ -662,7 +662,7 @@ public class JuegoController implements Serializable {
 		Jugador jugador = gestorJugadores.getJugadorHumano(senderId);
 		comprarPropiedad(jugador, tarjeta);
 	}
-
+	
 	private void comprarPropiedad(Jugador jugador, TarjetaPropiedad tarjeta)
 			throws SinDineroException, Exception {
 		History history;
@@ -694,6 +694,10 @@ public class JuegoController implements Serializable {
 
 		if (jugador.isHumano())
 			siguienteTurno(true);
+	}
+	
+	public TarjetaPropiedad hipotecarPropiedad(TarjetaPropiedad propiedad) {
+		return gestorTablero.hipotecarPropiedad(propiedad);
 	}
 
 	/**
@@ -1330,5 +1334,7 @@ public class JuegoController implements Serializable {
 	public boolean checkPagaronTodos() {
 		return contadorPagos == this.getCantJugadores();
 	}
+
+	
 
 }

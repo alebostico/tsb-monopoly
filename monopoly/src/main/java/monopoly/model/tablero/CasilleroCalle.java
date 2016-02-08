@@ -13,9 +13,6 @@ import monopoly.model.tarjetas.TarjetaCalle;
  */
 public class CasilleroCalle extends Casillero implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7775981623039342062L;
 
 	private String nombreCalle;
@@ -23,7 +20,7 @@ public class CasilleroCalle extends Casillero implements Serializable {
 	private TarjetaCalle tarjetaCalle;
 
 	public CasilleroCalle(int numeroCasillero, TarjetaCalle tarjetaCalle) {
-		super(numeroCasillero,tarjetaCalle.getNombre(), TipoCasillero.C_CALLE);
+		super(numeroCasillero, tarjetaCalle.getNombre(), TipoCasillero.C_CALLE);
 		this.nombreCalle = tarjetaCalle.getNombre();
 		this.tarjetaCalle = tarjetaCalle;
 		this.nroCasas = 0;
@@ -38,16 +35,34 @@ public class CasilleroCalle extends Casillero implements Serializable {
 		return tarjetaCalle;
 	}
 
+	/**
+	 * Devuelve la cantidad de edificios construídos:
+	 * <ul>
+	 * <li>0 - No tiene nada construído</li>
+	 * <li>1 a 4 - La cantdidad de casas</li>
+	 * <li>5 - Un hotel</li>
+	 * </ul>
+	 * 
+	 * @return La cantidad de casas u hoteles construídos
+	 */
 	public int getNroCasas() {
 		return nroCasas;
 	}
 
+	/**
+	 * Ingresa un nuevo valor de casas/hoteles
+	 * 
+	 * @param nroCasas
+	 *            La cantidad de edificios construidos (de 1 a 4 son Casas; 5 es
+	 *            un hotel; 0, no hay nada construído).
+	 */
 	public void setNroCasas(int nroCasas) {
 		this.nroCasas = nroCasas;
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see monopoly.model.tablero.Casillero#toString()
 	 */
 	@Override
@@ -61,9 +76,10 @@ public class CasilleroCalle extends Casillero implements Serializable {
 
 		return sb.toString();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see monopoly.model.tablero.Casillero#equals(java.lang.Object)
 	 */
 	@Override
@@ -80,14 +96,15 @@ public class CasilleroCalle extends Casillero implements Serializable {
 
 		return true;
 	}
-	
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		return this.getNumeroCasillero();
 	}
-	
+
 }

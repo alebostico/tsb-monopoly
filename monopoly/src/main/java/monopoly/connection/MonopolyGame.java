@@ -29,10 +29,12 @@ import monopoly.util.message.game.AdvanceInBoardMessage;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.ConfirmGameReloadedMessage;
+import monopoly.util.message.game.GetMortgagesMessage;
 import monopoly.util.message.game.GetSavedGamesMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.JoinGameMessage;
 import monopoly.util.message.game.LoadGameMessage;
+import monopoly.util.message.game.MortgageMessage;
 import monopoly.util.message.game.ReloadSavedGameMessage;
 import monopoly.util.message.game.SaveGameMessage;
 import monopoly.util.message.game.StartGameMessage;
@@ -108,6 +110,7 @@ public class MonopolyGame extends GameServer {
 		Tarjeta tarjeta;
 		History history;
 		List<Juego> juegosList;
+		List<TarjetaPropiedad> tarjetaPropiedadList;
 		TarjetaPropiedad tarjetaPropiedad;
 		ChatGameMessage msgChatGameMessage;
 		StartGameMessage msgStartGameMessage;
@@ -175,7 +178,8 @@ public class MonopolyGame extends GameServer {
 
 			case ConstantesMensaje.CONFIRM_GAME_RELOADED_MESSAGE:
 				juego = (Juego) ((ConfirmGameReloadedMessage) message).juego;
-				 // TODO: Para debug comentar la linea siguiente, no borra el juego
+				// TODO: Para debug comentar la linea siguiente, no borra el
+				// juego
 				PartidasController.getInstance()
 						.confirmarJuegoRestaurado(juego);
 				break;
@@ -287,6 +291,23 @@ public class MonopolyGame extends GameServer {
 				if (!StringUtils.IsNullOrEmpty(msgHistoryGame.idJuego))
 					PartidasController.getInstance().sendHistoryGame(senderId,
 							msgHistoryGame.idJuego, history);
+				break;
+
+			case ConstantesMensaje.GET_MORTGAGES_MESSAGE:
+				jugador = (Jugador) ((GetMortgagesMessage) message).message;
+				tarjetaPropiedadList = jugador.getPropiedadesHipotecables();
+				sendToOne(senderId, new GetMortgagesMessage(senderId,
+						tarjetaPropiedadList));
+				break;
+
+			case ConstantesMensaje.MORTGAGE_MESSAGE:
+				MortgageMessage hipoteca = ((MortgageMessage) message);
+				tarjetaPropiedad = (TarjetaPropiedad) hipoteca.message;
+				tarjetaPropiedad = PartidasController.getInstance()
+						.hipotecarPropiedad(hipoteca.idJuego, senderId,
+								tarjetaPropiedad);
+				sendToOne(senderId, new MortgageMessage(senderId,
+						hipoteca.idJuego, tarjetaPropiedad));
 				break;
 
 			case ConstantesMensaje.DISCONNECT_MESSAGE:

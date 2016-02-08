@@ -9,6 +9,7 @@ import java.util.List;
 
 import javafx.scene.control.Alert.AlertType;
 import monopoly.client.controller.CrearJuegoController;
+import monopoly.client.controller.HipotecarController;
 import monopoly.client.controller.LoginController;
 import monopoly.client.controller.ReanudarJuegoController;
 import monopoly.client.controller.RegistrarmeController;
@@ -18,6 +19,7 @@ import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
+import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.message.CreateAccountMessage;
@@ -25,9 +27,11 @@ import monopoly.util.message.CreateGameMessage;
 import monopoly.util.message.ExceptionMessage;
 import monopoly.util.message.LoginMessage;
 import monopoly.util.message.game.ChatGameMessage;
+import monopoly.util.message.game.GetMortgagesMessage;
 import monopoly.util.message.game.GetSavedGamesMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.JoinGameMessage;
+import monopoly.util.message.game.MortgageMessage;
 import monopoly.util.message.game.ReloadSavedGameMessage;
 import monopoly.util.message.game.SaveGameMessage;
 
@@ -42,7 +46,10 @@ public class MonopolyClient extends GameClient {
 
 	private Juego juego;
 
+	private TarjetaPropiedad propiedad;
+	
 	private List<Juego> juegosList;
+	private List<TarjetaPropiedad> propiedadesList;
 
 	/**
 	 * Connect to the hub at a specified host name and port number.
@@ -104,6 +111,12 @@ public class MonopolyClient extends GameClient {
 				}
 				break;
 
+			case ConstantesMensaje.MORTGAGE_MESSAGE:
+				MortgageMessage hipoteca = (MortgageMessage) message;
+				propiedad = (TarjetaPropiedad) hipoteca.message;
+				HipotecarController.getInstance().finishMortgage(propiedad);
+				break;
+				
 			case ConstantesMensaje.RELOAD_SAVED_GAME_MESSAGE:
 
 				ReloadSavedGameMessage savedGame = (ReloadSavedGameMessage) message;
@@ -147,6 +160,25 @@ public class MonopolyClient extends GameClient {
 				// (MonopolyGameStatus) msgCompleteTurnMessage.status);
 				break;
 
+			case ConstantesMensaje.GET_MORTGAGES_MESSAGE:
+				list = (List<?>) ((GetMortgagesMessage) message).message;
+				propiedadesList = new ArrayList<TarjetaPropiedad>();
+				if (list != null && !list.isEmpty()) {
+					for (Object obj : list) {
+						propiedadesList.add((TarjetaPropiedad) obj);
+					}
+					HipotecarController.getInstance().showHipotecar(
+							propiedadesList);
+				} else {
+					usuario = TableroController.getInstance()
+							.getUsuarioLogueado();
+					TableroController.getInstance().showMessageBox(
+							AlertType.INFORMATION, "Información",
+							"No hay propiedades",
+							"No hay ninguna propiedad que se pueda hipotecar.");
+				}
+				break;
+
 			case ConstantesMensaje.EXCEPTION_MESSAGE:
 				Exception ex = (Exception) ((ExceptionMessage) message).message;
 				TableroController.getInstance().showException(ex);
@@ -176,7 +208,7 @@ public class MonopolyClient extends GameClient {
 		case ConstantesMensaje.THROW_DICE_ADVANCE_MESSAGE:
 			TableroController.getInstance().processTirarDados(null);
 			break;
-			
+
 		case ConstantesMensaje.DOUBLE_DICE_MESSAGE:
 			TableroController.getInstance().showDadosDobles();
 			break;

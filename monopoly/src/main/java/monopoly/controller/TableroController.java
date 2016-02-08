@@ -1017,6 +1017,26 @@ public class TableroController implements Serializable {
 		return true;
 	}
 
+	/**
+	 * Hipoteca una propiedad.
+	 * 
+	 * @param propiedad
+	 *            La propiedad que se va a hipotecar.
+	 * @return La {@code propiedad} hipotecada si se hipotecó. {@code null} si no se
+	 *         pudo hipotecar
+	 */
+	public TarjetaPropiedad hipotecarPropiedad(TarjetaPropiedad propiedad) {
+		if (!propiedad.isHipotecable())
+			return null;
+
+		BancoController bancoController = getBancoController(propiedad
+				.getJugador().getJuego());
+		if (bancoController.hipotecarPropiedad(propiedad) != 0) {
+			return propiedad;
+		}
+		return null;
+	}
+
 	private int calcularAlquilerCalle(CasilleroCalle pCasillero) {
 		int nroCasas = 0;
 		int monto = 0;

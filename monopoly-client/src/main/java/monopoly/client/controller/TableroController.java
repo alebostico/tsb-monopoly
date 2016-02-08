@@ -98,6 +98,7 @@ import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
+import monopoly.util.message.game.GetMortgagesMessage;
 import monopoly.util.message.game.SaveGameMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.PayRentMessage;
@@ -1435,14 +1436,15 @@ public class TableroController extends AnchorPane implements Serializable,
 					for (Casillero casillero : casilleros) {
 						if (casillero.isCasilleroCalle()
 								&& ((CasilleroCalle) casillero).getNroCasas() > 0) {
-							
+
 							tpCasilleroSelected = (TilePane) pTablero
 									.lookup("#pCasillero"
 											+ String.format("%02d", casillero
 													.getNumeroCasillero()));
 							if (tpCasilleroSelected != null) {
-								
-								switch (((CasilleroCalle) casillero).getNroCasas()) {
+
+								switch (((CasilleroCalle) casillero)
+										.getNroCasas()) {
 								case 1:
 									imgCasa = new Image(
 											TableroController.class
@@ -1487,15 +1489,13 @@ public class TableroController extends AnchorPane implements Serializable,
 
 									break;
 								}
-								
-								
-								
-								
+
 							} else {
-								throw new CondicionInvalidaException(String.format(
-										"Casillero inválido: %s", casillero.getNumeroCasillero()));
+								throw new CondicionInvalidaException(String
+										.format("Casillero inválido: %s",
+												casillero.getNumeroCasillero()));
 							}
-							
+
 						}
 					}
 				} catch (Exception ex) {
@@ -2280,9 +2280,44 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	}
 
+	/**
+	 * Abre la ventana para hipotecar las propiedades. Muestra solo las
+	 * propiedades que puede hipotecar.
+	 * 
+	 * @param event
+	 */
 	@FXML
 	void processHipotecar(ActionEvent event) {
 
+		GestorLogs.registrarLog("Mostrando propiedades para hipotecar de '"
+				+ usuarioLogueado.getNombre() + "'...");
+		String fxml = ConstantesFXML.FXML_HIPOTECAR_PROPIEDAD;
+		HipotecarController controller;
+
+		try {
+			Stage hipotecarPropiedadStage = new Stage();
+			controller = (HipotecarController) FXUtils.cargarStage(
+					hipotecarPropiedadStage, fxml,
+					"Monopoly - Hipotecar Propiedad", false, false,
+					Modality.APPLICATION_MODAL, StageStyle.UTILITY);
+			controller.setCurrentStage(hipotecarPropiedadStage);
+			controller.setPrevStage(currentStage);
+			controller.setUsuarioLogueado(usuarioLogueado);
+			int senderId = ConnectionController.getInstance().getIdPlayer();
+			ConnectionController.getInstance().send(
+					new GetMortgagesMessage(senderId,
+							estadoActual.currentPlayer));
+		} catch (Exception ex) {
+			GestorLogs.registrarException(ex);
+
+			final Alert alert = new Alert(AlertType.ERROR);
+
+			alert.setTitle("Error...");
+			alert.setContentText(ex.getMessage());
+			alert.getButtonTypes().setAll(
+					new ButtonType("Aceptar", ButtonData.OK_DONE));
+			alert.showAndWait();
+		}
 	}
 
 	@FXML
