@@ -37,6 +37,7 @@ import monopoly.util.message.game.LoadGameMessage;
 import monopoly.util.message.game.ReloadSavedGameMessage;
 import monopoly.util.message.game.SaveGameMessage;
 import monopoly.util.message.game.StartGameMessage;
+import monopoly.util.message.game.actions.AuctionFinishMessage;
 import monopoly.util.message.game.actions.AuctionPropertyMessage;
 import monopoly.util.message.game.actions.BuyPropertyMessage;
 import monopoly.util.message.game.actions.ChanceCardMessage;
@@ -128,6 +129,7 @@ public class MonopolyGame extends GameServer {
 		SaveGameMessage msgSaveGameMessage;
 		PayRentMessage msgPayRent;
 		AuctionPropertyMessage msgAuctionProperty;
+		AuctionFinishMessage msgAuctionFinish;
 
 		try {
 			switch (message.getClass().getSimpleName()) {
@@ -210,8 +212,13 @@ public class MonopolyGame extends GameServer {
 
 			case ConstantesMensaje.AUCTION_PROPERTY_MESSAGE:
 				msgAuctionProperty = (AuctionPropertyMessage) message;
-				PartidasController.getInstance().IniciarSubasta(msgAuctionProperty.idJuego,
+				PartidasController.getInstance().subastar(msgAuctionProperty.idJuego,
 						senderId, (SubastaStatus)msgAuctionProperty.subastaStatus);
+				break;
+				
+			case ConstantesMensaje.AUCTION_FINISH_MESSAGE:
+				msgAuctionFinish = (AuctionFinishMessage) message;
+				PartidasController.getInstance().finalizarSubasta(msgAuctionFinish.idJuego, senderId);				
 				break;
 
 			case ConstantesMensaje.BUY_PROPERTY_MESSAGE:

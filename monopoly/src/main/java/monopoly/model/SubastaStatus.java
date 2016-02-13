@@ -28,6 +28,8 @@ public class SubastaStatus implements Serializable {
 	public final TarjetaPropiedad propiedadSubastada;
 	
 	public final int montoSubasta;
+	
+	public String mensaje;
 
 	public SubastaStatus(EnumEstadoSubasta pEstado, List<History> pHistoryList,
 			Jugador pJugadorActual, TarjetaPropiedad pPropiedadSubastada,int pMontoSubasta) {
@@ -40,4 +42,13 @@ public class SubastaStatus implements Serializable {
 		this.propiedadSubastada = pPropiedadSubastada;
 		this.montoSubasta = pMontoSubasta;
 	}
+
+	public String getMensaje() {
+		return mensaje;
+	}
+
+	public void setMensaje(String mensaje) {
+		this.mensaje = mensaje;
+	}
+	
 }

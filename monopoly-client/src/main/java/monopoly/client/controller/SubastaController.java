@@ -4,24 +4,42 @@
 package monopoly.client.controller;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
+import monopoly.client.connection.ConnectionController;
+import monopoly.model.History;
+import monopoly.model.JugadorHumano;
+import monopoly.model.SubastaStatus;
 import monopoly.model.tarjetas.TarjetaPropiedad;
+import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.constantes.EnumEstadoSubasta;
+import monopoly.util.exception.CondicionInvalidaException;
+import monopoly.util.message.game.actions.AuctionFinishMessage;
+import monopoly.util.message.game.actions.AuctionPropertyMessage;
 
 /**
  * @author Bostico Alejandro
@@ -34,13 +52,13 @@ public class SubastaController extends AnchorPane implements Initializable {
 	private ImageView imgPropiedad;
 
 	@FXML
-	private TableView<SubastaHistory> tblSubasta;
+	private TableView<SubastaHistoryProperty> tblSubasta;
 
 	@FXML
-	private TableColumn<SubastaHistory, String> columnUsuario;
+	private TableColumn<SubastaHistoryProperty, String> columnUsuario;
 
 	@FXML
-	private TableColumn<SubastaHistory, String> columnHistorico;
+	private TableColumn<SubastaHistoryProperty, String> columnHistorico;
 
 	@FXML
 	private TextField txtMejorOferta;
@@ -56,6 +74,19 @@ public class SubastaController extends AnchorPane implements Initializable {
 
 	@FXML
 	private Label lblMessage;
+
+	@FXML
+	private Stage currentStage;
+
+	private List<History> historyList;
+
+	private List<SubastaHistoryProperty> historyFilterList;
+
+	private ObservableList<SubastaHistoryProperty> historyObservableList;
+
+	private String idJuego;
+
+	private JugadorHumano jugador;
 
 	private TarjetaPropiedad tarjetaSubasta;
 
@@ -98,36 +129,204 @@ public class SubastaController extends AnchorPane implements Initializable {
 						}
 
 					});
-		}		
+		}
+		historyList = new ArrayList<History>();
+		historyFilterList = new ArrayList<SubastaHistoryProperty>();
+		historyObservableList = FXCollections
+				.observableArrayList(historyFilterList);
+		configurarTabla();
+	}
+
+	private void configurarTabla() {
+		// Columna Usuario
+		// columnUsuario = new TableColumn<>("Usuario");
+		if (columnUsuario != null)
+			columnUsuario
+					.setCellValueFactory(new PropertyValueFactory<SubastaHistoryProperty, String>(
+							"usuario"));
+
+		// Column Fecha
+		// columnHistorico = new TableColumn<>("Fecha");
+		if (columnHistorico != null)
+			columnHistorico
+					.setCellValueFactory(new PropertyValueFactory<SubastaHistoryProperty, String>(
+							"historia"));
+
+		// colNombre.prefWidthProperty().bind(
+		// tblJuegos.widthProperty().multiply(0.30));
+		// colFecha.prefWidthProperty().bind(
+		// tblJuegos.widthProperty().multiply(0.15));
+		// colCreador.prefWidthProperty().bind(
+		// tblJuegos.widthProperty().multiply(0.25));
+		// colParticipantes.prefWidthProperty().bind(
+		// tblJuegos.widthProperty().multiply(0.30));
+
 	}
 
 	private void pujarSubasta() {
-		int cantidadOfertada = 0;
-		if (estadoSubasta == EnumEstadoSubasta.CREADA) {
-			if (!StringUtils.IsNullOrEmpty(txtMiOferta.getText())) {
-				lblMessage.setText("");
-				cantidadOfertada = Integer.parseInt(txtMiOferta.getText());
-				if (cantidadOfertada > 0) {
-					// TODO: enviar mensaje para empezar la subasta.
-				} else
-					lblMessage.setText("la oferta debería ser mayor a 0.");
-			} else
-				lblMessage.setText("Campo Mi Oferta Obligatorio.");
-		} else {
+		Platform.runLater(new Runnable() {
+			int cantidadOfertada = 0;
+			int mejorOferta = 0;
+			AuctionPropertyMessage msg;
+			SubastaStatus subasta;
 
+			@Override
+			public void run() {
+				try {
+					lblMessage.setText("");
+
+					if (StringUtils.IsNullOrEmpty(txtMiOferta.getText())) {
+						txtMiOferta.setFocusTraversable(true);
+						throw new CondicionInvalidaException(
+								"Campo Mi Oferta Obligatorio.");
+					}
+
+					cantidadOfertada = Integer.parseInt(txtMiOferta.getText());
+					if (jugador.getDinero() == 0
+							&& estadoSubasta == EnumEstadoSubasta.CREADA) {
+						subasta = new SubastaStatus(estadoSubasta, null,
+								jugador, tarjetaSubasta, 1);
+						msg = new AuctionPropertyMessage(idJuego, subasta);
+						ConnectionController.getInstance().send(msg);
+						bloquearBotones(true);
+						return;
+					}
+
+					if (cantidadOfertada <= 0) {
+						txtMiOferta.setFocusTraversable(true);
+						throw new CondicionInvalidaException(
+								"La oferta debería ser mayor a 0.");
+					}
+
+					mejorOferta = Integer.parseInt(txtMejorOferta.getText());
+					if (estadoSubasta == EnumEstadoSubasta.JUGANDO) {
+						if (cantidadOfertada <= mejorOferta) {
+							txtMiOferta.setFocusTraversable(true);
+							throw new CondicionInvalidaException(
+									"Mi oferta debe superar el monto de la mejor oferta.");
+						}
+					}
+
+					if (cantidadOfertada > jugador.getDinero()) {
+						btnAbandonarSubasta.setFocusTraversable(true);
+						throw new CondicionInvalidaException(
+								"No tienes suficiente dinero para ofertar. Debes abandonar la subasta.");
+					}
+
+					bloquearBotones(true);
+					subasta = new SubastaStatus(estadoSubasta, null, jugador,
+							tarjetaSubasta, cantidadOfertada);
+					msg = new AuctionPropertyMessage(idJuego, subasta);
+					ConnectionController.getInstance().send(msg);
+
+					lblMessage.setText("Esperando por apuestas...");
+
+				} catch (CondicionInvalidaException ce) {
+					lblMessage.setText(ce.getMessage());
+				} catch (Exception ex) {
+
+				}
+			}
+		});
+
+	}
+
+	private void bloquearBotones(boolean bHabilitado) {
+		try {
+			btnPujar.setDisable(!bHabilitado);
+			btnAbandonarSubasta.setDisable(!bHabilitado);
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
 		}
 	}
 
 	private void abandonarSubasta() {
+		Platform.runLater(new Runnable() {
+			AuctionFinishMessage msg;
 
+			@Override
+			public void run() {
+				try {
+					if (TableroController.getInstance().showYesNoMsgBox("Abandonar Subasta", null, "¿Está seguro que desea abandonar la subasta?") == ButtonType.YES) {
+						bloquearBotones(true);
+						lblMessage.setText("La pantalla seguirá activa hasta que finalice la subasta.");
+						msg = new AuctionFinishMessage(idJuego,
+								"Abandonar Subasta.");
+						ConnectionController.getInstance().send(msg);
+					}
+				} catch (Exception ex) {
+					GestorLogs.registrarError(ex);
+				}
+			}
+		});
+	}
+
+	public void actualizarSubasta(SubastaStatus status) {
+		try {
+			Platform.runLater(new Runnable() {
+
+				@Override
+				public void run() {
+					try {
+						estadoSubasta = status.estado;
+						if(status.estado== EnumEstadoSubasta.JUGANDO)
+						{
+							for (History history : status.historyList) {
+								agregarHistoriaDeSubasta(history);
+							}
+							
+							if(status.jugadorActual.getNombre().equals(jugador.getNombre()))
+							{
+								bloquearBotones(false);
+								txtMejorOferta.setText(String.valueOf(status.montoSubasta));
+							}
+						}
+					} catch (Exception ex) {
+						GestorLogs.registrarException(ex);
+					}
+				}
+			});
+		} catch (Exception ex) {
+			GestorLogs.registrarException(ex);
+		}
+	}
+
+	public void agregarHistoriaDeSubasta(final History history) {
+		FutureTask<Void> taskAddHistory = null;
+		try {
+			taskAddHistory = new FutureTask<Void>(new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
+
+					historyList.add(history);
+					historyFilterList.add(new SubastaHistoryProperty(history
+							.getUsuario(), history.getMensaje()));
+
+					historyObservableList = FXCollections
+							.observableArrayList(historyFilterList);
+
+					if (tblSubasta != null) {
+						tblSubasta.getItems().clear();
+						tblSubasta.setItems(historyObservableList);
+						// tblSubasta.getColumns().setAll(columnUsuario,
+						// columnHistorico);
+					}
+					return null;
+				}
+			});
+			Platform.runLater(taskAddHistory);
+			taskAddHistory.get();
+
+		} catch (Exception ex) {
+			GestorLogs.registrarException(ex);
+		}
 	}
 
 	@FXML
 	void processPujar(ActionEvent event) {
-		try 
-		{
+		try {
 			pujarSubasta();
-			
+
 		} catch (NumberFormatException nfe) {
 			lblMessage.setText("La oferta debe ser un valor númerico.");
 		} catch (Exception ex) {
@@ -157,6 +356,30 @@ public class SubastaController extends AnchorPane implements Initializable {
 		return instance;
 	}
 
+	public Stage getCurrentStage() {
+		return currentStage;
+	}
+
+	public void setCurrentStage(Stage currentStage) {
+		this.currentStage = currentStage;
+	}
+
+	public String getIdJuego() {
+		return idJuego;
+	}
+
+	public void setIdJuego(String idJuego) {
+		this.idJuego = idJuego;
+	}
+
+	public JugadorHumano getJugador() {
+		return jugador;
+	}
+
+	public void setJugador(JugadorHumano jugador) {
+		this.jugador = jugador;
+	}
+
 	public EnumEstadoSubasta getEstadoSubasta() {
 		return estadoSubasta;
 	}
@@ -165,11 +388,11 @@ public class SubastaController extends AnchorPane implements Initializable {
 		this.estadoSubasta = estadoSubasta;
 	}
 
-	public static class SubastaHistory {
+	public static class SubastaHistoryProperty {
 		private final SimpleObjectProperty<String> usuario;
 		private final SimpleObjectProperty<String> historia;
 
-		public SubastaHistory(String usuario, String historia) {
+		public SubastaHistoryProperty(String usuario, String historia) {
 			this.usuario = new SimpleObjectProperty<String>(usuario);
 			this.historia = new SimpleObjectProperty<String>(historia);
 		}

@@ -311,10 +311,15 @@ public class PartidasController {
 		juegoController.sendHistoryGame(history);
 	}
 	
-	public void IniciarSubasta(String idJuego, int senderId,
+	public void subastar(String idJuego, int senderId,
 			SubastaStatus subastaStatus) throws Exception{
 		juegoController = juegosControllerList.get(idJuego);
-		juegoController.IniciarSubasta(senderId, subastaStatus);
+		juegoController.subastar(senderId, subastaStatus);
+	}
+	
+	public void finalizarSubasta(String idJuego, int senderId) throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.finalizarSubasta(senderId);
 	}
 
 	// =====================================================================//
