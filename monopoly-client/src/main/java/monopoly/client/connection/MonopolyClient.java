@@ -212,6 +212,31 @@ public class MonopolyClient extends GameClient {
 				HipotecarController.getInstance().finishMortgage(propiedad);
 				break;
 
+			case ConstantesMensaje.GET_MORTGAGES_MESSAGE:
+				list = (List<?>) ((GetMortgagesMessage) message).message;
+				propiedadesList = new ArrayList<TarjetaPropiedad>();
+				if (list != null && !list.isEmpty()) {
+					for (Object obj : list) {
+						propiedadesList.add((TarjetaPropiedad) obj);
+					}
+					HipotecarController.getInstance().showHipotecar(
+							propiedadesList);
+				} else {
+					usuario = TableroController.getInstance()
+							.getUsuarioLogueado();
+					TableroController.getInstance().showMessageBox(
+							AlertType.INFORMATION, "Información",
+							"No hay propiedades",
+							"No hay ninguna propiedad que se pueda hipotecar.");
+				}
+				break;
+
+			case ConstantesMensaje.MORTGAGE_MESSAGE:
+				MortgageMessage hipoteca = (MortgageMessage) message;
+				propiedad = (TarjetaPropiedad) hipoteca.message;
+				HipotecarController.getInstance().finishMortgage(propiedad);
+				break;
+
 			case ConstantesMensaje.EXCEPTION_MESSAGE:
 				Exception ex = (Exception) ((ExceptionMessage) message).message;
 				TableroController.getInstance().showException(ex);
