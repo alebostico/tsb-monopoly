@@ -101,6 +101,7 @@ import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
+import monopoly.util.message.game.GetMortgagesMessage;
 import monopoly.util.message.game.SaveGameMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.PayRentMessage;
@@ -748,7 +749,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			actualizarGraficoEnElTablero();
 
 			switch (estadoActual.estadoTurno) {
-			/**
+			/*
 			 * opción cuando al jugador le toca tirar el dado.
 			 */
 			case TIRAR_DADO:
@@ -757,6 +758,11 @@ public class TableroController extends AnchorPane implements Serializable,
 				showMessageBox(AlertType.INFORMATION, "Turno de juego...",
 						null, "Es tu turno para jugar");
 				break;
+				
+			case ACTUALIZANDO_ESTADO:
+				bloquearAcciones(false);
+				break;
+				
 			case JUGANDO:
 				bloquearAcciones(true);
 				mostrarTirarDados(false);
@@ -2500,9 +2506,44 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	}
 
+	/**
+	 * Abre la ventana para hipotecar las propiedades. Muestra solo las
+	 * propiedades que puede hipotecar.
+	 * 
+	 * @param event
+	 */
 	@FXML
 	void processHipotecar(ActionEvent event) {
 
+		GestorLogs.registrarLog("Mostrando propiedades para hipotecar de '"
+				+ usuarioLogueado.getNombre() + "'...");
+		String fxml = ConstantesFXML.FXML_HIPOTECAR_PROPIEDAD;
+		HipotecarController controller;
+
+		try {
+			Stage hipotecarPropiedadStage = new Stage();
+			controller = (HipotecarController) FXUtils.cargarStage(
+					hipotecarPropiedadStage, fxml,
+					"Monopoly - Hipotecar Propiedad", false, false,
+					Modality.APPLICATION_MODAL, StageStyle.UTILITY);
+			controller.setCurrentStage(hipotecarPropiedadStage);
+			controller.setPrevStage(currentStage);
+			controller.setUsuarioLogueado(usuarioLogueado);
+			int senderId = ConnectionController.getInstance().getIdPlayer();
+			ConnectionController.getInstance().send(
+					new GetMortgagesMessage(senderId,
+							estadoActual.currentPlayer));
+		} catch (Exception ex) {
+			GestorLogs.registrarException(ex);
+
+			final Alert alert = new Alert(AlertType.ERROR);
+
+			alert.setTitle("Error...");
+			alert.setContentText(ex.getMessage());
+			alert.getButtonTypes().setAll(
+					new ButtonType("Aceptar", ButtonData.OK_DONE));
+			alert.showAndWait();
+		}
 	}
 
 	@FXML

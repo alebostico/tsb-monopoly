@@ -9,6 +9,7 @@ import java.util.List;
 
 import javafx.scene.control.Alert.AlertType;
 import monopoly.client.controller.CrearJuegoController;
+import monopoly.client.controller.HipotecarController;
 import monopoly.client.controller.LoginController;
 import monopoly.client.controller.ReanudarJuegoController;
 import monopoly.client.controller.RegistrarmeController;
@@ -19,6 +20,7 @@ import monopoly.model.Juego;
 import monopoly.model.MonopolyGameStatus;
 import monopoly.model.SubastaStatus;
 import monopoly.model.Usuario;
+import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.message.CreateAccountMessage;
@@ -26,9 +28,11 @@ import monopoly.util.message.CreateGameMessage;
 import monopoly.util.message.ExceptionMessage;
 import monopoly.util.message.LoginMessage;
 import monopoly.util.message.game.ChatGameMessage;
+import monopoly.util.message.game.GetMortgagesMessage;
 import monopoly.util.message.game.GetSavedGamesMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.JoinGameMessage;
+import monopoly.util.message.game.MortgageMessage;
 import monopoly.util.message.game.ReloadSavedGameMessage;
 import monopoly.util.message.game.SaveGameMessage;
 import monopoly.util.message.game.actions.AuctionFinishMessage;
@@ -48,7 +52,10 @@ public class MonopolyClient extends GameClient {
 	
 	private History history;
 
+	private TarjetaPropiedad propiedad;
+
 	private List<Juego> juegosList;
+	private List<TarjetaPropiedad> propiedadesList;
 
 	/**
 	 * Connect to the hub at a specified host name and port number.
@@ -180,6 +187,31 @@ public class MonopolyClient extends GameClient {
 				TableroController.getInstance().finalizarSubasta(mensaje);
 				break;
 
+			case ConstantesMensaje.GET_MORTGAGES_MESSAGE:
+				list = (List<?>) ((GetMortgagesMessage) message).message;
+				propiedadesList = new ArrayList<TarjetaPropiedad>();
+				if (list != null && !list.isEmpty()) {
+					for (Object obj : list) {
+						propiedadesList.add((TarjetaPropiedad) obj);
+					}
+					HipotecarController.getInstance().showHipotecar(
+							propiedadesList);
+				} else {
+					usuario = TableroController.getInstance()
+							.getUsuarioLogueado();
+					TableroController.getInstance().showMessageBox(
+							AlertType.INFORMATION, "Información",
+							"No hay propiedades",
+							"No hay ninguna propiedad que se pueda hipotecar.");
+				}
+				break;
+
+			case ConstantesMensaje.MORTGAGE_MESSAGE:
+				MortgageMessage hipoteca = (MortgageMessage) message;
+				propiedad = (TarjetaPropiedad) hipoteca.message;
+				HipotecarController.getInstance().finishMortgage(propiedad);
+				break;
+
 			case ConstantesMensaje.EXCEPTION_MESSAGE:
 				Exception ex = (Exception) ((ExceptionMessage) message).message;
 				TableroController.getInstance().showException(ex);
@@ -209,7 +241,7 @@ public class MonopolyClient extends GameClient {
 		case ConstantesMensaje.THROW_DICE_ADVANCE_MESSAGE:
 			TableroController.getInstance().processTirarDados(null);
 			break;
-			
+
 		case ConstantesMensaje.DOUBLE_DICE_MESSAGE:
 			TableroController.getInstance().showDadosDobles();
 			break;
@@ -223,24 +255,27 @@ public class MonopolyClient extends GameClient {
 	private void determinarAccion(Object message) {
 		MonopolyGameStatus status = (MonopolyGameStatus) message;
 
-		switch (status.estadoTurno) {
-		case INICIADO:
-			TableroController.getInstance().actualizarEstadoJuego(status);
-			break;
+		TableroController.getInstance().actualizarEstadoJuego(status);
 
-		case TIRAR_DADO:
-		case ESPERANDO_TURNO:
-		case JUGANDO:
-		case DADOS_DOBLES:
-		case PRESO:
-		case LIBRE:
-			TableroController.getInstance().actualizarEstadoJuego(status);
-			break;
-
-		default:
-			break;
-
-		}
+		// switch (status.estadoTurno) {
+		// case INICIADO:
+		// TableroController.getInstance().actualizarEstadoJuego(status);
+		// break;
+		//
+		// case ACTUALIZANDO_ESTADO:
+		// case TIRAR_DADO:
+		// case ESPERANDO_TURNO:
+		// case JUGANDO:
+		// case DADOS_DOBLES:
+		// case PRESO:
+		// case LIBRE:
+		// TableroController.getInstance().actualizarEstadoJuego(status);
+		// break;
+		//
+		// default:
+		// break;
+		//
+		// }
 	}
 
 	/**

@@ -18,6 +18,7 @@ import monopoly.model.Jugador;
 import monopoly.model.SubastaStatus;
 import monopoly.model.Usuario;
 import monopoly.model.tarjetas.Tarjeta;
+import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.EnumSalidaCarcel;
 import monopoly.util.constantes.EnumsTipoImpuesto;
@@ -166,6 +167,12 @@ public class PartidasController {
 			String nombrePropiedad) throws SinDineroException, Exception {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.comprarPropiedad(senderId, nombrePropiedad);
+	}
+
+	public TarjetaPropiedad hipotecarPropiedad(String idJuego, int senderId,
+			TarjetaPropiedad propiedad) throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		return juegoController.hipotecarPropiedad(propiedad);
 	}
 
 	/**
