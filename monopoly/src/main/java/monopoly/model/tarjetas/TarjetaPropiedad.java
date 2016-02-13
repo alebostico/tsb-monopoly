@@ -80,10 +80,10 @@ public abstract class TarjetaPropiedad extends Tarjeta implements Serializable {
 
 	@Column(name = "pathImagenPropiedad")
 	private String pathImagenPropiedad;
-	
+
 	@Column(name = "pathImagenFrente")
 	private String pathImagenFrente;
-	
+
 	@Column(name = "pathImagenDorso")
 	private String pathImagenDorso;
 
@@ -96,7 +96,7 @@ public abstract class TarjetaPropiedad extends Tarjeta implements Serializable {
 
 	@Column(name = "nombrePropiedad")
 	private String nombrePropiedad;
-	
+
 	@Transient
 	private Casillero casillero;
 
@@ -111,8 +111,8 @@ public abstract class TarjetaPropiedad extends Tarjeta implements Serializable {
 	 * @param valorPropiedad
 	 */
 	public TarjetaPropiedad(Jugador jugador, String nombre,
-			int valorHipotecario, String nombreImagen,
-			int valorPropiedad, Casillero casillero) {
+			int valorHipotecario, String nombreImagen, int valorPropiedad,
+			Casillero casillero) {
 		super();
 		this.jugador = jugador;
 		this.nombre = nombre;
@@ -121,6 +121,27 @@ public abstract class TarjetaPropiedad extends Tarjeta implements Serializable {
 		this.hipotecada = false;
 		this.valorPropiedad = valorPropiedad;
 		this.casillero = casillero;
+	}
+
+	/**
+	 * Informa si una propiedad está en condiciones de ser hipotecada. Verifica
+	 * que la propiedad no esté hipotecada, y si es calle, controla que no tenga
+	 * construcciones (casas u hoteles)
+	 * 
+	 * @return {@code true} si la propiedad se puede hipotecar.
+	 */
+	public boolean isHipotecable() {
+		// Controlamos que la propiedad no esté hipotecada...
+		if (this.isHipotecada())
+			return false;
+
+		// Si es calle, controlamos que no tenga consrucciones...
+		if (this.isPropiedadCalle()) {
+			TarjetaCalle calle = (TarjetaCalle) this;
+			if (calle.getNroCasas() != 0)
+				return false;
+		}
+		return true;
 	}
 
 	public Jugador getJugador() {
@@ -150,9 +171,9 @@ public abstract class TarjetaPropiedad extends Tarjeta implements Serializable {
 	public int getValorHipotecario() {
 		return valorHipotecario;
 	}
-	
-	public int getValorDeshipotecario(){
-		return (int)((double)valorHipotecario * 1.10);
+
+	public int getValorDeshipotecario() {
+		return (int) ((double) valorHipotecario * 1.10);
 	}
 
 	public void setValorHipotecario(int valorHipotecario) {
@@ -214,31 +235,34 @@ public abstract class TarjetaPropiedad extends Tarjeta implements Serializable {
 	public void setPathImagenDorso(String pathImagenDorso) {
 		this.pathImagenDorso = pathImagenDorso;
 	}
-	
+
 	/**
 	 * Devuelve true o false si es una Calle
+	 * 
 	 * @return True si es tarjeta calle, False caso contrario.
 	 */
-	public boolean isPropiedadCalle(){
+	public boolean isPropiedadCalle() {
 		return this instanceof TarjetaCalle;
 	}
-	
+
 	/**
 	 * Devuelve true o false si es una compania.
+	 * 
 	 * @return True si es tarjeta compania, False caso contrario.
 	 */
-	public boolean isPropiedadCompania(){
+	public boolean isPropiedadCompania() {
 		return this instanceof TarjetaCompania;
 	}
-	
+
 	/**
 	 * Devuelve true o false si es una estación
+	 * 
 	 * @return True si es una tarjeta estación, False caso contrario.
 	 */
-	public boolean isPropiedadEstacion(){
+	public boolean isPropiedadEstacion() {
 		return this instanceof TarjetaEstacion;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -252,6 +276,7 @@ public abstract class TarjetaPropiedad extends Tarjeta implements Serializable {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -269,15 +294,16 @@ public abstract class TarjetaPropiedad extends Tarjeta implements Serializable {
 		return true;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		return this.getIdTarjeta();
 	}
-	
+
 	// public boolean hipotecarPropiedad() {
 	// return this.getJugador().getJuego().getBanco()
 	// .hipotecarPropiedad(jugador, this);

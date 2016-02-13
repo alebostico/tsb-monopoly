@@ -353,7 +353,7 @@ public abstract class Jugador implements Serializable {
 			if (tarjetaPropiedad.isPropiedadCalle()) {
 				tarjetaCalle = (TarjetaCalle) tarjetaPropiedad;
 				color = tarjetaCalle.getEnumColor();
-			
+
 				if (this.poseeColorCompleto(color))
 					if (!list.contains(color))
 						list.add(color.getColor());
@@ -395,11 +395,12 @@ public abstract class Jugador implements Serializable {
 	public boolean poseeColorCompleto(TarjetaCalle.EnumColor color) {
 		int contador = 0;
 		TarjetaCalle tarjetaCalle;
-		
+
 		for (TarjetaPropiedad tarjetaPropiedad : this.getTarjPropiedadList()) {
-			if (tarjetaPropiedad.isPropiedadCalle()){
+			if (tarjetaPropiedad.isPropiedadCalle()) {
 				tarjetaCalle = (TarjetaCalle) tarjetaPropiedad;
-				if(tarjetaCalle.getEnumColor().getColor().equals(color.getColor()))
+				if (tarjetaCalle.getEnumColor().getColor()
+						.equals(color.getColor()))
 					contador++;
 			}
 		}
@@ -789,7 +790,13 @@ public abstract class Jugador implements Serializable {
 	/**
 	 * Calcula cual es el monto total que puede pagar el jugador. El método
 	 * tiene en cuenta el dinero en efectivo, la venta de casas/hoteles y la
-	 * hipoteca de propiedades
+	 * hipoteca de propiedades. Se calcula como la sumatoria de:
+	 * <ul>
+	 * <li>el <b>valor de hipoteca</b> de las propiedades que posea,</li>
+	 * <li>el <b>valor de venta</b> de las casas/hoteles que posea en sus propiedades
+	 * (la mitad del valor de la construcción) y</li>
+	 * <li>el dinero en efectivo.</li>
+	 * </ul>
 	 * 
 	 * @return El monto total que el jugador puede pagar
 	 */

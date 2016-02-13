@@ -14,7 +14,9 @@ import monopoly.model.tablero.Casillero;
 import monopoly.model.tablero.CasilleroCalle;
 import monopoly.model.tablero.CasilleroCompania;
 import monopoly.model.tablero.CasilleroEstacion;
+import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
+import monopoly.util.exception.PropiedadNoHipotecableException;
 import monopoly.util.exception.SinDineroException;
 
 /**
@@ -98,11 +100,12 @@ public class BancoController implements Serializable {
 		jugador.cobrar(monto);
 		return true;
 	}
-	
+
 	/**
 	 * suma 200 euros al jugador por pasar por la salida.
 	 * 
-	 * @param jugador jugador que va a cobrar.
+	 * @param jugador
+	 *            jugador que va a cobrar.
 	 * @return
 	 */
 	public void pagarPasoSalida(Jugador jugador) {
@@ -117,7 +120,11 @@ public class BancoController implements Serializable {
 	 *            el jugador que hipoteca la propiedad
 	 * @param tarjetaPropiedad
 	 *            la propiedad que hipoteca el jugador
-	 * @return true so
+	 * @return {@code true} si se hipotecó.
+	 * @deprecated Usar {@link #hipotecarPropiedad(TarjetaPropiedad)} que le
+	 *             suma el dinero al dueño de la propiedad. No es necesario
+	 *             enviarle el jugador. Además, este método no verifica si la
+	 *             propiedad está en condiciones de ser hipotecada.
 	 */
 	public boolean hipotecarPropiedad(Jugador jugador,
 			TarjetaPropiedad tarjetaPropiedad) {
@@ -126,6 +133,60 @@ public class BancoController implements Serializable {
 			return true;
 		} else
 			return false;
+	}
+
+	/**
+	 * Toma una propiedad en hipoteca y paga al jugador "dueño" de esa propiedad
+	 * el valor hipotecario de esa propiedad. Antes de hipotecar, verifica que
+	 * la propiedad no esté ya hipotecada y que no tenga construcciones en el
+	 * caso de sea una calle.
+	 * 
+	 * @param propiedad
+	 *            La propiedad que se quiere hipotecar
+	 * @return La propiedad hipotecada
+	 * @throws PropiedadNoHipotecableException
+	 *             Si la propiedad no se puede hipotecar por alguno de los
+	 *             siguientes motivos:
+	 *             <ul>
+	 *             <li>La propiedad ya está hipotecada. No se puede volver a
+	 *             hipotecar.</li>
+	 *             <li>La propiedad tiene construcciones. No se puede hipotecar.
+	 *             </li>
+	 *             <li>La propiedad no tiene dueño. No se puede hipotecar.</li>
+	 *             </ul>
+	 */
+	public TarjetaPropiedad hipotecarPropiedad(TarjetaPropiedad propiedad)
+			throws PropiedadNoHipotecableException {
+		// Controlamos que la propiedad no esté hipotecada...
+		if (propiedad.isHipotecada())
+			throw new PropiedadNoHipotecableException(
+					String.format(
+							"La propiedad %s ya está hipotecada. No se puede volver a hipotecar.",
+							propiedad.getNombre()));
+
+		// Si es calle, controlamos que no tenga construcciones...
+		if (propiedad.isPropiedadCalle()) {
+			TarjetaCalle calle = (TarjetaCalle) propiedad;
+			if (calle.getNroCasas() != 0)
+				throw new PropiedadNoHipotecableException(
+						String.format(
+								"La propiedad %s tiene construcciones. No se puede hipotecar.",
+								propiedad.getNombre()));
+		}
+
+		// Controlamos que la propiedad tenga dueño...
+		if (propiedad.getJugador() == null)
+			throw new PropiedadNoHipotecableException(String.format(
+					"La propiedad %s no tiene dueño. No se puede hipotecar.",
+					propiedad.getNombre()));
+
+		// Si se puede hipotecar, hipotecamos...
+		Jugador jugador = propiedad.getJugador();
+		if (this.pagar(jugador, propiedad.getValorHipotecario())) {
+			propiedad.setHipotecada(true);
+			return propiedad;
+		} else
+			return null;
 	}
 
 	/**

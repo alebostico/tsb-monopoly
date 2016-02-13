@@ -20,13 +20,16 @@ import monopoly.model.tablero.CasilleroEstacion;
 import monopoly.model.tablero.Tablero;
 import monopoly.model.tarjetas.Tarjeta;
 import monopoly.model.tarjetas.TarjetaCalle;
+import monopoly.model.tarjetas.TarjetaCompania;
 import monopoly.model.tarjetas.TarjetaComunidad;
+import monopoly.model.tarjetas.TarjetaEstacion;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.CasilleroComparator;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.exception.CondicionInvalidaException;
+import monopoly.util.exception.PropiedadNoHipotecableException;
 import monopoly.util.exception.SinDineroException;
 import monopoly.util.exception.SinEdificiosException;
 
@@ -1015,6 +1018,66 @@ public class TableroController implements Serializable {
 		// return false;
 
 		return true;
+	}
+
+	/**
+	 * Hipoteca una propiedad.
+	 * 
+	 * @param propiedad
+	 *            La propiedad que se va a hipotecar.
+	 * @param currentPlayer
+	 *            El jugador que solicita la hipoteca, o sea, el jugador que
+	 *            tiene el turno de juego.
+	 * @return La {@code propiedad} hipotecada si se hipotecó. {@code null} si
+	 *         no se pudo hipotecar
+	 * @throws PropiedadNoHipotecableException
+	 *             Si la propiedad no se puede hipotecar
+	 */
+	public TarjetaPropiedad hipotecarPropiedad(TarjetaPropiedad propiedad,
+			Jugador currentPlayer) throws PropiedadNoHipotecableException {
+
+		// Buscamos la propiedad en el tablero para hipotecar esa en lugar de la
+		// que mandan, que es en realidad una copia
+		Casillero casillero = getCasillero(propiedad.getCasillero()
+				.getNumeroCasillero());
+		TarjetaPropiedad tarjetaPropiedad;
+
+		if (casillero.isCasilleroCalle())
+			tarjetaPropiedad = (TarjetaCalle) ((CasilleroCalle) casillero)
+					.getTarjetaCalle();
+		else if (casillero.isCasilleroCompania())
+			tarjetaPropiedad = (TarjetaCompania) ((CasilleroCompania) casillero)
+					.getTarjetaCompania();
+		else if (casillero.isCasilleroEstacion())
+			tarjetaPropiedad = (TarjetaEstacion) ((CasilleroEstacion) casillero)
+					.getTarjetaEstacion();
+		else
+			/*
+			 * Nunca debería ocurrir que el casillero que encuentre no sea una
+			 * Propiedad, porque lo que se manda por parámetro es una
+			 * TarjetaPropiedad. Si pasa esto es porque hay algún problema en la
+			 * búsqueda del casillero en la propiedad o porque algo se rompió en
+			 * el camino. De todas maneras lanzo una excepción para saber que
+			 * acá se produce el error en caso de que ocurra.
+			 */
+			throw new PropiedadNoHipotecableException(String.format(
+					"La Tarjeta %s no es propiedad o no se encontró "
+							+ "en el tablero. Casillero nro %d",
+					propiedad.getNombre(), casillero.getNumeroCasillero()));
+
+		if (!currentPlayer.equals(tarjetaPropiedad.getJugador()))
+			throw new PropiedadNoHipotecableException(
+					String.format(
+							"Una propiedad solo puede ser hipotecada por "
+									+ "su dueño y en su turno. La propiedad %s "
+									+ "perteneciente a %s está siendo hipotecada por %s.",
+							tarjetaPropiedad.getNombre(),
+							tarjetaPropiedad.getJugador().getNombre(),
+							currentPlayer.getNombre()));
+
+		BancoController bancoController = getBancoController(currentPlayer
+				.getJuego());
+		return bancoController.hipotecarPropiedad(tarjetaPropiedad);
 	}
 
 	private int calcularAlquilerCalle(CasilleroCalle pCasillero) {
