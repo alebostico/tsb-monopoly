@@ -54,6 +54,8 @@ public class MonopolyClient extends GameClient {
 
 	private TarjetaPropiedad propiedad;
 
+	private TarjetaPropiedad propiedad;
+
 	private List<Juego> juegosList;
 	private List<TarjetaPropiedad> propiedadesList;
 
@@ -185,6 +187,31 @@ public class MonopolyClient extends GameClient {
 			case ConstantesMensaje.AUCTION_FINISH_MESSAGE:
 				mensaje = ((AuctionFinishMessage) message).mensaje;
 				TableroController.getInstance().finalizarSubasta(mensaje);
+				break;
+
+			case ConstantesMensaje.GET_MORTGAGES_MESSAGE:
+				list = (List<?>) ((GetMortgagesMessage) message).message;
+				propiedadesList = new ArrayList<TarjetaPropiedad>();
+				if (list != null && !list.isEmpty()) {
+					for (Object obj : list) {
+						propiedadesList.add((TarjetaPropiedad) obj);
+					}
+					HipotecarController.getInstance().showHipotecar(
+							propiedadesList);
+				} else {
+					usuario = TableroController.getInstance()
+							.getUsuarioLogueado();
+					TableroController.getInstance().showMessageBox(
+							AlertType.INFORMATION, "Información",
+							"No hay propiedades",
+							"No hay ninguna propiedad que se pueda hipotecar.");
+				}
+				break;
+
+			case ConstantesMensaje.MORTGAGE_MESSAGE:
+				MortgageMessage hipoteca = (MortgageMessage) message;
+				propiedad = (TarjetaPropiedad) hipoteca.message;
+				HipotecarController.getInstance().finishMortgage(propiedad);
 				break;
 
 			case ConstantesMensaje.GET_MORTGAGES_MESSAGE:
