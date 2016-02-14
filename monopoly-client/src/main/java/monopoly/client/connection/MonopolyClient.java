@@ -18,6 +18,7 @@ import monopoly.client.controller.UnirmeJuegoController;
 import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.MonopolyGameStatus;
+import monopoly.model.SubastaStatus;
 import monopoly.model.Usuario;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
@@ -35,6 +36,9 @@ import monopoly.util.message.game.JoinGameMessage;
 import monopoly.util.message.game.MortgageMessage;
 import monopoly.util.message.game.ReloadSavedGameMessage;
 import monopoly.util.message.game.SaveGameMessage;
+import monopoly.util.message.game.actions.AuctionFinishMessage;
+import monopoly.util.message.game.actions.AuctionNotifyMessage;
+import monopoly.util.message.game.actions.AuctionPropertyMessage;
 
 /**
  * @author Bostico Alejandro
@@ -46,6 +50,8 @@ public class MonopolyClient extends GameClient {
 	private Usuario usuario;
 
 	private Juego juego;
+	
+	private History history;
 
 	private TarjetaPropiedad propiedad;
 
@@ -68,6 +74,10 @@ public class MonopolyClient extends GameClient {
 	 */
 	protected void messageReceived(final Object message) {
 		List<?> list;
+		List<History> historyList;
+		String mensaje;
+		MonopolyGameStatus status;
+		SubastaStatus subastaStatus;
 
 		try {
 			switch (message.getClass().getSimpleName()) {
@@ -116,7 +126,7 @@ public class MonopolyClient extends GameClient {
 
 				ReloadSavedGameMessage savedGame = (ReloadSavedGameMessage) message;
 				this.juego = (Juego) savedGame.juego;
-				MonopolyGameStatus status = (MonopolyGameStatus) savedGame.juegoStatus;
+				status = (MonopolyGameStatus) savedGame.juegoStatus;
 				ReanudarJuegoController.getInstance().finishLoadGame(juego,
 						status);
 				break;
@@ -137,13 +147,13 @@ public class MonopolyClient extends GameClient {
 				break;
 
 			case ConstantesMensaje.HISTORY_GAME_MESSAGE:
-				History history = (History) ((HistoryGameMessage) message).message;
+				history = (History) ((HistoryGameMessage) message).message;
 				TableroController.getInstance().addHistoryGame(history);
 				break;
 
 			case ConstantesMensaje.CHAT_GAME_MESSAGE:
-				History chatHistory = (History) ((ChatGameMessage) message).message;
-				TableroController.getInstance().addChatHistoryGame(chatHistory);
+				history = (History) ((ChatGameMessage) message).message;
+				TableroController.getInstance().addChatHistoryGame(history);
 				break;
 
 			case ConstantesMensaje.COMPLETE_TURN_MESSAGE:
@@ -153,6 +163,29 @@ public class MonopolyClient extends GameClient {
 				// msgCompleteTurnMessage.message,
 				// msgCompleteTurnMessage.action,
 				// (MonopolyGameStatus) msgCompleteTurnMessage.status);
+				break;
+				
+			case ConstantesMensaje.AUCTION_PROPERTY_MESSAGE:
+				subastaStatus = (SubastaStatus)((AuctionPropertyMessage) message).subastaStatus;
+				TableroController.getInstance().actualizarSubasta(subastaStatus);
+				break;
+				
+			case ConstantesMensaje.AUCTION_NOTIFY_MESSAGE:
+				list = (List<?>) ((AuctionNotifyMessage)message).historyList;
+				
+				if(list.isEmpty())
+					return;
+				
+				historyList= new ArrayList<History>();				
+				for (Object history : list) {
+					historyList.add((History)history);
+				}
+				TableroController.getInstance().addHistorySubasta(historyList);
+				break;
+				
+			case ConstantesMensaje.AUCTION_FINISH_MESSAGE:
+				mensaje = ((AuctionFinishMessage) message).mensaje;
+				TableroController.getInstance().finalizarSubasta(mensaje);
 				break;
 
 			case ConstantesMensaje.GET_MORTGAGES_MESSAGE:

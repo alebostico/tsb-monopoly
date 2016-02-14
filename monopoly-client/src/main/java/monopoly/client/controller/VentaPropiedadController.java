@@ -3,6 +3,7 @@ package monopoly.client.controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,7 +19,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import monopoly.client.connection.ConnectionController;
 import monopoly.client.util.FXUtils;
-import monopoly.model.Jugador;
+import monopoly.model.JugadorHumano;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
@@ -53,7 +54,9 @@ public class VentaPropiedadController extends AnchorPane implements
 
 	private TarjetaPropiedad tarjetaSelected;
 
-	private Jugador jugadorComprador;
+	private JugadorHumano jugadorComprador;
+	
+	private String idJuego;
 
 	private static VentaPropiedadController instance;
 
@@ -89,7 +92,7 @@ public class VentaPropiedadController extends AnchorPane implements
 
 	@FXML
 	void processSubasta(ActionEvent event) {
-		javafx.application.Platform.runLater(new Runnable() {
+		Platform.runLater(new Runnable() {
 			private Stage subastaStage = null;
 
 			@Override
@@ -106,8 +109,10 @@ public class VentaPropiedadController extends AnchorPane implements
 							false, Modality.APPLICATION_MODAL,
 							StageStyle.DECORATED);
 					controller.setTarjetaSubasta(tarjetaSelected);
+					controller.setCurrentStage(subastaStage);
+					controller.setJugador(jugadorComprador);
+					controller.setIdJuego(idJuego);
 					subastaStage.show();
-					//finalizarTurno();
 					if (VentaPropiedadController.getInstance() != null)
 						VentaPropiedadController.getInstance()
 								.getCurrentStage().close();
@@ -157,12 +162,20 @@ public class VentaPropiedadController extends AnchorPane implements
 		this.tarjetaSelected = tarjetaSelected;
 	}
 
-	public Jugador getJugadorComprador() {
+	public JugadorHumano getJugadorComprador() {
 		return jugadorComprador;
 	}
 
-	public void setJugadorComprador(Jugador jugadorComprador) {
+	public void setJugadorComprador(JugadorHumano jugadorComprador) {
 		this.jugadorComprador = jugadorComprador;
+	}
+
+	public String getIdJuego() {
+		return idJuego;
+	}
+
+	public void setIdJuego(String idJuego) {
+		this.idJuego = idJuego;
 	}
 
 	public static VentaPropiedadController getInstance() {
