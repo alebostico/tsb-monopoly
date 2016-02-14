@@ -2310,41 +2310,8 @@ public class TableroController extends AnchorPane implements Serializable,
 				@Override
 				public Void call() throws Exception {
 
-					ButtonType buttonAceptar;
-
-					final Alert alert = new Alert(type);
-
-					alert.setTitle(title);
-					alert.setHeaderText(headerText);
-					alert.setContentText(message);
-					buttonAceptar = new ButtonType("Aceptar",
-							ButtonData.OK_DONE);
-					alert.getButtonTypes().setAll(buttonAceptar);
-
-					/*
-					 * workaround para el problema del tamaño de labels:
-					 * http://stackoverflow.com/a/33905734
-					 */
-					alert.getDialogPane()
-							.getChildren()
-							.stream()
-							.filter(node -> node instanceof Label)
-							.forEach(
-									node -> ((Label) node)
-											.setMinHeight(Region.USE_PREF_SIZE));
-
-					DialogPane dialogPane = alert.getDialogPane();
-					// dialogPane.getStyleClass().remove("alert");
-
-					/*
-					 * dialogPane.getStylesheets().add(
-					 * getClass().getResource("/css/Dialog.css")
-					 * .toExternalForm());
-					 * dialogPane.getStyleClass().add("dialog");
-					 */
-
-					// setearEstiloMessageBox(alert);
-
+					final Alert alert = getAlert(type, title, headerText,
+							message, null);
 					alert.showAndWait();
 					return null;
 
@@ -2416,6 +2383,53 @@ public class TableroController extends AnchorPane implements Serializable,
 		buttonBar.getButtons().forEach(b -> b.setStyle(styleButton));
 	}
 
+	private Alert getAlert(AlertType type, String title, String headerText,
+			String message, List<ButtonType> botones) {
+
+		Alert alert = null;
+		ButtonType buttonAceptar = null;
+		DialogPane dialogPane;
+
+		try {
+			alert = new Alert(type);
+
+			alert.setTitle(title);
+			alert.setHeaderText(headerText);
+			alert.setContentText(message);
+			if (botones != null && botones.size() > 0) {
+				alert.getButtonTypes().setAll(botones);
+			} else {
+				buttonAceptar = new ButtonType("Aceptar", ButtonData.OK_DONE);
+				alert.getButtonTypes().setAll(buttonAceptar);
+			}
+
+			dialogPane = alert.getDialogPane();
+			// dialogPane.getStyleClass().remove("alert");
+			dialogPane.getStylesheets().add(
+					getClass().getResource("/css/Dialog.css").toExternalForm());
+			dialogPane.getStyleClass().add("dialog");
+			// setearEstiloMessageBox(alert);
+
+			/*
+			 * workaround para el problema del tamaño de labels:
+			 * http://stackoverflow.com/a/33905734
+			 */
+			alert.getDialogPane()
+					.getChildren()
+					.stream()
+					.filter(node -> node instanceof Label)
+					.forEach(
+							node -> ((Label) node)
+									.setMinHeight(Region.USE_PREF_SIZE));
+			
+			alert.showAndWait();
+
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
+		}
+		return alert;
+	}
+	
 	/**
 	 * Método para mostrar un mensaje en la pantalla que requiere de una
 	 * respuesta SI/NO
@@ -2429,8 +2443,8 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * @return {@code true} si el usuario respondió SI. {@code false} si
 	 *         respondió NO.
 	 */
-	public boolean showYesNoMsgBox(final String title, final String headerText,
-			final String message) {
+	public boolean showYesNoMsgBox(String title, String headerText,
+			String message) {
 
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle(title);

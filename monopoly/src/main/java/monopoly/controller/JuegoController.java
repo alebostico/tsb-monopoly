@@ -33,6 +33,7 @@ import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.constantes.EnumAction;
+import monopoly.util.constantes.EnumEstadoSubasta;
 import monopoly.util.constantes.EnumSalidaCarcel;
 import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
@@ -43,6 +44,7 @@ import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.ReloadSavedGameMessage;
+import monopoly.util.message.game.actions.AuctionFinishMessage;
 import monopoly.util.message.game.actions.PayToPlayerMessage;
 
 import org.apache.commons.lang.mutable.MutableBoolean;
@@ -1362,19 +1364,45 @@ public class JuegoController implements Serializable {
 	 * 
 	 * @throws Exception
 	 */
-	public void IniciarSubasta(int senderId, SubastaStatus subastaStatus)
+	public void subastar(int senderId, SubastaStatus subastaStatus)
 			throws Exception {
-		gestorSubasta = new SubastaController(subastaStatus.propiedadSubastada);
-		for (Jugador jugador : gestorJugadores.getTurnoslist()) {
-			if (jugador.getDinero() > subastaStatus.montoSubasta)
-				gestorSubasta.agregarJugadorASubasta(jugador);
-		}
-		if (gestorSubasta.cantidadJugadores() > 1) {
-			gestorSubasta.siguienteTurno();
+			AuctionFinishMessage msgFinalizarSubasta;
+			
+		try {
+			if (subastaStatus.estado == EnumEstadoSubasta.CREADA) {
+				// Validar que todos los jugadores tengan suficiente dinero.
+				gestorSubasta = new SubastaController(
+						subastaStatus.propiedadSubastada);
+				for (Jugador jugador : gestorJugadores.getTurnoslist()) {
+					if (jugador.getDinero() > subastaStatus.montoSubasta)
+						gestorSubasta.agregarJugadorASubasta(jugador);
+				}
+				switch (gestorSubasta.cantidadJugadores()) {
+				case 0:
+					msgFinalizarSubasta = new AuctionFinishMessage(null, "Ninguno de los jugadores posee dinero suficiente para subastar. La Propiedad queda disponible");
+					sendToOne(senderId, msgFinalizarSubasta);
+					break;
 
-		} else {
+				case 1:
+					// Notificar quien ganó la subasta
+					//sendToAll(new HistoryGameMessage(new History(StringUtils.getFechaActual(), usuario, mensaje)));
+				}
+				if (gestorSubasta.cantidadJugadores() > 1) {
+					gestorSubasta.siguienteTurno();
 
+				} else {
+
+				}
+			} else {
+
+			}
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
 		}
+	}
+
+	public void finalizarSubasta(int senderId) {
+
 	}
 
 	/**
