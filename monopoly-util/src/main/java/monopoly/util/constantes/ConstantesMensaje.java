@@ -37,7 +37,6 @@ public class ConstantesMensaje {
 	public final static String GO_TO_JAIL_MESSAGE = "GoToJailMessage";
 	public final static String SUPER_TAX_MESSAGE = "SuperTaxMessage";
 	
-	public final static String GET_MORTGAGES_MESSAGE = "GetMortgagesMessage";
 	public final static String MORTGAGE_MESSAGE = "MortgageMessage";
 	public final static String DEMORTGAGE_MESSAGE = "DemortgageMessage";
 

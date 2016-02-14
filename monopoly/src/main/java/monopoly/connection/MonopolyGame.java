@@ -21,8 +21,6 @@ import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.constantes.EnumSalidaCarcel;
-import monopoly.util.exception.PropiedadNoHipotecableException;
-import monopoly.util.exception.SinDineroException;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
 import monopoly.util.message.ExceptionMessage;
@@ -32,7 +30,6 @@ import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.ConfirmGameReloadedMessage;
 import monopoly.util.message.game.DemortgageMessage;
-import monopoly.util.message.game.GetMortgagesMessage;
 import monopoly.util.message.game.GetSavedGamesMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.JoinGameMessage;
@@ -115,7 +112,6 @@ public class MonopolyGame extends GameServer {
 		Tarjeta tarjeta;
 		History history;
 		List<Juego> juegosList;
-		List<TarjetaPropiedad> tarjetaPropiedadList;
 		TarjetaPropiedad tarjetaPropiedad;
 		ChatGameMessage msgChatGameMessage;
 		StartGameMessage msgStartGameMessage;
@@ -306,13 +302,6 @@ public class MonopolyGame extends GameServer {
 				if (!StringUtils.IsNullOrEmpty(msgHistoryGame.idJuego))
 					PartidasController.getInstance().sendHistoryGame(senderId,
 							msgHistoryGame.idJuego, history);
-				break;
-
-			case ConstantesMensaje.GET_MORTGAGES_MESSAGE:
-				jugador = (Jugador) ((GetMortgagesMessage) message).message;
-				tarjetaPropiedadList = jugador.getPropiedadesHipotecables();
-				sendToOne(senderId, new GetMortgagesMessage(senderId,
-						tarjetaPropiedadList));
 				break;
 
 			case ConstantesMensaje.MORTGAGE_MESSAGE:

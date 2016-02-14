@@ -106,7 +106,6 @@ import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.DemortgageMessage;
-import monopoly.util.message.game.GetMortgagesMessage;
 import monopoly.util.message.game.MortgageMessage;
 import monopoly.util.message.game.SaveGameMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
@@ -268,9 +267,6 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	@FXML
 	private MenuButton btnMenu;
-
-	@FXML
-	private MenuButton btnAcciones;
 
 	@FXML
 	private MenuItem btnHipotecar;
@@ -1751,7 +1747,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				btnAcciones.setDisable(bloquear);
 				btnConstruir.setDisable(bloquear);
 				btnComercializar.setDisable(bloquear);
 				btnDeshipotecar.setDisable(bloquear);
@@ -1840,7 +1835,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		VBox pImgFicha = new VBox();
 		HBox hbPropiedades = new HBox();
 		HBox hbExtra = new HBox();
-		// final HBox hbPropiedad;
 		ScrollPane scroll;
 
 		acoplarAContenedor(vBox, 0);
@@ -2692,7 +2686,6 @@ public class TableroController extends AnchorPane implements Serializable,
 				TirarDadosController controller;
 
 				try {
-					btnAcciones.setDisable(true);
 					fxml = ConstantesFXML.FXML_TIRAR_DADOS;
 					tirarDadosStage = new Stage();
 					title = estadoActual.currentPlayer.estaPreso() ? "Monopoly - Tirar Dados dobles."
@@ -2737,44 +2730,10 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	}
 
-	/**
-	 * Abre la ventana para hipotecar las propiedades. Muestra solo las
-	 * propiedades que puede hipotecar.
-	 * 
-	 * @param event
-	 */
+
 	@FXML
 	void processHipotecar(ActionEvent event) {
 
-		GestorLogs.registrarLog("Mostrando propiedades para hipotecar de '"
-				+ usuarioLogueado.getNombre() + "'...");
-		String fxml = ConstantesFXML.FXML_HIPOTECAR_PROPIEDAD;
-		HipotecarController controller;
-
-		try {
-			Stage hipotecarPropiedadStage = new Stage();
-			controller = (HipotecarController) FXUtils.cargarStage(
-					hipotecarPropiedadStage, fxml,
-					"Monopoly - Hipotecar Propiedad", false, false,
-					Modality.APPLICATION_MODAL, StageStyle.UTILITY);
-			controller.setCurrentStage(hipotecarPropiedadStage);
-			controller.setPrevStage(currentStage);
-			controller.setUsuarioLogueado(usuarioLogueado);
-			int senderId = ConnectionController.getInstance().getIdPlayer();
-			ConnectionController.getInstance().send(
-					new GetMortgagesMessage(senderId,
-							estadoActual.currentPlayer));
-		} catch (Exception ex) {
-			GestorLogs.registrarException(ex);
-
-			final Alert alert = new Alert(AlertType.ERROR);
-
-			alert.setTitle("Error...");
-			alert.setContentText(ex.getMessage());
-			alert.getButtonTypes().setAll(
-					new ButtonType("Aceptar", ButtonData.OK_DONE));
-			alert.showAndWait();
-		}
 	}
 
 	@FXML
@@ -2851,14 +2810,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		if (instance == null)
 			instance = new TableroController();
 		return instance;
-	}
-
-	public MenuButton getBtnAcciones() {
-		return btnAcciones;
-	}
-
-	public void setBtnAcciones(MenuButton btnAcciones) {
-		this.btnAcciones = btnAcciones;
 	}
 
 	public Stage getCurrentStage() {
