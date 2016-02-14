@@ -196,7 +196,7 @@
                               <Accordion fx:id="accordionPlayers" minHeight="340.0" minWidth="400.0" prefHeight="340.0" prefWidth="400.0" />
                               <Accordion fx:id="accordionHistorial" maxHeight="300.0" minHeight="330.0" minWidth="400.0" prefHeight="330.0" prefWidth="400.0">
                                 <panes>
-                                  <TitledPane fx:id="tpHistory" contentDisplay="CENTER" text="Historia del Juego" textFill="WHITE">
+                                  <TitledPane fx:id="tpHistory" contentDisplay="CENTER" prefHeight="638.0" prefWidth="415.0" text="Historia del Juego" textFill="WHITE">
                                        <content>
                                           <ListView fx:id="lvHistoryGame">
                                              <opaqueInsets>

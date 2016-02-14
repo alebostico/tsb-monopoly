@@ -31,6 +31,7 @@ import monopoly.util.message.game.AdvanceInBoardMessage;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.ConfirmGameReloadedMessage;
+import monopoly.util.message.game.DemortgageMessage;
 import monopoly.util.message.game.GetMortgagesMessage;
 import monopoly.util.message.game.GetSavedGamesMessage;
 import monopoly.util.message.game.HistoryGameMessage;
@@ -316,6 +317,16 @@ public class MonopolyGame extends GameServer {
 				sendToOne(senderId, new MortgageMessage(senderId,
 						hipoteca.idJuego, tarjetaPropiedad));
 				break;
+				
+			case ConstantesMensaje.DEMORTGAGE_MESSAGE:
+				DemortgageMessage deshipoteca = ((DemortgageMessage) message);
+				tarjetaPropiedad = (TarjetaPropiedad) deshipoteca.message;
+				tarjetaPropiedad = PartidasController.getInstance()
+						.deshipotecarPropiedad(deshipoteca.idJuego, senderId,
+								tarjetaPropiedad);
+				sendToOne(senderId, new DemortgageMessage(senderId,
+						deshipoteca.idJuego, tarjetaPropiedad));
+				break;
 
 			case ConstantesMensaje.DISCONNECT_MESSAGE:
 
@@ -329,17 +340,10 @@ public class MonopolyGame extends GameServer {
 				System.out.print(message.getClass().getSimpleName());
 				break;
 			}
-		} catch (SinDineroException sde) {
-			GestorLogs.registrarException(sde);
-			sendToOne(senderId, new ExceptionMessage(sde));
-		} catch (PropiedadNoHipotecableException pnhe){
-			GestorLogs.registrarException(pnhe);
-			sendToOne(senderId, new ExceptionMessage(pnhe));
 		} catch (Exception ex) {
 			GestorLogs.registrarException(ex);
 			sendToOne(senderId, new ExceptionMessage(ex));
 		}
-
 	}
 
 	private void messageString(int senderId, Object message) throws Exception {

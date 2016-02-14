@@ -27,6 +27,7 @@ import monopoly.util.message.CreateGameMessage;
 import monopoly.util.message.ExceptionMessage;
 import monopoly.util.message.LoginMessage;
 import monopoly.util.message.game.ChatGameMessage;
+import monopoly.util.message.game.DemortgageMessage;
 import monopoly.util.message.game.GetMortgagesMessage;
 import monopoly.util.message.game.GetSavedGamesMessage;
 import monopoly.util.message.game.HistoryGameMessage;
@@ -176,7 +177,13 @@ public class MonopolyClient extends GameClient {
 			case ConstantesMensaje.MORTGAGE_MESSAGE:
 				MortgageMessage hipoteca = (MortgageMessage) message;
 				propiedad = (TarjetaPropiedad) hipoteca.message;
-				HipotecarController.getInstance().finishMortgage(propiedad);
+				TableroController.getInstance().finishMortgage(propiedad);
+				break;
+				
+			case ConstantesMensaje.DEMORTGAGE_MESSAGE:
+				DemortgageMessage deshipoteca = (DemortgageMessage) message;
+				propiedad = (TarjetaPropiedad) deshipoteca.message;
+				TableroController.getInstance().finishDemortgage(propiedad);
 				break;
 
 			case ConstantesMensaje.EXCEPTION_MESSAGE:

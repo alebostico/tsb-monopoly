@@ -39,6 +39,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -53,10 +55,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -78,6 +82,7 @@ import monopoly.model.Deuda;
 import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
+import monopoly.model.JugadorHumano;
 import monopoly.model.MonopolyGameStatus;
 import monopoly.model.Usuario;
 import monopoly.model.tablero.Casillero;
@@ -98,7 +103,9 @@ import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
+import monopoly.util.message.game.DemortgageMessage;
 import monopoly.util.message.game.GetMortgagesMessage;
+import monopoly.util.message.game.MortgageMessage;
 import monopoly.util.message.game.SaveGameMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.PayRentMessage;
@@ -382,6 +389,33 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	/**
+	 * Devuelve el {@code JugadorHumano} que pertenece al {@code Usuario}
+	 * 
+	 * @param usuario
+	 *            El usuario del cual se quiere conocer el Jugador
+	 * @return El jugador
+	 */
+	public JugadorHumano getPlayer(Usuario usuario) {
+
+		for (Jugador jugador : estadoActual.turnos) {
+			if (jugador.isHumano()) {
+				if (((JugadorHumano) jugador).getUsuario().equals(usuario))
+					return (JugadorHumano) jugador;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Devuelve el Jugador del usuario logueado
+	 * 
+	 * @return El Jugador del usuario logueado
+	 */
+	public JugadorHumano getMyPlayer() {
+		return getPlayer(usuarioLogueado);
+	}
+
+	/**
 	 * 
 	 * Éste método muestra el tablero y muestra un messagebox informando al
 	 * jugador que debe esperar a que se unan al juego otros oponentes.
@@ -631,10 +665,8 @@ public class TableroController extends AnchorPane implements Serializable,
 		boolean answer = false;
 
 		if (!force) {
-			ButtonType result = showYesNoMsgBox("Abandonar juego", null,
+			answer = showYesNoMsgBox("Abandonar juego", null,
 					"¿Está seguro que desea abandonar el juego? Se perderá el progreso del juego.");
-			if (result.getButtonData() == ButtonData.YES)
-				answer = true;
 		}
 		if (force || answer) {
 			GestorLogs.registrarLog("Saliendo de monopolio...");
@@ -727,11 +759,11 @@ public class TableroController extends AnchorPane implements Serializable,
 				showMessageBox(AlertType.INFORMATION, "Turno de juego...",
 						null, "Es tu turno para jugar");
 				break;
-				
+
 			case ACTUALIZANDO_ESTADO:
 				bloquearAcciones(false);
 				break;
-				
+
 			case JUGANDO:
 				bloquearAcciones(true);
 				mostrarTirarDados(false);
@@ -1580,6 +1612,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		VBox pImgFicha = new VBox();
 		HBox hbPropiedades = new HBox();
 		HBox hbExtra = new HBox();
+		// final HBox hbPropiedad;
 		ScrollPane scroll;
 
 		acoplarAContenedor(vBox, 0);
@@ -1655,6 +1688,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					else
 						strStyle = "negro";
 				}
+
 				bCrearImagen = false;
 				if (jugador.getTarjPropiedadList().contains(propiedad)) {
 					bCrearImagen = true;
@@ -1664,11 +1698,12 @@ public class TableroController extends AnchorPane implements Serializable,
 						rutaImagen = propiedad.getPathImagenDorso();
 					strToolTip = showToolTipsPropiedad(propiedad);
 				}
-				gridPane1.add(
-						crearHBoxTarjetaPropiedad(strStyle, bCrearImagen,
-								rutaImagen, hbWidth, hbHeight, strToolTip),
-						Integer.parseInt(vTarjeta[1]), Integer
-								.parseInt(vTarjeta[2]));
+				final HBox hbPropiedad = crearHBoxTarjetaPropiedad(strStyle,
+						bCrearImagen, rutaImagen, hbWidth, hbHeight,
+						strToolTip, propiedad);
+
+				gridPane1.add(hbPropiedad, Integer.parseInt(vTarjeta[1]),
+						Integer.parseInt(vTarjeta[2]));
 			}
 		}
 
@@ -1709,11 +1744,13 @@ public class TableroController extends AnchorPane implements Serializable,
 						rutaImagen = propiedad.getPathImagenDorso();
 					strToolTip = showToolTipsPropiedad(propiedad);
 				}
-				gridPane2.add(
-						crearHBoxTarjetaPropiedad(strStyle, bCrearImagen,
-								rutaImagen, hbWidth, hbHeight, strToolTip),
-						Integer.parseInt(vTarjeta[1]), Integer
-								.parseInt(vTarjeta[2]));
+
+				final HBox hbPropiedad = crearHBoxTarjetaPropiedad(strStyle,
+						bCrearImagen, rutaImagen, hbWidth, hbHeight,
+						strToolTip, propiedad);
+
+				gridPane2.add(hbPropiedad, Integer.parseInt(vTarjeta[1]),
+						Integer.parseInt(vTarjeta[2]));
 			}
 		}
 
@@ -1862,9 +1899,9 @@ public class TableroController extends AnchorPane implements Serializable,
 				}
 				gridPane1.add(
 						crearHBoxTarjetaPropiedad(strStyle, bCrearImagen,
-								rutaImagen, hbWidth, hbHeight, strToolTip),
-						Integer.parseInt(vTarjeta[1]), Integer
-								.parseInt(vTarjeta[2]));
+								rutaImagen, hbWidth, hbHeight, strToolTip,
+								propiedad), Integer.parseInt(vTarjeta[1]),
+						Integer.parseInt(vTarjeta[2]));
 			}
 		}
 
@@ -1904,9 +1941,9 @@ public class TableroController extends AnchorPane implements Serializable,
 				}
 				gridPane2.add(
 						crearHBoxTarjetaPropiedad(strStyle, bCrearImagen,
-								rutaImagen, hbWidth, hbHeight, strToolTip),
-						Integer.parseInt(vTarjeta[1]), Integer
-								.parseInt(vTarjeta[2]));
+								rutaImagen, hbWidth, hbHeight, strToolTip,
+								propiedad), Integer.parseInt(vTarjeta[1]),
+						Integer.parseInt(vTarjeta[2]));
 			}
 		}
 
@@ -1941,7 +1978,8 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	private HBox crearHBoxTarjetaPropiedad(final String style,
 			final boolean creaImagen, final String rutaImagen,
-			final Double hbWidth, final Double hbHeight, final String toolTips) {
+			final Double hbWidth, final Double hbHeight, final String toolTips,
+			final TarjetaPropiedad propiedad) {
 		final HBox hBox_inner = new HBox();
 
 		Platform.runLater(new Runnable() {
@@ -1960,18 +1998,196 @@ public class TableroController extends AnchorPane implements Serializable,
 							hbHeight, false, false);
 					hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 					tpImagen = new Tooltip(toolTips);
+					tpImagen.setContentDisplay(ContentDisplay.TOP);
 					imgPropiedad = new Image(TableroController.class
 							.getResourceAsStream(rutaImagen), 250, 284, false,
 							false);
 					tpImagen.setGraphic(new ImageView(imgPropiedad));
 					tpImagen.setAutoHide(false);
 					Tooltip.install(hBox_inner, tpImagen);
-				}
 
+					if (propiedad.getJugador() != null
+							&& propiedad.getJugador().equals(getMyPlayer())) {
+						final ContextMenu contextMenu = new ContextMenu();
+						MenuItem btnHipo = new MenuItem("Hipotecar");
+						MenuItem btnDes = new MenuItem("Deshipotecar");
+						MenuItem btnCon = new MenuItem("Construir");
+						MenuItem btnVCon = new MenuItem("Vender construcciones");
+						MenuItem btnVProp = new MenuItem("Vender propiedad");
+
+						btnHipo.setOnAction(new EventHipotecar(propiedad));
+						btnDes.setOnAction(new EventDeshipotecar(propiedad));
+
+						contextMenu.getItems().addAll(btnHipo, btnDes, btnCon,
+								btnVCon, btnVProp);
+
+						// Seteamos el estado de los botones...
+						if (!propiedad.isHipotecable())
+							btnHipo.setDisable(true);
+
+						if (!propiedad.isDeshipotecable())
+							btnDes.setDisable(true);
+
+						if (propiedad.isPropiedadCalle()) {
+							if (!((TarjetaCalle) propiedad).isContruible())
+								btnCon.setDisable(true);
+						} else {
+							btnCon.setVisible(false);
+						}
+
+						if (propiedad.isPropiedadCalle()) {
+							if (!((TarjetaCalle) propiedad).isDescontruible())
+								btnVCon.setDisable(true);
+						} else {
+							btnVCon.setVisible(false);
+						}
+
+						if (btnVCon.isVisible() && !btnVCon.isDisable())
+							btnVProp.setDisable(true);
+
+						hBox_inner.setOnMouseClicked(event -> {
+							if (event.getButton() == MouseButton.SECONDARY) {
+								contextMenu.show(hBox_inner,
+										event.getScreenX(), event.getScreenY());
+							}
+						});
+					}
+				}
 			}
 		});
-
 		return hBox_inner;
+	}
+
+	/**
+	 * Clase para la acción de "Hipotecar" del {@code ContextMenu}
+	 * 
+	 * @author Bostico Alejandro
+	 * @author Moreno Pablo
+	 */
+	private class EventHipotecar implements EventHandler<ActionEvent> {
+
+		final private TarjetaPropiedad propiedad;
+
+		public EventHipotecar(TarjetaPropiedad propiedad) {
+			super();
+			this.propiedad = propiedad;
+		}
+
+		@Override
+		public void handle(ActionEvent event) {
+			boolean answer = showYesNoMsgBox("Hipotecar propiedad",
+					"Confirmar hipoteca", String.format(
+							"¿Desea hipotecar la propiedad %s por %s?",
+							propiedad.getNombre(), StringUtils
+									.formatearAMoneda(propiedad
+											.getValorHipotecario())));
+
+			if (!answer)
+				return;
+
+			int senderID = ConnectionController.getInstance().getIdPlayer();
+			String idJuego = getJuego().getUniqueID();
+
+			MortgageMessage msg = new MortgageMessage(senderID, idJuego,
+					propiedad);
+			ConnectionController.getInstance().send(msg);
+
+		}
+
+	}
+
+	/**
+	 * Clase para la acción de "Deshipotecar" del {@code ContextMenu}
+	 * 
+	 * @author Bostico Alejandro
+	 * @author Moreno Pablo
+	 */
+	private class EventDeshipotecar implements EventHandler<ActionEvent> {
+
+		final private TarjetaPropiedad propiedad;
+
+		public EventDeshipotecar(TarjetaPropiedad propiedad) {
+			super();
+			this.propiedad = propiedad;
+		}
+
+		@Override
+		public void handle(ActionEvent event) {
+			boolean answer = showYesNoMsgBox("Deshipotecar propiedad",
+					"Confirmar deshipoteca", String.format(
+							"¿Desea deshipotecar la propiedad %s por %s?",
+							propiedad.getNombre(), StringUtils
+									.formatearAMoneda(propiedad
+											.getValorDeshipotecario())));
+
+			if (!answer)
+				return;
+
+			int senderID = ConnectionController.getInstance().getIdPlayer();
+			String idJuego = getJuego().getUniqueID();
+
+			DemortgageMessage msg = new DemortgageMessage(senderID, idJuego,
+					propiedad);
+			ConnectionController.getInstance().send(msg);
+
+		}
+
+	}
+
+	/**
+	 * Muestra un mensaje que informa si la propiedad se hipotecó correctamente
+	 * o hubo algún error
+	 * 
+	 * @param propiedad
+	 *            La propiedad que se hipoteca.
+	 */
+	public void finishMortgage(TarjetaPropiedad propiedad) {
+
+		if (propiedad != null && propiedad.isHipotecada()) {
+			TableroController.getInstance().showMessageBox(
+					AlertType.INFORMATION,
+					"Información",
+					"Propiedad hipotecada",
+					String.format("La propiedad %s se hipotecó por %s",
+							propiedad.getNombre(), StringUtils
+									.formatearAMoneda(propiedad
+											.getValorHipotecario())));
+		} else {
+			TableroController.getInstance().showMessageBox(
+					AlertType.ERROR,
+					"Error",
+					"Error de hipoteca",
+					String.format("La propiedad %s no se pudo hipotecar",
+							propiedad.getNombre()));
+		}
+	}
+
+	/**
+	 * Muestra un mensaje que informa si la propiedad se deshipotecó
+	 * correctamente o hubo algún error
+	 * 
+	 * @param propiedad
+	 *            La propiedad que se hipoteca.
+	 */
+	public void finishDemortgage(TarjetaPropiedad propiedad) {
+
+		if (propiedad != null && !propiedad.isHipotecada()) {
+			TableroController.getInstance().showMessageBox(
+					AlertType.INFORMATION,
+					"Información",
+					"Propiedad deshipotecada",
+					String.format("La propiedad %s se deshipotecó por %s",
+							propiedad.getNombre(), StringUtils
+									.formatearAMoneda(propiedad
+											.getValorDeshipotecario())));
+		} else {
+			TableroController.getInstance().showMessageBox(
+					AlertType.ERROR,
+					"Error",
+					"Error de deshipoteca",
+					String.format("La propiedad %s no se pudo deshipotecar",
+							propiedad.getNombre()));
+		}
 	}
 
 	private void acoplarAContenedor(javafx.scene.Node node, double valor) {
@@ -2105,12 +2321,28 @@ public class TableroController extends AnchorPane implements Serializable,
 							ButtonData.OK_DONE);
 					alert.getButtonTypes().setAll(buttonAceptar);
 
+					/*
+					 * workaround para el problema del tamaño de labels:
+					 * http://stackoverflow.com/a/33905734
+					 */
+					alert.getDialogPane()
+							.getChildren()
+							.stream()
+							.filter(node -> node instanceof Label)
+							.forEach(
+									node -> ((Label) node)
+											.setMinHeight(Region.USE_PREF_SIZE));
+
 					DialogPane dialogPane = alert.getDialogPane();
 					// dialogPane.getStyleClass().remove("alert");
-					dialogPane.getStylesheets().add(
-							getClass().getResource("/css/Dialog.css")
-									.toExternalForm());
-					dialogPane.getStyleClass().add("dialog");
+
+					/*
+					 * dialogPane.getStylesheets().add(
+					 * getClass().getResource("/css/Dialog.css")
+					 * .toExternalForm());
+					 * dialogPane.getStyleClass().add("dialog");
+					 */
+
 					// setearEstiloMessageBox(alert);
 
 					alert.showAndWait();
@@ -2194,15 +2426,30 @@ public class TableroController extends AnchorPane implements Serializable,
 	 *            El encabezado del mensaje
 	 * @param message
 	 *            El mensaje a mostrar
-	 * @return La respuesta del usuario
+	 * @return {@code true} si el usuario respondió SI. {@code false} si
+	 *         respondió NO.
 	 */
-	public ButtonType showYesNoMsgBox(final String title,
-			final String headerText, final String message) {
+	public boolean showYesNoMsgBox(final String title, final String headerText,
+			final String message) {
 
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle(title);
 		alert.setHeaderText(headerText);
 		alert.setContentText(message);
+
+		// alert.setResizable(true);
+
+		/*
+		 * workaround para el problema del tamaño de labels:
+		 * http://stackoverflow.com/a/33905734
+		 */
+		alert.getDialogPane()
+				.getChildren()
+				.stream()
+				.filter(node -> node instanceof Label)
+				.forEach(
+						node -> ((Label) node)
+								.setMinHeight(Region.USE_PREF_SIZE));
 
 		ButtonType buttonYes;
 		ButtonType buttonNo;
@@ -2213,8 +2460,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 		Optional<ButtonType> result = alert.showAndWait();
 
-		return result.get();
-
+		return (result.get().getButtonData() == ButtonData.YES);
 	}
 
 	// ======================================================================//

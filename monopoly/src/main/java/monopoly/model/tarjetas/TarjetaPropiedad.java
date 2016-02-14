@@ -144,6 +144,24 @@ public abstract class TarjetaPropiedad extends Tarjeta implements Serializable {
 		return true;
 	}
 
+	/**
+	 * Informa si una propiedad está en condiciones de ser dehipotecada.
+	 * Verifica que la propiedad esté hipotecada y que el dueño de la propiedad
+	 * tenga dinreo suficiente para pagar el precio de la deshipoteca.
+	 * 
+	 * @return {@code true} si la propiedad se puede deshipotecar.
+	 */
+	public boolean isDeshipotecable() {
+		if (!this.isHipotecada())
+			return false;
+
+		if (!this.getJugador().puedePagarConEfectivo(
+				this.getValorDeshipotecario()))
+			return false;
+
+		return true;
+	}
+
 	public Jugador getJugador() {
 		return jugador;
 	}

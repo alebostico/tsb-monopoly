@@ -4,6 +4,8 @@
 package monopoly.model.tarjetas;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -71,14 +73,30 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 			this.cantMonopoly = cantMonopoly;
 		}
 
+		/**
+		 * Devuelve el nombre del EnumColor
+		 * 
+		 * @return el nombre del color
+		 */
 		public String getColor() {
 			return color;
 		}
 
+		/**
+		 * Devuelve la cantidad de casilleros de ese color que hay en tablero.
+		 * 
+		 * @return la cantidad de casilleros que conforman el monopolio
+		 */
 		public int getCantMonopoly() {
 			return cantMonopoly;
 		}
 
+		/**
+		 * Devuelve un String con el nombre del color y la cantidad de calles de
+		 * ese color
+		 * 
+		 * @return El nombre del color y la cantidad de calles en el monopolio
+		 */
 		public String getColorCant() {
 			return color + " (" + String.valueOf(cantMonopoly) + ")";
 		}
@@ -143,6 +161,85 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 		this.precioCadaHotel = precioCadaHotel;
 		this.color = color;
 		this.setEnumColor();
+	}
+
+	/**
+	 * Informa si el jugador puede construir en la propiedad. Verifica que la
+	 * propiedad sea una calle, que el jugador dueño de esta propiedad posea
+	 * todas las propiedades del mismo color y que la propiedad no esté
+	 * hipotecada.
+	 * 
+	 * @return {@code true} si se puede construir sobre la propiedad
+	 */
+	public boolean isContruible() {
+		if (this.isHipotecada())
+			return false;
+
+		if (!this.jugadorTieneMonopolio())
+			return false;
+
+		return true;
+	}
+
+	/**
+	 * Informa si se pueden vender construcciones de la calle o de alguna calle
+	 * del mismo color.
+	 * 
+	 * @return {@code true} si se puede vender construcciones del color
+	 */
+	public boolean isDescontruible() {
+		List<TarjetaCalle> lista = this.getCallesColor();
+
+		for (TarjetaCalle tarjetaCalle : lista) {
+			CasilleroCalle casillero = (CasilleroCalle) tarjetaCalle
+					.getCasillero();
+			if (casillero.getNroCasas() > 0)
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Informa si una calle se puede vender. Para que una calle se pueda vender,
+	 * ninguna de las calles del mismo color deben tener edificios construidos.
+	 * 
+	 * @return Si la calle se puede vender.
+	 */
+	public boolean isVendible() {
+		return !this.isDescontruible();
+	}
+
+	/**
+	 * Verifica si el dueño de la propiedad tiene todas las calles del
+	 * monopolio, o sea, todas las calles del mismo color que la propiedad
+	 * 
+	 * @return {@code true} si el jugador posee todas las calles del mismo color
+	 */
+	private boolean jugadorTieneMonopolio() {
+		if (!this.isPropiedadCalle())
+			return false;
+
+		int contPropColor = 0;
+
+		TarjetaCalle calle = (TarjetaCalle) this;
+		final int cantColor = calle.getEnumColor().getCantMonopoly();
+
+		for (TarjetaPropiedad propiedad : this.getJugador()
+				.getTarjPropiedadList()) {
+			if (propiedad.isPropiedadCalle())
+				if (((TarjetaCalle) propiedad).getColor().equals(
+						calle.getColor()))
+					if (propiedad.isHipotecada())
+						return false;
+					else
+						contPropColor++;
+		}
+
+		if (contPropColor == cantColor)
+			return true;
+		else
+			return false;
+
 	}
 
 	/**
@@ -378,6 +475,29 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	public void setColor(String color) {
 		this.color = color;
 		this.setEnumColor();
+	}
+
+	/**
+	 * Devuelve una lista con todas las calles del mismo color que posee el
+	 * propietario de la propiedad. <strong>NO</strong> controla si el monopolio
+	 * está completo.
+	 * 
+	 * @return Las calles del mismo color
+	 */
+	protected List<TarjetaCalle> getCallesColor() {
+		List<TarjetaCalle> monopolio = new ArrayList<TarjetaCalle>();
+
+		TarjetaCalle calle = (TarjetaCalle) this;
+
+		for (TarjetaPropiedad propiedad : this.getJugador()
+				.getTarjPropiedadList()) {
+			if (propiedad.isPropiedadCalle()) {
+				TarjetaCalle propiedadCalle = (TarjetaCalle) propiedad;
+				if (propiedadCalle.getColor().equals(calle.getColor()))
+					monopolio.add(propiedadCalle);
+			}
+		}
+		return monopolio;
 	}
 
 	// /**

@@ -169,10 +169,45 @@ public class PartidasController {
 		juegoController.comprarPropiedad(senderId, nombrePropiedad);
 	}
 
+	/**
+	 * Método para hipotecar una propiedad
+	 * 
+	 * @param idJuego
+	 *            El ID del juego en donde se va a hipotecar
+	 * @param senderId
+	 *            Id de conexión del jugador que desea hipotecar la propiedad.
+	 * @param propiedad
+	 *            La {@code TarjetaPropiedad} de la propiedad que se va a
+	 *            hipotecar
+	 * @return La {@code  TarjetaPropiedad} de la propiedad hipotecada o
+	 *         {@code null} si no se pudo hipotecar.
+	 * @throws Exception
+	 */
 	public TarjetaPropiedad hipotecarPropiedad(String idJuego, int senderId,
 			TarjetaPropiedad propiedad) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
 		return juegoController.hipotecarPropiedad(propiedad);
+	}
+
+	/**
+	 * Método para deshipotecar una propiedad
+	 * 
+	 * @param idJuego
+	 *            El ID del juego en donde se va a deshipotecar
+	 * @param senderId
+	 *            Id de conexión del jugador que desea deshipotecar la
+	 *            propiedad.
+	 * @param propiedad
+	 *            La {@code TarjetaPropiedad} de la propiedad que se va a
+	 *            deshipotecar
+	 * @return La {@code  TarjetaPropiedad} de la propiedad deshipotecada o
+	 *         {@code null} si no se pudo deshipotecar.
+	 * @throws Exception
+	 */
+	public TarjetaPropiedad deshipotecarPropiedad(String idJuego, int senderId,
+			TarjetaPropiedad propiedad) throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		return juegoController.deshipotecarPropiedad(propiedad);
 	}
 
 	/**
@@ -317,9 +352,9 @@ public class PartidasController {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.sendHistoryGame(history);
 	}
-	
+
 	public void IniciarSubasta(String idJuego, int senderId,
-			SubastaStatus subastaStatus) throws Exception{
+			SubastaStatus subastaStatus) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.IniciarSubasta(senderId, subastaStatus);
 	}

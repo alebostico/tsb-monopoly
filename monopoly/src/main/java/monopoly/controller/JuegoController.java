@@ -784,8 +784,10 @@ public class JuegoController implements Serializable {
 	 *            La propiedad que se va a hipotecar
 	 * @return La {@code propiedad} hipotecada si se hipotecó. {@code null} si
 	 *         no se pudo hipotecar. Ver
-	 *         {@link TableroController#hipotecarPropiedad(TarjetaPropiedad, Jugador)}.
-	 * @throws Exception Si no se puede enviar el mensaje al cliente.
+	 *         {@link TableroController#hipotecarPropiedad(TarjetaPropiedad, Jugador)}
+	 *         .
+	 * @throws Exception
+	 *             Si no se puede enviar el mensaje al cliente.
 	 */
 	public TarjetaPropiedad hipotecarPropiedad(TarjetaPropiedad propiedad)
 			throws Exception {
@@ -804,7 +806,54 @@ public class JuegoController implements Serializable {
 					propiedad.getNombre(), StringUtils
 							.formatearAMoneda(propiedad.getValorHipotecario()));
 		else
-			mensaje = String.format("No pudo hiṕotecar la propiedad %s",
+			mensaje = String.format("No pudo hipotecar la propiedad %s",
+					propiedad.getNombre());
+
+		historyList.add(new History(StringUtils.getFechaActual(), jugador
+				.getNombre(), mensaje));
+
+		turnosList = gestorJugadores.getTurnoslist();
+		status = new MonopolyGameStatus(turnosList, gestorBanco.getBanco(),
+				gestorTablero.getTablero(), estadoJuegoJugadorActual, null,
+				gestorJugadores.getCurrentPlayer(), historyList, null);
+		sendToAll(status);
+
+		return propiedadToReturn;
+
+	}
+
+	/**
+	 * Deshipoteca una propiedad y le resta el monto de la deshipteca a su
+	 * dueño.
+	 * 
+	 * @param propiedad
+	 *            La propiedad que se va a deshipotecar
+	 * @return La {@code propiedad} deshipotecada si se deshipotecó.
+	 *         {@code null} si no se pudo deshipotecar. Ver
+	 *         {@link TableroController#hipotecarPropiedad(TarjetaPropiedad, Jugador)}
+	 *         .
+	 * @throws Exception
+	 *             Si no se puede enviar el mensaje al cliente.
+	 */
+	public TarjetaPropiedad deshipotecarPropiedad(TarjetaPropiedad propiedad)
+			throws Exception {
+
+		Jugador jugador = gestorJugadores.getCurrentPlayer();
+		TarjetaPropiedad propiedadToReturn = gestorTablero
+				.deshipotecarPropiedad(propiedad, jugador);
+
+		String mensaje;
+		EstadoJuego estadoJuegoJugadorActual = EstadoJuego.ACTUALIZANDO_ESTADO;
+		List<Jugador> turnosList;
+		List<History> historyList = new ArrayList<History>();
+
+		if (propiedadToReturn != null)
+			mensaje = String.format("Deshipotecó la propiedad %s por %s.",
+					propiedad.getNombre(), StringUtils
+							.formatearAMoneda(propiedad
+									.getValorDeshipotecario()));
+		else
+			mensaje = String.format("No pudo deshipotecar la propiedad %s",
 					propiedad.getNombre());
 
 		historyList.add(new History(StringUtils.getFechaActual(), jugador
