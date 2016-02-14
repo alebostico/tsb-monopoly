@@ -54,7 +54,6 @@ public class MonopolyClient extends GameClient {
 	private TarjetaPropiedad propiedad;
 
 	private List<Juego> juegosList;
-	private List<TarjetaPropiedad> propiedadesList;
 
 	/**
 	 * Connect to the hub at a specified host name and port number.

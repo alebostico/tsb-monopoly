@@ -10,15 +10,27 @@ package monopoly.util.exception;
  */
 public class EmailInvalidoException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 4883262323302464365L;
 
-	public EmailInvalidoException(){}
-	
-	public EmailInvalidoException(String message)
-	{
+	public EmailInvalidoException() {
+		super();
+	}
+
+	public EmailInvalidoException(String message) {
 		super(message);
 	}
+
+	public EmailInvalidoException(String message, Throwable cause,
+			boolean enableSuppression, boolean writableStackTrace) {
+		super(message, cause, enableSuppression, writableStackTrace);
+	}
+
+	public EmailInvalidoException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public EmailInvalidoException(Throwable cause) {
+		super(cause);
+	}
+
 }

@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * 
+ * @author Bostico Alejandro
+ * @author Moreno Pablo
+ *
+ */
 public class ListUtils {
 
 	/**
