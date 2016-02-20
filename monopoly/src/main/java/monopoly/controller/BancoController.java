@@ -16,6 +16,8 @@ import monopoly.model.tablero.CasilleroCompania;
 import monopoly.model.tablero.CasilleroEstacion;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
+import monopoly.util.GestorLogs;
+import monopoly.util.exception.PropiedadNoDeshipotecableException;
 import monopoly.util.exception.PropiedadNoHipotecableException;
 import monopoly.util.exception.SinDineroException;
 
@@ -126,6 +128,7 @@ public class BancoController implements Serializable {
 	 *             enviarle el jugador. Además, este método no verifica si la
 	 *             propiedad está en condiciones de ser hipotecada.
 	 */
+	@Deprecated
 	public boolean hipotecarPropiedad(Jugador jugador,
 			TarjetaPropiedad tarjetaPropiedad) {
 		if (this.pagar(jugador, tarjetaPropiedad.getValorHipotecario())) {
@@ -137,9 +140,9 @@ public class BancoController implements Serializable {
 
 	/**
 	 * Toma una propiedad en hipoteca y paga al jugador "dueño" de esa propiedad
-	 * el valor hipotecario de esa propiedad. Antes de hipotecar, verifica que
-	 * la propiedad no esté ya hipotecada y que no tenga construcciones en el
-	 * caso de sea una calle.
+	 * el valor hipotecario. Antes de hipotecar, verifica que la propiedad no
+	 * esté ya hipotecada y que no tenga construcciones en el caso de sea una
+	 * calle.
 	 * 
 	 * @param propiedad
 	 *            La propiedad que se quiere hipotecar
@@ -184,9 +187,54 @@ public class BancoController implements Serializable {
 		Jugador jugador = propiedad.getJugador();
 		if (this.pagar(jugador, propiedad.getValorHipotecario())) {
 			propiedad.setHipotecada(true);
+			GestorLogs.registrarLog(String.format(
+					"El Jugador %s hipotecó %s por %s", jugador.getNombre(),
+					propiedad.getNombre(), propiedad.getValorHipotecario()));
 			return propiedad;
 		} else
 			return null;
+	}
+
+	/**
+	 * Toma una propiedad hipotecada y cobra al jugador "dueño" de esa propiedad
+	 * el costo de deshipotecarla. Antes de deshipotecar, verifica que la
+	 * propiedad esté ya hipotecada.
+	 * 
+	 * @param propiedad
+	 *            La propiedad que se quiere deshipotecar
+	 * @return La propiedad deshipotecada
+	 * @throws PropiedadNoDeshipotecableException
+	 *             Si la propiedad no está hipotecada
+	 * @throws SinDineroException
+	 *             Si el dueño de la propiedad no tiene dinero en efectivo para
+	 *             deshipotecar la propiedad
+	 */
+	public TarjetaPropiedad deshipotecarPropiedad(TarjetaPropiedad propiedad)
+			throws PropiedadNoDeshipotecableException, SinDineroException {
+		// Controlamos que la propiedad esté hipotecada...
+		if (!propiedad.isHipotecada())
+			throw new PropiedadNoDeshipotecableException(
+					String.format(
+							"La propiedad %s no está hipotecada. No se puede deshipotecar.",
+							propiedad.getNombre()));
+
+		Jugador jugador = propiedad.getJugador();
+
+		if (jugador.pagar(propiedad.getValorDeshipotecario())) {
+			propiedad.setHipotecada(false);
+			GestorLogs.registrarLog(String.format(
+					"El Jugador %s deshipotecó %s por %s", jugador.getNombre(),
+					propiedad.getNombre(), propiedad.getValorDeshipotecario()));
+			return propiedad;
+		} else {
+			throw new SinDineroException(
+					String.format(
+							"El jugador %s no tiene %s en efectivo para deshipotecar %s",
+							jugador.getNombre(),
+							propiedad.getValorDeshipotecario(),
+							propiedad.getNombre()));
+		}
+
 	}
 
 	/**
@@ -198,7 +246,12 @@ public class BancoController implements Serializable {
 	 * @param tarjetaPropiedad
 	 *            la propiedad que deshipoteca el jugador
 	 * @throws SinDineroException
+	 * @deprecated Usar {@link #deshipotecarPropiedad(TarjetaPropiedad)} que le
+	 *             resta el dinero al dueño de la propiedad. No es necesario
+	 *             enviarle el jugador. Además, este método no verifica si la
+	 *             propiedad está en condiciones de ser deshipotecada.
 	 */
+	@Deprecated
 	public void deshipotecarPropiedad(Jugador jugador,
 			TarjetaPropiedad tarjetaPropiedad) throws SinDineroException {
 		this.cobrar(jugador,
@@ -218,6 +271,20 @@ public class BancoController implements Serializable {
 	public void venderPropiedad(Jugador jugador,
 			TarjetaPropiedad tarjetaPropiedad) throws SinDineroException {
 		this.cobrar(jugador, tarjetaPropiedad.getValorPropiedad());
+		jugador.adquirirPropiedad(tarjetaPropiedad);
+	}
+	
+	/**
+	 * Adquiere una propiedad a un monto determinado.
+	 * 
+	 * @param jugador
+	 * @param tarjetaPropiedad
+	 * @param monto
+	 * @throws SinDineroException
+	 */
+	public void adquirirPropiedad(Jugador jugador,
+			TarjetaPropiedad tarjetaPropiedad, int monto) throws SinDineroException {
+		this.cobrar(jugador, monto);
 		jugador.adquirirPropiedad(tarjetaPropiedad);
 	}
 

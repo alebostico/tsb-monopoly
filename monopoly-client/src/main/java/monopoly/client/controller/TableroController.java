@@ -39,6 +39,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -53,10 +55,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -101,7 +105,8 @@ import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
-import monopoly.util.message.game.GetMortgagesMessage;
+import monopoly.util.message.game.DemortgageMessage;
+import monopoly.util.message.game.MortgageMessage;
 import monopoly.util.message.game.SaveGameMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.PayRentMessage;
@@ -264,9 +269,6 @@ public class TableroController extends AnchorPane implements Serializable,
 	private MenuButton btnMenu;
 
 	@FXML
-	private MenuButton btnAcciones;
-
-	@FXML
 	private MenuItem btnHipotecar;
 
 	@FXML
@@ -384,6 +386,33 @@ public class TableroController extends AnchorPane implements Serializable,
 			addHistoryGame(usuarioLogueado.getUserName(), "Sé unió al Juego.");
 
 		esperarJugadores();
+	}
+
+	/**
+	 * Devuelve el {@code JugadorHumano} que pertenece al {@code Usuario}
+	 * 
+	 * @param usuario
+	 *            El usuario del cual se quiere conocer el Jugador
+	 * @return El jugador
+	 */
+	public JugadorHumano getPlayer(Usuario usuario) {
+
+		for (Jugador jugador : estadoActual.turnos) {
+			if (jugador.isHumano()) {
+				if (((JugadorHumano) jugador).getUsuario().equals(usuario))
+					return (JugadorHumano) jugador;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Devuelve el Jugador del usuario logueado
+	 * 
+	 * @return El Jugador del usuario logueado
+	 */
+	public JugadorHumano getMyPlayer() {
+		return getPlayer(usuarioLogueado);
 	}
 
 	/**
@@ -658,10 +687,8 @@ public class TableroController extends AnchorPane implements Serializable,
 	private void cerrar(boolean force) {
 		boolean answer = false;
 		if (!force) {
-			ButtonType result = showYesNoMsgBox("Abandonar juego", null,
+			answer = showYesNoMsgBox("Abandonar juego", null,
 					"¿Está seguro que desea abandonar el juego? Se perderá el progreso del juego.");
-			if (result.getButtonData() == ButtonData.YES)
-				answer = true;
 		}
 		if (force || answer) {
 			GestorLogs.registrarLog("Saliendo de monopolio...");
@@ -758,11 +785,11 @@ public class TableroController extends AnchorPane implements Serializable,
 				showMessageBox(AlertType.INFORMATION, "Turno de juego...",
 						null, "Es tu turno para jugar");
 				break;
-				
+
 			case ACTUALIZANDO_ESTADO:
 				bloquearAcciones(false);
 				break;
-				
+
 			case JUGANDO:
 				bloquearAcciones(true);
 				mostrarTirarDados(false);
@@ -1460,13 +1487,15 @@ public class TableroController extends AnchorPane implements Serializable,
 							if (!jugador.getNombre().equals(
 									statusSubasta.jugadorActual.getNombre())) {
 								SubastaController.getInstance()
-								.getCurrentStage().close();
+										.getCurrentStage().close();
 								alert = getAlert(AlertType.INFORMATION,
-										"Subasta Finalizada", String.format("Subastar %s",
-												SubastaController.getInstance().getTarjetaSubasta()
-												.getNombre()),
+										"Subasta Finalizada", String.format(
+												"Subastar %s",
+												SubastaController.getInstance()
+														.getTarjetaSubasta()
+														.getNombre()),
 										statusSubasta.getMensaje(), null);
-								alert.show();								
+								alert.show();
 							}
 						} else {
 							SubastaController.getInstance().actualizarSubasta(
@@ -1496,15 +1525,16 @@ public class TableroController extends AnchorPane implements Serializable,
 					SubastaController.getInstance().getCurrentStage().close();
 					VentaPropiedadController.getInstance().getCurrentStage()
 							.close();
-					
-					alert = getAlert(AlertType.INFORMATION,
-							"Subasta Finalizada", String.format("Subastar %s",
-									SubastaController.getInstance().getTarjetaSubasta()
-									.getNombre()),
-									mensaje, null);
-					
+
+					alert = getAlert(
+							AlertType.INFORMATION,
+							"Subasta Finalizada",
+							String.format("Subastar %s", SubastaController
+									.getInstance().getTarjetaSubasta()
+									.getNombre()), mensaje, null);
+
 					alert.showAndWait();
-					
+
 					finalizarTurno();
 
 				} catch (Exception ex) {
@@ -1717,7 +1747,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				btnAcciones.setDisable(bloquear);
 				btnConstruir.setDisable(bloquear);
 				btnComercializar.setDisable(bloquear);
 				btnDeshipotecar.setDisable(bloquear);
@@ -1881,6 +1910,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					else
 						strStyle = "negro";
 				}
+
 				bCrearImagen = false;
 				if (jugador.getTarjPropiedadList().contains(propiedad)) {
 					bCrearImagen = true;
@@ -1890,11 +1920,12 @@ public class TableroController extends AnchorPane implements Serializable,
 						rutaImagen = propiedad.getPathImagenDorso();
 					strToolTip = showToolTipsPropiedad(propiedad);
 				}
-				gridPane1.add(
-						crearHBoxTarjetaPropiedad(strStyle, bCrearImagen,
-								rutaImagen, hbWidth, hbHeight, strToolTip),
-						Integer.parseInt(vTarjeta[1]), Integer
-								.parseInt(vTarjeta[2]));
+				final HBox hbPropiedad = crearHBoxTarjetaPropiedad(strStyle,
+						bCrearImagen, rutaImagen, hbWidth, hbHeight,
+						strToolTip, propiedad);
+
+				gridPane1.add(hbPropiedad, Integer.parseInt(vTarjeta[1]),
+						Integer.parseInt(vTarjeta[2]));
 			}
 		}
 
@@ -1935,11 +1966,13 @@ public class TableroController extends AnchorPane implements Serializable,
 						rutaImagen = propiedad.getPathImagenDorso();
 					strToolTip = showToolTipsPropiedad(propiedad);
 				}
-				gridPane2.add(
-						crearHBoxTarjetaPropiedad(strStyle, bCrearImagen,
-								rutaImagen, hbWidth, hbHeight, strToolTip),
-						Integer.parseInt(vTarjeta[1]), Integer
-								.parseInt(vTarjeta[2]));
+
+				final HBox hbPropiedad = crearHBoxTarjetaPropiedad(strStyle,
+						bCrearImagen, rutaImagen, hbWidth, hbHeight,
+						strToolTip, propiedad);
+
+				gridPane2.add(hbPropiedad, Integer.parseInt(vTarjeta[1]),
+						Integer.parseInt(vTarjeta[2]));
 			}
 		}
 
@@ -2087,9 +2120,9 @@ public class TableroController extends AnchorPane implements Serializable,
 				}
 				gridPane1.add(
 						crearHBoxTarjetaPropiedad(strStyle, bCrearImagen,
-								rutaImagen, hbWidth, hbHeight, strToolTip),
-						Integer.parseInt(vTarjeta[1]), Integer
-								.parseInt(vTarjeta[2]));
+								rutaImagen, hbWidth, hbHeight, strToolTip,
+								propiedad), Integer.parseInt(vTarjeta[1]),
+						Integer.parseInt(vTarjeta[2]));
 			}
 		}
 
@@ -2129,9 +2162,9 @@ public class TableroController extends AnchorPane implements Serializable,
 				}
 				gridPane2.add(
 						crearHBoxTarjetaPropiedad(strStyle, bCrearImagen,
-								rutaImagen, hbWidth, hbHeight, strToolTip),
-						Integer.parseInt(vTarjeta[1]), Integer
-								.parseInt(vTarjeta[2]));
+								rutaImagen, hbWidth, hbHeight, strToolTip,
+								propiedad), Integer.parseInt(vTarjeta[1]),
+						Integer.parseInt(vTarjeta[2]));
 			}
 		}
 
@@ -2184,7 +2217,8 @@ public class TableroController extends AnchorPane implements Serializable,
 	 */
 	private HBox crearHBoxTarjetaPropiedad(final String style,
 			final boolean creaImagen, final String rutaImagen,
-			final Double hbWidth, final Double hbHeight, final String toolTips) {
+			final Double hbWidth, final Double hbHeight, final String toolTips,
+			final TarjetaPropiedad propiedad) {
 		final HBox hBox_inner = new HBox();
 
 		Platform.runLater(new Runnable() {
@@ -2203,18 +2237,196 @@ public class TableroController extends AnchorPane implements Serializable,
 							hbHeight, false, false);
 					hBox_inner.getChildren().add(new ImageView(imgPropiedad));
 					tpImagen = new Tooltip(toolTips);
+					tpImagen.setContentDisplay(ContentDisplay.TOP);
 					imgPropiedad = new Image(TableroController.class
 							.getResourceAsStream(rutaImagen), 250, 284, false,
 							false);
 					tpImagen.setGraphic(new ImageView(imgPropiedad));
 					tpImagen.setAutoHide(false);
 					Tooltip.install(hBox_inner, tpImagen);
-				}
 
+					if (propiedad.getJugador() != null
+							&& propiedad.getJugador().equals(getMyPlayer())) {
+						final ContextMenu contextMenu = new ContextMenu();
+						MenuItem btnHipo = new MenuItem("Hipotecar");
+						MenuItem btnDes = new MenuItem("Deshipotecar");
+						MenuItem btnCon = new MenuItem("Construir");
+						MenuItem btnVCon = new MenuItem("Vender construcciones");
+						MenuItem btnVProp = new MenuItem("Vender propiedad");
+
+						btnHipo.setOnAction(new EventHipotecar(propiedad));
+						btnDes.setOnAction(new EventDeshipotecar(propiedad));
+
+						contextMenu.getItems().addAll(btnHipo, btnDes, btnCon,
+								btnVCon, btnVProp);
+
+						// Seteamos el estado de los botones...
+						if (!propiedad.isHipotecable())
+							btnHipo.setDisable(true);
+
+						if (!propiedad.isDeshipotecable())
+							btnDes.setDisable(true);
+
+						if (propiedad.isPropiedadCalle()) {
+							if (!((TarjetaCalle) propiedad).isContruible())
+								btnCon.setDisable(true);
+						} else {
+							btnCon.setVisible(false);
+						}
+
+						if (propiedad.isPropiedadCalle()) {
+							if (!((TarjetaCalle) propiedad).isDescontruible())
+								btnVCon.setDisable(true);
+						} else {
+							btnVCon.setVisible(false);
+						}
+
+						if (btnVCon.isVisible() && !btnVCon.isDisable())
+							btnVProp.setDisable(true);
+
+						hBox_inner.setOnMouseClicked(event -> {
+							if (event.getButton() == MouseButton.SECONDARY) {
+								contextMenu.show(hBox_inner,
+										event.getScreenX(), event.getScreenY());
+							}
+						});
+					}
+				}
 			}
 		});
-
 		return hBox_inner;
+	}
+
+	/**
+	 * Clase para la acción de "Hipotecar" del {@code ContextMenu}
+	 * 
+	 * @author Bostico Alejandro
+	 * @author Moreno Pablo
+	 */
+	private class EventHipotecar implements EventHandler<ActionEvent> {
+
+		final private TarjetaPropiedad propiedad;
+
+		public EventHipotecar(TarjetaPropiedad propiedad) {
+			super();
+			this.propiedad = propiedad;
+		}
+
+		@Override
+		public void handle(ActionEvent event) {
+			boolean answer = showYesNoMsgBox("Hipotecar propiedad",
+					"Confirmar hipoteca", String.format(
+							"¿Desea hipotecar la propiedad %s por %s?",
+							propiedad.getNombre(), StringUtils
+									.formatearAMoneda(propiedad
+											.getValorHipotecario())));
+
+			if (!answer)
+				return;
+
+			int senderID = ConnectionController.getInstance().getIdPlayer();
+			String idJuego = getJuego().getUniqueID();
+
+			MortgageMessage msg = new MortgageMessage(senderID, idJuego,
+					propiedad);
+			ConnectionController.getInstance().send(msg);
+
+		}
+
+	}
+
+	/**
+	 * Clase para la acción de "Deshipotecar" del {@code ContextMenu}
+	 * 
+	 * @author Bostico Alejandro
+	 * @author Moreno Pablo
+	 */
+	private class EventDeshipotecar implements EventHandler<ActionEvent> {
+
+		final private TarjetaPropiedad propiedad;
+
+		public EventDeshipotecar(TarjetaPropiedad propiedad) {
+			super();
+			this.propiedad = propiedad;
+		}
+
+		@Override
+		public void handle(ActionEvent event) {
+			boolean answer = showYesNoMsgBox("Deshipotecar propiedad",
+					"Confirmar deshipoteca", String.format(
+							"¿Desea deshipotecar la propiedad %s por %s?",
+							propiedad.getNombre(), StringUtils
+									.formatearAMoneda(propiedad
+											.getValorDeshipotecario())));
+
+			if (!answer)
+				return;
+
+			int senderID = ConnectionController.getInstance().getIdPlayer();
+			String idJuego = getJuego().getUniqueID();
+
+			DemortgageMessage msg = new DemortgageMessage(senderID, idJuego,
+					propiedad);
+			ConnectionController.getInstance().send(msg);
+
+		}
+
+	}
+
+	/**
+	 * Muestra un mensaje que informa si la propiedad se hipotecó correctamente
+	 * o hubo algún error
+	 * 
+	 * @param propiedad
+	 *            La propiedad que se hipoteca.
+	 */
+	public void finishMortgage(TarjetaPropiedad propiedad) {
+
+		if (propiedad != null && propiedad.isHipotecada()) {
+			TableroController.getInstance().showMessageBox(
+					AlertType.INFORMATION,
+					"Información",
+					"Propiedad hipotecada",
+					String.format("La propiedad %s se hipotecó por %s",
+							propiedad.getNombre(), StringUtils
+									.formatearAMoneda(propiedad
+											.getValorHipotecario())));
+		} else {
+			TableroController.getInstance().showMessageBox(
+					AlertType.ERROR,
+					"Error",
+					"Error de hipoteca",
+					String.format("La propiedad %s no se pudo hipotecar",
+							propiedad.getNombre()));
+		}
+	}
+
+	/**
+	 * Muestra un mensaje que informa si la propiedad se deshipotecó
+	 * correctamente o hubo algún error
+	 * 
+	 * @param propiedad
+	 *            La propiedad que se hipoteca.
+	 */
+	public void finishDemortgage(TarjetaPropiedad propiedad) {
+
+		if (propiedad != null && !propiedad.isHipotecada()) {
+			TableroController.getInstance().showMessageBox(
+					AlertType.INFORMATION,
+					"Información",
+					"Propiedad deshipotecada",
+					String.format("La propiedad %s se deshipotecó por %s",
+							propiedad.getNombre(), StringUtils
+									.formatearAMoneda(propiedad
+											.getValorDeshipotecario())));
+		} else {
+			TableroController.getInstance().showMessageBox(
+					AlertType.ERROR,
+					"Error",
+					"Error de deshipoteca",
+					String.format("La propiedad %s no se pudo deshipotecar",
+							propiedad.getNombre()));
+		}
 	}
 
 	/**
@@ -2284,7 +2496,7 @@ public class TableroController extends AnchorPane implements Serializable,
 				pCasillero06.getChildren().clear();
 				pCasillero07.getChildren().clear();
 				pCasillero08.getChildren().clear();
-				pCasillero01.getChildren().clear();
+				pCasillero09.getChildren().clear();
 				pCasillero10.getChildren().clear();
 				pCasillero11.getChildren().clear();
 				pCasillero12.getChildren().clear();
@@ -2385,6 +2597,18 @@ public class TableroController extends AnchorPane implements Serializable,
 			dialogPane.getStyleClass().add("dialog");
 			// setearEstiloMessageBox(alert);
 
+			/*
+			 * workaround para el problema del tamaño de labels:
+			 * http://stackoverflow.com/a/33905734
+			 */
+			alert.getDialogPane()
+					.getChildren()
+					.stream()
+					.filter(node -> node instanceof Label)
+					.forEach(
+							node -> ((Label) node)
+									.setMinHeight(Region.USE_PREF_SIZE));
+
 			alert.showAndWait();
 
 		} catch (Exception ex) {
@@ -2403,9 +2627,11 @@ public class TableroController extends AnchorPane implements Serializable,
 	 *            El encabezado del mensaje
 	 * @param message
 	 *            El mensaje a mostrar
-	 * @return La respuesta del usuario
+	 * @return <strong>{@code true}</strong> si el usuario respondió
+	 *         <strong>SI</strong>. <strong>{@code false}</strong> si respondió
+	 *         <strong>NO</strong>.
 	 */
-	public ButtonType showYesNoMsgBox(String title, String headerText,
+	public boolean showYesNoMsgBox(String title, String headerText,
 			String message) {
 
 		Alert alert;
@@ -2430,8 +2656,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
 		}
-		return result.get();
-
+		return (result.get().getButtonData() == ButtonData.YES);
 	}
 
 	// ------------------------------------------------------------------- //
@@ -2461,7 +2686,6 @@ public class TableroController extends AnchorPane implements Serializable,
 				TirarDadosController controller;
 
 				try {
-					btnAcciones.setDisable(true);
 					fxml = ConstantesFXML.FXML_TIRAR_DADOS;
 					tirarDadosStage = new Stage();
 					title = estadoActual.currentPlayer.estaPreso() ? "Monopoly - Tirar Dados dobles."
@@ -2506,44 +2730,10 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	}
 
-	/**
-	 * Abre la ventana para hipotecar las propiedades. Muestra solo las
-	 * propiedades que puede hipotecar.
-	 * 
-	 * @param event
-	 */
+
 	@FXML
 	void processHipotecar(ActionEvent event) {
 
-		GestorLogs.registrarLog("Mostrando propiedades para hipotecar de '"
-				+ usuarioLogueado.getNombre() + "'...");
-		String fxml = ConstantesFXML.FXML_HIPOTECAR_PROPIEDAD;
-		HipotecarController controller;
-
-		try {
-			Stage hipotecarPropiedadStage = new Stage();
-			controller = (HipotecarController) FXUtils.cargarStage(
-					hipotecarPropiedadStage, fxml,
-					"Monopoly - Hipotecar Propiedad", false, false,
-					Modality.APPLICATION_MODAL, StageStyle.UTILITY);
-			controller.setCurrentStage(hipotecarPropiedadStage);
-			controller.setPrevStage(currentStage);
-			controller.setUsuarioLogueado(usuarioLogueado);
-			int senderId = ConnectionController.getInstance().getIdPlayer();
-			ConnectionController.getInstance().send(
-					new GetMortgagesMessage(senderId,
-							estadoActual.currentPlayer));
-		} catch (Exception ex) {
-			GestorLogs.registrarException(ex);
-
-			final Alert alert = new Alert(AlertType.ERROR);
-
-			alert.setTitle("Error...");
-			alert.setContentText(ex.getMessage());
-			alert.getButtonTypes().setAll(
-					new ButtonType("Aceptar", ButtonData.OK_DONE));
-			alert.showAndWait();
-		}
 	}
 
 	@FXML
@@ -2620,14 +2810,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		if (instance == null)
 			instance = new TableroController();
 		return instance;
-	}
-
-	public MenuButton getBtnAcciones() {
-		return btnAcciones;
-	}
-
-	public void setBtnAcciones(MenuButton btnAcciones) {
-		this.btnAcciones = btnAcciones;
 	}
 
 	public Stage getCurrentStage() {
