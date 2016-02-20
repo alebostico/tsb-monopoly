@@ -1415,10 +1415,6 @@ public class JuegoController implements Serializable {
 	 */
 	public void subastar(int senderId, SubastaStatus subastaStatus)
 			throws Exception {
-<<<<<<< HEAD
-		AuctionFinishMessage msgFinalizarSubasta;
-=======
-
 		AuctionFinishMessage msgFinalizarSubasta;
 		AuctionPropertyMessage msgAuction;
 		TarjetaPropiedad tarjeta;
@@ -1427,7 +1423,6 @@ public class JuegoController implements Serializable {
 		String mensaje;
 		History history;
 		int montoSubasta;
->>>>>>> branch 'master' of https://github.com/ale-bos/tsb-monopoly
 
 		try {
 			if (subastaStatus.estado == EnumEstadoSubasta.CREADA) {
@@ -1454,13 +1449,6 @@ public class JuegoController implements Serializable {
 
 				case 1:
 					// Notificar quien ganó la subasta
-<<<<<<< HEAD
-					// sendToAll(new HistoryGameMessage(new
-					// History(StringUtils.getFechaActual(), usuario,
-					// mensaje)));
-				}
-				if (gestorSubasta.cantidadJugadores() > 1) {
-=======
 					jugadorTurno = gestorSubasta.getJugadoresList().get(0);
 					gestorBanco.adquirirPropiedad(jugadorTurno, tarjeta,
 							montoSubasta);
@@ -1496,7 +1484,6 @@ public class JuegoController implements Serializable {
 
 				default:
 					gestorSubasta.inicializarVariables();
->>>>>>> branch 'master' of https://github.com/ale-bos/tsb-monopoly
 					gestorSubasta.siguienteTurno();
 					jugadorTurno = gestorSubasta.jugadorActual();
 					mensaje = "Turno para subastar.";
