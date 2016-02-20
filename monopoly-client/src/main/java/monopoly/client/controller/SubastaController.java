@@ -20,7 +20,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -248,8 +247,10 @@ public class SubastaController extends AnchorPane implements Initializable {
 			public void run() {
 				try {
 					if (TableroController.getInstance().showYesNoMsgBox("Abandonar Subasta", null, "¿Está seguro que desea abandonar la subasta?")) {
+
 						bloquearBotones(true);
-						lblMessage.setText("La pantalla seguirá activa hasta que finalice la subasta.");
+						lblMessage
+								.setText("La pantalla seguirá activa hasta que finalice la subasta.");
 						msg = new AuctionFinishMessage(idJuego,
 								"Abandonar Subasta.");
 						ConnectionController.getInstance().send(msg);
@@ -269,16 +270,16 @@ public class SubastaController extends AnchorPane implements Initializable {
 				public void run() {
 					try {
 						estadoSubasta = status.estado;
-						if(status.estado== EnumEstadoSubasta.JUGANDO)
-						{
+						if (status.estado == EnumEstadoSubasta.JUGANDO) {
 							for (History history : status.historyList) {
 								agregarHistoriaDeSubasta(history);
 							}
-							
-							if(status.jugadorActual.getNombre().equals(jugador.getNombre()))
-							{
+
+							if (status.jugadorActual.getNombre().equals(
+									jugador.getNombre())) {
 								bloquearBotones(false);
-								txtMejorOferta.setText(String.valueOf(status.montoSubasta));
+								txtMejorOferta.setText(String
+										.valueOf(status.montoSubasta));
 							}
 						}
 					} catch (Exception ex) {

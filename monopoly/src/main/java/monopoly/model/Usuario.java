@@ -221,7 +221,7 @@ public class Usuario implements Serializable {
 			return false;
 
 		Usuario jugador = (Usuario) object;
-		if (this.getUserName() != jugador.getUserName())
+		if (!this.getUserName().equals(jugador.getUserName()))
 			return false;
 
 		return true;

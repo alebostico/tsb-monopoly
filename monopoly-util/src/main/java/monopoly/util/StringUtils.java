@@ -13,10 +13,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Clase para trabajar con Strings.
  * 
- * @author Herman Alonso Barrates Víquez
- *         http://www.codigofantasma.com/blog/implementar
- *         -encriptacion-md5-y-sha-en-java/
+ * @author Bostico Alejandro
+ * @author Moreno Pablo
  */
 public class StringUtils {
 
@@ -41,14 +41,14 @@ public class StringUtils {
 	 * @return String creado a partir de <code>digest</code>
 	 */
 	private static String toHexadecimal(byte[] digest) {
-		String hash = "";
+		StringBuffer hash = new StringBuffer();
 		for (byte aux : digest) {
 			int b = aux & 0xff;
 			if (Integer.toHexString(b).length() == 1)
-				hash += "0";
-			hash += Integer.toHexString(b);
+				hash.append("0");
+			hash.append(Integer.toHexString(b));
 		}
-		return hash;
+		return hash.toString();
 	}
 
 	// http://www.codigofantasma.com/blog/implementar-encriptacion-md5-y-sha-en-java/
@@ -142,26 +142,26 @@ public class StringUtils {
 		return tokens;
 	}
 
+	private final static DateFormat dateFormat = new SimpleDateFormat(
+			"dd/MM/yy HH:mm");
+
 	/**
 	 * Devuelve la FECHA actual en el formato {@code "dd/MM/yy HH:mm"}
 	 * 
 	 * @return La fecha actual
 	 */
-	private final static DateFormat dateFormat = new SimpleDateFormat(
-			"dd/MM/yy HH:mm");
-
 	public static String getFechaActual() {
 		Calendar calendar = GregorianCalendar.getInstance();
 		return dateFormat.format(calendar.getTime());
 	}
+
+	private final static DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
 	/**
 	 * Devuelve la HORA actual en el formato {@code "HH:mm"}
 	 * 
 	 * @return La hora actual
 	 */
-	private final static DateFormat timeFormat = new SimpleDateFormat("HH:mm");
-
 	public static String getHoraActual() {
 		Calendar calendar = GregorianCalendar.getInstance();
 		return timeFormat.format(calendar.getTime());
@@ -169,13 +169,19 @@ public class StringUtils {
 
 	private final static DecimalFormat decimalFormat = new DecimalFormat(
 			"#,###,###,##0' €'");
-	
-	public static DecimalFormat getFormatoDecimal(){
+
+	/**
+	 * Devuelve el formato decimal usado en el programa (Ej: {@code 123 €}).
+	 * 
+	 * @return El {@code DecimalFormat} para la moneda.
+	 */
+	public static DecimalFormat getFormatoDecimal() {
 		return decimalFormat;
 	}
 
 	/**
-	 * Método para convertir un entero en moneda
+	 * Método para convertir un entero en moneda en el formato devuelto por
+	 * {@link #getFormatoDecimal()} (Ej: {@code 123 €}).
 	 *
 	 * @param monto
 	 *            monto a convertir en moneda

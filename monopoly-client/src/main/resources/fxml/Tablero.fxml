@@ -170,17 +170,8 @@
                                       <items>
                                         <MenuItem mnemonicParsing="false" onAction="#processGuardar" text="Guardar y salir" />
                                         <MenuItem mnemonicParsing="false" onAction="#processAbandonar" text="Abandonar juego" />
-                                      </items>
-                                    </MenuButton>
-                                    <MenuButton fx:id="btnAcciones" alignment="CENTER" minWidth="140.0" mnemonicParsing="false" onAction="#processAcciones" popupSide="TOP" styleClass="context-menu" text="Acciones">
-                                       <items>
-                                          <MenuItem fx:id="btnConstruir" mnemonicParsing="false" onAction="#processContruir" text="Construir" />
-                                          <MenuItem fx:id="btnVender" mnemonicParsing="false" onAction="#processVender" text="Vender Construccion" />
-                                          <MenuItem fx:id="btnHipotecar" mnemonicParsing="false" onAction="#processHipotecar" text="Hipotecar" />
-                                          <MenuItem fx:id="btnDeshipotecar" mnemonicParsing="false" onAction="#processDeshipotecar" text="Deshipotecar" />
-                                          <MenuItem fx:id="btnComercializar" mnemonicParsing="false" onAction="#processComercializar" text="Ofertar Propiedad" />
                                           <MenuItem fx:id="btnBancarrota" mnemonicParsing="false" onAction="#processBancarrota" text="Declararme en Bancarrota" />
-                                       </items>
+                                      </items>
                                     </MenuButton>
                                     <Button fx:id="btnTirarDados" alignment="CENTER" maxWidth="150.0" minWidth="100.0" mnemonicParsing="false" onAction="#processTirarDados" prefWidth="150.0" styleClass="button_tablero" text="Tirar Dados" visible="false" />
                                     <Button fx:id="btnFinalizarTurno" minWidth="150.0" mnemonicParsing="false" onAction="#processfinalizarTurno" styleClass="button_tablero" text="Finalizar Turno" visible="false" />
@@ -196,7 +187,7 @@
                               <Accordion fx:id="accordionPlayers" minHeight="340.0" minWidth="400.0" prefHeight="340.0" prefWidth="400.0" />
                               <Accordion fx:id="accordionHistorial" maxHeight="300.0" minHeight="330.0" minWidth="400.0" prefHeight="330.0" prefWidth="400.0">
                                 <panes>
-                                  <TitledPane fx:id="tpHistory" contentDisplay="CENTER" text="Historia del Juego" textFill="WHITE">
+                                  <TitledPane fx:id="tpHistory" contentDisplay="CENTER" prefHeight="638.0" prefWidth="415.0" text="Historia del Juego" textFill="WHITE">
                                        <content>
                                           <ListView fx:id="lvHistoryGame">
                                              <opaqueInsets>

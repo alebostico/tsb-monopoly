@@ -26,6 +26,5 @@ public class ConstantesFXML {
 	public final static String FXML_TARJETA_SUERTE = "/fxml/TarjetaSuerte.fxml";
 	public final static String FXML_TARJETA_COMUNIDAD = "/fxml/TarjetaComunidad.fxml";
 	public final static String FXML_SUBASTA = "/fxml/SubastarPropiedad.fxml";
-	public final static String FXML_HIPOTECAR_PROPIEDAD = "/fxml/HipotecarPropiedad.fxml";
 	
 }

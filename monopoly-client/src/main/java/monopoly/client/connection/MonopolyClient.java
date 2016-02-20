@@ -9,7 +9,6 @@ import java.util.List;
 
 import javafx.scene.control.Alert.AlertType;
 import monopoly.client.controller.CrearJuegoController;
-import monopoly.client.controller.HipotecarController;
 import monopoly.client.controller.LoginController;
 import monopoly.client.controller.ReanudarJuegoController;
 import monopoly.client.controller.RegistrarmeController;
@@ -28,7 +27,7 @@ import monopoly.util.message.CreateGameMessage;
 import monopoly.util.message.ExceptionMessage;
 import monopoly.util.message.LoginMessage;
 import monopoly.util.message.game.ChatGameMessage;
-import monopoly.util.message.game.GetMortgagesMessage;
+import monopoly.util.message.game.DemortgageMessage;
 import monopoly.util.message.game.GetSavedGamesMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.JoinGameMessage;
@@ -55,7 +54,6 @@ public class MonopolyClient extends GameClient {
 	private TarjetaPropiedad propiedad;
 
 	private List<Juego> juegosList;
-	private List<TarjetaPropiedad> propiedadesList;
 
 	/**
 	 * Connect to the hub at a specified host name and port number.
@@ -190,26 +188,13 @@ public class MonopolyClient extends GameClient {
 			case ConstantesMensaje.MORTGAGE_MESSAGE:
 				MortgageMessage hipoteca = (MortgageMessage) message;
 				propiedad = (TarjetaPropiedad) hipoteca.message;
-				HipotecarController.getInstance().finishMortgage(propiedad);
+				TableroController.getInstance().finishMortgage(propiedad);
 				break;
-
-			case ConstantesMensaje.GET_MORTGAGES_MESSAGE:
-				list = (List<?>) ((GetMortgagesMessage) message).message;
-				propiedadesList = new ArrayList<TarjetaPropiedad>();
-				if (list != null && !list.isEmpty()) {
-					for (Object obj : list) {
-						propiedadesList.add((TarjetaPropiedad) obj);
-					}
-					HipotecarController.getInstance().showHipotecar(
-							propiedadesList);
-				} else {
-					usuario = TableroController.getInstance()
-							.getUsuarioLogueado();
-					TableroController.getInstance().showMessageBox(
-							AlertType.INFORMATION, "Información",
-							"No hay propiedades",
-							"No hay ninguna propiedad que se pueda hipotecar.");
-				}
+				
+			case ConstantesMensaje.DEMORTGAGE_MESSAGE:
+				DemortgageMessage deshipoteca = (DemortgageMessage) message;
+				propiedad = (TarjetaPropiedad) deshipoteca.message;
+				TableroController.getInstance().finishDemortgage(propiedad);
 				break;
 
 			case ConstantesMensaje.EXCEPTION_MESSAGE:

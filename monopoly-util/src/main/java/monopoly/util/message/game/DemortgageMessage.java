@@ -7,11 +7,12 @@ import java.io.Serializable;
  * @author Moreno Pablo
  *
  */
-public class GetMortgagesMessage implements Serializable {
+public class DemortgageMessage implements Serializable {
 
-	private static final long serialVersionUID = 3555249207080068084L;
+	private static final long serialVersionUID = -1368624856073449644L;
 
 	public final int senderID; // The ID of the client who sent that message.
+	public final String idJuego;
 	public final Object message; // Original message from a client.
 
 	/**
@@ -20,10 +21,11 @@ public class GetMortgagesMessage implements Serializable {
 	 * @param senderID
 	 *            the ID number of the original sender.
 	 * @param message
-	 *            El Jugador del cual se quieren mostrar las propiedades.
+	 *            La propiedad que se quiere deshipotecar.
 	 */
-	public GetMortgagesMessage(int senderID, Object message) {
+	public DemortgageMessage(int senderID, String idJuego, Object message) {
 		this.senderID = senderID;
+		this.idJuego = idJuego;
 		this.message = message;
 	}
 

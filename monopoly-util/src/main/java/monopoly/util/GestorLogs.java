@@ -9,10 +9,29 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
+ * <p>
+ * Una clase para gestionar los logs que se imprimen en la consola y en un
+ * archivo. Existen 5 niveles de mensajes:
+ * <ol type="1" start="0">
+ * <li>GestorLogs.MSG_ERROR</li>
+ * <li>GestorLogs.MSG_WARNING</li>
+ * <li>GestorLogs.MSG_INFO</li>
+ * <li>GestorLogs.MSG_DEBUG</li>
+ * <li>GestorLogs.MSG_DEBUG_DETAIL</li>
+ * </ol>
+ * Cada mensaje que ingresa tiene un nivel de importancia. Si el nivel de
+ * importancia configurado es mayor o igual que el que ingresa se loguea, sino
+ * se descarta.
+ * </p>
+ * <p>
+ * Se puede configurar el nivel de detalle que se desea loguear con el método
+ * {@link #setLoggingDetailLevel(int)} (por defecto es MSG_DEBUG = 3). También
+ * se puede configurar si se desea el mensaje en la consola (además de en un
+ * archivo) con el método {@link #setPrintToConsole(boolean)}.
+ * </p>
+ * 
  * @author Bostico Alejandro
  * @author Moreno Pablo
- * 
- * 
  */
 public class GestorLogs {
 
@@ -283,6 +302,10 @@ public class GestorLogs {
 	}
 
 	/**
+	 * Retorna el nivel de detalle configurado. Si el nivel de detalle del
+	 * mensaje que ingresa es menor o igual al que está configurado, el mensaje
+	 * se loguea.
+	 * 
 	 * @return the loggingDetailLevel
 	 */
 	public static int getLoggingDetailLevel() {
@@ -290,23 +313,40 @@ public class GestorLogs {
 	}
 
 	/**
-	 * @return the printToConsole
+	 * Retorna el estado de la impresión a consola
+	 * 
+	 * @return {@code true} si imprime en la pantalla los mensajes que ingresan
+	 *         y tienen un nivel de detalle mayor o igual al cofigurado
+	 * @see {@link #setLoggingDetailLevel(int)}
 	 */
 	public static boolean isPrintToConsole() {
 		return printToConsole;
 	}
 
 	/**
+	 * Configura si se loguea en la pantalla o no los mensajes que ingresan.
+	 * 
 	 * @param printToConsole
-	 *            the printToConsole to set
+	 *            {@code true} si se desea imprimir en la pantalla los mensajes
+	 *            que ingresan
 	 */
 	public static void setPrintToConsole(boolean printToConsole) {
 		GestorLogs.printToConsole = printToConsole;
 	}
 
 	/**
+	 * Configura el nivel de detalle deseado. Puede ser alguno de los
+	 * siguientes: *
+	 * <ol type="1" start="0">
+	 * <li>GestorLogs.MSG_ERROR</li>
+	 * <li>GestorLogs.MSG_WARNING</li>
+	 * <li>GestorLogs.MSG_INFO</li>
+	 * <li>GestorLogs.MSG_DEBUG</li>
+	 * <li>GestorLogs.MSG_DEBUG_DETAIL</li>
+	 * </ol>
+	 * 
 	 * @param loggingDetailLevel
-	 *            the loggingDetailLevel to set
+	 *            El nivel de detalle que se desea configurar.
 	 */
 	public static void setLoggingDetailLevel(int loggingDetailLevel) {
 		GestorLogs.loggingDetailLevel = loggingDetailLevel;

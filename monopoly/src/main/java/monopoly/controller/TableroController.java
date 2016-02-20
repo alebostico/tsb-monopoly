@@ -29,6 +29,8 @@ import monopoly.util.CasilleroComparator;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.exception.CondicionInvalidaException;
+import monopoly.util.exception.PropiedadHipotecadaException;
+import monopoly.util.exception.PropiedadNoDeshipotecableException;
 import monopoly.util.exception.PropiedadNoHipotecableException;
 import monopoly.util.exception.SinDineroException;
 import monopoly.util.exception.SinEdificiosException;
@@ -1060,24 +1062,88 @@ public class TableroController implements Serializable {
 			 * el camino. De todas maneras lanzo una excepción para saber que
 			 * acá se produce el error en caso de que ocurra.
 			 */
-			throw new PropiedadNoHipotecableException(String.format(
+			throw new IllegalArgumentException(String.format(
 					"La Tarjeta %s no es propiedad o no se encontró "
 							+ "en el tablero. Casillero nro %d",
 					propiedad.getNombre(), casillero.getNumeroCasillero()));
 
 		if (!currentPlayer.equals(tarjetaPropiedad.getJugador()))
-			throw new PropiedadNoHipotecableException(
+			throw new IllegalArgumentException(
 					String.format(
 							"Una propiedad solo puede ser hipotecada por "
 									+ "su dueño y en su turno. La propiedad %s "
 									+ "perteneciente a %s está siendo hipotecada por %s.",
-							tarjetaPropiedad.getNombre(),
-							tarjetaPropiedad.getJugador().getNombre(),
-							currentPlayer.getNombre()));
+							tarjetaPropiedad.getNombre(), tarjetaPropiedad
+									.getJugador().getNombre(), currentPlayer
+									.getNombre()));
 
 		BancoController bancoController = getBancoController(currentPlayer
 				.getJuego());
 		return bancoController.hipotecarPropiedad(tarjetaPropiedad);
+	}
+
+	/**
+	 * Deshipoteca una propiedad.
+	 * 
+	 * @param propiedad
+	 *            La propiedad que se va a deshipotecar.
+	 * @param currentPlayer
+	 *            El jugador que solicita la deshipoteca, o sea, el jugador que
+	 *            tiene el turno de juego.
+	 * @return La {@code propiedad} deshipotecada si se deshipotecó.
+	 *         {@code null} si no se pudo deshipotecar
+	 * @throws SinDineroException
+	 *             Si el dueño de la propiedad no tiene dinero suficiente para
+	 *             pagar la deshipoteca de la propiedad
+	 * @throws PropiedadNoDeshipotecableException
+	 *             Si la propiedad no se puede deshipotecar
+	 */
+	public TarjetaPropiedad deshipotecarPropiedad(TarjetaPropiedad propiedad,
+			Jugador currentPlayer) throws PropiedadNoDeshipotecableException,
+			SinDineroException {
+
+		// Buscamos la propiedad en el tablero para deshipotecar esa en lugar de
+		// la que mandan, que es en realidad una copia
+		Casillero casillero = getCasillero(propiedad.getCasillero()
+				.getNumeroCasillero());
+		TarjetaPropiedad tarjetaPropiedad;
+
+		if (casillero.isCasilleroCalle())
+			tarjetaPropiedad = (TarjetaCalle) ((CasilleroCalle) casillero)
+					.getTarjetaCalle();
+		else if (casillero.isCasilleroCompania())
+			tarjetaPropiedad = (TarjetaCompania) ((CasilleroCompania) casillero)
+					.getTarjetaCompania();
+		else if (casillero.isCasilleroEstacion())
+			tarjetaPropiedad = (TarjetaEstacion) ((CasilleroEstacion) casillero)
+					.getTarjetaEstacion();
+		else
+			/*
+			 * Nunca debería ocurrir que el casillero que encuentre no sea una
+			 * Propiedad, porque lo que se manda por parámetro es una
+			 * TarjetaPropiedad. Si pasa esto es porque hay algún problema en la
+			 * búsqueda del casillero en la propiedad o porque algo se rompió en
+			 * el camino. De todas maneras lanzo una excepción para saber que
+			 * acá se produce el error en caso de que ocurra.
+			 */
+			throw new IllegalArgumentException(String.format(
+					"La Tarjeta %s no es propiedad o no se encontró "
+							+ "en el tablero. Casillero nro %d",
+					propiedad.getNombre(), casillero.getNumeroCasillero()));
+
+		if (!currentPlayer.equals(tarjetaPropiedad.getJugador()))
+			throw new IllegalArgumentException(
+					String.format(
+							"Una propiedad solo puede ser deshipotecada por "
+									+ "su dueño y en su turno. La propiedad %s "
+									+ "perteneciente a %s está siendo deshipotecada por %s.",
+							tarjetaPropiedad.getNombre(), tarjetaPropiedad
+									.getJugador().getNombre(), currentPlayer
+									.getNombre()));
+
+		BancoController bancoController = getBancoController(currentPlayer
+				.getJuego());
+		return bancoController.deshipotecarPropiedad(tarjetaPropiedad);
 	}
 
 	private int calcularAlquilerCalle(CasilleroCalle pCasillero) {
@@ -1440,9 +1506,13 @@ public class TableroController implements Serializable {
 	 * @throws SinDineroException
 	 *             Si el Jugador no tiene dinero suficiente para comprar los
 	 *             edificios.
+	 * @throws PropiedadHipotecadaException
+	 *             Si alguna de las calles del monopolio se encuentra
+	 *             hipotecada.
 	 */
 	public boolean comprarEdificio(int cantidad, CasilleroCalle casillero)
-			throws SinEdificiosException, SinDineroException {
+			throws SinEdificiosException, SinDineroException,
+			PropiedadHipotecadaException {
 
 		// Si estamos poniendo casas, sabemos que en ningún caso vamos a
 		// colocar más de 15 o menos de 1...
@@ -1479,6 +1549,16 @@ public class TableroController implements Serializable {
 					+ " no tiene dinero para pagar " + cantidad + " casas.");
 
 		for (CasilleroCalle casilleroCalle : monopolio) {
+			if (casilleroCalle.getTarjetaCalle().isHipotecable()) {
+
+				String mensaje = String.format(
+						"La propiedad %s del color %s está hipotecada. "
+								+ "No se puede construir.", casilleroCalle
+								.getTarjetaCalle().getNombre(), casilleroCalle
+								.getTarjetaCalle().getColor());
+				throw new PropiedadHipotecadaException(mensaje);
+			}
+
 			cantEdificiosActuales[i] = casilleroCalle.getNroCasas();
 			cantEdificiosTotal += casilleroCalle.getNroCasas();
 			i++;

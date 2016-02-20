@@ -19,6 +19,7 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.TarjetaPropiedadComparator;
+import monopoly.util.exception.PropiedadHipotecadaException;
 import monopoly.util.exception.SinDineroException;
 import monopoly.util.exception.SinEdificiosException;
 
@@ -921,9 +922,12 @@ public class JugadorVirtualController implements Serializable {
 	 * @throws SinDineroException
 	 *             Cuando el jugador no dispone dinero para comprar las
 	 *             casas/hoteles
+	 * @throws PropiedadHipotecadaException
+	 *             Cuando alguna de las calles del monopolio está hipotecada
 	 */
 	public String construirAleatorio(JugadorVirtual jugadorActual)
-			throws SinEdificiosException, SinDineroException {
+			throws SinEdificiosException, SinDineroException,
+			PropiedadHipotecadaException {
 
 		Random rnd = new Random();
 		JuegoController juegoController = PartidasController.getInstance()
@@ -1001,10 +1005,9 @@ public class JugadorVirtualController implements Serializable {
 
 					tableroController.comprarEdificio(casasMonopolio,
 							(CasilleroCalle) tarjetaCalle.getCasillero());
-					return String
-							.format("Compró %s edificios para el monopolio color %s",
-									casasMonopolio,
-									tarjetaCalle.getColor());
+					return String.format(
+							"Compró %s edificios para el monopolio color %s",
+							casasMonopolio, tarjetaCalle.getColor());
 				}
 			}
 		}
@@ -1067,8 +1070,9 @@ public class JugadorVirtualController implements Serializable {
 		// capital). Aumentando si es cobrar
 		if (cantidad <= jugador.getDinero()) {
 			jugador.pagar(cantidad);
-			GestorLogs.registrarDebug("(JVController.java) El jugador virtual " + jugador.getNombre()
-					+ " pagó " + StringUtils.formatearAMoneda(cantidad));
+			GestorLogs.registrarDebug("(JVController.java) El jugador virtual "
+					+ jugador.getNombre() + " pagó "
+					+ StringUtils.formatearAMoneda(cantidad));
 		}
 		// Declaro al jugador moroso
 		else {
