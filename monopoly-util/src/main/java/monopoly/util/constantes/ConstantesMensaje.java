@@ -39,6 +39,7 @@ public class ConstantesMensaje {
 	
 	public final static String MORTGAGE_MESSAGE = "MortgageMessage";
 	public final static String DEMORTGAGE_MESSAGE = "DemortgageMessage";
+	public final static String BUILD_MESSAGE = "BuildMessage";
 
 	public final static String COMPLETE_TURN_MESSAGE = "CompleteTurnMessage";
 	public final static String PAY_TO_PLAYER_MESSAGE = "PayToPlayerMessage";

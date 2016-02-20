@@ -18,6 +18,7 @@ import monopoly.model.Jugador;
 import monopoly.model.SubastaStatus;
 import monopoly.model.Usuario;
 import monopoly.model.tarjetas.Tarjeta;
+import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.EnumSalidaCarcel;
@@ -211,6 +212,25 @@ public class PartidasController {
 	}
 
 	/**
+	 * Método para construir edificios en una calle
+	 * 
+	 * @param idJuego
+	 *            El ID del juego en donde se va a construir
+	 * @param senderId
+	 *            Id de conexión del jugador que desea construir.
+	 * @param propiedad
+	 *            La {@code TarjetaCalle} de la calle donde se va a construir
+	 * @return El dinero invertido en construir o {@code -1} si no se pudo
+	 *         construir.
+	 * @throws Exception
+	 */
+	public int construirEdificios(String idJuego, int senderId,
+			TarjetaCalle calle, int cantidad) throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		return juegoController.construirEdificios(calle, cantidad);
+	}
+
+	/**
 	 * Método ejecutado para realizar el objetivo de la tarjeta comunidad o
 	 * suerte que salió.
 	 * 
@@ -358,7 +378,7 @@ public class PartidasController {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.subastar(senderId, subastaStatus);
 	}
-	
+
 	public void finalizarSubasta(String idJuego, int senderId) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.finalizarSubasta(senderId);

@@ -41,13 +41,13 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
@@ -103,6 +103,7 @@ import monopoly.util.constantes.EnumEstadoSubasta;
 import monopoly.util.constantes.EnumSalidaCarcel;
 import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
+import monopoly.util.message.game.BuildMessage;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.DemortgageMessage;
@@ -780,23 +781,23 @@ public class TableroController extends AnchorPane implements Serializable,
 			 * opción cuando al jugador le toca tirar el dado.
 			 */
 			case TIRAR_DADO:
-				bloquearAcciones(false);
+				// bloquearAcciones(false);
 				mostrarTirarDados(true);
 				showMessageBox(AlertType.INFORMATION, "Turno de juego...",
 						null, "Es tu turno para jugar");
 				break;
 
 			case ACTUALIZANDO_ESTADO:
-				bloquearAcciones(false);
+				// bloquearAcciones(false);
 				break;
 
 			case JUGANDO:
-				bloquearAcciones(true);
+				// bloquearAcciones(true);
 				mostrarTirarDados(false);
 				realizarAccionEnCasillero();
 				break;
 			case ESPERANDO_TURNO:
-				bloquearAcciones(true);
+				// bloquearAcciones(true);
 				mostrarTirarDados(false);
 				break;
 			case DADOS_DOBLES:
@@ -806,7 +807,7 @@ public class TableroController extends AnchorPane implements Serializable,
 				showOpcionesCarcel();
 				break;
 			case LIBRE:
-				bloquearAcciones(false);
+				// bloquearAcciones(false);
 				mostrarTirarDados(true);
 				showMessageBox(AlertType.INFORMATION, "Turno de juego...",
 						"Libre de la Cárcel.", "Continua jugando.");
@@ -1368,7 +1369,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					result = alert.showAndWait();
 
 					if (result.get() == buttonTirarDados) {
-						bloquearAcciones(false);
+						// bloquearAcciones(false);
 						mostrarTirarDados(true);
 					} else if (result.get() == buttonUsarTarjeta) {
 						msgPayToLeaveJail = new PayToLeaveJailMessage(idJuego,
@@ -1412,7 +1413,7 @@ public class TableroController extends AnchorPane implements Serializable,
 	 */
 	public void showDadosDobles() {
 		try {
-			bloquearAcciones(false);
+			// bloquearAcciones(false);
 			mostrarTirarDados(true);
 			showMessageBox(AlertType.INFORMATION, "Turno de juego...",
 					"Dados dobles.", "Es tu turno nuevamente.");
@@ -1558,7 +1559,7 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * @throws Exception
 	 */
 	private void registrarDeuda(int pMonto) throws Exception {
-		bloquearAcciones(false);
+		// bloquearAcciones(false);
 		mostrarTirarDados(false);
 		mostrarFinalizarTurno(true);
 		deudaPendiente = new Deuda(pMonto);
@@ -1743,18 +1744,18 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * 
 	 * @param bloquear
 	 */
-	private void bloquearAcciones(final boolean bloquear) {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				btnConstruir.setDisable(bloquear);
-				btnComercializar.setDisable(bloquear);
-				btnDeshipotecar.setDisable(bloquear);
-				btnHipotecar.setDisable(bloquear);
-				btnVender.setDisable(bloquear);
-			}
-		});
-	}
+	// private void bloquearAcciones(final boolean bloquear) {
+	// Platform.runLater(new Runnable() {
+	// @Override
+	// public void run() {
+	// btnConstruir.setDisable(bloquear);
+	// btnComercializar.setDisable(bloquear);
+	// btnDeshipotecar.setDisable(bloquear);
+	// btnHipotecar.setDisable(bloquear);
+	// btnVender.setDisable(bloquear);
+	// }
+	// });
+	// }
 
 	/**
 	 * Habilita botones para gestionar una venta/hipoteca de propiedades.
@@ -1837,7 +1838,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		HBox hbExtra = new HBox();
 		ScrollPane scroll;
 
-		acoplarAContenedor(vBox, 0);
+		acoplarAContenedor(vBox);
 		root.getStyleClass().add("bg_info_panel");
 		root.setPadding(new Insets(10));
 		vBox.setAlignment(Pos.CENTER);
@@ -1855,7 +1856,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		root.getChildren().add(vBox);
 		scroll = makeScrollable(root);
 
-		acoplarAContenedor(pImgFicha, 0);
+		acoplarAContenedor(pImgFicha);
 		pImgFicha.setAlignment(Pos.CENTER);
 		pImgFicha.getStyleClass().add("bg_info_ficha");
 		pImgFicha.setPrefSize((double) 60, (double) 60);
@@ -1874,8 +1875,8 @@ public class TableroController extends AnchorPane implements Serializable,
 		GridPane gridPane1 = new GridPane();
 		GridPane gridPane2 = new GridPane();
 
-		acoplarAContenedor(gridPane1, 0);
-		acoplarAContenedor(gridPane2, 0);
+		acoplarAContenedor(gridPane1);
+		acoplarAContenedor(gridPane2);
 
 		gridPane1.setHgap(5);
 		gridPane1.setVgap(10);
@@ -2053,7 +2054,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		hbExtra.setAlignment(Pos.CENTER);
 		hbExtra.setSpacing(20);
 
-		acoplarAContenedor(vBox, 0);
+		acoplarAContenedor(vBox);
 		vBox.getChildren().add(hbPropiedades);
 		vBox.getChildren().add(hbExtra);
 
@@ -2074,8 +2075,8 @@ public class TableroController extends AnchorPane implements Serializable,
 		GridPane gridPane1 = new GridPane();
 		GridPane gridPane2 = new GridPane();
 
-		acoplarAContenedor(gridPane1, 0);
-		acoplarAContenedor(gridPane2, 0);
+		acoplarAContenedor(gridPane1);
+		acoplarAContenedor(gridPane2);
 
 		gridPane1.setHgap(5);
 		gridPane1.setVgap(10);
@@ -2256,6 +2257,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 						btnHipo.setOnAction(new EventHipotecar(propiedad));
 						btnDes.setOnAction(new EventDeshipotecar(propiedad));
+						btnCon.setOnAction(new EventConstruir(propiedad));
 
 						contextMenu.getItems().addAll(btnHipo, btnDes, btnCon,
 								btnVCon, btnVProp);
@@ -2374,6 +2376,61 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	/**
+	 * Clase para la acción de "Construir" del {@code ContextMenu}
+	 * 
+	 * @author Bostico Alejandro
+	 * @author Moreno Pablo
+	 */
+	private class EventConstruir implements EventHandler<ActionEvent> {
+
+		final private TarjetaPropiedad propiedad;
+
+		public EventConstruir(TarjetaPropiedad propiedad) {
+			super();
+			this.propiedad = propiedad;
+		}
+
+		@Override
+		public void handle(ActionEvent event) {
+			int maxHouse = 15;
+			TarjetaCalle tarjeta;
+
+			if (propiedad.isPropiedadCalle()) {
+				tarjeta = (TarjetaCalle) propiedad;
+				maxHouse = tarjeta.casasParaCompletar();
+			} else {
+				showMessageBox(AlertType.ERROR, "Error",
+						"No se puede construir",
+						"Solo se pueden construír edificios sobre calles.");
+				return;
+			}
+
+			String descripcion = "Seleccione la cantidad de casas que desea construír.\n"
+					+ "Se construirán automáticamente y en orden de forma tal que ninguna\n"
+					+ "calle tenga más de 1 casa de diferencia con otra. Si se seleccionan\n"
+					+ "5 construcciones, se construirá un hotel en lugar de casas.\n\n";
+			int answer = showNumericMsgBox("Construir edificios",
+					"Ingresar cantidad", descripcion,
+					"¿Cuantos edificios desea construír en total?", 1,
+					maxHouse, maxHouse, tarjeta.getPrecioCadaCasa());
+
+			// Si "answer = -1" es porque presionó "Cancelar"
+			// En ese caso salimos sin hacer nada...
+			if (answer < 1)
+				return;
+
+			int senderID = ConnectionController.getInstance().getIdPlayer();
+			String idJuego = getJuego().getUniqueID();
+
+			BuildMessage msg = new BuildMessage(senderID, idJuego, tarjeta,
+					answer);
+			ConnectionController.getInstance().send(msg);
+
+		}
+
+	}
+
+	/**
 	 * Muestra un mensaje que informa si la propiedad se hipotecó correctamente
 	 * o hubo algún error
 	 * 
@@ -2430,12 +2487,43 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	/**
+	 * Muestra un mensaje que informa si se pudieron construir los edificios
+	 * 
+	 * @param calle
+	 *            La calle del color donde se construyó.
+	 * @param monto
+	 *            La propiedad que se hipoteca.
+	 */
+	public void finishBuild(TarjetaCalle calle, int monto) {
+
+		if (monto > 0) {
+			TableroController
+					.getInstance()
+					.showMessageBox(
+							AlertType.INFORMATION,
+							"Información",
+							"Calle construida",
+							String.format(
+									"Se construyó sobre el color %s con un costo de %s",
+									calle.getColor(),
+									StringUtils.formatearAMoneda(monto)));
+		} else {
+			TableroController.getInstance().showMessageBox(
+					AlertType.ERROR,
+					"Error",
+					"Error en la construcción",
+					String.format("No se pudo construir sobre el color %s",
+							calle.getColor()));
+		}
+	}
+
+	/**
 	 * Acopla al contenedor un panel.
 	 * 
 	 * @param node
 	 * @param valor
 	 */
-	private void acoplarAContenedor(javafx.scene.Node node, double valor) {
+	private void acoplarAContenedor(javafx.scene.Node node) {
 		AnchorPane.setLeftAnchor(node, (double) 0);
 		AnchorPane.setRightAnchor(node, (double) 0);
 		AnchorPane.setTopAnchor(node, (double) 0);
@@ -2452,7 +2540,7 @@ public class TableroController extends AnchorPane implements Serializable,
 	private String showToolTipsPropiedad(TarjetaPropiedad propiedad) {
 		String tooltip = propiedad.getNombre();
 		if (propiedad.isHipotecada())
-			tooltip += "(Hipotecada)";
+			tooltip += " (Hipotecada)";
 		tooltip += " - "
 				+ StringUtils.formatearAMoneda(propiedad.getValorPropiedad());
 		return tooltip;
@@ -2570,53 +2658,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
-	private Alert getAlert(AlertType type, String title, String headerText,
-			String message, List<ButtonType> botones) {
-
-		Alert alert = null;
-		ButtonType buttonAceptar = null;
-		DialogPane dialogPane;
-
-		try {
-			alert = new Alert(type);
-
-			alert.setTitle(title);
-			alert.setHeaderText(headerText);
-			alert.setContentText(message);
-			if (botones != null && botones.size() > 0) {
-				alert.getButtonTypes().setAll(botones);
-			} else {
-				buttonAceptar = new ButtonType("Aceptar", ButtonData.OK_DONE);
-				alert.getButtonTypes().setAll(buttonAceptar);
-			}
-
-			dialogPane = alert.getDialogPane();
-			// dialogPane.getStyleClass().remove("alert");
-			dialogPane.getStylesheets().add(
-					getClass().getResource("/css/Dialog.css").toExternalForm());
-			dialogPane.getStyleClass().add("dialog");
-			// setearEstiloMessageBox(alert);
-
-			/*
-			 * workaround para el problema del tamaño de labels:
-			 * http://stackoverflow.com/a/33905734
-			 */
-			alert.getDialogPane()
-					.getChildren()
-					.stream()
-					.filter(node -> node instanceof Label)
-					.forEach(
-							node -> ((Label) node)
-									.setMinHeight(Region.USE_PREF_SIZE));
-
-			alert.showAndWait();
-
-		} catch (Exception ex) {
-			GestorLogs.registrarError(ex);
-		}
-		return alert;
-	}
-
 	/**
 	 * Método para mostrar un mensaje en la pantalla que requiere de una
 	 * respuesta SI/NO
@@ -2657,6 +2698,135 @@ public class TableroController extends AnchorPane implements Serializable,
 			GestorLogs.registrarError(ex);
 		}
 		return (result.get().getButtonData() == ButtonData.YES);
+	}
+
+	/**
+	 * Método para mostrar un mensaje en la pantalla que requiere de una
+	 * respuesta Numérica entre {@code min} y {@code max}.
+	 * 
+	 * @param title
+	 *            El título del mensaje
+	 * @param headerText
+	 *            El encabezado del mensaje
+	 * @param message
+	 *            El mensaje a mostrar
+	 * @param minValue
+	 *            El valor mínimo aceptado por el spinner
+	 * @param maxValue
+	 *            El valor máximo aceptado por el spinner
+	 * @param defaultValue
+	 *            El valor por defecto en el spinner
+	 * @return El valor seleccionado por el usuario o -1 si presionó "Cancelar"
+	 */
+	public int showNumericMsgBox(String title, String headerText, String desc,
+			String message, int minValue, int maxValue, int defaultValue,
+			int precioCasa) {
+
+		Alert alert;
+		Optional<ButtonType> result = null;
+
+		Spinner<Integer> spinner = new Spinner<Integer>(minValue, maxValue,
+				defaultValue);
+		Label lblText = new Label(message);
+		Label lblDesc = new Label(desc);
+		Label lblCost = new Label(StringUtils.formatearAMoneda(defaultValue
+				* precioCasa));
+
+		spinner.setEditable(false); // solo se puede editar usando los botones
+		spinner.setVisible(true);
+		spinner.setMinWidth(80);
+		spinner.setPrefWidth(80);
+
+		spinner.getValueFactory()
+				.valueProperty()
+				.addListener(
+						(obs, oldValue, newValue) -> lblCost
+								.setText(StringUtils.formatearAMoneda(newValue
+										* precioCasa)));
+
+		GridPane grid = new GridPane();
+		grid.setHgap(10);
+		grid.setVgap(10);
+		grid.setPadding(new Insets(20, 20, 10, 10));
+
+		grid.add(lblDesc, 0, 0);
+		grid.add(lblText, 0, 2);
+		grid.add(new HBox(new Label("   "), spinner, new Label(
+				"  Costo total: "), lblCost), 0, 3);
+
+		try {
+			ButtonType buttonOk;
+			ButtonType buttonCancel;
+
+			buttonOk = new ButtonType("Aceptar", ButtonData.OK_DONE);
+			buttonCancel = new ButtonType("Cancelar", ButtonData.CANCEL_CLOSE);
+
+			alert = getAlert(
+					AlertType.CONFIRMATION,
+					title,
+					headerText,
+					message,
+					new ArrayList<ButtonType>(Arrays.asList(buttonOk,
+							buttonCancel)));
+
+			alert.getDialogPane().setContent(grid);
+
+			result = alert.showAndWait();
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
+		}
+
+		if (result.get().getButtonData() == ButtonData.CANCEL_CLOSE)
+			return -1;
+
+		return spinner.getValue();
+
+	}
+
+	private Alert getAlert(AlertType type, String title, String headerText,
+			String message, List<ButtonType> botones) {
+
+		Alert alert = null;
+		ButtonType buttonAceptar = null;
+		// DialogPane dialogPane;
+
+		try {
+			alert = new Alert(type);
+
+			alert.setTitle(title);
+			alert.setHeaderText(headerText);
+			alert.setContentText(message);
+			if (botones != null && botones.size() > 0) {
+				alert.getButtonTypes().setAll(botones);
+			} else {
+				buttonAceptar = new ButtonType("Aceptar", ButtonData.OK_DONE);
+				alert.getButtonTypes().setAll(buttonAceptar);
+			}
+
+			// dialogPane = alert.getDialogPane();
+
+			// dialogPane.getStylesheets().add(
+			// getClass().getResource("/css/Dialog.css").toExternalForm());
+			// dialogPane.getStyleClass().add("dialog");
+
+			/*
+			 * workaround para el problema del tamaño de labels:
+			 * http://stackoverflow.com/a/33905734
+			 */
+			alert.getDialogPane()
+					.getChildren()
+					.stream()
+					.filter(node -> node instanceof Label)
+					.forEach(
+							node -> ((Label) node)
+									.setMinHeight(Region.USE_PREF_SIZE));
+
+			// alert.showAndWait();
+
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
+		}
+		return alert;
 	}
 
 	// ------------------------------------------------------------------- //
@@ -2729,7 +2899,6 @@ public class TableroController extends AnchorPane implements Serializable,
 	void processVender(ActionEvent event) {
 
 	}
-
 
 	@FXML
 	void processHipotecar(ActionEvent event) {

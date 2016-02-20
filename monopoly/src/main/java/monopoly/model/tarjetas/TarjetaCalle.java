@@ -178,6 +178,9 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 		if (!this.jugadorTieneMonopolio())
 			return false;
 
+		if (this.casasParaCompletar() == 0)
+			return false;
+
 		return true;
 	}
 
@@ -475,6 +478,26 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 	public void setColor(String color) {
 		this.color = color;
 		this.setEnumColor();
+	}
+
+	/**
+	 * Devuelve la cantidad de casas que faltan para completar el total de casas
+	 * del color.
+	 * 
+	 * @return La cantidad de casas permitidas en el color, menos las que ya
+	 *         están construidas (total_casas_color - total_casas_construidas).
+	 */
+	public int casasParaCompletar() {
+
+		List<TarjetaCalle> monopolio = getCallesColor();
+		int contCasas = 0;
+
+		for (TarjetaCalle tarjetaCalle : monopolio) {
+			contCasas += ((CasilleroCalle) tarjetaCalle.getCasillero())
+					.getNroCasas();
+		}
+
+		return (getEnumColor().getCantMonopoly() * 5) - contCasas;
 	}
 
 	/**

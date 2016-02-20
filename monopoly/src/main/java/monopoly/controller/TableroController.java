@@ -1072,7 +1072,7 @@ public class TableroController implements Serializable {
 					String.format(
 							"Una propiedad solo puede ser hipotecada por "
 									+ "su dueño y en su turno. La propiedad %s "
-									+ "perteneciente a %s está siendo hipotecada por %s.",
+									+ "perteneciente a %s y está siendo hipotecada por %s.",
 							tarjetaPropiedad.getNombre(), tarjetaPropiedad
 									.getJugador().getNombre(), currentPlayer
 									.getNombre()));
@@ -1136,7 +1136,7 @@ public class TableroController implements Serializable {
 					String.format(
 							"Una propiedad solo puede ser deshipotecada por "
 									+ "su dueño y en su turno. La propiedad %s "
-									+ "perteneciente a %s está siendo deshipotecada por %s.",
+									+ "perteneciente a %s y está siendo deshipotecada por %s.",
 							tarjetaPropiedad.getNombre(), tarjetaPropiedad
 									.getJugador().getNombre(), currentPlayer
 									.getNombre()));
@@ -1500,7 +1500,8 @@ public class TableroController implements Serializable {
 	 * 
 	 * @param casillero
 	 *            El casillero del monopolio en el que se quieren colocar
-	 * @return true si compra las casas
+	 * @return El dinero que se invirtió para constrir los edificios o
+	 *         {@code -1} si no se pudo construir.
 	 * @throws SinEdificiosException
 	 *             Si no se disponen de los edificios necesarios.
 	 * @throws SinDineroException
@@ -1510,7 +1511,7 @@ public class TableroController implements Serializable {
 	 *             Si alguna de las calles del monopolio se encuentra
 	 *             hipotecada.
 	 */
-	public boolean comprarEdificio(int cantidad, CasilleroCalle casillero)
+	public int comprarEdificio(int cantidad, CasilleroCalle casillero)
 			throws SinEdificiosException, SinDineroException,
 			PropiedadHipotecadaException {
 
@@ -1537,6 +1538,7 @@ public class TableroController implements Serializable {
 		int cantEdificiosTotal = cantidad;
 		int cantCasas = 0;
 		int cantHoteles = 0;
+		int montoAPagar = 0;
 
 		int i = 0;
 
@@ -1549,8 +1551,7 @@ public class TableroController implements Serializable {
 					+ " no tiene dinero para pagar " + cantidad + " casas.");
 
 		for (CasilleroCalle casilleroCalle : monopolio) {
-			if (casilleroCalle.getTarjetaCalle().isHipotecable()) {
-
+			if (casilleroCalle.getTarjetaCalle().isHipotecada()) {
 				String mensaje = String.format(
 						"La propiedad %s del color %s está hipotecada. "
 								+ "No se puede construir.", casilleroCalle
@@ -1609,9 +1610,10 @@ public class TableroController implements Serializable {
 							+ banco.getNroHoteles());
 
 		// Verificamos que el jugador tenga dinero suficiente para pagar...
-		if (!jugador.pagar(cantidad
-				* casillero.getTarjetaCalle().getPrecioCadaCasa()))
-			return false;
+		montoAPagar = cantidad
+				* casillero.getTarjetaCalle().getPrecioCadaCasa();
+		if (!jugador.pagar(montoAPagar))
+			return -1;
 
 		i = 0;
 		for (CasilleroCalle casilleroCalle : monopolio) {
@@ -1647,7 +1649,7 @@ public class TableroController implements Serializable {
 			sf.append("\n");
 		}
 		GestorLogs.registrarDebugDetail(sf.toString());
-		return true;
+		return montoAPagar;
 	}
 
 	/**

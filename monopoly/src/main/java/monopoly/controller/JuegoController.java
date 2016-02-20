@@ -872,6 +872,53 @@ public class JuegoController implements Serializable {
 	}
 
 	/**
+	 * Construye {@code cantidad} de edificios en el color de la {@code calle} y
+	 * le cobra al dueño de la calle.
+	 * 
+	 * @param calle
+	 *            La calle del color donde se va a construir
+	 * @param cantidad
+	 *            La cantidad de casas que se van a construir
+	 * @return El dinero invertido en construir o {@code -1} si no se pudo
+	 *         construir.
+	 * @throws Exception
+	 *             Si no se puede enviar el mensaje al cliente.
+	 */
+	public int construirEdificios(TarjetaCalle calle, int cantidad)
+			throws Exception {
+
+		Jugador jugador = gestorJugadores.getCurrentPlayer();
+		int toReturn = gestorTablero.comprarEdificio(cantidad,
+				(CasilleroCalle) calle.getCasillero());
+
+		String mensaje;
+		EstadoJuego estadoJuegoJugadorActual = EstadoJuego.ACTUALIZANDO_ESTADO;
+		List<Jugador> turnosList;
+		List<History> historyList = new ArrayList<History>();
+
+		if (toReturn != -1)
+			mensaje = String.format(
+					"Contruyó %s edificios sobre la calle %s por %s.",
+					cantidad, calle.getNombre(),
+					StringUtils.formatearAMoneda(toReturn));
+		else
+			mensaje = String.format("No pudo construir sobre la calle %s",
+					calle.getNombre());
+
+		historyList.add(new History(StringUtils.getFechaActual(), jugador
+				.getNombre(), mensaje));
+
+		turnosList = gestorJugadores.getTurnoslist();
+		status = new MonopolyGameStatus(turnosList, gestorBanco.getBanco(),
+				gestorTablero.getTablero(), estadoJuegoJugadorActual, null,
+				gestorJugadores.getCurrentPlayer(), historyList, null);
+		sendToAll(status);
+
+		return toReturn;
+
+	}
+
+	/**
 	 * Implementa el objetivo de la tarjeta Comunidad o Suerte Cuando un jugador
 	 * humano saca una de las tarjetas.
 	 * 
@@ -1366,8 +1413,8 @@ public class JuegoController implements Serializable {
 	 */
 	public void subastar(int senderId, SubastaStatus subastaStatus)
 			throws Exception {
-			AuctionFinishMessage msgFinalizarSubasta;
-			
+		AuctionFinishMessage msgFinalizarSubasta;
+
 		try {
 			if (subastaStatus.estado == EnumEstadoSubasta.CREADA) {
 				// Validar que todos los jugadores tengan suficiente dinero.
@@ -1379,13 +1426,17 @@ public class JuegoController implements Serializable {
 				}
 				switch (gestorSubasta.cantidadJugadores()) {
 				case 0:
-					msgFinalizarSubasta = new AuctionFinishMessage(null, "Ninguno de los jugadores posee dinero suficiente para subastar. La Propiedad queda disponible");
+					msgFinalizarSubasta = new AuctionFinishMessage(
+							null,
+							"Ninguno de los jugadores posee dinero suficiente para subastar. La Propiedad queda disponible");
 					sendToOne(senderId, msgFinalizarSubasta);
 					break;
 
 				case 1:
 					// Notificar quien ganó la subasta
-					//sendToAll(new HistoryGameMessage(new History(StringUtils.getFechaActual(), usuario, mensaje)));
+					// sendToAll(new HistoryGameMessage(new
+					// History(StringUtils.getFechaActual(), usuario,
+					// mensaje)));
 				}
 				if (gestorSubasta.cantidadJugadores() > 1) {
 					gestorSubasta.siguienteTurno();
