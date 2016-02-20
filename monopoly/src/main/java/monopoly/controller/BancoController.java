@@ -273,6 +273,20 @@ public class BancoController implements Serializable {
 		this.cobrar(jugador, tarjetaPropiedad.getValorPropiedad());
 		jugador.adquirirPropiedad(tarjetaPropiedad);
 	}
+	
+	/**
+	 * Adquiere una propiedad a un monto determinado.
+	 * 
+	 * @param jugador
+	 * @param tarjetaPropiedad
+	 * @param monto
+	 * @throws SinDineroException
+	 */
+	public void adquirirPropiedad(Jugador jugador,
+			TarjetaPropiedad tarjetaPropiedad, int monto) throws SinDineroException {
+		this.cobrar(jugador, monto);
+		jugador.adquirirPropiedad(tarjetaPropiedad);
+	}
 
 	/**
 	 * Cobra al jugador los montos especificados por cada casa y cada hotel que

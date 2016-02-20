@@ -3,6 +3,7 @@ package monopoly.controller;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import monopoly.dao.IJuegoDao;
@@ -45,6 +46,7 @@ import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.ReloadSavedGameMessage;
 import monopoly.util.message.game.actions.AuctionFinishMessage;
+import monopoly.util.message.game.actions.AuctionPropertyMessage;
 import monopoly.util.message.game.actions.PayToPlayerMessage;
 
 import org.apache.commons.lang.mutable.MutableBoolean;
@@ -1413,7 +1415,19 @@ public class JuegoController implements Serializable {
 	 */
 	public void subastar(int senderId, SubastaStatus subastaStatus)
 			throws Exception {
+<<<<<<< HEAD
 		AuctionFinishMessage msgFinalizarSubasta;
+=======
+
+		AuctionFinishMessage msgFinalizarSubasta;
+		AuctionPropertyMessage msgAuction;
+		TarjetaPropiedad tarjeta;
+		Jugador jugadorTurno;
+		Jugador jugadorActual;
+		String mensaje;
+		History history;
+		int montoSubasta;
+>>>>>>> branch 'master' of https://github.com/ale-bos/tsb-monopoly
 
 		try {
 			if (subastaStatus.estado == EnumEstadoSubasta.CREADA) {
@@ -1424,6 +1438,12 @@ public class JuegoController implements Serializable {
 					if (jugador.getDinero() > subastaStatus.montoSubasta)
 						gestorSubasta.agregarJugadorASubasta(jugador);
 				}
+
+				tarjeta = gestorBanco.getBanco().getTarjetaPropiedad(
+						subastaStatus.propiedadSubastada.getNombrePropiedad());
+				jugadorActual = gestorJugadores.getJugadorHumano(senderId);
+				montoSubasta = subastaStatus.montoSubasta;
+
 				switch (gestorSubasta.cantidadJugadores()) {
 				case 0:
 					msgFinalizarSubasta = new AuctionFinishMessage(
@@ -1434,15 +1454,76 @@ public class JuegoController implements Serializable {
 
 				case 1:
 					// Notificar quien ganó la subasta
+<<<<<<< HEAD
 					// sendToAll(new HistoryGameMessage(new
 					// History(StringUtils.getFechaActual(), usuario,
 					// mensaje)));
 				}
 				if (gestorSubasta.cantidadJugadores() > 1) {
+=======
+					jugadorTurno = gestorSubasta.getJugadoresList().get(0);
+					gestorBanco.adquirirPropiedad(jugadorTurno, tarjeta,
+							montoSubasta);
+
+					mensaje = String.format(
+							"Ganó la subasta de la propiedad %s con %s",
+							tarjeta.getNombre(),
+							StringUtils.formatearAMoneda(montoSubasta));
+					history = new History(StringUtils.getFechaActual(),
+							jugadorTurno.getNombre(), mensaje);
+
+					sendToAll(new MonopolyGameStatus(
+							gestorJugadores.getTurnoslist(),
+							gestorBanco.getBanco(), gestorTablero.getTablero(),
+							EstadoJuego.ACTUALIZANDO_ESTADO, null,
+							gestorJugadores.getCurrentPlayer(),
+							new ArrayList<History>(), null));
+
+					Thread.sleep(1500);
+
+					if (jugadorTurno.equals(jugadorActual))
+						mensaje = String.format(
+								"Ganaste la subasta de la propiedad %s",
+								tarjeta.getNombre());
+					else
+						mensaje = String
+								.format("%s ganó la subasta de la propiedad %s. Finalizó tu turno.",
+										tarjeta.getNombre());
+
+					msgFinalizarSubasta = new AuctionFinishMessage(null, "");
+					sendToOne(senderId, msgFinalizarSubasta);
+					break;
+
+				default:
+					gestorSubasta.inicializarVariables();
+>>>>>>> branch 'master' of https://github.com/ale-bos/tsb-monopoly
 					gestorSubasta.siguienteTurno();
+					jugadorTurno = gestorSubasta.jugadorActual();
+					mensaje = "Turno para subastar.";
+					history = new History(StringUtils.getFechaActual(),
+							jugadorTurno.getNombre(), mensaje);
+					subastaStatus = new SubastaStatus(
+							EnumEstadoSubasta.INICIADA, new ArrayList<History>(
+									Arrays.asList(history)), jugadorTurno,
+							tarjeta, montoSubasta);
+					msgAuction = new AuctionPropertyMessage(
+							juego.getUniqueID(), subastaStatus);
 
-				} else {
-
+					while (true) {
+						if (jugadorTurno.isVirtual()) {
+							montoSubasta = gestorJugadoresVirtuales.pujar(tarjeta,
+									montoSubasta, jugadorActual,
+									(JugadorVirtual) jugadorTurno);
+							Thread.sleep(1500);
+							if(montoSubasta > 0)
+							{
+								//TODO: abandonar jugador virtual.
+							}
+							
+						}else
+							break;
+					}
+					break;
 				}
 			} else {
 

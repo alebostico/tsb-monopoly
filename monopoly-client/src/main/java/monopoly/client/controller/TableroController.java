@@ -2584,7 +2584,7 @@ public class TableroController extends AnchorPane implements Serializable,
 				pCasillero06.getChildren().clear();
 				pCasillero07.getChildren().clear();
 				pCasillero08.getChildren().clear();
-				pCasillero01.getChildren().clear();
+				pCasillero09.getChildren().clear();
 				pCasillero10.getChildren().clear();
 				pCasillero11.getChildren().clear();
 				pCasillero12.getChildren().clear();

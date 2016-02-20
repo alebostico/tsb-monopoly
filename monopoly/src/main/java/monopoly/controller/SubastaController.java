@@ -16,7 +16,7 @@ public class SubastaController implements Serializable {
 	private Jugador[] indexList;
 
 	private int indexActual;
-	
+
 	private TarjetaPropiedad propiedadSubastada;
 
 	public SubastaController(TarjetaPropiedad pPropiedadSubastada) {
@@ -28,7 +28,18 @@ public class SubastaController implements Serializable {
 		jugadoresList.add(jugador);
 	}
 
-	public void inicializarVariables() throws Exception{
+	public void quitarJugadorDeSubasta(Jugador jugador) throws Exception {
+		int index = 0;
+		for (int i = 0; i < indexList.length; i++) {
+			if (indexList[i].equals(jugador)) {
+				index = i;
+				break;
+			}
+		}
+		jugadoresList.remove(indexList[index]);
+	}
+
+	public void inicializarVariables() throws Exception {
 		indexList = new Jugador[jugadoresList.size()];
 		for (int i = 0; i < jugadoresList.size(); i++) {
 			indexList[i] = jugadoresList.get(i);
@@ -36,14 +47,19 @@ public class SubastaController implements Serializable {
 		indexActual = 0;
 	}
 	
-	public Jugador siguienteTurno() throws Exception{
-		if(indexActual < indexList.length - 1)
+	public void reordenarTurnos()
+	{
+		//TODO: Programar
+	}
+
+	public Jugador siguienteTurno() throws Exception {
+		if (indexActual < indexList.length - 1)
 			indexActual++;
 		else
 			indexActual = 0;
 		return indexList[indexActual];
 	}
-	
+
 	public TarjetaPropiedad getPropiedadSubastada() {
 		return propiedadSubastada;
 	}
@@ -52,13 +68,16 @@ public class SubastaController implements Serializable {
 		this.propiedadSubastada = propiedadSubastada;
 	}
 
-	public Jugador jugadorActual() throws Exception
-	{
+	public Jugador jugadorActual() throws Exception {
 		return indexList[indexActual];
 	}
-	
-	public int cantidadJugadores(){
+
+	public int cantidadJugadores() {
 		return jugadoresList.size();
+	}
+
+	public List<Jugador> getJugadoresList() {
+		return jugadoresList;
 	}
 
 }

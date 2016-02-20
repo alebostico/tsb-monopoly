@@ -246,9 +246,8 @@ public class SubastaController extends AnchorPane implements Initializable {
 			@Override
 			public void run() {
 				try {
-					if (TableroController.getInstance().showYesNoMsgBox(
-							"Abandonar Subasta", null,
-							"¿Está seguro que desea abandonar la subasta?")) {
+					if (TableroController.getInstance().showYesNoMsgBox("Abandonar Subasta", null, "¿Está seguro que desea abandonar la subasta?")) {
+
 						bloquearBotones(true);
 						lblMessage
 								.setText("La pantalla seguirá activa hasta que finalice la subasta.");
