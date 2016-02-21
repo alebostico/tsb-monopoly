@@ -38,6 +38,7 @@ import monopoly.util.constantes.EnumEstadoSubasta;
 import monopoly.util.constantes.EnumSalidaCarcel;
 import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
+import monopoly.util.exception.PropiedadHipotecadaException;
 import monopoly.util.exception.SinDineroException;
 import monopoly.util.exception.SinEdificiosException;
 import monopoly.util.message.ExceptionMessage;
@@ -921,6 +922,53 @@ public class JuegoController implements Serializable {
 	}
 
 	/**
+	 * Vende {@code cantidad} de edificios en el color de la {@code calle} y
+	 * le paga al dueño de la calle.
+	 * 
+	 * @param calle
+	 *            La calle del color donde se quiere vender.
+	 * @param cantidad
+	 *            La cantidad de casas que se van a vender
+	 * @return El dinero ganado por vender o {@code -1} si no se pudo
+	 *         vender.
+	 * @throws Exception
+	 *             Si no se puede enviar el mensaje al cliente.
+	 */
+	public int venderEdificios(TarjetaCalle calle, int cantidad)
+			throws Exception {
+		Jugador jugador = gestorJugadores.getCurrentPlayer();
+		int cantVendida = gestorTablero.venderEdificio(cantidad,
+				(CasilleroCalle) calle.getCasillero());
+
+		int money = (calle.getPrecioVentaCadaCasa()) * cantVendida;
+		
+		String mensaje;
+		EstadoJuego estadoJuegoJugadorActual = EstadoJuego.ACTUALIZANDO_ESTADO;
+		List<Jugador> turnosList;
+		List<History> historyList = new ArrayList<History>();
+
+		if (cantVendida != -1)
+			mensaje = String.format(
+					"Vendió %s edificios de la calle %s por %s.",
+					cantVendida, calle.getNombre(),
+					StringUtils.formatearAMoneda(money));
+		else
+			mensaje = String.format("No pudo vender de la calle %s",
+					calle.getNombre());
+
+		historyList.add(new History(StringUtils.getFechaActual(), jugador
+				.getNombre(), mensaje));
+
+		turnosList = gestorJugadores.getTurnoslist();
+		status = new MonopolyGameStatus(turnosList, gestorBanco.getBanco(),
+				gestorTablero.getTablero(), estadoJuegoJugadorActual, null,
+				gestorJugadores.getCurrentPlayer(), historyList, null);
+		sendToAll(status);
+
+		return money;
+	}
+
+	/**
 	 * Implementa el objetivo de la tarjeta Comunidad o Suerte Cuando un jugador
 	 * humano saca una de las tarjetas.
 	 * 
@@ -1498,16 +1546,15 @@ public class JuegoController implements Serializable {
 
 					while (true) {
 						if (jugadorTurno.isVirtual()) {
-							montoSubasta = gestorJugadoresVirtuales.pujar(tarjeta,
-									montoSubasta, jugadorActual,
+							montoSubasta = gestorJugadoresVirtuales.pujar(
+									tarjeta, montoSubasta, jugadorActual,
 									(JugadorVirtual) jugadorTurno);
 							Thread.sleep(1500);
-							if(montoSubasta > 0)
-							{
-								//TODO: abandonar jugador virtual.
+							if (montoSubasta > 0) {
+								// TODO: abandonar jugador virtual.
 							}
-							
-						}else
+
+						} else
 							break;
 					}
 					break;

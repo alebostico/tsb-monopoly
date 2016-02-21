@@ -109,6 +109,7 @@ import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.DemortgageMessage;
 import monopoly.util.message.game.MortgageMessage;
 import monopoly.util.message.game.SaveGameMessage;
+import monopoly.util.message.game.UnbuildMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.PayRentMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
@@ -2255,23 +2256,25 @@ public class TableroController extends AnchorPane implements Serializable,
 						MenuItem btnVCon = new MenuItem("Vender construcciones");
 						MenuItem btnVProp = new MenuItem("Vender propiedad");
 
-						btnHipo.setOnAction(new EventHipotecar(propiedad));
-						btnDes.setOnAction(new EventDeshipotecar(propiedad));
-						btnCon.setOnAction(new EventConstruir(propiedad));
-
 						contextMenu.getItems().addAll(btnHipo, btnDes, btnCon,
 								btnVCon, btnVProp);
 
 						// Seteamos el estado de los botones...
 						if (!propiedad.isHipotecable())
 							btnHipo.setDisable(true);
+						else
+							btnHipo.setOnAction(new EventHipotecar(propiedad));
 
 						if (!propiedad.isDeshipotecable())
 							btnDes.setDisable(true);
+						else
+							btnDes.setOnAction(new EventDeshipotecar(propiedad));
 
 						if (propiedad.isPropiedadCalle()) {
 							if (!((TarjetaCalle) propiedad).isContruible())
 								btnCon.setDisable(true);
+							else
+								btnCon.setOnAction(new EventConstruir(propiedad));
 						} else {
 							btnCon.setVisible(false);
 						}
@@ -2279,6 +2282,9 @@ public class TableroController extends AnchorPane implements Serializable,
 						if (propiedad.isPropiedadCalle()) {
 							if (!((TarjetaCalle) propiedad).isDescontruible())
 								btnVCon.setDisable(true);
+							else
+								btnVCon.setOnAction(new EventDesconstruir(
+										propiedad));
 						} else {
 							btnVCon.setVisible(false);
 						}
@@ -2411,8 +2417,9 @@ public class TableroController extends AnchorPane implements Serializable,
 					+ "5 construcciones, se construirá un hotel en lugar de casas.\n\n";
 			int answer = showNumericMsgBox("Construir edificios",
 					"Ingresar cantidad", descripcion,
-					"¿Cuantos edificios desea construír en total?", 1,
-					maxHouse, maxHouse, tarjeta.getPrecioCadaCasa());
+					"¿Cuantos edificios desea construír en total?",
+					"Costo total", 1, maxHouse, maxHouse,
+					tarjeta.getPrecioCadaCasa());
 
 			// Si "answer = -1" es porque presionó "Cancelar"
 			// En ese caso salimos sin hacer nada...
@@ -2423,6 +2430,61 @@ public class TableroController extends AnchorPane implements Serializable,
 			String idJuego = getJuego().getUniqueID();
 
 			BuildMessage msg = new BuildMessage(senderID, idJuego, tarjeta,
+					answer);
+			ConnectionController.getInstance().send(msg);
+
+		}
+
+	}
+
+	/**
+	 * Clase para la acción de "Vender construcciones" del {@code ContextMenu}
+	 * 
+	 * @author Bostico Alejandro
+	 * @author Moreno Pablo
+	 */
+	private class EventDesconstruir implements EventHandler<ActionEvent> {
+
+		final private TarjetaPropiedad propiedad;
+
+		public EventDesconstruir(TarjetaPropiedad propiedad) {
+			super();
+			this.propiedad = propiedad;
+		}
+
+		@Override
+		public void handle(ActionEvent event) {
+			int maxHouse = 15;
+			TarjetaCalle tarjeta;
+
+			if (propiedad.isPropiedadCalle()) {
+				tarjeta = (TarjetaCalle) propiedad;
+				maxHouse = (tarjeta.getEnumColor().getCantMonopoly() * 5)
+						- tarjeta.casasParaCompletar();
+			} else {
+				showMessageBox(AlertType.ERROR, "Error",
+						"No se pueden vender construcciones",
+						"Solo se pueden vender construcciones de calles.");
+				return;
+			}
+
+			String descripcion = "Seleccione la cantidad de casas que desea vender.\n"
+					+ "Se venderan automáticamente y en orden de forma tal que ninguna\n"
+					+ "calle tenga más de 1 casa de diferencia con otra.\n\n";
+			int answer = showNumericMsgBox("Vender edificios",
+					"Ingresar cantidad", descripcion,
+					"¿Cuantos edificios desea vender?", "Beneficio total", 1,
+					maxHouse, maxHouse, tarjeta.getPrecioVentaCadaCasa());
+
+			// Si "answer = -1" es porque presionó "Cancelar"
+			// En ese caso salimos sin hacer nada...
+			if (answer < 1)
+				return;
+
+			int senderID = ConnectionController.getInstance().getIdPlayer();
+			String idJuego = getJuego().getUniqueID();
+
+			UnbuildMessage msg = new UnbuildMessage(senderID, idJuego, tarjeta,
 					answer);
 			ConnectionController.getInstance().send(msg);
 
@@ -2513,6 +2575,38 @@ public class TableroController extends AnchorPane implements Serializable,
 					"Error",
 					"Error en la construcción",
 					String.format("No se pudo construir sobre el color %s",
+							calle.getColor()));
+		}
+	}
+
+	/**
+	 * Muestra un mensaje que informa si se pudieron construir los edificios
+	 * 
+	 * @param calle
+	 *            La calle del color donde se construyó.
+	 * @param monto
+	 *            La propiedad que se hipoteca.
+	 */
+	public void finishUnbuild(TarjetaCalle calle, int monto) {
+
+		if (monto > 0) {
+			TableroController
+					.getInstance()
+					.showMessageBox(
+							AlertType.INFORMATION,
+							"Información",
+							"Edificios vendidos",
+							String.format(
+									"Se vendieron edificios en el color %s con un beneficio de %s",
+									calle.getColor(),
+									StringUtils.formatearAMoneda(monto)));
+		} else {
+			TableroController.getInstance().showMessageBox(
+					AlertType.ERROR,
+					"Error",
+					"Error en la venta",
+					String.format(
+							"No se pudieron vender edificios del color %s",
 							calle.getColor()));
 		}
 	}
@@ -2702,25 +2796,44 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	/**
 	 * Método para mostrar un mensaje en la pantalla que requiere de una
-	 * respuesta Numérica entre {@code min} y {@code max}.
+	 * respuesta Numérica entre {@code min} y {@code max}. <code>
+	 * -----------------------------------------------------
+	 * |   title                                           | 
+	 * |===================================================|
+	 * | headerText                                        |
+	 * |---------------------------------------------------|
+	 * | desc line1......................................  |
+	 * | desc line2......................................  |
+	 * | message                                           |
+	 * |  ----------                                       |
+	 * |  |SPINNER |  msgSpinner: xxx €                    |
+	 * |  ----------                                       |
+	 * -----------------------------------------------------
+	 * </code>
 	 * 
 	 * @param title
 	 *            El título del mensaje
 	 * @param headerText
 	 *            El encabezado del mensaje
+	 * @param desc
+	 *            Una descripción con una explicación
 	 * @param message
 	 *            El mensaje a mostrar
+	 * @param msgSpinner
+	 *            Un texto que va a la derecha del spinner
 	 * @param minValue
 	 *            El valor mínimo aceptado por el spinner
 	 * @param maxValue
 	 *            El valor máximo aceptado por el spinner
 	 * @param defaultValue
 	 *            El valor por defecto en el spinner
+	 * @param precioCasa
+	 *            El precio de cada casa que se quiere vender/comprar
 	 * @return El valor seleccionado por el usuario o -1 si presionó "Cancelar"
 	 */
 	public int showNumericMsgBox(String title, String headerText, String desc,
-			String message, int minValue, int maxValue, int defaultValue,
-			int precioCasa) {
+			String message, String msgSpinner, int minValue, int maxValue,
+			int defaultValue, int precioCasa) {
 
 		Alert alert;
 		Optional<ButtonType> result = null;
@@ -2751,8 +2864,8 @@ public class TableroController extends AnchorPane implements Serializable,
 
 		grid.add(lblDesc, 0, 0);
 		grid.add(lblText, 0, 2);
-		grid.add(new HBox(new Label("   "), spinner, new Label(
-				"  Costo total: "), lblCost), 0, 3);
+		grid.add(new HBox(new Label("   "), spinner, new Label("  "
+				+ msgSpinner + ": "), lblCost), 0, 3);
 
 		try {
 			ButtonType buttonOk;

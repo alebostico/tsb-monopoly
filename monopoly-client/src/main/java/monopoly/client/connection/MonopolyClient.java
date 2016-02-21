@@ -36,6 +36,7 @@ import monopoly.util.message.game.JoinGameMessage;
 import monopoly.util.message.game.MortgageMessage;
 import monopoly.util.message.game.ReloadSavedGameMessage;
 import monopoly.util.message.game.SaveGameMessage;
+import monopoly.util.message.game.UnbuildMessage;
 import monopoly.util.message.game.actions.AuctionFinishMessage;
 import monopoly.util.message.game.actions.AuctionNotifyMessage;
 import monopoly.util.message.game.actions.AuctionPropertyMessage;
@@ -206,6 +207,13 @@ public class MonopolyClient extends GameClient {
 				tarjetaCalle = (TarjetaCalle) construccion.message;
 				TableroController.getInstance().finishBuild(tarjetaCalle,
 						construccion.cantidad);
+				break;
+				
+			case ConstantesMensaje.UNBUILD_MESSAGE:
+				UnbuildMessage vender = (UnbuildMessage) message;
+				tarjetaCalle = (TarjetaCalle) vender.message;
+				TableroController.getInstance().finishUnbuild(tarjetaCalle,
+						vender.cantidad);
 				break;
 
 			case ConstantesMensaje.EXCEPTION_MESSAGE:

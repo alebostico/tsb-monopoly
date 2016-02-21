@@ -40,6 +40,7 @@ import monopoly.util.message.game.MortgageMessage;
 import monopoly.util.message.game.ReloadSavedGameMessage;
 import monopoly.util.message.game.SaveGameMessage;
 import monopoly.util.message.game.StartGameMessage;
+import monopoly.util.message.game.UnbuildMessage;
 import monopoly.util.message.game.actions.AuctionFinishMessage;
 import monopoly.util.message.game.actions.AuctionPropertyMessage;
 import monopoly.util.message.game.actions.BuyPropertyMessage;
@@ -332,12 +333,21 @@ public class MonopolyGame extends GameServer {
 			case ConstantesMensaje.BUILD_MESSAGE:
 				BuildMessage construir = ((BuildMessage) message);
 				tarjetaCalle = (TarjetaCalle) construir.message;
-				int resultado = PartidasController
-						.getInstance()
+				int resConstruir = PartidasController.getInstance()
 						.construirEdificios(construir.idJuego, senderId,
 								tarjetaCalle, construir.cantidad.intValue());
 				sendToOne(senderId, new BuildMessage(senderId,
-						construir.idJuego, tarjetaCalle, resultado));
+						construir.idJuego, tarjetaCalle, resConstruir));
+				break;
+
+			case ConstantesMensaje.UNBUILD_MESSAGE:
+				UnbuildMessage vender = ((UnbuildMessage) message);
+				tarjetaCalle = (TarjetaCalle) vender.message;
+				int resVender = PartidasController.getInstance()
+						.venderEdificios(vender.idJuego, senderId,
+								tarjetaCalle, vender.cantidad.intValue());
+				sendToOne(senderId, new UnbuildMessage(senderId, vender.idJuego,
+						tarjetaCalle, resVender));
 				break;
 
 			case ConstantesMensaje.DISCONNECT_MESSAGE:

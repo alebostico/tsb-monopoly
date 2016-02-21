@@ -229,6 +229,25 @@ public class PartidasController {
 		juegoController = juegosControllerList.get(idJuego);
 		return juegoController.construirEdificios(calle, cantidad);
 	}
+	
+	/**
+	 * Método para vender edificios en una calle
+	 * 
+	 * @param idJuego
+	 *            El ID del juego en donde se va a construir
+	 * @param senderId
+	 *            Id de conexión del jugador que desea construir.
+	 * @param propiedad
+	 *            La {@code TarjetaCalle} de la calle donde se va a construir
+	 * @return El dinero ganado en vender o {@code -1} si no se pudo
+	 *         vender.
+	 * @throws Exception
+	 */
+	public int venderEdificios(String idJuego, int senderId,
+			TarjetaCalle calle, int cantidad) throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		return juegoController.venderEdificios(calle, cantidad);
+	}
 
 	/**
 	 * Método ejecutado para realizar el objetivo de la tarjeta comunidad o

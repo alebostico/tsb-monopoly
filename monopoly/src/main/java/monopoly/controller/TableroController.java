@@ -1605,9 +1605,9 @@ public class TableroController implements Serializable {
 
 		if (cantCasas > banco.getNroCasas())
 			throw new SinEdificiosException(
-					"El banco no dispone de los hoteles necesarios."
-							+ " Requeridos=" + cantHoteles + ", disponibles="
-							+ banco.getNroHoteles());
+					"El banco no dispone de las casas necesarias."
+							+ " Requeridas=" + cantCasas + ", disponibles="
+							+ banco.getNroCasas());
 
 		// Verificamos que el jugador tenga dinero suficiente para pagar...
 		montoAPagar = cantidad
@@ -1691,7 +1691,7 @@ public class TableroController implements Serializable {
 		int cantCalles = monopolio.size();
 		int cantEdificiosActuales[] = new int[cantCalles];
 		int cantEdificiosNuevos[] = new int[cantCalles];
-		int cantEdificiosTotal = cantidad;
+		int cantEdificiosTotal = 0;
 		int cantCasas = 0;
 		int cantHoteles = 0;
 
@@ -1710,7 +1710,7 @@ public class TableroController implements Serializable {
 
 		// Sino...
 		// Distribuímos los edificios de forma tal que no queden
-		// con más de una porpiedad de diferencia
+		// con más de una propiedad de diferencia
 		for (i = 0; i < cantCalles; i++)
 			cantEdificiosNuevos[i] = (cantEdificiosTotal - cantidad)
 					/ cantCalles;
@@ -1736,11 +1736,11 @@ public class TableroController implements Serializable {
 
 		if (cantCasas > banco.getNroCasas())
 			throw new SinEdificiosException(
-					"El banco no dispone de los hoteles necesarios."
-							+ " Requeridos=" + cantHoteles + ", disponibles="
-							+ banco.getNroHoteles());
+					"El banco no dispone de los casas necesarias."
+							+ " Requeridas=" + cantCasas + ", disponibles="
+							+ banco.getNroCasas());
 
-		jugador.cobrar(cantEdificiosTotal
+		jugador.cobrar(cantidad
 				* casillero.getTarjetaCalle().getPrecioVentaCadaCasa());
 
 		// Actualizamos la cantidad de casas en los casilleros...
