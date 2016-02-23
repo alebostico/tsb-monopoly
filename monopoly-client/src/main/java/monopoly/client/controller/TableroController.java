@@ -509,29 +509,9 @@ public class TableroController extends AnchorPane implements Serializable,
 					if (lvHistoryGame != null) {
 						lvHistoryGame.getItems().clear();
 						lvHistoryGame.setItems(oHistoryGameList);
+						lvHistoryGame.setCellFactory(new HistoryCallback());
 						lvHistoryGame
-								.setCellFactory(new Callback<ListView<History>, javafx.scene.control.ListCell<History>>() {
-									@Override
-									public ListCell<History> call(
-											ListView<History> listView) {
-										return new ListCell<History>() {
-
-											@Override
-											protected void updateItem(
-													History item, boolean bln) {
-												super.updateItem(item, bln);
-												if (item != null) {
-													Text txtHistory = new Text(
-															item.toString());
-													txtHistory
-															.setFill(Color.RED);
-													setGraphic(txtHistory);
-												}
-											}
-
-										};
-									}
-								});
+								.scrollTo(lvHistoryGame.getItems().size() - 1);
 					}
 					return null;
 				}
@@ -563,29 +543,9 @@ public class TableroController extends AnchorPane implements Serializable,
 					if (lvHistoryChat != null) {
 						lvHistoryChat.getItems().clear();
 						lvHistoryChat.setItems(oHistoryChatList);
+						lvHistoryChat.setCellFactory(new HistoryCallback());
 						lvHistoryChat
-								.setCellFactory(new Callback<ListView<History>, javafx.scene.control.ListCell<History>>() {
-									@Override
-									public ListCell<History> call(
-											ListView<History> listView) {
-										return new ListCell<History>() {
-
-											@Override
-											protected void updateItem(
-													History item, boolean bln) {
-												super.updateItem(item, bln);
-												if (item != null) {
-													Text txtHistory = new Text(
-															item.toChatString());
-													txtHistory
-															.setFill(Color.RED);
-													setGraphic(txtHistory);
-												}
-											}
-
-										};
-									}
-								});
+								.scrollTo(lvHistoryChat.getItems().size() - 1);
 					}
 					return null;
 				}
@@ -595,6 +555,50 @@ public class TableroController extends AnchorPane implements Serializable,
 		} catch (Exception ex) {
 			GestorLogs.registrarException(ex);
 		}
+	}
+
+	private class HistoryCallback implements
+			Callback<ListView<History>, javafx.scene.control.ListCell<History>> {
+		@Override
+		public ListCell<History> call(ListView<History> listView) {
+			return new HistoryListCell();
+		}
+	}
+
+	private class HistoryListCell extends ListCell<History> {
+
+		@Override
+		protected void updateItem(History item, boolean bln) {
+			super.updateItem(item, bln);
+			if (item != null) {
+				Text txtHistory = new Text(item.toString());
+
+				Color fillColor = determinarColor(item.getUsuario());
+
+				txtHistory.setFill(fillColor);
+				setGraphic(txtHistory);
+			}
+		}
+	}
+
+	/**
+	 * Devuelve un color de acuerdo al usuario logueado y al que se envía.
+	 * 
+	 * @param nombreUsuario
+	 *            El usuario que inicia el evento.
+	 * @return El color que corresponde (o {@code Color.RED} si no se encuentra
+	 *         el usuario)
+	 */
+	private javafx.scene.paint.Color determinarColor(String nombreUsuario) {
+		Color fillColor = Color.RED;
+		String jugador = TableroController.this.usuarioLogueado.getUserName();
+		if (jugador != null) {
+			if (jugador.equals(nombreUsuario))
+				fillColor = Color.DARKGREEN;
+			else
+				fillColor = Color.DARKBLUE;
+		}
+		return fillColor;
 	}
 
 	/**
@@ -2247,51 +2251,66 @@ public class TableroController extends AnchorPane implements Serializable,
 					tpImagen.setAutoHide(false);
 					Tooltip.install(hBox_inner, tpImagen);
 
-					if (propiedad.getJugador() != null
-							&& propiedad.getJugador().equals(getMyPlayer())) {
+					if (propiedad.getJugador() != null) {
 						final ContextMenu contextMenu = new ContextMenu();
-						MenuItem btnHipo = new MenuItem("Hipotecar");
-						MenuItem btnDes = new MenuItem("Deshipotecar");
-						MenuItem btnCon = new MenuItem("Construir");
-						MenuItem btnVCon = new MenuItem("Vender construcciones");
-						MenuItem btnVProp = new MenuItem("Vender propiedad");
+						if (propiedad.getJugador().equals(getMyPlayer())) {
+							MenuItem btnHipo = new MenuItem("Hipotecar");
+							MenuItem btnDes = new MenuItem("Deshipotecar");
+							MenuItem btnCon = new MenuItem("Construir");
+							MenuItem btnVCon = new MenuItem(
+									"Vender construcciones");
+							MenuItem btnVProp = new MenuItem("Vender propiedad");
 
-						contextMenu.getItems().addAll(btnHipo, btnDes, btnCon,
-								btnVCon, btnVProp);
+							contextMenu.getItems().addAll(btnHipo, btnDes,
+									btnCon, btnVCon, btnVProp);
 
-						// Seteamos el estado de los botones...
-						if (!propiedad.isHipotecable())
-							btnHipo.setDisable(true);
-						else
-							btnHipo.setOnAction(new EventHipotecar(propiedad));
-
-						if (!propiedad.isDeshipotecable())
-							btnDes.setDisable(true);
-						else
-							btnDes.setOnAction(new EventDeshipotecar(propiedad));
-
-						if (propiedad.isPropiedadCalle()) {
-							if (!((TarjetaCalle) propiedad).isContruible())
-								btnCon.setDisable(true);
+							// Seteamos el estado de los botones...
+							if (!propiedad.isHipotecable())
+								btnHipo.setDisable(true);
 							else
-								btnCon.setOnAction(new EventConstruir(propiedad));
-						} else {
-							btnCon.setVisible(false);
-						}
-
-						if (propiedad.isPropiedadCalle()) {
-							if (!((TarjetaCalle) propiedad).isDescontruible())
-								btnVCon.setDisable(true);
-							else
-								btnVCon.setOnAction(new EventDesconstruir(
+								btnHipo.setOnAction(new EventHipotecar(
 										propiedad));
+
+							if (!propiedad.isDeshipotecable())
+								btnDes.setDisable(true);
+							else
+								btnDes.setOnAction(new EventDeshipotecar(
+										propiedad));
+
+							if (propiedad.isPropiedadCalle()) {
+								if (!((TarjetaCalle) propiedad).isContruible())
+									btnCon.setDisable(true);
+								else
+									btnCon.setOnAction(new EventConstruir(
+											propiedad));
+							} else {
+								btnCon.setVisible(false);
+							}
+
+							if (propiedad.isPropiedadCalle()) {
+								if (!((TarjetaCalle) propiedad)
+										.isDescontruible())
+									btnVCon.setDisable(true);
+								else
+									btnVCon.setOnAction(new EventDesconstruir(
+											propiedad));
+							} else {
+								btnVCon.setVisible(false);
+							}
+
+							if (btnVCon.isVisible() && !btnVCon.isDisable())
+								btnVProp.setDisable(true);
+
 						} else {
-							btnVCon.setVisible(false);
+							MenuItem btnOferta = new MenuItem(
+									"Comprar propiedad");
+
+							btnOferta.setOnAction(new EventComprarPropiedad(
+									propiedad));
+
+							contextMenu.getItems().addAll(btnOferta);
+
 						}
-
-						if (btnVCon.isVisible() && !btnVCon.isDisable())
-							btnVProp.setDisable(true);
-
 						hBox_inner.setOnMouseClicked(event -> {
 							if (event.getButton() == MouseButton.SECONDARY) {
 								contextMenu.show(hBox_inner,
@@ -2415,7 +2434,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					+ "Se construirán automáticamente y en orden de forma tal que ninguna\n"
 					+ "calle tenga más de 1 casa de diferencia con otra. Si se seleccionan\n"
 					+ "5 construcciones, se construirá un hotel en lugar de casas.\n\n";
-			int answer = showNumericMsgBox("Construir edificios",
+			int answer = showConstruccionesMsgBox("Construir edificios",
 					"Ingresar cantidad", descripcion,
 					"¿Cuantos edificios desea construír en total?",
 					"Costo total", 1, maxHouse, maxHouse,
@@ -2471,7 +2490,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			String descripcion = "Seleccione la cantidad de casas que desea vender.\n"
 					+ "Se venderan automáticamente y en orden de forma tal que ninguna\n"
 					+ "calle tenga más de 1 casa de diferencia con otra.\n\n";
-			int answer = showNumericMsgBox("Vender edificios",
+			int answer = showConstruccionesMsgBox("Vender edificios",
 					"Ingresar cantidad", descripcion,
 					"¿Cuantos edificios desea vender?", "Beneficio total", 1,
 					maxHouse, maxHouse, tarjeta.getPrecioVentaCadaCasa());
@@ -2490,6 +2509,79 @@ public class TableroController extends AnchorPane implements Serializable,
 
 		}
 
+	}
+
+	/**
+	 * Clase para la acción de "Vender construcciones" del {@code ContextMenu}
+	 * 
+	 * @author Bostico Alejandro
+	 * @author Moreno Pablo
+	 */
+	private class EventComprarPropiedad implements EventHandler<ActionEvent> {
+
+		final private TarjetaPropiedad propiedad;
+
+		public EventComprarPropiedad(TarjetaPropiedad propiedad) {
+			super();
+			this.propiedad = propiedad;
+		}
+
+		@Override
+		public void handle(ActionEvent event) {
+
+			TarjetaPropiedad tarjeta;
+			tarjeta = (TarjetaPropiedad) propiedad;
+
+			StringBuffer descripcion = new StringBuffer();
+			descripcion
+					.append("Puede realizar una oferta monetaria por la propiedad.\n");
+			descripcion
+					.append("En el caso de que el dueño la acepte, le deberá pagar el\n");
+			descripcion.append("monto ofertado y la propiedad será suya.\n\n");
+
+			descripcion.append("Nombre de la propiedad: "
+					+ propiedad.getNombre() + "\n");
+
+			descripcion.append("Actual dueño: "
+					+ propiedad.getJugador().getNombre() + "\n");
+
+			descripcion.append("Valor de la propiedad: "
+					+ StringUtils.formatearAMoneda(propiedad
+							.getValorPropiedad()) + "\n");
+
+			descripcion.append("Valor hipotecario: "
+					+ StringUtils.formatearAMoneda(propiedad
+							.getValorHipotecario()) + "\n");
+
+			if (propiedad.isHipotecada()) {
+				descripcion
+						.append("La propiedad está hipotecada y debés pagar ");
+				descripcion.append(StringUtils.formatearAMoneda(propiedad
+						.getValorDeshipotecario()));
+				descripcion.append("\npara deshipotecarla luego de comprarla.");
+			} else {
+				descripcion.append("La propiedad NO está hipotecada.");
+			}
+
+			int answer = showPropiedadesMsgBox("Hacer una oferta",
+					"Ingresar cantidad", descripcion.toString(),
+					"¿Cuando dinero desea ofertar por la propiedad?",
+					"Beneficio total", tarjeta.getValorPropiedad());
+
+			// Si "answer = -1" es porque presionó "Cancelar"
+			// En ese caso salimos sin hacer nada...
+			if (answer < 1)
+				return;
+
+			// int senderID = ConnectionController.getInstance().getIdPlayer();
+			// String idJuego = getJuego().getUniqueID();
+			//
+			// UnbuildMessage msg = new UnbuildMessage(senderID, idJuego,
+			// tarjeta,
+			// answer);
+			// ConnectionController.getInstance().send(msg);
+
+		}
 	}
 
 	/**
@@ -2831,9 +2923,9 @@ public class TableroController extends AnchorPane implements Serializable,
 	 *            El precio de cada casa que se quiere vender/comprar
 	 * @return El valor seleccionado por el usuario o -1 si presionó "Cancelar"
 	 */
-	public int showNumericMsgBox(String title, String headerText, String desc,
-			String message, String msgSpinner, int minValue, int maxValue,
-			int defaultValue, int precioCasa) {
+	public int showConstruccionesMsgBox(String title, String headerText,
+			String desc, String message, String msgSpinner, int minValue,
+			int maxValue, int defaultValue, int precioCasa) {
 
 		Alert alert;
 		Optional<ButtonType> result = null;
@@ -2866,6 +2958,90 @@ public class TableroController extends AnchorPane implements Serializable,
 		grid.add(lblText, 0, 2);
 		grid.add(new HBox(new Label("   "), spinner, new Label("  "
 				+ msgSpinner + ": "), lblCost), 0, 3);
+
+		try {
+			ButtonType buttonOk;
+			ButtonType buttonCancel;
+
+			buttonOk = new ButtonType("Aceptar", ButtonData.OK_DONE);
+			buttonCancel = new ButtonType("Cancelar", ButtonData.CANCEL_CLOSE);
+
+			alert = getAlert(
+					AlertType.CONFIRMATION,
+					title,
+					headerText,
+					message,
+					new ArrayList<ButtonType>(Arrays.asList(buttonOk,
+							buttonCancel)));
+
+			alert.getDialogPane().setContent(grid);
+
+			result = alert.showAndWait();
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
+		}
+
+		if (result.get().getButtonData() == ButtonData.CANCEL_CLOSE)
+			return -1;
+
+		return spinner.getValue();
+
+	}
+
+	/**
+	 * Método para mostrar un mensaje en la pantalla que requiere de una
+	 * respuesta Numérica entre {@code 0} y {@code Integer.MAX_VALUE}. <code>
+	 * -----------------------------------------------------
+	 * |   title                                           | 
+	 * |===================================================|
+	 * | headerText                                        |
+	 * |---------------------------------------------------|
+	 * | desc line1......................................  |
+	 * | desc line2......................................  |
+	 * | message                                           |
+	 * |  ----------                                       |
+	 * |  |SPINNER |  €                                    |
+	 * |  ----------                                       |
+	 * -----------------------------------------------------
+	 * </code>
+	 * 
+	 * @param title
+	 *            El título del mensaje
+	 * @param headerText
+	 *            El encabezado del mensaje
+	 * @param desc
+	 *            Una descripción con una explicación
+	 * @param message
+	 *            El mensaje a mostrar
+	 * @param valorPropiedad
+	 *            El valor de de la propiedad que se oferta
+	 * @return El valor seleccionado por el usuario o -1 si presionó "Cancelar"
+	 */
+	public int showPropiedadesMsgBox(String title, String headerText,
+			String desc, String message, String msgSpinner, int valorPropiedad) {
+
+		Alert alert;
+		Optional<ButtonType> result = null;
+
+		Spinner<Integer> spinner = new Spinner<Integer>(0, Integer.MAX_VALUE,
+				valorPropiedad);
+
+		Label lblText = new Label(message);
+		Label lblDesc = new Label(desc);
+
+		spinner.setEditable(true);
+		spinner.setVisible(true);
+		spinner.setMinWidth(80);
+		spinner.setPrefWidth(80);
+
+		GridPane grid = new GridPane();
+		grid.setHgap(10);
+		grid.setVgap(10);
+		grid.setPadding(new Insets(20, 20, 10, 10));
+
+		grid.add(lblDesc, 0, 0);
+		grid.add(lblText, 0, 1);
+		grid.add(new HBox(spinner, new Label(" € ")), 0, 2);
 
 		try {
 			ButtonType buttonOk;

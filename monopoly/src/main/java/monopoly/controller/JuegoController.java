@@ -109,6 +109,7 @@ public class JuegoController implements Serializable {
 	 */
 	public void addPlayer(Jugador jugador) throws Exception {
 		this.gestorJugadores.addPlayer(jugador);
+		this.juego.addJugador(jugador);
 		jugador.setCasilleroActual(gestorTablero.getCasillero(1));
 
 		History history = new History(StringUtils.getFechaActual(),
