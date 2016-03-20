@@ -41,7 +41,9 @@ public class ConstantesMensaje {
 	public final static String DEMORTGAGE_MESSAGE = "DemortgageMessage";
 	public final static String BUILD_MESSAGE = "BuildMessage";
 	public final static String UNBUILD_MESSAGE = "UnbuildMessage";
-
+	public final static String BID_FOR_PROPERTY_MESSAGE = "BidForPropertyMessage";
+	public final static String BID_RESULT_MESSAGE = "BidResultMessage";
+	
 	public final static String COMPLETE_TURN_MESSAGE = "CompleteTurnMessage";
 	public final static String PAY_TO_PLAYER_MESSAGE = "PayToPlayerMessage";
 	public final static String DOUBLE_DICE_JAIL_MESSAGE = "DoubleDiceJailMessage";

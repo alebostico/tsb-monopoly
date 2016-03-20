@@ -12,6 +12,7 @@ import monopoly.model.AccionEnCasillero;
 import monopoly.model.Banco;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
+import monopoly.model.JugadorHumano;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tablero.Casillero.TipoCasillero;
 import monopoly.model.tablero.CasilleroCalle;
@@ -770,6 +771,23 @@ public class TableroController implements Serializable {
 	public boolean esUltimaPropiedadMonopolio(Casillero casillero,
 			Jugador jugador) {
 		if (this.propNoCompradasMonopolio(casillero, jugador) == 1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Determina si el jugador tiene todas las propiedades del mismo color
+	 * 
+	 * @param casillero
+	 *            Un casillero del color del monopolio
+	 * @param jugador
+	 *            El jugador dueño de las propiedades del color
+	 * @return {@code true} si tiene todas las propiedades del mismo color
+	 */
+	public boolean tieneMonopolioCompleto(Casillero casillero, Jugador jugador) {
+		if (this.propNoCompradasMonopolio(casillero, jugador) == 0) {
 			return true;
 		} else {
 			return false;
@@ -1839,7 +1857,62 @@ public class TableroController implements Serializable {
 
 		this.getBancoController(jugador.getJuego()).venderPropiedad(jugador,
 				tarjeta);
+	}
 
+	/**
+	 * Transfiere una propiedad de su dueño al comprador por el monto indicado
+	 * 
+	 * @param tarjeta
+	 *            La tarjeta que se va a transferir
+	 * @param comprador
+	 *            El Jugador al cual se tranfiere
+	 * @param monto
+	 *            El precio que el comprador le paga al actual dueño de la
+	 *            propiedad
+	 * @throws SinDineroException
+	 *             Si el compador no tiene dinero suficiente para pagar la
+	 *             propiedad
+	 */
+	public void transferirPropiedad(TarjetaPropiedad tarjeta,
+			JugadorHumano comprador, int monto) throws SinDineroException {
+		// TODO: debería llamar al método adquirir propiedad que hizo Pablo
+
+		JugadorHumano newDueno = comprador;
+		Jugador oldDueno = tarjeta.getJugador();
+
+		Casillero casilleroTablero;
+		TarjetaPropiedad tarjetaTablero;
+
+		casilleroTablero = tablero.getCasillero(tarjeta.getCasillero()
+				.getNumeroCasillero());
+
+		switch (casilleroTablero.getTipoCasillero()) {
+		case C_CALLE:
+			tarjetaTablero = ((CasilleroCalle) casilleroTablero)
+					.getTarjetaCalle();
+			break;
+		case C_COMPANIA:
+			tarjetaTablero = ((CasilleroCompania) casilleroTablero)
+					.getTarjetaCompania();
+			break;
+		case C_ESTACION:
+			tarjetaTablero = ((CasilleroEstacion) casilleroTablero)
+					.getTarjetaEstacion();
+			break;
+		default:
+			// No debería entrar nunca a esta parte
+			tarjetaTablero = tarjeta;
+			break;
+		}
+
+		newDueno.pagarAJugador(oldDueno, monto);
+		oldDueno.getTarjPropiedadList().remove(tarjetaTablero);
+		newDueno.adquirirPropiedad(tarjetaTablero);
+
+		GestorLogs.registrarDebug("El jugador " + newDueno.getNombre()
+				+ " le compró la propiedad " + tarjeta.getNombre()
+				+ " al jugador " + oldDueno.getNombre() + " por "
+				+ StringUtils.formatearAMoneda(monto));
 	}
 
 	/**

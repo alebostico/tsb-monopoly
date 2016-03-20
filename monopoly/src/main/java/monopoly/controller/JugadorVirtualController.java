@@ -216,6 +216,130 @@ public class JugadorVirtualController implements Serializable {
 	}
 
 	/**
+	 * Decide si el jugadorVirtual vende la propiedad al precio que el jugador
+	 * ofrezca. Se tomarán diferentes decisiones de acuerdo al tipo de jugador
+	 * virtual.
+	 * 
+	 * @param propiedad
+	 *            La propiedad de la transacción
+	 * @param oferta
+	 *            El monto que se ofrece por la propiedad
+	 * @param comprador
+	 *            El jugador que hace la oferta
+	 * @param vendedor
+	 *            El jugador que recibe la oferta
+	 * @return {@code true} si se acepta la oferta, {@code false} si se rechaza.
+	 */
+	public boolean decidirVenderPropiedad(TarjetaPropiedad propiedad,
+			int oferta, Jugador comprador, JugadorVirtual vendedor) {
+
+		Random rnd = new Random();
+		int precioVenta = propiedad.getValorPropiedad();
+		int probabilidad;
+		int resultado;
+		boolean vender = false;
+
+		Casillero casillero = propiedad.getCasillero();
+		int precioPropiedad = propiedad.getValorPropiedad();
+		int dineroJugador = vendedor.getDinero();
+		JuegoController juegoController = PartidasController.getInstance()
+				.buscarControladorJuego(vendedor.getJuego().getUniqueID());
+		TableroController tableroController = juegoController
+				.getGestorTablero();
+
+		switch (vendedor.getTipoJugador()) {
+		// Jugador basado en reglas
+		case TJ_MAGNATE:
+
+			// si el jugador al que le compran ya tiene monopolio, no vende
+			if (tableroController.tieneMonopolioCompleto(casillero, vendedor)) {
+				break;
+			}
+
+			// Si el jugador que vende tiene otra propiedad del mismo color, el
+			// precio sube (precio + 40%)
+			if (tableroController.poseeParteDelMonopolio(casillero, vendedor)) {
+				precioVenta = (int) (precioVenta + ((double) precioVenta * 0.40));
+			}
+
+			// si el jugador que compra ya tiene una propiedad del mismo color,
+			// el precio sube (precio + 60%)
+			if (tableroController.poseeParteDelMonopolio(casillero, comprador)) {
+				precioVenta = (int) (precioVenta + ((double) precioVenta * 0.60));
+			}
+
+			// si el jugador que compra completa monopolio, el precio sube
+			// (precio + 130%)
+			if (tableroController.esUltimaPropiedadMonopolio(casillero,
+					comprador)) {
+				precioVenta = (int) (precioVenta + ((double) precioVenta * 1.30));
+			}
+
+			// si no entró a ninguna de las opciones anteriores, el
+			// precioPropiedad == precioVenta
+			// en ese caso, ponemos un mínimo de venta:
+			// si el precio de compra es mayor al 130% del valor de la
+			// propiedad, compra.
+			if (precioPropiedad == precioVenta) {
+				precioVenta = (int) (precioVenta + ((double) precioVenta * 0.30));
+			}
+
+			if (oferta >= precioVenta)
+				vender = true;
+			else
+				vender = false;
+
+			break;
+
+		case TJ_EMPRESARIO:
+
+			// Decido según el azar si pujo o no, en funcion de la siguiente
+			// probabilidad
+			probabilidad = (dineroJugador - oferta) * 100 / dineroJugador;
+
+			resultado = rnd.nextInt(100);
+
+			// Si el numero es menor que la probabilidad, vendo
+			if (resultado > probabilidad)
+				vender = true;
+			else
+				vender = false;
+
+			break;
+
+		case TJ_COMPRADOR_PRIMERIZO:
+
+			// Decido según el azar si pujo o no, en funcion de la siguiente
+			// probabilidad
+			probabilidad = 50;
+
+			resultado = rnd.nextInt(100);
+
+			// Si el numero es menor que la probabilidad, pujo
+			if (resultado > probabilidad)
+				vender = true;
+			else
+				vender = false;
+
+			break;
+
+		}
+
+		if (vender) {
+			GestorLogs.registrarDebug("El jugador " + vendedor.getNombre()
+					+ " ACEPTÓ la oferta de "
+					+ StringUtils.formatearAMoneda(oferta) + " de "
+					+ comprador.getNombre() + " por " + propiedad.getNombre());
+		} else {
+			GestorLogs.registrarDebug("El jugador " + vendedor.getNombre()
+					+ " RECHAZÓ la oferta de "
+					+ StringUtils.formatearAMoneda(oferta) + " de "
+					+ comprador.getNombre() + " por " + propiedad.getNombre());
+		}
+		return vender;
+	}
+
+	/**
 	 * El jugador decidir&aacute; al caer sobre una propiedad libre si quiere
 	 * comprarla o no. La decisi&oacute;n se tomar&aacute; en funci&oacute;n del
 	 * tipo de agente de IA que se trate.
@@ -1108,5 +1232,4 @@ public class JugadorVirtualController implements Serializable {
 		}
 
 	}
-
 }

@@ -25,14 +25,11 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -75,7 +72,6 @@ import javafx.util.Duration;
 import monopoly.client.connection.ConnectionController;
 import monopoly.client.controller.TirarDadosController.TipoTiradaEnum;
 import monopoly.client.util.FXUtils;
-import monopoly.client.util.ScreensFramework;
 import monopoly.model.AccionEnCasillero;
 import monopoly.model.Banco;
 import monopoly.model.Deuda;
@@ -103,6 +99,8 @@ import monopoly.util.constantes.EnumEstadoSubasta;
 import monopoly.util.constantes.EnumSalidaCarcel;
 import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
+import monopoly.util.message.game.BidForPropertyMessage;
+import monopoly.util.message.game.BidResultMessage;
 import monopoly.util.message.game.BuildMessage;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
@@ -349,6 +347,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		oHistoryGameList = FXCollections.observableArrayList(historyGameList);
 		oHistoryChatList = FXCollections.observableArrayList(historyChatList);
 		accordionHistorial.setExpandedPane(tpHistory);
+		// setJugador(getMyPlayer());
 
 		txtMessageChat.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
@@ -638,25 +637,47 @@ public class TableroController extends AnchorPane implements Serializable,
 	 */
 	private void esperarJugadores() {
 		preloaderStage = new Stage();
+		SplashController controller;
 
 		try {
 
 			String fxml = ConstantesFXML.FXML_SPLASH;
-			Parent root;
 
-			FXMLLoader loader = ScreensFramework.getLoader(fxml);
+			preloaderStage = new Stage();
+			controller = (SplashController) FXUtils.cargarStage(preloaderStage,
+					fxml, "Monopoly - Esperando por jugadores", false, false,
+					Modality.APPLICATION_MODAL, StageStyle.UNDECORATED);
 
-			root = (Parent) loader.load();
+			controller.setController(TableroController.this);
+			controller.setCurrentStage(preloaderStage);
+			preloaderStage.show();
 
-			Scene scene = new Scene(root);
-			preloaderStage.setScene(scene);
-			preloaderStage.setTitle("Monopoly - Esperando por jugadores");
-			preloaderStage.centerOnScreen();
-			preloaderStage.setResizable(false);
-			preloaderStage.initModality(Modality.APPLICATION_MODAL);
-			preloaderStage.initStyle(StageStyle.UNDECORATED);
-			SplashController controller = (SplashController) loader
-					.getController();
+		} catch (Exception ex) {
+			GestorLogs.registrarException(ex);
+			showMessageBox(AlertType.ERROR, "Error...", null, ex.getMessage());
+		}
+	}
+
+	/**
+	 * Método que muestra un messagebox informando que el jugador debe esperar
+	 * por oponentes.
+	 */
+	private void esperarRespuestaOferta() {
+		preloaderStage = new Stage();
+		SplashController controller;
+
+		try {
+			String fxml = ConstantesFXML.FXML_SPLASH;
+
+			preloaderStage = new Stage();
+			controller = (SplashController) FXUtils.cargarStage(preloaderStage,
+					fxml, "Monopoly - Esperando respuesta", false, false,
+					Modality.APPLICATION_MODAL, StageStyle.UNDECORATED);
+
+			controller.setController(TableroController.this);
+			controller.setCurrentStage(preloaderStage);
+			preloaderStage.show();
+			controller.setLblMensaje("Esperando respuesta del jugador...");
 			controller.setController(TableroController.this);
 			controller.setCurrentStage(preloaderStage);
 			preloaderStage.show();
@@ -2529,9 +2550,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		@Override
 		public void handle(ActionEvent event) {
 
-			TarjetaPropiedad tarjeta;
-			tarjeta = (TarjetaPropiedad) propiedad;
-
 			StringBuffer descripcion = new StringBuffer();
 			descripcion
 					.append("Puede realizar una oferta monetaria por la propiedad.\n");
@@ -2566,21 +2584,21 @@ public class TableroController extends AnchorPane implements Serializable,
 			int answer = showPropiedadesMsgBox("Hacer una oferta",
 					"Ingresar cantidad", descripcion.toString(),
 					"¿Cuando dinero desea ofertar por la propiedad?",
-					"Beneficio total", tarjeta.getValorPropiedad());
+					"Beneficio total", propiedad.getValorPropiedad());
 
 			// Si "answer = -1" es porque presionó "Cancelar"
 			// En ese caso salimos sin hacer nada...
 			if (answer < 1)
 				return;
 
-			// int senderID = ConnectionController.getInstance().getIdPlayer();
-			// String idJuego = getJuego().getUniqueID();
-			//
-			// UnbuildMessage msg = new UnbuildMessage(senderID, idJuego,
-			// tarjeta,
-			// answer);
-			// ConnectionController.getInstance().send(msg);
+			String idJuego = getJuego().getUniqueID();
 
+			BidForPropertyMessage msg = new BidForPropertyMessage(
+					TableroController.this.getMyPlayer(), idJuego, propiedad,
+					answer);
+			ConnectionController.getInstance().send(msg);
+
+			esperarRespuestaOferta();
 		}
 	}
 
@@ -2804,6 +2822,76 @@ public class TableroController extends AnchorPane implements Serializable,
 				pCasillero40.getChildren().clear();
 			}
 		});
+	}
+
+	/**
+	 * Muestra un mensaje para consultarle al jugador si desea venderle una
+	 * propiedad a otro jugador
+	 * 
+	 * @param propiedad
+	 *            La propiedad por la que ofertó
+	 * @param oferente
+	 *            El jugador que realizó la oferta
+	 * @param monto
+	 *            El monto que ofrece
+	 */
+	public void ofrecerPorPropiedad(TarjetaPropiedad propiedad,
+			Jugador oferente, int monto) {
+
+		String message = String.format(
+				"El jugador %s realizó una oferta de %s por la propiedad %s.\n"
+						+ "¿Deséa aceptar la oferta y venderle la propuiedad?",
+				oferente.getNombre(), StringUtils.formatearAMoneda(monto),
+				propiedad.getNombre());
+
+		boolean respuesta = showYesNoMsgBox("Oferta recibida",
+				"Ha recibido una oferta", message);
+
+		BidResultMessage bidMessage = new BidResultMessage(
+				(JugadorHumano) oferente, juego.getUniqueID(), propiedad,
+				monto, respuesta);
+		ConnectionController.getInstance().send(bidMessage);
+	}
+
+	/**
+	 * Muestra un mensaje que le informa al jugador si la oferta fue aceptada o
+	 * rechazada.
+	 * 
+	 * @param propiedad
+	 *            La propiedad por la que ofertó
+	 * @param monto
+	 *            El monto que ofrece
+	 * @param resultado
+	 *            {@code true} si la oferta fue aceptada
+	 */
+	public void finalizarOfertaPropiedad(TarjetaPropiedad propiedad, int monto,
+			boolean resultado) {
+
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				SplashController.getInstance().getCurrentStage().close();
+
+			}
+		});
+
+		String titulo;
+		String mensaje;
+
+		if (resultado) {
+			titulo = "Oferta aceptada";
+			mensaje = String.format("Adquiriste la propiedad %s por %s",
+					propiedad.getNombre(), StringUtils.formatearAMoneda(monto));
+		} else {
+			titulo = "Oferta rechazada";
+			mensaje = String.format("El jugador %s no aceptó tu oferta de %s\n"
+					+ "por la propiedad %s",
+					propiedad.getJugador().getNombre(),
+					StringUtils.formatearAMoneda(monto), propiedad.getNombre());
+		}
+
+		showMessageBox(AlertType.INFORMATION, "Comprar propiedad", titulo,
+				mensaje);
 	}
 
 	/**
