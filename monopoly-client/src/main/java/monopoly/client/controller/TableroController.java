@@ -2838,19 +2838,29 @@ public class TableroController extends AnchorPane implements Serializable,
 	public void ofrecerPorPropiedad(TarjetaPropiedad propiedad,
 			Jugador oferente, int monto) {
 
-		String message = String.format(
-				"El jugador %s realizó una oferta de %s por la propiedad %s.\n"
-						+ "¿Deséa aceptar la oferta y venderle la propuiedad?",
-				oferente.getNombre(), StringUtils.formatearAMoneda(monto),
-				propiedad.getNombre());
+		Platform.runLater(new Runnable() {
+			String message;
+			boolean respuesta;
 
-		boolean respuesta = showYesNoMsgBox("Oferta recibida",
-				"Ha recibido una oferta", message);
+			@Override
+			public void run() {
+				message = String
+						.format("El jugador %s realizó una oferta de %s por la propiedad %s.\n"
+								+ "¿Desea aceptar la oferta y venderle la propiedad?",
+								oferente.getNombre(),
+								StringUtils.formatearAMoneda(monto),
+								propiedad.getNombre());
 
-		BidResultMessage bidMessage = new BidResultMessage(
-				(JugadorHumano) oferente, juego.getUniqueID(), propiedad,
-				monto, respuesta);
-		ConnectionController.getInstance().send(bidMessage);
+				respuesta = showYesNoMsgBox("Oferta recibida",
+						"Ha recibido una oferta", message);
+
+				BidResultMessage bidMessage = new BidResultMessage(
+						(JugadorHumano) oferente, juego.getUniqueID(),
+						propiedad, monto, respuesta);
+				ConnectionController.getInstance().send(bidMessage);
+			}
+		});
+
 	}
 
 	/**
@@ -2871,7 +2881,6 @@ public class TableroController extends AnchorPane implements Serializable,
 			@Override
 			public void run() {
 				SplashController.getInstance().getCurrentStage().close();
-
 			}
 		});
 
@@ -2972,6 +2981,64 @@ public class TableroController extends AnchorPane implements Serializable,
 			GestorLogs.registrarError(ex);
 		}
 		return (result.get().getButtonData() == ButtonData.YES);
+	}
+
+	/**
+	 * Método para mostrar un mensaje en la pantalla que requiere de una
+	 * respuesta SI/NO para usar cuando no se ejecuta desde una ventana JavaFX
+	 * (Mete el mensaje dentro de un FutureTask).
+	 * 
+	 * @param title
+	 *            El título del mensaje
+	 * @param headerText
+	 *            El encabezado del mensaje
+	 * @param message
+	 *            El mensaje a mostrar
+	 * @return <strong>{@code true}</strong> si el usuario respondió
+	 *         <strong>SI</strong>. <strong>{@code false}</strong> si respondió
+	 *         <strong>NO</strong>.
+	 */
+	public boolean showFutureYesNoMsgBox(String title, String headerText,
+			String message) {
+		Boolean result = new Boolean(false);
+		FutureTask<Boolean> taskMessage = null;
+
+		try {
+
+			taskMessage = new FutureTask<Boolean>(new Callable<Boolean>() {
+
+				Alert alert;
+				Optional<ButtonType> result = null;
+
+				@Override
+				public Boolean call() throws Exception {
+
+					ButtonType buttonYes;
+					ButtonType buttonNo;
+
+					buttonYes = new ButtonType("Si", ButtonData.YES);
+					buttonNo = new ButtonType("No", ButtonData.NO);
+
+					alert = getAlert(
+							AlertType.CONFIRMATION,
+							title,
+							headerText,
+							message,
+							new ArrayList<ButtonType>(Arrays.asList(buttonYes,
+									buttonNo)));
+
+					result = alert.showAndWait();
+					return new Boolean(
+							result.get().getButtonData() == ButtonData.YES);
+				}
+			});
+
+			Platform.runLater(taskMessage);
+			result = taskMessage.get();
+		} catch (Exception ex) {
+			GestorLogs.registrarError(ex);
+		}
+		return (result.booleanValue());
 	}
 
 	/**

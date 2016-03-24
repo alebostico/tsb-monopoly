@@ -1874,12 +1874,36 @@ public class TableroController implements Serializable {
 	 *             propiedad
 	 */
 	public void transferirPropiedad(TarjetaPropiedad tarjeta,
-			JugadorHumano comprador, int monto) throws SinDineroException {
+			JugadorHumano comprador, Jugador vendedor, int monto)
+			throws SinDineroException {
 		// TODO: debería llamar al método adquirir propiedad que hizo Pablo
 
 		JugadorHumano newDueno = comprador;
-		Jugador oldDueno = tarjeta.getJugador();
+		Jugador oldDueno = vendedor;
 
+		TarjetaPropiedad tarjetaTablero = this.getTarjetaPropiedad(tarjeta);
+
+		newDueno.pagarAJugador(oldDueno, monto);
+		oldDueno.getTarjPropiedadList().remove(tarjetaTablero);
+		newDueno.adquirirPropiedad(tarjetaTablero);
+
+		GestorLogs.registrarDebug("El jugador " + newDueno.getNombre()
+				+ " le compró la propiedad " + tarjeta.getNombre()
+				+ " al jugador " + oldDueno.getNombre() + " por "
+				+ StringUtils.formatearAMoneda(monto));
+	}
+
+	/**
+	 * Devuelve la instancia de la {@code TarjetaPropiedad} del tablero a partir
+	 * de una copia de esa misma tarjeta propiedad. Se supone que la tarjeta
+	 * pasada por parámetro es igual a la del tablero, pero otra instancia. Este
+	 * método devuelve la instancia del tablero.
+	 * 
+	 * @param tarjeta
+	 *            La copia de la tarjeta
+	 * @return La instancia del tablero de la {@code tarjeta}
+	 */
+	public TarjetaPropiedad getTarjetaPropiedad(TarjetaPropiedad tarjeta) {
 		Casillero casilleroTablero;
 		TarjetaPropiedad tarjetaTablero;
 
@@ -1904,15 +1928,7 @@ public class TableroController implements Serializable {
 			tarjetaTablero = tarjeta;
 			break;
 		}
-
-		newDueno.pagarAJugador(oldDueno, monto);
-		oldDueno.getTarjPropiedadList().remove(tarjetaTablero);
-		newDueno.adquirirPropiedad(tarjetaTablero);
-
-		GestorLogs.registrarDebug("El jugador " + newDueno.getNombre()
-				+ " le compró la propiedad " + tarjeta.getNombre()
-				+ " al jugador " + oldDueno.getNombre() + " por "
-				+ StringUtils.formatearAMoneda(monto));
+		return tarjetaTablero;
 	}
 
 	/**

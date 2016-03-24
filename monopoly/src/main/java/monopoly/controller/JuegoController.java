@@ -747,13 +747,11 @@ public class JuegoController implements Serializable {
 					oferta, comprador, jugadorVirtual);
 
 			this.transferirPropiedad(propiedad, comprador, oferta, compra);
-			
-		} else {
-			int toSend = ((JugadorHumano) dueno).getSenderID();
 
-			BidForPropertyMessage bidMessage = new BidForPropertyMessage(dueno,
-					juego.getUniqueID(), propiedad, oferta);
-			sendToOne(toSend, bidMessage);
+		} else {
+			BidForPropertyMessage bidMessage = new BidForPropertyMessage(
+					comprador, juego.getUniqueID(), propiedad, oferta);
+			sendToOne(((JugadorHumano) dueno).getSenderID(), bidMessage);
 		}
 
 	}
@@ -803,25 +801,35 @@ public class JuegoController implements Serializable {
 		EstadoJuego estadoJuegoJugadorActual = EstadoJuego.ACTUALIZANDO_ESTADO;
 		List<Jugador> turnosList;
 		List<History> historyList = new ArrayList<History>();
-		Jugador dueno = propiedad.getJugador();
+		Jugador oldDueno = propiedad.getJugador();
+		JugadorHumano newDueno = comprador;
 
 		if (compra) {
 
+			for (Jugador jugador : this.gestorJugadores.getTurnoslist()) {
+				if (jugador.getNombre().equals(comprador.getNombre()))
+					newDueno = (JugadorHumano) jugador;
+				else if (jugador.getNombre().equals(
+						propiedad.getJugador().getNombre()))
+					oldDueno = jugador;
+			}
+
 			// Transferimos la propiedad y el dinero....
-			gestorTablero.transferirPropiedad(propiedad, comprador, monto);
+			gestorTablero.transferirPropiedad(
+					gestorTablero.getTarjetaPropiedad(propiedad), newDueno,
+					oldDueno, monto);
 
 			// Enviar mensajes informado
 			mensaje = String.format(
 					"Le compró la propiedad %s al jugador %s por %s",
-					comprador.getNombre(), dueno.getNombre(),
-					propiedad.getNombre(), StringUtils.formatearAMoneda(monto));
+					propiedad.getNombre(), oldDueno.getNombre(),
+					StringUtils.formatearAMoneda(monto));
 
 		} else {
 			mensaje = String.format(
 					"No le compró la propiedad %s al jugador %s "
 							+ "porque no aceptó la oferta de %s",
-					propiedad.getNombre(), dueno.getNombre(),
-
+					propiedad.getNombre(), oldDueno.getNombre(),
 					StringUtils.formatearAMoneda(monto));
 		}
 
