@@ -39,7 +39,7 @@ public class Juego implements Serializable {
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "juegoGuardadoID")
 	private int juegoGuardadoID;
-	
+
 	/**
 	 * Nombre unico que identifica al juego
 	 */
@@ -64,10 +64,10 @@ public class Juego implements Serializable {
 
 	@Column(name = "fecha_creacion")
 	private Date fechaCreacion;
-	
+
 	@Column(name = "fecha_guardado")
 	private Date fechaGuardado;
-	
+
 	@Column(name = "fecha_restaurado")
 	private Date fechaRestaurado;
 
@@ -79,13 +79,13 @@ public class Juego implements Serializable {
 
 	@Column(name = "cant_jugadores")
 	private int cantJugadores;
-	
+
 	@Column(name = "nombre_archivo")
 	private String nombreArchivo;
 
 	@Transient
 	private List<Ficha> fichasPlayerList;
-	
+
 	@Transient
 	private Tablero tablero;
 
@@ -114,8 +114,8 @@ public class Juego implements Serializable {
 		this.fechaRestaurado = null;
 		this.jugadoresList = new ArrayList<Jugador>();
 		this.fichasPlayerList = FichasController.getFichas();
-//		this.tarjetasPropiedadList = TarjetaController
-//				.getTarjetasPropiedadesTreeMap();
+		// this.tarjetasPropiedadList = TarjetaController
+		// .getTarjetasPropiedadesTreeMap();
 		this.generateUniqueID();
 		this.initJuego();
 	}
@@ -177,9 +177,32 @@ public class Juego implements Serializable {
 
 		GestorLogs.registrarLog("Agregado jugador '"
 				+ jugador.getFicha().getNombre() + "' al juego '"
-				+ this.getUniqueID() );
+				+ this.getUniqueID());
 
 		return returnValue;
+	}
+
+	/**
+	 * Devuelve la cantidad de jugadores humanos que están jugando
+	 * 
+	 * @return La cantidad de Jugadores humanos del juego
+	 */
+	public int cantJugadoresHumanos() {
+		int contador = 0;
+		for (Jugador jugador : jugadoresList) {
+			if (jugador.isHumano())
+				contador++;
+		}
+		return contador;
+	}
+
+	/**
+	 * Devuelve la cantidad de jugadores virtuales que están jugando
+	 * 
+	 * @return La cantidad de Jugadores virtuales del juego
+	 */
+	public int cantJugadoresVirtuales() {
+		return jugadoresList.size() - cantJugadoresHumanos();
 	}
 
 	/**
@@ -298,7 +321,8 @@ public class Juego implements Serializable {
 	}
 
 	/**
-	 * @param tablero the tablero to set
+	 * @param tablero
+	 *            the tablero to set
 	 */
 	public void setTablero(Tablero tablero) {
 		this.tablero = tablero;

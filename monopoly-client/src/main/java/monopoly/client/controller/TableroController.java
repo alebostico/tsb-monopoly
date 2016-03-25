@@ -349,31 +349,36 @@ public class TableroController extends AnchorPane implements Serializable,
 		accordionHistorial.setExpandedPane(tpHistory);
 		// setJugador(getMyPlayer());
 
-		txtMessageChat.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override
-			public void handle(KeyEvent keyEvent) {
-				if (keyEvent.getCode() == KeyCode.ENTER) {
-					if (txtMessageChat.getText().trim().length() == 0) {
-						keyEvent.consume();
-					} else {
-						if (keyEvent.isAltDown() || keyEvent.isControlDown()
-								|| keyEvent.isShiftDown()) {
-							txtMessageChat.appendText("\n");
-						} else {
-							sendChatMessage();
-							keyEvent.consume();
-						}
+		txtMessageChat.setOnKeyPressed(new ChatEventHandler());
 
+	}
+
+	private class ChatEventHandler implements EventHandler<KeyEvent> {
+		@Override
+		public void handle(KeyEvent keyEvent) {
+			if (keyEvent.getCode() == KeyCode.ENTER) {
+				if (txtMessageChat.getText().trim().length() == 0) {
+					keyEvent.consume();
+				} else {
+					if (keyEvent.isAltDown() || keyEvent.isControlDown()
+							|| keyEvent.isShiftDown()) {
+						txtMessageChat.appendText("\n");
+					} else {
+						sendChatMessage();
+						keyEvent.consume();
 					}
+
 				}
 			}
-		});
+		}
+
 	}
 
 	/**
 	 * 
-	 * Éste método muestra el tablero y muestra un messagebox informando al
-	 * jugador que debe esperar a que se unan al juego otros oponentes.
+	 * Éste método muestra sendChatMessageel tablero y muestra un messagebox
+	 * informando al jugador que debe esperar a que se unan al juego otros
+	 * oponentes.
 	 * 
 	 */
 	public void showTableroDeJuego() {
@@ -694,9 +699,9 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * 
 	 */
 	private void guardarJuego() {
+
 		SaveGameMessage saveMessage = new SaveGameMessage(getJuego()
 				.getUniqueID(), null);
-
 		ConnectionController.getInstance().send(saveMessage);
 	}
 
@@ -2942,6 +2947,26 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	/**
+	 * Método para mostrar un mensaje en la pantalla dentro de una interfaz
+	 * JavaFx (No genera el FutureTask).
+	 * 
+	 * @param type
+	 *            El tipo de mensaje. Es del tipo
+	 *            {@link javafx.scene.control.Alert.AlertType}
+	 * @param title
+	 *            El título del mensaje
+	 * @param headerText
+	 *            El encabezado del mensaje
+	 * @param message
+	 *            El mensaje a mostrar
+	 */
+	public void showNoFutureMessageBox(final AlertType type,
+			final String title, final String headerText, final String message) {
+		final Alert alert = getAlert(type, title, headerText, message, null);
+		alert.showAndWait();
+	}
+
+	/**
 	 * Método para mostrar un mensaje en la pantalla que requiere de una
 	 * respuesta SI/NO
 	 * 
@@ -3361,7 +3386,9 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	@FXML
 	void processSendMessage(ActionEvent event) {
-		sendChatMessage();
+		if (txtMessageChat.getText().trim().length() > 0) {
+			sendChatMessage();
+		}
 	}
 
 	@FXML
@@ -3384,15 +3411,34 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * 
 	 * @param event
 	 */
-
 	@FXML
 	void processGuardar(ActionEvent event) {
-		this.guardarJuego();
+		if (cantJugadoresHumanos() == 1)
+			this.guardarJuego();
+		else
+			showNoFutureMessageBox(AlertType.ERROR, "No se puede guardar",
+					null,
+					"No se puede guardar el juego cuando hay mas de un jugador humano.");
+
 		// this.cerrar(true);
 		/*
 		 * Cierro la ventana cuando llega la confirmación de que el juego se
 		 * guardó sin problemas
 		 */
+	}
+
+	/**
+	 * Devuelve la cantidad de jugadores humanos del juego
+	 * 
+	 * @return La cantidad de jugadores humanos que están jugando
+	 */
+	private int cantJugadoresHumanos() {
+		int contador = 0;
+		for (Jugador jugador : estadoActual.turnos) {
+			if (jugador.isHumano())
+				contador++;
+		}
+		return contador;
 	}
 
 	/**
