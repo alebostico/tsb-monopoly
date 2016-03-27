@@ -1424,13 +1424,14 @@ public class JuegoController implements Serializable {
 
 		jugador.setUltimoResultado(dados);
 
-		if (dados.EsDoble()) {
+		if (dados.EsDoble() || jugador.getCantidadTurnosCarcel() >= 3) {
 			// ~~~> Sacó dobles, sale de la carcel.
 			jugador.resetCantidadTurnosCarcel();
 			jugador.setPreso(false);
-			mensaje = String.format(
+			mensaje = dados.EsDoble() ? String.format(
 					"Sacó dobles (%s - %s). Sale de la cárcel.",
-					dados.getValorDado(1), dados.getValorDado(2));
+					dados.getValorDado(1), dados.getValorDado(2))
+					: "Tercer turno en la cárcel. Queda libre.";
 			history = new History(StringUtils.getFechaActual(),
 					jugador.getNombre(), mensaje);
 			msgHistory = new HistoryGameMessage(history);
