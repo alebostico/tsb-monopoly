@@ -91,7 +91,7 @@ public abstract class Jugador implements Serializable {
 
 	@Transient
 	private EstadoJugador estadoJugador;
-	
+
 	@Transient
 	private boolean enSubasta;
 
@@ -682,8 +682,12 @@ public abstract class Jugador implements Serializable {
 	 * Paga un monto de dinero a un jugador
 	 * 
 	 * @param jugador
+	 *            El jugador al cual le paga
 	 * @param monto
+	 *            El monto que se va a pagar
 	 * @throws SinDineroException
+	 *             Si no tiene dinero suficiente para pagar el monto, lanza una
+	 *             excepción
 	 */
 	public void pagarAJugador(Jugador jugador, int monto)
 			throws SinDineroException {
@@ -821,8 +825,8 @@ public abstract class Jugador implements Serializable {
 	 * hipoteca de propiedades. Se calcula como la sumatoria de:
 	 * <ul>
 	 * <li>el <b>valor de hipoteca</b> de las propiedades que posea,</li>
-	 * <li>el <b>valor de venta</b> de las casas/hoteles que posea en sus propiedades
-	 * (la mitad del valor de la construcción) y</li>
+	 * <li>el <b>valor de venta</b> de las casas/hoteles que posea en sus
+	 * propiedades (la mitad del valor de la construcción) y</li>
 	 * <li>el dinero en efectivo.</li>
 	 * </ul>
 	 * 

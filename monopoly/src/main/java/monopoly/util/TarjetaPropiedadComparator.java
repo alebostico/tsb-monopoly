@@ -10,9 +10,9 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
 /**
  * Clase para ordenar las propiedades según su valor de menor a mayor.
  * <ul>
- * <li>Para ordenar las propiedades de menor a mayor:<br/>
+ * <li>Para ordenar las propiedades de menor a mayor:<br>
  * {@code Collections.sort(propiedades, new TarjetaPropiedadComparator());}
- * <li>Para ordenarlas de mayor a menor: <br/>
+ * <li>Para ordenarlas de mayor a menor: <br>
  * {@code Collections.sort(propiedades,
  * 			Collections.reverseOrder(new TarjetaPropiedadComparator()));}
  * </ul>

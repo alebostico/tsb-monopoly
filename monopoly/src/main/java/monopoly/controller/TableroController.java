@@ -12,6 +12,7 @@ import monopoly.model.AccionEnCasillero;
 import monopoly.model.Banco;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
+import monopoly.model.JugadorHumano;
 import monopoly.model.tablero.Casillero;
 import monopoly.model.tablero.Casillero.TipoCasillero;
 import monopoly.model.tablero.CasilleroCalle;
@@ -777,6 +778,23 @@ public class TableroController implements Serializable {
 	}
 
 	/**
+	 * Determina si el jugador tiene todas las propiedades del mismo color
+	 * 
+	 * @param casillero
+	 *            Un casillero del color del monopolio
+	 * @param jugador
+	 *            El jugador dueño de las propiedades del color
+	 * @return {@code true} si tiene todas las propiedades del mismo color
+	 */
+	public boolean tieneMonopolioCompleto(Casillero casillero, Jugador jugador) {
+		if (this.propNoCompradasMonopolio(casillero, jugador) == 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * Determina la cantidad de casas que le faltan comprar al jugador.
 	 * 
 	 * @param casillero
@@ -1072,7 +1090,7 @@ public class TableroController implements Serializable {
 					String.format(
 							"Una propiedad solo puede ser hipotecada por "
 									+ "su dueño y en su turno. La propiedad %s "
-									+ "perteneciente a %s está siendo hipotecada por %s.",
+									+ "perteneciente a %s y está siendo hipotecada por %s.",
 							tarjetaPropiedad.getNombre(), tarjetaPropiedad
 									.getJugador().getNombre(), currentPlayer
 									.getNombre()));
@@ -1136,7 +1154,7 @@ public class TableroController implements Serializable {
 					String.format(
 							"Una propiedad solo puede ser deshipotecada por "
 									+ "su dueño y en su turno. La propiedad %s "
-									+ "perteneciente a %s está siendo deshipotecada por %s.",
+									+ "perteneciente a %s y está siendo deshipotecada por %s.",
 							tarjetaPropiedad.getNombre(), tarjetaPropiedad
 									.getJugador().getNombre(), currentPlayer
 									.getNombre()));
@@ -1500,7 +1518,8 @@ public class TableroController implements Serializable {
 	 * 
 	 * @param casillero
 	 *            El casillero del monopolio en el que se quieren colocar
-	 * @return true si compra las casas
+	 * @return El dinero que se invirtió para constrir los edificios o
+	 *         {@code -1} si no se pudo construir.
 	 * @throws SinEdificiosException
 	 *             Si no se disponen de los edificios necesarios.
 	 * @throws SinDineroException
@@ -1510,7 +1529,7 @@ public class TableroController implements Serializable {
 	 *             Si alguna de las calles del monopolio se encuentra
 	 *             hipotecada.
 	 */
-	public boolean comprarEdificio(int cantidad, CasilleroCalle casillero)
+	public int comprarEdificio(int cantidad, CasilleroCalle casillero)
 			throws SinEdificiosException, SinDineroException,
 			PropiedadHipotecadaException {
 
@@ -1537,6 +1556,7 @@ public class TableroController implements Serializable {
 		int cantEdificiosTotal = cantidad;
 		int cantCasas = 0;
 		int cantHoteles = 0;
+		int montoAPagar = 0;
 
 		int i = 0;
 
@@ -1549,8 +1569,7 @@ public class TableroController implements Serializable {
 					+ " no tiene dinero para pagar " + cantidad + " casas.");
 
 		for (CasilleroCalle casilleroCalle : monopolio) {
-			if (casilleroCalle.getTarjetaCalle().isHipotecable()) {
-
+			if (casilleroCalle.getTarjetaCalle().isHipotecada()) {
 				String mensaje = String.format(
 						"La propiedad %s del color %s está hipotecada. "
 								+ "No se puede construir.", casilleroCalle
@@ -1604,14 +1623,15 @@ public class TableroController implements Serializable {
 
 		if (cantCasas > banco.getNroCasas())
 			throw new SinEdificiosException(
-					"El banco no dispone de los hoteles necesarios."
-							+ " Requeridos=" + cantHoteles + ", disponibles="
-							+ banco.getNroHoteles());
+					"El banco no dispone de las casas necesarias."
+							+ " Requeridas=" + cantCasas + ", disponibles="
+							+ banco.getNroCasas());
 
 		// Verificamos que el jugador tenga dinero suficiente para pagar...
-		if (!jugador.pagar(cantidad
-				* casillero.getTarjetaCalle().getPrecioCadaCasa()))
-			return false;
+		montoAPagar = cantidad
+				* casillero.getTarjetaCalle().getPrecioCadaCasa();
+		if (!jugador.pagar(montoAPagar))
+			return -1;
 
 		i = 0;
 		for (CasilleroCalle casilleroCalle : monopolio) {
@@ -1647,7 +1667,7 @@ public class TableroController implements Serializable {
 			sf.append("\n");
 		}
 		GestorLogs.registrarDebugDetail(sf.toString());
-		return true;
+		return montoAPagar;
 	}
 
 	/**
@@ -1689,7 +1709,7 @@ public class TableroController implements Serializable {
 		int cantCalles = monopolio.size();
 		int cantEdificiosActuales[] = new int[cantCalles];
 		int cantEdificiosNuevos[] = new int[cantCalles];
-		int cantEdificiosTotal = cantidad;
+		int cantEdificiosTotal = 0;
 		int cantCasas = 0;
 		int cantHoteles = 0;
 
@@ -1708,7 +1728,7 @@ public class TableroController implements Serializable {
 
 		// Sino...
 		// Distribuímos los edificios de forma tal que no queden
-		// con más de una porpiedad de diferencia
+		// con más de una propiedad de diferencia
 		for (i = 0; i < cantCalles; i++)
 			cantEdificiosNuevos[i] = (cantEdificiosTotal - cantidad)
 					/ cantCalles;
@@ -1734,11 +1754,11 @@ public class TableroController implements Serializable {
 
 		if (cantCasas > banco.getNroCasas())
 			throw new SinEdificiosException(
-					"El banco no dispone de los hoteles necesarios."
-							+ " Requeridos=" + cantHoteles + ", disponibles="
-							+ banco.getNroHoteles());
+					"El banco no dispone de los casas necesarias."
+							+ " Requeridas=" + cantCasas + ", disponibles="
+							+ banco.getNroCasas());
 
-		jugador.cobrar(cantEdificiosTotal
+		jugador.cobrar(cantidad
 				* casillero.getTarjetaCalle().getPrecioVentaCadaCasa());
 
 		// Actualizamos la cantidad de casas en los casilleros...
@@ -1837,7 +1857,78 @@ public class TableroController implements Serializable {
 
 		this.getBancoController(jugador.getJuego()).venderPropiedad(jugador,
 				tarjeta);
+	}
 
+	/**
+	 * Transfiere una propiedad de su dueño al comprador por el monto indicado
+	 * 
+	 * @param tarjeta
+	 *            La tarjeta que se va a transferir
+	 * @param comprador
+	 *            El Jugador al cual se tranfiere
+	 * @param monto
+	 *            El precio que el comprador le paga al actual dueño de la
+	 *            propiedad
+	 * @throws SinDineroException
+	 *             Si el compador no tiene dinero suficiente para pagar la
+	 *             propiedad
+	 */
+	public void transferirPropiedad(TarjetaPropiedad tarjeta,
+			JugadorHumano comprador, Jugador vendedor, int monto)
+			throws SinDineroException {
+		// TODO: debería llamar al método adquirir propiedad que hizo Pablo
+
+		JugadorHumano newDueno = comprador;
+		Jugador oldDueno = vendedor;
+
+		TarjetaPropiedad tarjetaTablero = this.getTarjetaPropiedad(tarjeta);
+
+		newDueno.pagarAJugador(oldDueno, monto);
+		oldDueno.getTarjPropiedadList().remove(tarjetaTablero);
+		newDueno.adquirirPropiedad(tarjetaTablero);
+
+		GestorLogs.registrarDebug("El jugador " + newDueno.getNombre()
+				+ " le compró la propiedad " + tarjeta.getNombre()
+				+ " al jugador " + oldDueno.getNombre() + " por "
+				+ StringUtils.formatearAMoneda(monto));
+	}
+
+	/**
+	 * Devuelve la instancia de la {@code TarjetaPropiedad} del tablero a partir
+	 * de una copia de esa misma tarjeta propiedad. Se supone que la tarjeta
+	 * pasada por parámetro es igual a la del tablero, pero otra instancia. Este
+	 * método devuelve la instancia del tablero.
+	 * 
+	 * @param tarjeta
+	 *            La copia de la tarjeta
+	 * @return La instancia del tablero de la {@code tarjeta}
+	 */
+	public TarjetaPropiedad getTarjetaPropiedad(TarjetaPropiedad tarjeta) {
+		Casillero casilleroTablero;
+		TarjetaPropiedad tarjetaTablero;
+
+		casilleroTablero = tablero.getCasillero(tarjeta.getCasillero()
+				.getNumeroCasillero());
+
+		switch (casilleroTablero.getTipoCasillero()) {
+		case C_CALLE:
+			tarjetaTablero = ((CasilleroCalle) casilleroTablero)
+					.getTarjetaCalle();
+			break;
+		case C_COMPANIA:
+			tarjetaTablero = ((CasilleroCompania) casilleroTablero)
+					.getTarjetaCompania();
+			break;
+		case C_ESTACION:
+			tarjetaTablero = ((CasilleroEstacion) casilleroTablero)
+					.getTarjetaEstacion();
+			break;
+		default:
+			// No debería entrar nunca a esta parte
+			tarjetaTablero = tarjeta;
+			break;
+		}
+		return tarjetaTablero;
 	}
 
 	/**

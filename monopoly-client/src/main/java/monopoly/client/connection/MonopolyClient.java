@@ -17,9 +17,11 @@ import monopoly.client.controller.UnirmeJuegoController;
 import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
+import monopoly.model.JugadorHumano;
 import monopoly.model.MonopolyGameStatus;
 import monopoly.model.SubastaStatus;
 import monopoly.model.Usuario;
+import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesMensaje;
@@ -27,6 +29,9 @@ import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
 import monopoly.util.message.ExceptionMessage;
 import monopoly.util.message.LoginMessage;
+import monopoly.util.message.game.BidForPropertyMessage;
+import monopoly.util.message.game.BidResultMessage;
+import monopoly.util.message.game.BuildMessage;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.DemortgageMessage;
 import monopoly.util.message.game.GetSavedGamesMessage;
@@ -36,6 +41,7 @@ import monopoly.util.message.game.MortgageMessage;
 import monopoly.util.message.game.ReloadSavedGameMessage;
 import monopoly.util.message.game.SaveGameMessage;
 import monopoly.util.message.game.actions.AuctionDecideMessage;
+import monopoly.util.message.game.UnbuildMessage;
 import monopoly.util.message.game.actions.AuctionFinishMessage;
 import monopoly.util.message.game.actions.AuctionNotifyMessage;
 import monopoly.util.message.game.actions.AuctionPropertyMessage;
@@ -78,6 +84,7 @@ public class MonopolyClient extends GameClient {
 		MonopolyGameStatus status;
 		SubastaStatus subastaStatus;
 		AuctionDecideMessage msgAuctionDecide;
+		TarjetaCalle tarjetaCalle;
 
 		try {
 			switch (message.getClass().getSimpleName()) {
@@ -208,6 +215,36 @@ public class MonopolyClient extends GameClient {
 				DemortgageMessage deshipoteca = (DemortgageMessage) message;
 				propiedad = (TarjetaPropiedad) deshipoteca.message;
 				TableroController.getInstance().finishDemortgage(propiedad);
+				break;
+
+			case ConstantesMensaje.BUILD_MESSAGE:
+				BuildMessage construccion = (BuildMessage) message;
+				tarjetaCalle = (TarjetaCalle) construccion.message;
+				TableroController.getInstance().finishBuild(tarjetaCalle,
+						construccion.cantidad);
+				break;
+
+			case ConstantesMensaje.UNBUILD_MESSAGE:
+				UnbuildMessage vender = (UnbuildMessage) message;
+				tarjetaCalle = (TarjetaCalle) vender.message;
+				TableroController.getInstance().finishUnbuild(tarjetaCalle,
+						vender.cantidad);
+				break;
+
+			case ConstantesMensaje.BID_FOR_PROPERTY_MESSAGE:
+				BidForPropertyMessage bidMsg = (BidForPropertyMessage) message;
+				TableroController.getInstance().ofrecerPorPropiedad(
+						(TarjetaPropiedad) bidMsg.propiedad,
+						(JugadorHumano) bidMsg.comprador,
+						bidMsg.oferta.intValue());
+				break;
+
+			case ConstantesMensaje.BID_RESULT_MESSAGE:
+				BidResultMessage bidResult = (BidResultMessage) message;
+				TableroController.getInstance().finalizarOfertaPropiedad(
+						(TarjetaPropiedad) bidResult.propiedad,
+						bidResult.oferta.intValue(),
+						bidResult.resultado.booleanValue());
 				break;
 
 			case ConstantesMensaje.EXCEPTION_MESSAGE:

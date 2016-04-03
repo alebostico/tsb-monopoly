@@ -13,9 +13,11 @@ import monopoly.model.Estado.EstadoJuego;
 import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
+import monopoly.model.JugadorHumano;
 import monopoly.model.SubastaStatus;
 import monopoly.model.Usuario;
 import monopoly.model.tarjetas.Tarjeta;
+import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
@@ -26,6 +28,9 @@ import monopoly.util.message.CreateGameMessage;
 import monopoly.util.message.ExceptionMessage;
 import monopoly.util.message.LoginMessage;
 import monopoly.util.message.game.AdvanceInBoardMessage;
+import monopoly.util.message.game.BidForPropertyMessage;
+import monopoly.util.message.game.BidResultMessage;
+import monopoly.util.message.game.BuildMessage;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.ConfirmGameReloadedMessage;
@@ -38,6 +43,7 @@ import monopoly.util.message.game.MortgageMessage;
 import monopoly.util.message.game.ReloadSavedGameMessage;
 import monopoly.util.message.game.SaveGameMessage;
 import monopoly.util.message.game.StartGameMessage;
+import monopoly.util.message.game.UnbuildMessage;
 import monopoly.util.message.game.actions.AuctionFinishMessage;
 import monopoly.util.message.game.actions.AuctionPropertyMessage;
 import monopoly.util.message.game.actions.BuyPropertyMessage;
@@ -113,6 +119,7 @@ public class MonopolyGame extends GameServer {
 		History history;
 		List<Juego> juegosList;
 		TarjetaPropiedad tarjetaPropiedad;
+		TarjetaCalle tarjetaCalle;
 		ChatGameMessage msgChatGameMessage;
 		StartGameMessage msgStartGameMessage;
 		AdvanceInBoardMessage msgAdvanceInBoard;
@@ -131,6 +138,8 @@ public class MonopolyGame extends GameServer {
 		PayRentMessage msgPayRent;
 		AuctionPropertyMessage msgAuctionProperty;
 		AuctionFinishMessage msgAuctionFinish;
+		BidForPropertyMessage msgBidForPropertyMessage;
+		BidResultMessage msgBidResultMessage;
 
 		try {
 			switch (message.getClass().getSimpleName()) {
@@ -181,8 +190,7 @@ public class MonopolyGame extends GameServer {
 
 			case ConstantesMensaje.CONFIRM_GAME_RELOADED_MESSAGE:
 				juego = (Juego) ((ConfirmGameReloadedMessage) message).juego;
-				// TODO: Para debug comentar la linea siguiente, no borra el
-				// juego
+				// Para debug comentar la linea siguiente, no borra el juego
 				PartidasController.getInstance()
 						.confirmarJuegoRestaurado(juego);
 				break;
@@ -214,13 +222,34 @@ public class MonopolyGame extends GameServer {
 
 			case ConstantesMensaje.AUCTION_PROPERTY_MESSAGE:
 				msgAuctionProperty = (AuctionPropertyMessage) message;
-				PartidasController.getInstance().subastar(msgAuctionProperty.idJuego,
-						senderId, (SubastaStatus)msgAuctionProperty.subastaStatus);
+				PartidasController.getInstance().subastar(
+						msgAuctionProperty.idJuego, senderId,
+						(SubastaStatus) msgAuctionProperty.subastaStatus);
 				break;
-				
+
 			case ConstantesMensaje.AUCTION_FINISH_MESSAGE:
 				msgAuctionFinish = (AuctionFinishMessage) message;
-				PartidasController.getInstance().finalizarSubasta(msgAuctionFinish.idJuego, senderId);				
+				PartidasController.getInstance().finalizarSubasta(
+						msgAuctionFinish.idJuego, senderId);
+				break;
+
+			case ConstantesMensaje.BID_FOR_PROPERTY_MESSAGE:
+				msgBidForPropertyMessage = (BidForPropertyMessage) message;
+				tarjetaPropiedad = (TarjetaPropiedad) msgBidForPropertyMessage.propiedad;
+				PartidasController.getInstance().ofrecerPorPropiedad(
+						msgBidForPropertyMessage.idJuego,
+						(JugadorHumano) msgBidForPropertyMessage.comprador,
+						tarjetaPropiedad, msgBidForPropertyMessage.oferta);
+				break;
+
+			case ConstantesMensaje.BID_RESULT_MESSAGE:
+				msgBidResultMessage = (BidResultMessage) message;
+				PartidasController.getInstance().terminarOfertaPorPropiedad(
+						msgBidResultMessage.idJuego,
+						(JugadorHumano) msgBidResultMessage.comprador,
+						(TarjetaPropiedad) msgBidResultMessage.propiedad,
+						msgBidResultMessage.oferta.intValue(),
+						msgBidResultMessage.resultado.booleanValue());
 				break;
 
 			case ConstantesMensaje.BUY_PROPERTY_MESSAGE:
@@ -313,7 +342,7 @@ public class MonopolyGame extends GameServer {
 				sendToOne(senderId, new MortgageMessage(senderId,
 						hipoteca.idJuego, tarjetaPropiedad));
 				break;
-				
+
 			case ConstantesMensaje.DEMORTGAGE_MESSAGE:
 				DemortgageMessage deshipoteca = ((DemortgageMessage) message);
 				tarjetaPropiedad = (TarjetaPropiedad) deshipoteca.message;
@@ -322,6 +351,26 @@ public class MonopolyGame extends GameServer {
 								tarjetaPropiedad);
 				sendToOne(senderId, new DemortgageMessage(senderId,
 						deshipoteca.idJuego, tarjetaPropiedad));
+				break;
+
+			case ConstantesMensaje.BUILD_MESSAGE:
+				BuildMessage construir = ((BuildMessage) message);
+				tarjetaCalle = (TarjetaCalle) construir.message;
+				int resConstruir = PartidasController.getInstance()
+						.construirEdificios(construir.idJuego, senderId,
+								tarjetaCalle, construir.cantidad.intValue());
+				sendToOne(senderId, new BuildMessage(senderId,
+						construir.idJuego, tarjetaCalle, resConstruir));
+				break;
+
+			case ConstantesMensaje.UNBUILD_MESSAGE:
+				UnbuildMessage vender = ((UnbuildMessage) message);
+				tarjetaCalle = (TarjetaCalle) vender.message;
+				int resVender = PartidasController.getInstance()
+						.venderEdificios(vender.idJuego, senderId,
+								tarjetaCalle, vender.cantidad.intValue());
+				sendToOne(senderId, new UnbuildMessage(senderId,
+						vender.idJuego, tarjetaCalle, resVender));
 				break;
 
 			case ConstantesMensaje.DISCONNECT_MESSAGE:

@@ -137,7 +137,7 @@ public class SerializerController {
 			juegoController = (JuegoController) input.readObject();
 
 			/*
-			 * Borro el juego de la base de datos ... pero lo borro cunado me
+			 * Borro el juego de la base de datos ... pero lo borro cuando me
 			 * llega la confirmación de que se cargó correctamente. ver
 			 * SerializerController.updateRestoreDate(Juego juego)
 			 */

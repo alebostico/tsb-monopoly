@@ -67,5 +67,17 @@ public class SplashController extends AnchorPane implements Initializable {
 	public void setCurrentStage(Stage currentStage) {
 		this.currentStage = currentStage;
 	}
+	/**
+	 * @return the lblMensaje
+	 */
+	public String getLblMensaje() {
+		return lblMensaje.getText();
+	}
+	/**
+	 * @param lblMensaje the lblMensaje to set
+	 */
+	public void setLblMensaje(String lblMensaje) {
+		this.lblMensaje.setText(lblMensaje);
+	}
 	
 }

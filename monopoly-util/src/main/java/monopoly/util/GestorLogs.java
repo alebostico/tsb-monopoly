@@ -351,5 +351,4 @@ public class GestorLogs {
 	public static void setLoggingDetailLevel(int loggingDetailLevel) {
 		GestorLogs.loggingDetailLevel = loggingDetailLevel;
 	}
-
 }

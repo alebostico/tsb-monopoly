@@ -15,9 +15,11 @@ import monopoly.model.Estado.EstadoJuego;
 import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
+import monopoly.model.JugadorHumano;
 import monopoly.model.SubastaStatus;
 import monopoly.model.Usuario;
 import monopoly.model.tarjetas.Tarjeta;
+import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.EnumSalidaCarcel;
@@ -170,6 +172,50 @@ public class PartidasController {
 	}
 
 	/**
+	 * Procesa una oferta realizada por un jugador para comprarle una propiedad
+	 * a otro jugador por el precio indicado
+	 * 
+	 * @param idJuego
+	 *            El id del Juego
+	 * @param senderId
+	 *            El jugador que realiza la oferta
+	 * @param propiedad
+	 *            La propiedad que se quiere comprar
+	 * @param oferta
+	 *            El monto ofrecido por la propiedad
+	 * @throws Exception
+	 */
+	public void ofrecerPorPropiedad(String idJuego, JugadorHumano comprador,
+			TarjetaPropiedad propiedad, int oferta) throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.ofrecerPorPropiedad(comprador, propiedad, oferta);
+	}
+
+	/**
+	 * Determina si un JugadorHumano acepta una oferta por una propiedad. En
+	 * caso de que haya aceptado, realiza la transferencia de la propiedad.
+	 * 
+	 * @param idJuego
+	 *            El juego
+	 * @param comprador
+	 *            El jugador que compra la propiedad
+	 * @param propiedad
+	 *            La propiedad que se transfiere
+	 * @param oferta
+	 *            El monto de la oferta
+	 * @param resultado
+	 *            {@code true} si el jugador aceptó la oferta
+	 * @throws Exception
+	 */
+	public void terminarOfertaPorPropiedad(String idJuego,
+			JugadorHumano comprador, TarjetaPropiedad propiedad, int oferta,
+			boolean resultado) throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.terminarOfertaPorPropiedad(comprador, propiedad,
+				oferta, resultado);
+	}
+
+	/**
 	 * Método para hipotecar una propiedad
 	 * 
 	 * @param idJuego
@@ -208,6 +254,43 @@ public class PartidasController {
 			TarjetaPropiedad propiedad) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
 		return juegoController.deshipotecarPropiedad(propiedad);
+	}
+
+	/**
+	 * Método para construir edificios en una calle
+	 * 
+	 * @param idJuego
+	 *            El ID del juego en donde se va a construir
+	 * @param senderId
+	 *            Id de conexión del jugador que desea construir.
+	 * @param propiedad
+	 *            La {@code TarjetaCalle} de la calle donde se va a construir
+	 * @return El dinero invertido en construir o {@code -1} si no se pudo
+	 *         construir.
+	 * @throws Exception
+	 */
+	public int construirEdificios(String idJuego, int senderId,
+			TarjetaCalle calle, int cantidad) throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		return juegoController.construirEdificios(calle, cantidad);
+	}
+
+	/**
+	 * Método para vender edificios en una calle
+	 * 
+	 * @param idJuego
+	 *            El ID del juego en donde se va a construir
+	 * @param senderId
+	 *            Id de conexión del jugador que desea construir.
+	 * @param propiedad
+	 *            La {@code TarjetaCalle} de la calle donde se va a construir
+	 * @return El dinero ganado en vender o {@code -1} si no se pudo vender.
+	 * @throws Exception
+	 */
+	public int venderEdificios(String idJuego, int senderId,
+			TarjetaCalle calle, int cantidad) throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		return juegoController.venderEdificios(calle, cantidad);
 	}
 
 	/**
@@ -358,7 +441,7 @@ public class PartidasController {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.subastar(senderId, subastaStatus);
 	}
-	
+
 	public void finalizarSubasta(String idJuego, int senderId) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.finalizarSubasta(senderId);

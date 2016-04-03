@@ -71,7 +71,8 @@ CREATE TABLE `juego_guardado` (
   `nombre_archivo` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`juegoGuardadoID`),
   KEY `fk_juego_guardado_usuario` (`usuarioID`),
-  CONSTRAINT `fk_juego_guardado_usuario` FOREIGN KEY (`usuarioID`) REFERENCES `usuario` (`usuarioID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_juego_guardado_usuario` FOREIGN KEY (`usuarioID`) 
+  REFERENCES `usuario` (`usuarioID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -81,13 +82,6 @@ CREATE TABLE `juego_guardado` (
 
 LOCK TABLES `juego_guardado` WRITE;
 /*!40000 ALTER TABLE `juego_guardado` DISABLE KEYS */;
-/*
-INSERT INTO `monopoly_db`.`juego_guardado` (`juegoID`,`fecha_creacion`,`fecha_guardado`,`fecha_restaurado`,`nombre_juego`,`usuarioID`,`cant_jugadores`,`nombre_archivo`)
-VALUES ('ale_201511071441',STR_TO_DATE('2015-11-07 14:41:00','%Y-%m-%d %T'),STR_TO_DATE('2015-11-07 14:42:00','%Y-%m-%d %T'),NULL,'Juego1',2,2,'ale_201511071441.game');
-
-INSERT INTO `monopoly_db`.`juego_guardado` (`juegoID`,`fecha_creacion`,`fecha_guardado`,`fecha_restaurado`,`nombre_juego`,`usuarioID`,`cant_jugadores`,`nombre_archivo`)
-VALUES ('ale_201511071552',STR_TO_DATE('2015-11-07 15:52:00','%Y-%m-%d %T'),STR_TO_DATE('2015-11-07 15:53:00','%Y-%m-%d %T'),NULL,'Juego2',2,2,'ale_201511071552.game');
-*/
 /*!40000 ALTER TABLE `juego_guardado` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -111,7 +105,21 @@ CREATE TABLE `tarjeta_comunidad` (
 
 LOCK TABLES `tarjeta_comunidad` WRITE;
 /*!40000 ALTER TABLE `tarjeta_comunidad` DISABLE KEYS */;
-INSERT INTO `tarjeta_comunidad` (`tarjetaComunidadID`, `objetivo`) VALUES (1,'PAGA POR TU PÓLIZA DE SEGURO 50 €.'),(2,'EN TU  CUMPLEAÑOS RECIBES\\nDE CADA JUGADOR 10 €.'),(3,'COLÓCATE EN LA CASILLA DE SALIDA.'),(4,'PAGA LA FACTURA DEL MÉDICO 50 €.'),(5,'HAS GANADO EL SEGUNDO\\nPREMIO DE BELLEZA.\\nRECIBE 10 €.'),(6,'ERROR EN LA BANCA A TU FAVOR.\\nRECIBE 200 €.'),(7,'VE A LA CÁRCEL.\\nVE DIRECTAMENTE SIN\\nPASAR POR LA\\nCASILLA DE SALIDA\\nY SIN COBRAR LOS 200 €.'),(8,'HACIENDA TE DEVUELVE 20 €.'),(9,'COBRAS UNA HERENCIA DE 100 €.'),(10,'RECIBE 100 € POR LOS INTERESES\\nDE TU PLAZO FIJO.'),(11,'PAGA AL HOSPITAL 100 €.'),(12,'RETROCEDE HASTA RONDA DE VALENCIA.'),(13,'QUEDAS LIBRE DE LA CÁRCEL.\\n\\nEsta carta puede venderse o conservarse\\nhasta que sea utilizada.'),(14,'LA VENTA DE TUS ACCIONES TE PRODUCE 50 €.');
+INSERT INTO `tarjeta_comunidad` (`tarjetaComunidadID`, `objetivo`) 
+VALUES (1,'PAGA POR TU PÓLIZA DE SEGURO 50 €.'),
+(2,'EN TU  CUMPLEAÑOS RECIBES\\nDE CADA JUGADOR 10 €.'),
+(3,'COLÓCATE EN LA CASILLA DE SALIDA.'),
+(4,'PAGA LA FACTURA DEL MÉDICO 50 €.'),
+(5,'HAS GANADO EL SEGUNDO\\nPREMIO DE BELLEZA.\\nRECIBE 10 €.'),
+(6,'ERROR EN LA BANCA A TU FAVOR.\\nRECIBE 200 €.'),
+(7,'VE A LA CÁRCEL.\\nVE DIRECTAMENTE SIN\\nPASAR POR LA\\nCASILLA DE SALIDA\\nY SIN COBRAR LOS 200 €.'),
+(8,'HACIENDA TE DEVUELVE 20 €.'),
+(9,'COBRAS UNA HERENCIA DE 100 €.'),
+(10,'RECIBE 100 € POR LOS INTERESES\\nDE TU PLAZO FIJO.'),
+(11,'PAGA AL HOSPITAL 100 €.'),
+(12,'RETROCEDE HASTA RONDA DE VALENCIA.'),
+(13,'QUEDAS LIBRE DE LA CÁRCEL.\\n\\nEsta carta puede venderse o conservarse\\nhasta que sea utilizada.'),
+(14,'LA VENTA DE TUS ACCIONES TE PRODUCE 50 €.');
 /*!40000 ALTER TABLE `tarjeta_comunidad` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -130,7 +138,8 @@ CREATE TABLE `tarjeta_estacion` (
   `valorCuatroEstacion` int(11) NOT NULL,
   PRIMARY KEY (`tarjetaPropiedadID`),
   KEY `fk_tarjeta_estacion_propiedad` (`tarjetaPropiedadID`),
-  CONSTRAINT `fk_tarjeta_estacion_propiedad` FOREIGN KEY (`tarjetaPropiedadID`) REFERENCES `tarjeta_propiedad` (`tarjetaPropiedadID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_tarjeta_estacion_propiedad` FOREIGN KEY (`tarjetaPropiedadID`) 
+  REFERENCES `tarjeta_propiedad` (`tarjetaPropiedadID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -140,7 +149,9 @@ CREATE TABLE `tarjeta_estacion` (
 
 LOCK TABLES `tarjeta_estacion` WRITE;
 /*!40000 ALTER TABLE `tarjeta_estacion` DISABLE KEYS */;
-INSERT INTO `tarjeta_estacion` (`tarjetaPropiedadID`, `precioAlquiler`, `valorDosEstacion`, `valorTresEstacion`, `valorCuatroEstacion`) VALUES (23,25,50,100,200),(24,25,50,100,200),(25,25,50,100,200),(26,25,50,100,200);
+INSERT INTO `tarjeta_estacion` (`tarjetaPropiedadID`, `precioAlquiler`, 
+`valorDosEstacion`, `valorTresEstacion`, `valorCuatroEstacion`) 
+VALUES (23,25,50,100,200),(24,25,50,100,200),(25,25,50,100,200),(26,25,50,100,200);
 /*!40000 ALTER TABLE `tarjeta_estacion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -157,7 +168,8 @@ CREATE TABLE `tarjeta_compania` (
   `vecesPorDosCartas` int(11) NOT NULL,
   PRIMARY KEY (`tarjetaPropiedadID`),
   KEY `fk_tarjeta_compania_propiedad` (`tarjetaPropiedadID`),
-  CONSTRAINT `fk_tarjeta_compania_propiedad` FOREIGN KEY (`tarjetaPropiedadID`) REFERENCES `tarjeta_propiedad` (`tarjetaPropiedadID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_tarjeta_compania_propiedad` FOREIGN KEY (`tarjetaPropiedadID`) 
+  REFERENCES `tarjeta_propiedad` (`tarjetaPropiedadID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -167,7 +179,9 @@ CREATE TABLE `tarjeta_compania` (
 
 LOCK TABLES `tarjeta_compania` WRITE;
 /*!40000 ALTER TABLE `tarjeta_compania` DISABLE KEYS */;
-INSERT INTO `tarjeta_compania` (`tarjetaPropiedadID`, `vecesPorUnaCarta`, `vecesPorDosCartas`) VALUES (27,4,10),(28,4,10);
+INSERT INTO `tarjeta_compania` (`tarjetaPropiedadID`, 
+`vecesPorUnaCarta`, `vecesPorDosCartas`) 
+VALUES (27,4,10),(28,4,10);
 /*!40000 ALTER TABLE `tarjeta_compania` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -191,7 +205,8 @@ CREATE TABLE `tarjeta_calle` (
   `color` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`tarjetaPropiedadID`),
   KEY `fk_tarjeta_calle_1` (`tarjetaPropiedadID`),
-  CONSTRAINT `fk_tarjeta_calle_propiedad` FOREIGN KEY (`tarjetaPropiedadID`) REFERENCES `tarjeta_propiedad` (`tarjetaPropiedadID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_tarjeta_calle_propiedad` FOREIGN KEY (`tarjetaPropiedadID`) 
+  REFERENCES `tarjeta_propiedad` (`tarjetaPropiedadID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -201,7 +216,31 @@ CREATE TABLE `tarjeta_calle` (
 
 LOCK TABLES `tarjeta_calle` WRITE;
 /*!40000 ALTER TABLE `tarjeta_calle` DISABLE KEYS */;
-INSERT INTO `tarjeta_calle` (`tarjetaPropiedadID`, `precioAlquiler`, `valorUnaCasa`, `valorDosCasas`, `valorTresCasas`, `valorCuatroCasas`, `valorHotel`, `precioCadaCasa`, `precioCadaHotel`, `color`) VALUES (1,2,10,30,90,160,250,50,50,'MARRON'),(2,4,20,60,180,320,450,50,50,'MARRON'),(3,6,30,90,270,400,550,50,50,'CELESTE'),(4,6,30,90,270,400,550,50,50,'CELESTE'),(5,8,40,100,300,450,600,50,50,'CELESTE'),(6,10,50,150,450,625,750,70,100,'FUCSIA'),(7,10,50,150,450,625,750,70,100,'FUCSIA'),(8,12,60,180,500,700,900,80,100,'FUCSIA'),(9,14,70,200,550,750,950,90,100,'NARANJA'),(10,14,70,200,550,750,950,90,100,'NARANJA'),(11,16,80,220,600,800,1000,100,100,'NARANJA'),(12,18,90,250,700,875,1050,110,150,'ROJO'),(13,18,90,250,700,875,1050,110,150,'ROJO'),(14,20,100,300,750,925,1100,120,150,'ROJO'),(15,22,110,330,800,975,1150,130,150,'AMARILLO'),(16,22,110,330,800,975,1150,130,150,'AMARILLO'),(17,24,120,360,850,1025,1200,140,150,'AMARILLO'),(18,26,130,390,900,1100,1275,150,200,'VERDE'),(19,26,130,390,900,1100,1275,150,200,'VERDE'),(20,28,150,450,1000,1200,1400,160,200,'VERDE'),(21,35,175,500,1100,1300,1500,175,200,'AZUL'),(22,50,200,600,1400,1700,2000,200,200,'AZUL');
+INSERT INTO `tarjeta_calle` (`tarjetaPropiedadID`, `precioAlquiler`, 
+`valorUnaCasa`, `valorDosCasas`, `valorTresCasas`, `valorCuatroCasas`, 
+`valorHotel`, `precioCadaCasa`, `precioCadaHotel`, `color`) 
+VALUES (1,2,10,30,90,160,250,50,50,'MARRON'),
+(2,4,20,60,180,320,450,50,50,'MARRON'),
+(3,6,30,90,270,400,550,50,50,'CELESTE'),
+(4,6,30,90,270,400,550,50,50,'CELESTE'),
+(5,8,40,100,300,450,600,50,50,'CELESTE'),
+(6,10,50,150,450,625,750,100,100,'FUCSIA'),
+(7,10,50,150,450,625,750,100,100,'FUCSIA'),
+(8,12,60,180,500,700,900,100,100,'FUCSIA'),
+(9,14,70,200,550,750,950,100,100,'NARANJA'),
+(10,14,70,200,550,750,950,100,100,'NARANJA'),
+(11,16,80,220,600,800,1000,100,100,'NARANJA'),
+(12,18,90,250,700,875,1050,150,150,'ROJO'),
+(13,18,90,250,700,875,1050,150,150,'ROJO'),
+(14,20,100,300,750,925,1100,150,150,'ROJO'),
+(15,22,110,330,800,975,1150,150,150,'AMARILLO'),
+(16,22,110,330,800,975,1150,150,150,'AMARILLO'),
+(17,24,120,360,850,1025,1200,150,150,'AMARILLO'),
+(18,26,130,390,900,1100,1275,200,200,'VERDE'),
+(19,26,130,390,900,1100,1275,200,200,'VERDE'),
+(20,28,150,450,1000,1200,1400,200,200,'VERDE'),
+(21,35,175,500,1100,1300,1500,200,200,'AZUL'),
+(22,50,200,600,1400,1700,2000,200,200,'AZUL');
 /*!40000 ALTER TABLE `tarjeta_calle` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -225,7 +264,8 @@ CREATE TABLE `tarjeta_propiedad` (
   `nombrePropiedad` VARCHAR(45) NULL,
   PRIMARY KEY (`tarjetaPropiedadID`),
   KEY `fk_tarjeta_propiedad_jugador` (`jugadorID`),
-  CONSTRAINT `fk_tarjeta_propiedad_jugador` FOREIGN KEY (`jugadorID`) REFERENCES `jugador` (`jugadorID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_tarjeta_propiedad_jugador` FOREIGN KEY (`jugadorID`) 
+  REFERENCES `jugador` (`jugadorID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -288,7 +328,21 @@ CREATE TABLE `tarjeta_suerte` (
 
 LOCK TABLES `tarjeta_suerte` WRITE;
 /*!40000 ALTER TABLE `tarjeta_suerte` DISABLE KEYS */;
-INSERT INTO `tarjeta_suerte` (`tarjetaSuerteID`, `objetivo`) VALUES (1,'VE AL PASEO DEL PRADO.'),(2,'VE A LA GLORIETA DE BILBAO.\\nSI PASAS POR LA CASILLA DE SALIDA\\nCOBRA 200 €.'),(3,'LA BANCA TE PAGA 50 € DE INTERESES.'),(4,'COLÓCATE EN LA CASILLA DE SALIDA.'),(5,'ADELANTATE HASTA LA CALLE CEA BERMÚDEZ.\\nSI PASAS POR LA CASILLA DE SALIDA,\\nCOBRA 200 €.'),(6,'RECIBES EL RESCATE POR EL SEGURO\\nDE TUS EDIFICIOS.\\nCOBRA 150 €.'),(7,'VE A LA CÁRCEL.\\nVE DIRECTAMENTE SIN\\nPASAR POR LA\\nCASILLA DE SALIDA\\nY SIN COBRAR LOS 200 €.'),(8,'MULTA POR EMBRIAGUEZ 20 €.'),(9,'RETROCEDE TRES CASILLAS.'),(10,'HAZ REPARACIONES EN TODOS TUS EDIFICIOS.\\nPAGA POR CADA CASA 25 €.\\nPAGA POR CADA HOTEL 100 €.'),(11,'LA INSPECCIÓN DE LA CALLE TE OBLIGA\\nA REPARACIONES.\\nPAGA 40 € POR CADA CASA.\\nPAGA 115 € POR HOTEL.'),(12,'QUEDAS LIBRE DE LA CÁRCEL.\\n\\nEsta carta puede venderse o conservarse\\nhasta que sea utilizada.'),(13,'PAGA POR GASTOS ESCOLARES 150 €.'),(14,'VE A LA ESTACIÓN DE LAS DELICIAS.\\nSI PASAS POR LA CASILLA DE SALIDA,\\nCOBRA 200 €.');
+INSERT INTO `tarjeta_suerte` (`tarjetaSuerteID`, `objetivo`) 
+VALUES (1,'VE AL PASEO DEL PRADO.'),
+(2,'VE A LA GLORIETA DE BILBAO.\\nSI PASAS POR LA CASILLA DE SALIDA\\nCOBRA 200 €.'),
+(3,'LA BANCA TE PAGA 50 € DE INTERESES.'),
+(4,'COLÓCATE EN LA CASILLA DE SALIDA.'),
+(5,'ADELANTATE HASTA LA CALLE CEA BERMÚDEZ.\\nSI PASAS POR LA CASILLA DE SALIDA,\\nCOBRA 200 €.'),
+(6,'RECIBES EL RESCATE POR EL SEGURO\\nDE TUS EDIFICIOS.\\nCOBRA 150 €.'),
+(7,'VE A LA CÁRCEL.\\nVE DIRECTAMENTE SIN\\nPASAR POR LA\\nCASILLA DE SALIDA\\nY SIN COBRAR LOS 200 €.'),
+(8,'MULTA POR EMBRIAGUEZ 20 €.'),
+(9,'RETROCEDE TRES CASILLAS.'),
+(10,'HAZ REPARACIONES EN TODOS TUS EDIFICIOS.\\nPAGA POR CADA CASA 25 €.\\nPAGA POR CADA HOTEL 100 €.'),
+(11,'LA INSPECCIÓN DE LA CALLE TE OBLIGA\\nA REPARACIONES.\\nPAGA 40 € POR CADA CASA.\\nPAGA 115 € POR HOTEL.'),
+(12,'QUEDAS LIBRE DE LA CÁRCEL.\\n\\nEsta carta puede venderse o conservarse\\nhasta que sea utilizada.'),
+(13,'PAGA POR GASTOS ESCOLARES 150 €.'),
+(14,'VE A LA ESTACIÓN DE LAS DELICIAS.\\nSI PASAS POR LA CASILLA DE SALIDA,\\nCOBRA 200 €.');
 /*!40000 ALTER TABLE `tarjeta_suerte` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -336,17 +390,28 @@ CREATE TABLE `ficha` (
 
 LOCK TABLES `ficha` WRITE;
 /*!40000 ALTER TABLE `ficha` DISABLE KEYS */;
-INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('1','auto','/images/fichas/FichaS01.png','/images/fichas/Ficha01.png');
-INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('2','sombrero','/images/fichas/FichaS02.png','/images/fichas/Ficha02.png');
-INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('3','bota','/images/fichas/FichaS03.png','/images/fichas/Ficha03.png');
-INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('4','plancha','/images/fichas/FichaS04.png','/images/fichas/Ficha04.png');
-INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('5','carretilla','/images/fichas/FichaS05.png','/images/fichas/Ficha05.png');
-INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('6','dedal','/images/fichas/FichaS06.png','/images/fichas/Ficha06.png');
-INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('7','barco','/images/fichas/FichaS07.png','/images/fichas/Ficha07.png');
-INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('8','perro','/images/fichas/FichaS08.png','/images/fichas/Ficha08.png');
-INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('9','bolsa de dinero','/images/fichas/FichaS09.png','/images/fichas/Ficha09.png');
-INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('10','caballo','/images/fichas/FichaS10.png','/images/fichas/Ficha10.png');
-INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) VALUES ('11','cañón','/images/fichas/FichaS11.png','/images/fichas/Ficha11.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) 
+VALUES ('1','auto','/images/fichas/FichaS01.png','/images/fichas/Ficha01.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) 
+VALUES ('2','sombrero','/images/fichas/FichaS02.png','/images/fichas/Ficha02.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) 
+VALUES ('3','bota','/images/fichas/FichaS03.png','/images/fichas/Ficha03.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) 
+VALUES ('4','plancha','/images/fichas/FichaS04.png','/images/fichas/Ficha04.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) 
+VALUES ('5','carretilla','/images/fichas/FichaS05.png','/images/fichas/Ficha05.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) 
+VALUES ('6','dedal','/images/fichas/FichaS06.png','/images/fichas/Ficha06.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) 
+VALUES ('7','barco','/images/fichas/FichaS07.png','/images/fichas/Ficha07.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) 
+VALUES ('8','perro','/images/fichas/FichaS08.png','/images/fichas/Ficha08.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) 
+VALUES ('9','bolsa de dinero','/images/fichas/FichaS09.png','/images/fichas/Ficha09.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) 
+VALUES ('10','caballo','/images/fichas/FichaS10.png','/images/fichas/Ficha10.png');
+INSERT INTO monopoly_db.ficha (fichaID,nombre,pathImageSmall,pathImageBig) 
+VALUES ('11','cañón','/images/fichas/FichaS11.png','/images/fichas/Ficha11.png');
 /*!40000 ALTER TABLE `ficha` ENABLE KEYS */;
 UNLOCK TABLES;
 

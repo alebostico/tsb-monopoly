@@ -41,6 +41,8 @@ import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.exception.SinDineroException;
 import monopoly.util.exception.SinEdificiosException;
 import monopoly.util.message.ExceptionMessage;
+import monopoly.util.message.game.BidForPropertyMessage;
+import monopoly.util.message.game.BidResultMessage;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.HistoryGameMessage;
@@ -110,6 +112,7 @@ public class JuegoController implements Serializable {
 	 */
 	public void addPlayer(Jugador jugador) throws Exception {
 		this.gestorJugadores.addPlayer(jugador);
+		this.juego.addJugador(jugador);
 		jugador.setCasilleroActual(gestorTablero.getCasillero(1));
 
 		History history = new History(StringUtils.getFechaActual(),
@@ -721,6 +724,134 @@ public class JuegoController implements Serializable {
 	}
 
 	/**
+	 * Recibe una oferta de un jugador para comprar una propiedad de otro
+	 * jugador. Si el Jugador que recibe la oferta es un JugadorVirtual,
+	 * verifica si este la acepta y transfiere la propiedad si corresponde. Si
+	 * es un JugadorHumano, le envía un mensaje con la oferta.
+	 * 
+	 * @param senderId
+	 *            El jugador que hizo la oferta
+	 * @param propiedad
+	 *            La propiedad que quiere comprar
+	 * @param oferta
+	 *            El monto ofrecido por la propiedad
+	 * @throws Exception
+	 */
+	public void ofrecerPorPropiedad(JugadorHumano comprador,
+			TarjetaPropiedad propiedad, int oferta) throws Exception {
+
+		Jugador dueno = propiedad.getJugador();
+		boolean compra;
+
+		if (dueno.isVirtual()) {
+			JugadorVirtual jugadorVirtual = (JugadorVirtual) dueno;
+			compra = gestorJugadoresVirtuales.decidirVenderPropiedad(propiedad,
+					oferta, comprador, jugadorVirtual);
+
+			this.transferirPropiedad(propiedad, comprador, oferta, compra);
+
+		} else {
+			BidForPropertyMessage bidMessage = new BidForPropertyMessage(
+					comprador, juego.getUniqueID(), propiedad, oferta);
+			sendToOne(((JugadorHumano) dueno).getSenderID(), bidMessage);
+		}
+
+	}
+
+	/**
+	 * Determina si un JugadorHumano acepta una oferta por una propiedad. En
+	 * caso de que haya aceptado, realiza la transferencia de la propiedad.
+	 * 
+	 * @param comprador
+	 *            El jugador que compra la propiedad
+	 * @param propiedad
+	 *            La propiedad que se transfiere
+	 * @param oferta
+	 *            El monto de la oferta
+	 * @param resultado
+	 *            {@code true} si el jugador aceptó la oferta
+	 * @return {@code true} si el jugador aceptó la oferta
+	 * @throws Exception
+	 */
+	public boolean terminarOfertaPorPropiedad(JugadorHumano comprador,
+			TarjetaPropiedad propiedad, int oferta, boolean resultado)
+			throws Exception {
+
+		this.transferirPropiedad(propiedad, comprador, oferta, resultado);
+
+		return resultado;
+	}
+
+	/**
+	 * Realiza la transferencia de una propiedad de un jugador a otro
+	 * 
+	 * @param propiedad
+	 *            La propiedad que se va a transferir
+	 * @param comprador
+	 *            El jugador que compra la propiedad
+	 * @param monto
+	 *            El monto por el cual se compra la propiedad
+	 * @param compra
+	 *            {@code true} si el jugador aceptó la oferta
+	 * @throws Exception
+	 */
+	private void transferirPropiedad(TarjetaPropiedad propiedad,
+			JugadorHumano comprador, int monto, boolean compra)
+			throws Exception {
+
+		String mensaje;
+		EstadoJuego estadoJuegoJugadorActual = EstadoJuego.ACTUALIZANDO_ESTADO;
+		List<Jugador> turnosList;
+		List<History> historyList = new ArrayList<History>();
+		Jugador oldDueno = propiedad.getJugador();
+		JugadorHumano newDueno = comprador;
+
+		if (compra) {
+
+			for (Jugador jugador : this.gestorJugadores.getTurnoslist()) {
+				if (jugador.getNombre().equals(comprador.getNombre()))
+					newDueno = (JugadorHumano) jugador;
+				else if (jugador.getNombre().equals(
+						propiedad.getJugador().getNombre()))
+					oldDueno = jugador;
+			}
+
+			// Transferimos la propiedad y el dinero....
+			gestorTablero.transferirPropiedad(
+					gestorTablero.getTarjetaPropiedad(propiedad), newDueno,
+					oldDueno, monto);
+
+			// Enviar mensajes informado
+			mensaje = String.format(
+					"Le compró la propiedad %s al jugador %s por %s",
+					propiedad.getNombre(), oldDueno.getNombre(),
+					StringUtils.formatearAMoneda(monto));
+
+		} else {
+			mensaje = String.format(
+					"No le compró la propiedad %s al jugador %s "
+							+ "porque no aceptó la oferta de %s",
+					propiedad.getNombre(), oldDueno.getNombre(),
+					StringUtils.formatearAMoneda(monto));
+		}
+
+		historyList.add(new History(StringUtils.getFechaActual(), comprador
+				.getNombre(), mensaje));
+
+		turnosList = gestorJugadores.getTurnoslist();
+		status = new MonopolyGameStatus(turnosList, gestorBanco.getBanco(),
+				gestorTablero.getTablero(), estadoJuegoJugadorActual, null,
+				gestorJugadores.getCurrentPlayer(), historyList, null);
+		sendToAll(status);
+
+		// le informamos al comprador el resultado de la operacion...
+		BidResultMessage bidMsg = new BidResultMessage(comprador,
+				juego.getUniqueID(), propiedad, monto, compra);
+
+		sendToOne(comprador.getSenderID(), bidMsg);
+	}
+
+	/**
 	 * Método solicitado por un jugador humano para comprar una propiedad.
 	 * 
 	 * @param senderId
@@ -898,6 +1029,98 @@ public class JuegoController implements Serializable {
 
 		return propiedadToReturn;
 
+	}
+
+	/**
+	 * Construye {@code cantidad} de edificios en el color de la {@code calle} y
+	 * le cobra al dueño de la calle.
+	 * 
+	 * @param calle
+	 *            La calle del color donde se va a construir
+	 * @param cantidad
+	 *            La cantidad de casas que se van a construir
+	 * @return El dinero invertido en construir o {@code -1} si no se pudo
+	 *         construir.
+	 * @throws Exception
+	 *             Si no se puede enviar el mensaje al cliente.
+	 */
+	public int construirEdificios(TarjetaCalle calle, int cantidad)
+			throws Exception {
+
+		Jugador jugador = gestorJugadores.getCurrentPlayer();
+		int toReturn = gestorTablero.comprarEdificio(cantidad,
+				(CasilleroCalle) calle.getCasillero());
+
+		String mensaje;
+		EstadoJuego estadoJuegoJugadorActual = EstadoJuego.ACTUALIZANDO_ESTADO;
+		List<Jugador> turnosList;
+		List<History> historyList = new ArrayList<History>();
+
+		if (toReturn != -1)
+			mensaje = String.format(
+					"Contruyó %s edificios sobre la calle %s por %s.",
+					cantidad, calle.getNombre(),
+					StringUtils.formatearAMoneda(toReturn));
+		else
+			mensaje = String.format("No pudo construir sobre la calle %s",
+					calle.getNombre());
+
+		historyList.add(new History(StringUtils.getFechaActual(), jugador
+				.getNombre(), mensaje));
+
+		turnosList = gestorJugadores.getTurnoslist();
+		status = new MonopolyGameStatus(turnosList, gestorBanco.getBanco(),
+				gestorTablero.getTablero(), estadoJuegoJugadorActual, null,
+				gestorJugadores.getCurrentPlayer(), historyList, null);
+		sendToAll(status);
+
+		return toReturn;
+
+	}
+
+	/**
+	 * Vende {@code cantidad} de edificios en el color de la {@code calle} y le
+	 * paga al dueño de la calle.
+	 * 
+	 * @param calle
+	 *            La calle del color donde se quiere vender.
+	 * @param cantidad
+	 *            La cantidad de casas que se van a vender
+	 * @return El dinero ganado por vender o {@code -1} si no se pudo vender.
+	 * @throws Exception
+	 *             Si no se puede enviar el mensaje al cliente.
+	 */
+	public int venderEdificios(TarjetaCalle calle, int cantidad)
+			throws Exception {
+		Jugador jugador = gestorJugadores.getCurrentPlayer();
+		int cantVendida = gestorTablero.venderEdificio(cantidad,
+				(CasilleroCalle) calle.getCasillero());
+
+		int money = (calle.getPrecioVentaCadaCasa()) * cantVendida;
+
+		String mensaje;
+		EstadoJuego estadoJuegoJugadorActual = EstadoJuego.ACTUALIZANDO_ESTADO;
+		List<Jugador> turnosList;
+		List<History> historyList = new ArrayList<History>();
+
+		if (cantVendida != -1)
+			mensaje = String.format(
+					"Vendió %s edificios de la calle %s por %s.", cantVendida,
+					calle.getNombre(), StringUtils.formatearAMoneda(money));
+		else
+			mensaje = String.format("No pudo vender de la calle %s",
+					calle.getNombre());
+
+		historyList.add(new History(StringUtils.getFechaActual(), jugador
+				.getNombre(), mensaje));
+
+		turnosList = gestorJugadores.getTurnoslist();
+		status = new MonopolyGameStatus(turnosList, gestorBanco.getBanco(),
+				gestorTablero.getTablero(), estadoJuegoJugadorActual, null,
+				gestorJugadores.getCurrentPlayer(), historyList, null);
+		sendToAll(status);
+
+		return money;
 	}
 
 	/**
@@ -1228,13 +1451,14 @@ public class JuegoController implements Serializable {
 
 		jugador.setUltimoResultado(dados);
 
-		if (dados.EsDoble()) {
+		if (dados.EsDoble() || jugador.getCantidadTurnosCarcel() >= 3) {
 			// ~~~> Sacó dobles, sale de la carcel.
 			jugador.resetCantidadTurnosCarcel();
 			jugador.setPreso(false);
-			mensaje = String.format(
+			mensaje = dados.EsDoble() ? String.format(
 					"Sacó dobles (%s - %s). Sale de la cárcel.",
-					dados.getValorDado(1), dados.getValorDado(2));
+					dados.getValorDado(1), dados.getValorDado(2))
+					: "Tercer turno en la cárcel. Queda libre.";
 			history = new History(StringUtils.getFechaActual(),
 					jugador.getNombre(), mensaje);
 			msgHistory = new HistoryGameMessage(history);
