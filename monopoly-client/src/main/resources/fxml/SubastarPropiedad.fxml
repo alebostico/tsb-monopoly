@@ -36,9 +36,9 @@
                                       </rowConstraints>
                                        <children>
                                           <Label text="Mejor Oferta €" textFill="#00000003" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
-                                          <TextField fx:id="txtMejorOferta" editable="false" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" promptText="S/D" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+                                          <TextField fx:id="txtMejorOferta" editable="false" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" promptText="S/D" text="0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
                                           <Label text="Mi oferta €" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
-                                          <TextField fx:id="txtMiOferta" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" promptText="1 " GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+                                          <TextField fx:id="txtMiOferta" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
                                        </children>
                                     </GridPane>
                                  </children>

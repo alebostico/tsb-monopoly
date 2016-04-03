@@ -47,6 +47,7 @@ public class ConstantesMensaje {
 	public final static String PAY_RENT_MESSAGE = "PayRentMessage";
 	public final static String AUCTION_FINISH_MESSAGE = "AuctionFinishMessage";
 	public final static String AUCTION_NOTIFY_MESSAGE = "AuctionNotifyMessage";
+	public final static String AUCTION_DECIDE_MESSAGE = "AuctionDecideMessage";
 
 	/*************************************************************************************/
 

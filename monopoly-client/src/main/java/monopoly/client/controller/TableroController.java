@@ -108,6 +108,7 @@ import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.DemortgageMessage;
 import monopoly.util.message.game.MortgageMessage;
 import monopoly.util.message.game.SaveGameMessage;
+import monopoly.util.message.game.actions.AuctionDecideMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.PayRentMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
@@ -1455,6 +1456,7 @@ public class TableroController extends AnchorPane implements Serializable,
 				Alert alert = null;
 
 				try {
+					// Si el estado es iniciada ~~> Mostro la pantalla de subasta.
 					if (statusSubasta.estado == EnumEstadoSubasta.INICIADA) {
 						if (!jugador.getNombre().equals(
 								statusSubasta.jugadorActual.getNombre())) {
@@ -1482,7 +1484,7 @@ public class TableroController extends AnchorPane implements Serializable,
 									.agregarHistoriaDeSubasta(history);
 						}
 
-					} else {
+					} else {						
 						if (statusSubasta.estado == EnumEstadoSubasta.FINALIZADA) {
 							if (!jugador.getNombre().equals(
 									statusSubasta.jugadorActual.getNombre())) {
@@ -1501,7 +1503,6 @@ public class TableroController extends AnchorPane implements Serializable,
 							SubastaController.getInstance().actualizarSubasta(
 									statusSubasta);
 						}
-
 					}
 				} catch (Exception ex) {
 					GestorLogs.registrarException(ex);
@@ -1516,36 +1517,73 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * @param mensaje
 	 */
 	public void finalizarSubasta(final String mensaje) {
-		Platform.runLater(new Runnable() {
+		FutureTask<Void> taskMessage = null;
 
-			@Override
-			public void run() {
-				Alert alert;
-				try {
-					SubastaController.getInstance().getCurrentStage().close();
-					VentaPropiedadController.getInstance().getCurrentStage()
-							.close();
+		try {
 
+			taskMessage = new FutureTask<Void>(new Callable<Void>() {
+
+				@Override
+				public Void call() throws Exception {
+					Alert alert;
 					alert = getAlert(
 							AlertType.INFORMATION,
 							"Subasta Finalizada",
 							String.format("Subastar %s", SubastaController
 									.getInstance().getTarjetaSubasta()
 									.getNombre()), mensaje, null);
+					if (SubastaController.getInstance().getCurrentStage() != null)
+						SubastaController.getInstance().getCurrentStage()
+								.close();
+					VentaPropiedadController.getInstance().getCurrentStage()
+							.close();
 
 					alert.showAndWait();
 
 					finalizarTurno();
 
-				} catch (Exception ex) {
-					GestorLogs.registrarError(ex);
-					showMessageBox(AlertType.ERROR, "Finalizar Subasta", null,
-							ex.getMessage());
+					return null;
+
 				}
+			});
+			Platform.runLater(taskMessage);
+			taskMessage.get();
 
-			}
-		});
+		} catch (Exception ex) {
+			GestorLogs.registrarException(ex);
+		}
+	}
 
+	public void decidirSubasta(String mensaje, int monto,
+			TarjetaPropiedad propiedad, Jugador jugadorInicial) {
+
+		FutureTask<Void> taskMessage = null;
+
+		try {
+
+			taskMessage = new FutureTask<Void>(new Callable<Void>() {
+
+				@Override
+				public Void call() throws Exception {
+					AuctionDecideMessage msgDecide = null;
+					boolean bAceptaSubasta;
+					bAceptaSubasta = showYesNoMsgBox("Subasta - Monopoly",
+							"Subasta de la propiedad " + propiedad.getNombre(),
+							mensaje);
+					msgDecide = new AuctionDecideMessage(juego.getUniqueID(),
+							monto, propiedad, bAceptaSubasta, jugadorInicial);
+					ConnectionController.getInstance().send(msgDecide);
+
+					return null;
+
+				}
+			});
+			Platform.runLater(taskMessage);
+			taskMessage.get();
+
+		} catch (Exception ex) {
+			GestorLogs.registrarException(ex);
+		}
 	}
 
 	/**
@@ -2729,7 +2767,6 @@ public class TableroController extends AnchorPane implements Serializable,
 	void processVender(ActionEvent event) {
 
 	}
-
 
 	@FXML
 	void processHipotecar(ActionEvent event) {

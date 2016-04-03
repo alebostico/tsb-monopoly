@@ -13,7 +13,8 @@ import java.io.Serializable;
  */
 public enum EnumEstadoSubasta implements Serializable {
 
-	CREADA("creada"), INICIADA("Iniciada"),
+	CREADA("Creada"), CREADA_SIN_JUGADOR("Creada sin Jugador que subastó"),
+	INICIADA("Iniciada"),
 	JUGANDO("Jugando"), FINALIZADA("Finalizada");
 
 	private final String estadoSubasta;

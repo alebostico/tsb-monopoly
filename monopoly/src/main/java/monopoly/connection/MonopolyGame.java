@@ -298,7 +298,7 @@ public class MonopolyGame extends GameServer {
 
 			case ConstantesMensaje.HISTORY_GAME_MESSAGE:
 				msgHistoryGame = (HistoryGameMessage) message;
-				history = (History) msgHistoryGame.message;
+				history = (History) msgHistoryGame.history;
 				if (!StringUtils.IsNullOrEmpty(msgHistoryGame.idJuego))
 					PartidasController.getInstance().sendHistoryGame(senderId,
 							msgHistoryGame.idJuego, history);

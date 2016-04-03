@@ -75,12 +75,12 @@ public class JugadorVirtualController implements Serializable {
 	 * 
 	 * @param propiedad
 	 * @param maxActual
-	 * @param ganador
+	 * @param ultimoApostador
 	 * @param jugadorActual
 	 * @return
 	 */
 	public int pujar(TarjetaPropiedad propiedad, int maxActual,
-			Jugador ganador, JugadorVirtual jugadorActual) {
+			Jugador ultimoApostador, JugadorVirtual jugadorActual) {
 
 		// Si no tiene dinero no ofrece nada sin importar el tipo de jugador que
 		// sea
@@ -118,8 +118,9 @@ public class JugadorVirtualController implements Serializable {
 
 			// Si es la última propiedad del monopolio de otro jugador, tengo
 			// dinero, y dicho jugador es el ganador, pujo!
-			if (tableroController.esUltimaPropiedadMonopolio(
-					propiedad.getCasillero(), ganador)
+			if (ultimoApostador != null
+					&& tableroController.esUltimaPropiedadMonopolio(
+							propiedad.getCasillero(), ultimoApostador)
 					&& maxActual * 2 < dineroJugador) {
 				puja = maxActual + ((maxActual * 10) / 100);
 			} else
@@ -213,6 +214,80 @@ public class JugadorVirtualController implements Serializable {
 					+ " no ofreció nada por " + propiedad.getNombre());
 		}
 		return puja;
+	}
+
+	public boolean decidirAceptarSubasta(TarjetaPropiedad propiedad, int monto,
+			JugadorVirtual jugador) throws Exception {
+
+		int precioPropiedad = propiedad.getValorPropiedad();
+		int dineroJugador = jugador.getDinero();
+		boolean decidoComprar = false;
+
+		// Si no tiene dinero no ofrece nada sin importar el tipo de jugador que
+		// sea
+		if (monto >= dineroJugador) {
+			GestorLogs.registrarDebug("El jugador " + jugador.getNombre()
+					+ " no tiene dinero para aceptar la subasta por "
+					+ propiedad.getNombre());
+			return false;
+		}
+
+		switch (jugador.getTipoJugador()) {
+		// Jugador basado en reglas
+		case TJ_MAGNATE:
+
+			JuegoController juegoController = PartidasController.getInstance()
+					.buscarControladorJuego(jugador.getJuego().getUniqueID());
+			TableroController tableroController = juegoController
+					.getGestorTablero();
+
+			// Si es la ultima propiedad del monopolio y tengo dinero, pujo.
+			if (tableroController.esUltimaPropiedadMonopolio(
+					propiedad.getCasillero(), jugador)) {
+				decidoComprar = true;
+			} else
+
+			// Si soy el unico poseedor del monopolio y tengo dinero, pujo
+			if (tableroController.esUnicoPoseedorMonopolio(
+					propiedad.getCasillero(), jugador)) {
+				decidoComprar = true;
+			} else
+
+			// Si tengo mucho dinero pujo
+			if (monto < precioPropiedad && monto * 10 < dineroJugador) {
+				decidoComprar = true;
+			} else
+
+			// Si tengo mucho dinero pujo
+			if (monto < precioPropiedad && monto * 3 < dineroJugador) {
+				decidoComprar = true;
+			} else
+
+			// Si tengo mucho dinero pujo
+			if (monto > precioPropiedad && monto * 5 < dineroJugador) {
+				decidoComprar = true;
+			} else
+
+				break;
+
+		case TJ_EMPRESARIO:
+			// Si no hay puja
+
+			// Si tengo mucho dinero pujo
+			if (monto > precioPropiedad && monto * 5 < dineroJugador) {
+				decidoComprar = true;
+			}
+
+			break;
+		case TJ_COMPRADOR_PRIMERIZO:
+
+			decidoComprar = true;
+
+			break;
+
+		}
+
+		return decidoComprar;
 	}
 
 	/**

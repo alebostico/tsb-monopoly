@@ -145,11 +145,22 @@ public class Banco implements Serializable {
 	}
 
 	/**
-	 * @return the tarjetasPropiedadList
+	 * Obtiene la {@code TarjetaPropiedad} del tablero
+	 * en al parámetro {@code nombrePropiedad}. 
+	 * @param nombrePropiedad
+	 * @return
 	 */
-	public TarjetaPropiedad getTarjetaPropiedad(String key) {
+	public TarjetaPropiedad getTarjetaPropiedad(String nombrePropiedad) {
 		for (TarjetaPropiedad tarjetaPropiedad : tarjPropiedadList) {
-			if (tarjetaPropiedad.getNombrePropiedad().equals(key))
+			if (tarjetaPropiedad.getNombrePropiedad().equals(nombrePropiedad))
+				return tarjetaPropiedad;
+		}
+		return null;
+	}
+	
+	public TarjetaPropiedad getTarjetaPropiedad(TarjetaPropiedad propiedad) {
+		for (TarjetaPropiedad tarjetaPropiedad : tarjPropiedadList) {
+			if (tarjetaPropiedad.equals(propiedad))
 				return tarjetaPropiedad;
 		}
 		return null;

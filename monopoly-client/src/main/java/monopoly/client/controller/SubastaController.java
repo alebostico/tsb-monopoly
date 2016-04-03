@@ -36,7 +36,7 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
 import monopoly.util.constantes.EnumEstadoSubasta;
-import monopoly.util.exception.CondicionInvalidaException;
+import monopoly.util.exception.OfertaInvalidaException;
 import monopoly.util.message.game.actions.AuctionFinishMessage;
 import monopoly.util.message.game.actions.AuctionPropertyMessage;
 
@@ -176,39 +176,32 @@ public class SubastaController extends AnchorPane implements Initializable {
 
 					if (StringUtils.IsNullOrEmpty(txtMiOferta.getText())) {
 						txtMiOferta.setFocusTraversable(true);
-						throw new CondicionInvalidaException(
+						throw new OfertaInvalidaException(
 								"Campo Mi Oferta Obligatorio.");
 					}
 
+					mejorOferta = Integer.parseInt(txtMejorOferta.getText());
 					cantidadOfertada = Integer.parseInt(txtMiOferta.getText());
-					if (jugador.getDinero() == 0
-							&& estadoSubasta == EnumEstadoSubasta.CREADA) {
-						subasta = new SubastaStatus(estadoSubasta, null,
-								jugador, tarjetaSubasta, 1);
-						msg = new AuctionPropertyMessage(idJuego, subasta);
-						ConnectionController.getInstance().send(msg);
-						bloquearBotones(true);
-						return;
-					}
-
+					
 					if (cantidadOfertada <= 0) {
 						txtMiOferta.setFocusTraversable(true);
-						throw new CondicionInvalidaException(
+						throw new OfertaInvalidaException(
 								"La oferta debería ser mayor a 0.");
 					}
 
-					mejorOferta = Integer.parseInt(txtMejorOferta.getText());
-					if (estadoSubasta == EnumEstadoSubasta.JUGANDO) {
-						if (cantidadOfertada <= mejorOferta) {
-							txtMiOferta.setFocusTraversable(true);
-							throw new CondicionInvalidaException(
-									"Mi oferta debe superar el monto de la mejor oferta.");
-						}
+					if (cantidadOfertada < (mejorOferta
+							+ (int) (tarjetaSubasta.getValorPropiedad() * 0.1))) {
+						txtMiOferta.setFocusTraversable(true);
+						throw new OfertaInvalidaException(
+								String.format(
+										"La oferta debe superar la mejor oferta + el 10% del valor de la propiedad (%s)",
+										tarjetaSubasta.getValorPropiedad() * 0.1));
 					}
 
+					
 					if (cantidadOfertada > jugador.getDinero()) {
 						btnAbandonarSubasta.setFocusTraversable(true);
-						throw new CondicionInvalidaException(
+						throw new OfertaInvalidaException(
 								"No tienes suficiente dinero para ofertar. Debes abandonar la subasta.");
 					}
 
@@ -220,7 +213,7 @@ public class SubastaController extends AnchorPane implements Initializable {
 
 					lblMessage.setText("Esperando por apuestas...");
 
-				} catch (CondicionInvalidaException ce) {
+				} catch (OfertaInvalidaException ce) {
 					lblMessage.setText(ce.getMessage());
 				} catch (Exception ex) {
 
@@ -241,19 +234,36 @@ public class SubastaController extends AnchorPane implements Initializable {
 
 	private void abandonarSubasta() {
 		Platform.runLater(new Runnable() {
-			AuctionFinishMessage msg;
 
 			@Override
 			public void run() {
-				try {
-					if (TableroController.getInstance().showYesNoMsgBox("Abandonar Subasta", null, "¿Está seguro que desea abandonar la subasta?")) {
+				SubastaStatus subasta;
+				AuctionPropertyMessage msgSubastar;
+				AuctionFinishMessage msgFinish;
 
-						bloquearBotones(true);
-						lblMessage
-								.setText("La pantalla seguirá activa hasta que finalice la subasta.");
-						msg = new AuctionFinishMessage(idJuego,
-								"Abandonar Subasta.");
-						ConnectionController.getInstance().send(msg);
+				try {
+					if (TableroController.getInstance().showYesNoMsgBox(
+							"Abandonar Subasta", null,
+							"¿Está seguro que desea abandonar la subasta?")) {
+						if (estadoSubasta == EnumEstadoSubasta.CREADA) {
+							subasta = new SubastaStatus(estadoSubasta, null,
+									null, tarjetaSubasta, (int) (tarjetaSubasta
+											.getValorPropiedad() * 0.1));
+							msgSubastar = new AuctionPropertyMessage(idJuego,
+									subasta);
+							ConnectionController.getInstance()
+									.send(msgSubastar);
+							bloquearBotones(true);
+							return;
+						} else {
+
+							bloquearBotones(true);
+							lblMessage
+									.setText("La pantalla seguirá activa hasta que finalice la subasta.");
+							msgFinish = new AuctionFinishMessage(idJuego,
+									"Abandonar Subasta.");
+							ConnectionController.getInstance().send(msgFinish);
+						}
 					}
 				} catch (Exception ex) {
 					GestorLogs.registrarError(ex);

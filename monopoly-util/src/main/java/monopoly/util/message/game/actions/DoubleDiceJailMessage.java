@@ -1,4 +1,5 @@
-/**
+/**public final String idJuego;
+	public final String mensaje;
  * 
  */
 package monopoly.util.message.game.actions;

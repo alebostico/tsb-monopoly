@@ -524,6 +524,34 @@ public abstract class Jugador implements Serializable {
 	}
 
 	/**
+	 * Obtiene la propiedad del jugador.
+	 * 
+	 * @param tarjeta
+	 * @return
+	 */
+	public TarjetaPropiedad getPropiedad(TarjetaPropiedad tarjeta){
+		for(TarjetaPropiedad tarj : this.tarjPropiedadList){
+			if(tarj.equals(tarjeta))
+				return tarj;
+		}
+		return null;
+	}
+	
+	/**
+	 * Devuelte <strong>True<strong> si el jugador es propietario de la tarjeta.
+	 * <strong>False</strong> caso contrario.
+	 * 
+	 * @param tarjeta Propiedad.
+	 * 
+	 * @return
+	 */
+	public boolean esPropietario(TarjetaPropiedad tarjeta){
+		if(getPropiedad(tarjeta) != null)
+			return true;
+		return false;
+	}
+	
+	/**
 	 * Hipoteca una propiedad del jugador y cobra el monto de la hipoteca. Se
 	 * verifica que la propiedad no esté ya hipotecada y que no tenga edificios
 	 * en el caso de que sea una calle.

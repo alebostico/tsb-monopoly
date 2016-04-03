@@ -14,7 +14,7 @@ public class HistoryGameMessage implements Serializable {
 
 	private static final long serialVersionUID = -7458872200667918597L;
 
-	public final Object message; // Original message from a client.
+	public final Object history; // Original message from a client.
 
 	public final String idJuego;
 	/**
@@ -24,12 +24,12 @@ public class HistoryGameMessage implements Serializable {
 	 *            the original message.
 	 */
 	public HistoryGameMessage(Object message, String idJuego) {
-		this.message = message;
+		this.history = message;
 		this.idJuego = idJuego;
 	}
 	
 	public HistoryGameMessage(Object message){
-		this.message = message;
+		this.history = message;
 		this.idJuego = "";
 	}
 }
