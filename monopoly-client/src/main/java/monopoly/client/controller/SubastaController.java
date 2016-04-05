@@ -25,6 +25,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -48,7 +49,10 @@ import monopoly.util.message.game.actions.AuctionPropertyMessage;
 public class SubastaController extends AnchorPane implements Initializable {
 
 	@FXML
-	private ImageView imgPropiedad;
+    private ImageView imgPropiedadFrente;
+	
+	@FXML
+    private ImageView imgPropiedadDorso;
 
 	@FXML
 	private TableView<SubastaHistoryProperty> tblSubasta;
@@ -137,35 +141,36 @@ public class SubastaController extends AnchorPane implements Initializable {
 	}
 
 	private void configurarTabla() {
-		// Columna Usuario
-		// columnUsuario = new TableColumn<>("Usuario");
 		if (columnUsuario != null)
 			columnUsuario
 					.setCellValueFactory(new PropertyValueFactory<SubastaHistoryProperty, String>(
 							"usuario"));
 
-		// Column Fecha
-		// columnHistorico = new TableColumn<>("Fecha");
 		if (columnHistorico != null)
 			columnHistorico
 					.setCellValueFactory(new PropertyValueFactory<SubastaHistoryProperty, String>(
 							"historia"));
 
-		// colNombre.prefWidthProperty().bind(
-		// tblJuegos.widthProperty().multiply(0.30));
-		// colFecha.prefWidthProperty().bind(
-		// tblJuegos.widthProperty().multiply(0.15));
-		// colCreador.prefWidthProperty().bind(
-		// tblJuegos.widthProperty().multiply(0.25));
-		// colParticipantes.prefWidthProperty().bind(
-		// tblJuegos.widthProperty().multiply(0.30));
-
 	}
 
+	public void cargarImagenes() throws Exception{
+		Image img;
+		
+		img = new Image(tarjetaSubasta.getPathImagenPropiedad());
+		imgPropiedadDorso.setImage(img);
+		
+		img = new Image(tarjetaSubasta.getPathImagenFrente());		
+		imgPropiedadFrente.setImage(img);
+		
+		lblMessage.setText("");
+		
+	}
+	
 	private void pujarSubasta() {
 		Platform.runLater(new Runnable() {
 			int cantidadOfertada = 0;
 			int mejorOferta = 0;
+			int minimo = 0;
 			AuctionPropertyMessage msg;
 			SubastaStatus subasta;
 
@@ -189,13 +194,13 @@ public class SubastaController extends AnchorPane implements Initializable {
 								"La oferta debería ser mayor a 0.");
 					}
 
-					if (cantidadOfertada < (mejorOferta
-							+ (int) (tarjetaSubasta.getValorPropiedad() * 0.1))) {
+					minimo = (int) (tarjetaSubasta.getValorPropiedad() * 0.1);
+					if (cantidadOfertada < (mejorOferta + minimo )) {
 						txtMiOferta.setFocusTraversable(true);
 						throw new OfertaInvalidaException(
 								String.format(
 										"La oferta debe superar la mejor oferta + el 10% del valor de la propiedad (%s)",
-										tarjetaSubasta.getValorPropiedad() * 0.1));
+										String.valueOf(minimo)));
 					}
 
 					
@@ -216,11 +221,10 @@ public class SubastaController extends AnchorPane implements Initializable {
 				} catch (OfertaInvalidaException ce) {
 					lblMessage.setText(ce.getMessage());
 				} catch (Exception ex) {
-
+					lblMessage.setText(ex.getMessage());
 				}
 			}
 		});
-
 	}
 
 	private void bloquearBotones(boolean bHabilitado) {
@@ -274,6 +278,11 @@ public class SubastaController extends AnchorPane implements Initializable {
 
 	public void actualizarSubasta(SubastaStatus status) {
 		try {
+			
+			for (History history : status.historyList) {
+				agregarHistoriaDeSubasta(history);
+			}
+			
 			Platform.runLater(new Runnable() {
 
 				@Override
@@ -281,9 +290,7 @@ public class SubastaController extends AnchorPane implements Initializable {
 					try {
 						estadoSubasta = status.estado;
 						if (status.estado == EnumEstadoSubasta.JUGANDO) {
-							for (History history : status.historyList) {
-								agregarHistoriaDeSubasta(history);
-							}
+							
 
 							if (status.jugadorActual.getNombre().equals(
 									jugador.getNombre())) {
@@ -318,6 +325,7 @@ public class SubastaController extends AnchorPane implements Initializable {
 
 					if (tblSubasta != null) {
 						tblSubasta.getItems().clear();
+						//configurarTabla();
 						tblSubasta.setItems(historyObservableList);
 						// tblSubasta.getColumns().setAll(columnUsuario,
 						// columnHistorico);
@@ -408,12 +416,12 @@ public class SubastaController extends AnchorPane implements Initializable {
 			this.historia = new SimpleObjectProperty<String>(historia);
 		}
 
-		public SimpleObjectProperty<String> getUsuario() {
-			return usuario;
+		public String getUsuario() {
+			return usuario.get();
 		}
 
-		public SimpleObjectProperty<String> getHistoria() {
-			return historia;
+		public String getHistoria() {
+			return historia.get();
 		}
 	}
 

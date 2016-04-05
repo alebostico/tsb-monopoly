@@ -107,8 +107,8 @@ import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.DemortgageMessage;
 import monopoly.util.message.game.MortgageMessage;
 import monopoly.util.message.game.SaveGameMessage;
-import monopoly.util.message.game.actions.AuctionDecideMessage;
 import monopoly.util.message.game.UnbuildMessage;
+import monopoly.util.message.game.actions.AuctionDecideMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.PayRentMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
@@ -330,7 +330,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	private Usuario usuarioLogueado;
 
-	private JugadorHumano jugador;
+	// private JugadorHumano jugador;
 
 	private static MonopolyGameStatus estadoActual;
 
@@ -1477,20 +1477,19 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	public void actualizarSubasta(SubastaStatus statusSubasta) {
-		Platform.runLater(new Runnable() {
-			private Stage subastaStage = null;
 
-			@Override
-			public void run() {
+		if (statusSubasta.estado == EnumEstadoSubasta.INICIADA) {
+			Platform.runLater(new Runnable() {
+				private Stage subastaStage = null;
 
-				String fxml;
-				SubastaController controller;
-				Alert alert = null;
+				@Override
+				public void run() {
 
-				try {
-					// Si el estado es iniciada ~~> Mostro la pantalla de subasta.
-					if (statusSubasta.estado == EnumEstadoSubasta.INICIADA) {
-						if (!jugador.getNombre().equals(
+					String fxml;
+					SubastaController controller;
+
+					try {
+						if (!getMyPlayer().getNombre().equals(
 								statusSubasta.jugadorActual.getNombre())) {
 							fxml = ConstantesFXML.FXML_SUBASTA;
 							subastaStage = new Stage();
@@ -1502,7 +1501,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							controller
 									.setTarjetaSubasta(statusSubasta.propiedadSubastada);
 							controller.setCurrentStage(subastaStage);
-							controller.setJugador(jugador);
+							controller.setJugador(getMyPlayer());
 							controller.setIdJuego(juego.getUniqueID());
 							controller.setEstadoSubasta(statusSubasta.estado);
 							subastaStage.show();
@@ -1511,14 +1510,27 @@ public class TableroController extends AnchorPane implements Serializable,
 								VentaPropiedadController.getInstance()
 										.getCurrentStage().close();
 						}
-						for (History history : statusSubasta.historyList) {
-							SubastaController.getInstance()
-									.agregarHistoriaDeSubasta(history);
-						}
+					} catch (Exception ex) {
+						GestorLogs.registrarException(ex);
+					}
+				}
+			});
 
-					} else {						
-						if (statusSubasta.estado == EnumEstadoSubasta.FINALIZADA) {
-							if (!jugador.getNombre().equals(
+			for (History history : statusSubasta.historyList) {
+				SubastaController.getInstance().agregarHistoriaDeSubasta(
+						history);
+			}
+		} else {
+			if (statusSubasta.estado == EnumEstadoSubasta.FINALIZADA) {
+
+				FutureTask<Void> taskAddHistory = null;
+				try {
+					taskAddHistory = new FutureTask<Void>(new Callable<Void>() {
+						@Override
+						public Void call() throws Exception {
+							Alert alert = null;
+
+							if (!getMyPlayer().getNombre().equals(
 									statusSubasta.jugadorActual.getNombre())) {
 								SubastaController.getInstance()
 										.getCurrentStage().close();
@@ -1531,16 +1543,19 @@ public class TableroController extends AnchorPane implements Serializable,
 										statusSubasta.getMensaje(), null);
 								alert.show();
 							}
-						} else {
-							SubastaController.getInstance().actualizarSubasta(
-									statusSubasta);
+							return null;
 						}
-					}
+					});
+					Platform.runLater(taskAddHistory);
+					taskAddHistory.get();
 				} catch (Exception ex) {
 					GestorLogs.registrarException(ex);
 				}
+			} else {
+				SubastaController.getInstance()
+						.actualizarSubasta(statusSubasta);
 			}
-		});
+		}
 	}
 
 	/**
@@ -3541,13 +3556,13 @@ public class TableroController extends AnchorPane implements Serializable,
 		this.usuarioLogueado = usuarioLogueado;
 	}
 
-	public JugadorHumano getJugador() {
-		return jugador;
-	}
-
-	public void setJugador(JugadorHumano jugador) {
-		this.jugador = jugador;
-	}
+	// public JugadorHumano getJugador() {
+	// return jugador;
+	// }
+	//
+	// public void setJugador(JugadorHumano jugador) {
+	// this.jugador = jugador;
+	// }
 
 	public Deuda getDeudaPendiente() {
 		return deudaPendiente;

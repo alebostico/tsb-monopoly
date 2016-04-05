@@ -112,6 +112,7 @@ public class VentaPropiedadController extends AnchorPane implements
 					controller.setCurrentStage(subastaStage);
 					controller.setJugador(jugadorComprador);
 					controller.setIdJuego(idJuego);
+					controller.cargarImagenes();
 					subastaStage.show();
 					if (VentaPropiedadController.getInstance() != null)
 						VentaPropiedadController.getInstance()

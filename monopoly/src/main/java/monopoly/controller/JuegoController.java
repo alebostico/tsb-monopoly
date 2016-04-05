@@ -1824,8 +1824,14 @@ public class JuegoController implements Serializable {
 						jugadorTurno.getNombre(), mensaje);
 				historyList.add(history);
 
+				msgHistorySubasta = new AuctionNotifyMessage(historyList);
+				sendToAll(msgHistorySubasta);
+
+				Thread.sleep(1500);
+
 				subastaStatus = new SubastaStatus(EnumEstadoSubasta.INICIADA,
-						historyList, jugadorTurno, tarjeta, montoSubasta);
+						new ArrayList<History>(), jugadorTurno, tarjeta,
+						montoSubasta);
 
 				msgActualizarSubasta = new AuctionPropertyMessage(
 						juego.getUniqueID(), subastaStatus);
@@ -1842,13 +1848,15 @@ public class JuegoController implements Serializable {
 				montoMinimoSubasta = (int) (tarjeta.getValorPropiedad() * 0.1);
 
 				/**
-				 * Hago un ciclo para recorrer los turnos de los posibles jugadores
-				 * virtuales. Si el siguiente jugador es humano, envía el msj al 
-				 * jugador correspondiente para que haga su ofrecimiento.
+				 * Hago un ciclo para recorrer los turnos de los posibles
+				 * jugadores virtuales. Si el siguiente jugador es humano, envía
+				 * el msj al jugador correspondiente para que haga su
+				 * ofrecimiento.
 				 */
 				while (true) {
 					if (jugadorTurno.isVirtual()) {
-						// Incremento el monto minímo de la subasta para el jugador virtual.
+						// Incremento el monto minímo de la subasta para el
+						// jugador virtual.
 						montoSubastaVirtual = gestorJugadoresVirtuales.pujar(
 								tarjeta, montoSubasta + montoMinimoSubasta,
 								jugadorActual, (JugadorVirtual) jugadorTurno);
@@ -1867,7 +1875,7 @@ public class JuegoController implements Serializable {
 									new ArrayList<History>(
 											Arrays.asList(history)));
 							sendToAll(msgHistorySubasta);
-							
+
 							Thread.sleep(1500);
 
 							gestorSubasta.quitarJugadorDeSubasta(jugadorTurno);
@@ -1904,22 +1912,28 @@ public class JuegoController implements Serializable {
 							// Notifico a los jugadores que el jugador virtual
 							// levantó el monto de la subasta.
 							historyList = new ArrayList<History>();
-							
-							mensaje = "Subastó con ." + StringUtils.formatearAMoneda(montoSubastaVirtual);
+
+							mensaje = "Subastó con "
+									+ StringUtils
+											.formatearAMoneda(montoSubastaVirtual);
 							history = new History(StringUtils.getFechaActual(),
 									jugadorTurno.getNombre(), mensaje);
 							historyList.add(history);
-							
+
 							montoSubasta = montoSubastaVirtual;
 							jugadorActual = jugadorTurno;
 							jugadorTurno = gestorSubasta.siguienteTurno();
-							
-							mensaje = "Turno de subastar";
-							history = new History(StringUtils.getFechaActual(),
-									jugadorTurno.getNombre(), mensaje);
-							historyList.add(history);
-							
-							msgHistorySubasta = new AuctionNotifyMessage(historyList);
+
+							if (jugadorTurno.isVirtual()) {
+								mensaje = "Turno de subastar";
+								history = new History(
+										StringUtils.getFechaActual(),
+										jugadorTurno.getNombre(), mensaje);
+								historyList.add(history);
+							}
+
+							msgHistorySubasta = new AuctionNotifyMessage(
+									historyList);
 							sendToAll(msgHistorySubasta);
 							continue;
 						}
@@ -1940,23 +1954,24 @@ public class JuegoController implements Serializable {
 				}
 				break;
 			}
-		} 
+		}
 		/**
 		 * Si la subasta ya se encuentra iniciada
 		 */
 		else {
 			if (subastaStatus.estado == EnumEstadoSubasta.JUGANDO) {
-								
+
 				// Genero los histories de la subasta.
 				historyList = new ArrayList<History>();
 
-				mensaje = "Subastó con ." + StringUtils.formatearAMoneda(montoSubasta);
+				mensaje = "Subastó con ."
+						+ StringUtils.formatearAMoneda(montoSubasta);
 				history = new History(StringUtils.getFechaActual(),
 						jugadorActual.getNombre(), mensaje);
 				historyList.add(history);
 
 				jugadorTurno = gestorSubasta.siguienteTurno();
-				
+
 				mensaje = "Turno para subastar.";
 				history = new History(StringUtils.getFechaActual(),
 						jugadorTurno.getNombre(), mensaje);
@@ -1964,17 +1979,19 @@ public class JuegoController implements Serializable {
 
 				msgHistorySubasta = new AuctionNotifyMessage(historyList);
 				sendToAll(msgHistorySubasta);
-				
+
 				Thread.sleep(1500);
-				
+
 				/**
-				 * Hago un ciclo para recorrer los turnos de los posibles jugadores
-				 * virtuales. Si el siguiente jugador es humano, envía el msj al 
-				 * jugador correspondiente para que haga su ofrecimiento.
+				 * Hago un ciclo para recorrer los turnos de los posibles
+				 * jugadores virtuales. Si el siguiente jugador es humano, envía
+				 * el msj al jugador correspondiente para que haga su
+				 * ofrecimiento.
 				 */
 				while (true) {
 					if (jugadorTurno.isVirtual()) {
-						// Incremento el monto minímo de la subasta para el jugador virtual.
+						// Incremento el monto minímo de la subasta para el
+						// jugador virtual.
 						montoSubastaVirtual = gestorJugadoresVirtuales.pujar(
 								tarjeta, montoSubasta + montoMinimoSubasta,
 								jugadorActual, (JugadorVirtual) jugadorTurno);
@@ -1993,7 +2010,7 @@ public class JuegoController implements Serializable {
 									new ArrayList<History>(
 											Arrays.asList(history)));
 							sendToAll(msgHistorySubasta);
-							
+
 							Thread.sleep(1500);
 
 							gestorSubasta.quitarJugadorDeSubasta(jugadorTurno);
@@ -2030,22 +2047,28 @@ public class JuegoController implements Serializable {
 							// Notifico a los jugadores que el jugador virtual
 							// levantó el monto de la subasta.
 							historyList = new ArrayList<History>();
-							
-							mensaje = "Subastó con ." + StringUtils.formatearAMoneda(montoSubastaVirtual);
+
+							mensaje = "Subastó con ."
+									+ StringUtils
+											.formatearAMoneda(montoSubastaVirtual);
 							history = new History(StringUtils.getFechaActual(),
 									jugadorTurno.getNombre(), mensaje);
 							historyList.add(history);
-							
+
 							montoSubasta = montoSubastaVirtual;
 							jugadorActual = jugadorTurno;
 							jugadorTurno = gestorSubasta.siguienteTurno();
-							
-							mensaje = "Turno de subastar";
-							history = new History(StringUtils.getFechaActual(),
-									jugadorTurno.getNombre(), mensaje);
-							historyList.add(history);
-							
-							msgHistorySubasta = new AuctionNotifyMessage(historyList);
+
+							if (jugadorTurno.isVirtual()) {
+								mensaje = "Turno de subastar";
+								history = new History(
+										StringUtils.getFechaActual(),
+										jugadorTurno.getNombre(), mensaje);
+								historyList.add(history);
+							}
+
+							msgHistorySubasta = new AuctionNotifyMessage(
+									historyList);
 							sendToAll(msgHistorySubasta);
 							continue;
 						}
