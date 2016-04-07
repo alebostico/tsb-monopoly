@@ -513,6 +513,7 @@ public class JuegoController implements Serializable {
 		CasilleroCalle casilleroCalle;
 		CasilleroEstacion casilleroEstacion;
 		CasilleroCompania casilleroCompania;
+		SubastaStatus subastaStatus;
 		Jugador duenio;
 		String mensaje;
 		int montoAPagar;
@@ -527,31 +528,46 @@ public class JuegoController implements Serializable {
 			realizarObjetivoTarjeta(jugador, tarjetaSelected);
 			break;
 		case DISPONIBLE_PARA_VENDER:
-			if (gestorJugadoresVirtuales.decidirComprar(casillero, jugador)) {
-				switch (casillero.getTipoCasillero()) {
-				case C_CALLE:
-					tarjetaPropiedad = ((CasilleroCalle) casillero)
-							.getTarjetaCalle();
-					break;
-				case C_ESTACION:
-					tarjetaPropiedad = ((CasilleroEstacion) casillero)
-							.getTarjetaEstacion();
-					break;
-				case C_COMPANIA:
-					tarjetaPropiedad = ((CasilleroCompania) casillero)
-							.getTarjetaCompania();
-					break;
-				default:
-					break;
-				}
 
+			switch (casillero.getTipoCasillero()) {
+			case C_CALLE:
+				tarjetaPropiedad = ((CasilleroCalle) casillero)
+						.getTarjetaCalle();
+				break;
+			case C_ESTACION:
+				tarjetaPropiedad = ((CasilleroEstacion) casillero)
+						.getTarjetaEstacion();
+				break;
+			case C_COMPANIA:
+				tarjetaPropiedad = ((CasilleroCompania) casillero)
+						.getTarjetaCompania();
+				break;
+			default:
+				break;
+			}
+
+			if (gestorJugadoresVirtuales.decidirComprar(casillero, jugador)) {
 				comprarPropiedad(jugador, tarjetaPropiedad);
 			} else {
-				mensaje = String.format("El Jugador %s decidió no comprar %s.",
+				mensaje = String.format(
+						"Decidió no comprar. Se subasta la propiedad %s.",
 						jugador.getNombre(), casillero.getNombreCasillero());
 				sendToAll(new HistoryGameMessage(new History(
 						StringUtils.getFechaActual(), jugador.getNombre(),
 						mensaje)));
+
+				Thread.sleep(1500);
+				montoAPagar = (int) (tarjetaPropiedad.getValorPropiedad() * 0.1);
+				if (gestorJugadoresVirtuales.decidirAceptarSubasta(
+						tarjetaPropiedad, montoAPagar, jugador)) {
+					subastaStatus = new SubastaStatus(EnumEstadoSubasta.CREADA,
+							null, jugador, tarjetaPropiedad, montoAPagar);
+				} else {
+					subastaStatus = new SubastaStatus(EnumEstadoSubasta.CREADA,
+							null, null, tarjetaPropiedad, montoAPagar);
+				}
+
+				subastar(jugador, subastaStatus);
 			}
 			break;
 		case IMPUESTO_DE_LUJO:
@@ -1879,11 +1895,15 @@ public class JuegoController implements Serializable {
 							Thread.sleep(1500);
 
 							gestorSubasta.quitarJugadorDeSubasta(jugadorTurno);
+							jugadorTurno = gestorSubasta.getJugadorActual();
 
 							/**
 							 * Si es igual a 1 queda el jugador ganador.
 							 */
 							if (gestorSubasta.cantidadJugadores() <= 1) {
+
+								adquirirPropiedad(jugadorTurno, null, tarjeta,
+										montoSubasta);
 
 								mensaje = String
 										.format("Ganó la subasta de la propiedad %s con %s.",
@@ -1892,19 +1912,28 @@ public class JuegoController implements Serializable {
 														.formatearAMoneda(montoSubasta));
 								history = new History(
 										StringUtils.getFechaActual(),
-										jugadorActual.getNombre(), mensaje);
+										jugadorTurno.getNombre(), mensaje);
 
 								sendToAll(new MonopolyGameStatus(
 										gestorJugadores.getTurnoslist(),
 										gestorBanco.getBanco(),
 										gestorTablero.getTablero(),
-										EstadoJuego.SUBASTA_FINALIZADA, null,
+										EstadoJuego.ACTUALIZANDO_ESTADO, null,
 										gestorJugadores.getCurrentPlayer(),
 										new ArrayList<History>(Arrays
 												.asList(history)), null));
+
+								subastaStatus = new SubastaStatus(
+										EnumEstadoSubasta.FINALIZADA,
+										new ArrayList<History>(), jugadorTurno,
+										tarjeta, montoSubasta);
+								subastaStatus.setMensaje(mensaje);
+								msgActualizarSubasta = new AuctionPropertyMessage(
+										"", subastaStatus);
+
+								sendToAll(msgActualizarSubasta);
 								break;
 							} else {
-								jugadorTurno = gestorSubasta.jugadorActual();
 								continue;
 							}
 
@@ -1964,7 +1993,7 @@ public class JuegoController implements Serializable {
 				// Genero los histories de la subasta.
 				historyList = new ArrayList<History>();
 
-				mensaje = "Subastó con ."
+				mensaje = "Subastó con "
 						+ StringUtils.formatearAMoneda(montoSubasta);
 				history = new History(StringUtils.getFechaActual(),
 						jugadorActual.getNombre(), mensaje);
@@ -2014,11 +2043,15 @@ public class JuegoController implements Serializable {
 							Thread.sleep(1500);
 
 							gestorSubasta.quitarJugadorDeSubasta(jugadorTurno);
+							jugadorTurno = gestorSubasta.getJugadorActual();
 
 							/**
 							 * Si es igual a 1 queda el jugador ganador.
 							 */
 							if (gestorSubasta.cantidadJugadores() <= 1) {
+
+								adquirirPropiedad(jugadorTurno, null, tarjeta,
+										montoSubasta);
 
 								mensaje = String
 										.format("Ganó la subasta de la propiedad %s con %s.",
@@ -2027,19 +2060,28 @@ public class JuegoController implements Serializable {
 														.formatearAMoneda(montoSubasta));
 								history = new History(
 										StringUtils.getFechaActual(),
-										jugadorActual.getNombre(), mensaje);
+										jugadorTurno.getNombre(), mensaje);
 
 								sendToAll(new MonopolyGameStatus(
 										gestorJugadores.getTurnoslist(),
 										gestorBanco.getBanco(),
 										gestorTablero.getTablero(),
-										EstadoJuego.SUBASTA_FINALIZADA, null,
+										EstadoJuego.ACTUALIZANDO_ESTADO, null,
 										gestorJugadores.getCurrentPlayer(),
 										new ArrayList<History>(Arrays
 												.asList(history)), null));
+
+								subastaStatus = new SubastaStatus(
+										EnumEstadoSubasta.FINALIZADA,
+										new ArrayList<History>(), jugadorTurno,
+										tarjeta, montoSubasta);
+								subastaStatus.setMensaje(mensaje);
+								msgActualizarSubasta = new AuctionPropertyMessage(
+										"", subastaStatus);
+								sendToAll(msgActualizarSubasta);
 								break;
 							} else {
-								jugadorTurno = gestorSubasta.jugadorActual();
+								jugadorTurno = gestorSubasta.getJugadorActual();
 								continue;
 							}
 
@@ -2048,7 +2090,7 @@ public class JuegoController implements Serializable {
 							// levantó el monto de la subasta.
 							historyList = new ArrayList<History>();
 
-							mensaje = "Subastó con ."
+							mensaje = "Subastó con "
 									+ StringUtils
 											.formatearAMoneda(montoSubastaVirtual);
 							history = new History(StringUtils.getFechaActual(),
@@ -2142,8 +2184,68 @@ public class JuegoController implements Serializable {
 		}
 	}
 
-	public void finalizarSubasta(int senderId) {
+	public void finalizarSubasta(int senderId, int monto,
+			TarjetaPropiedad tarjeta) throws Exception {
 
+		String mensaje = "";
+		History history;
+		AuctionNotifyMessage msgHistorySubasta;
+		AuctionPropertyMessage msgActualizarSubasta;
+		SubastaStatus subastaStatus;
+		TarjetaPropiedad tarjetaPropiedad;
+		Jugador jugadorActual;
+		Jugador jugadorTurno;
+
+		jugadorActual = gestorJugadores.getJugadorHumano(senderId);
+		tarjetaPropiedad = gestorBanco.getBanco().getTarjetaPropiedad(
+				tarjeta.getNombrePropiedad());
+
+		// Notifico a los jugadores que el jugador abandonó la subasta.
+		mensaje = "Abandonó la Subasta.";
+		history = new History(StringUtils.getFechaActual(),
+				jugadorActual.getNombre(), mensaje);
+		msgHistorySubasta = new AuctionNotifyMessage(new ArrayList<History>(
+				Arrays.asList(history)));
+		sendToAll(msgHistorySubasta);
+
+		Thread.sleep(1500);
+
+		gestorSubasta.quitarJugadorDeSubasta(jugadorActual);
+
+		jugadorTurno = gestorSubasta.getJugadorActual();
+
+		/**
+		 * Si es igual a 1 queda el jugador ganador.
+		 */
+		if (gestorSubasta.cantidadJugadores() <= 1) {
+
+			adquirirPropiedad(jugadorTurno, null, tarjetaPropiedad, monto);
+
+			mensaje = String.format(
+					"Ganó la subasta de la propiedad %s con %s.",
+					tarjetaPropiedad.getNombre(),
+					StringUtils.formatearAMoneda(monto));
+			history = new History(StringUtils.getFechaActual(),
+					jugadorActual.getNombre(), mensaje);
+
+			sendToAll(new MonopolyGameStatus(gestorJugadores.getTurnoslist(),
+					gestorBanco.getBanco(), gestorTablero.getTablero(),
+					EstadoJuego.ACTUALIZANDO_ESTADO, null,
+					gestorJugadores.getCurrentPlayer(), new ArrayList<History>(
+							Arrays.asList(history)), null));
+
+			subastaStatus = new SubastaStatus(EnumEstadoSubasta.FINALIZADA,
+					new ArrayList<History>(), jugadorTurno, tarjetaPropiedad,
+					monto);
+
+			msgActualizarSubasta = new AuctionPropertyMessage("", subastaStatus);
+			sendToAll(msgActualizarSubasta);
+
+		} else {
+			subastaStatus = new SubastaStatus(EnumEstadoSubasta.JUGANDO, null,
+					jugadorTurno, tarjetaPropiedad, monto);
+			subastar(jugadorTurno, subastaStatus);
+		}
 	}
 
 	/**

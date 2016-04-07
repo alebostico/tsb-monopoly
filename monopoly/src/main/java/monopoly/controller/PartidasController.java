@@ -442,9 +442,9 @@ public class PartidasController {
 		juegoController.subastar(senderId, subastaStatus);
 	}
 
-	public void finalizarSubasta(String idJuego, int senderId) throws Exception {
+	public void finalizarSubasta(String idJuego, int senderId, int monto, TarjetaPropiedad tarjeta) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
-		juegoController.finalizarSubasta(senderId);
+		juegoController.finalizarSubasta(senderId, monto, tarjeta);
 	}
 
 	// =====================================================================//

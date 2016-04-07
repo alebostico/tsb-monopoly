@@ -79,7 +79,7 @@ public class SubastaController implements Serializable {
 		this.propiedadSubastada = propiedadSubastada;
 	}
 
-	public Jugador jugadorActual() throws Exception {
+	public Jugador getJugadorActual() throws Exception {
 		return indexList[indexActual];
 	}
 

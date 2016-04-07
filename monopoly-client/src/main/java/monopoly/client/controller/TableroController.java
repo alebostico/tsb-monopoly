@@ -1529,20 +1529,27 @@ public class TableroController extends AnchorPane implements Serializable,
 						@Override
 						public Void call() throws Exception {
 							Alert alert = null;
-
-							if (!getMyPlayer().getNombre().equals(
-									statusSubasta.jugadorActual.getNombre())) {
+							if (SubastaController.getInstance()
+									.getCurrentStage() != null)
 								SubastaController.getInstance()
 										.getCurrentStage().close();
-								alert = getAlert(AlertType.INFORMATION,
-										"Subasta Finalizada", String.format(
-												"Subastar %s",
-												SubastaController.getInstance()
-														.getTarjetaSubasta()
-														.getNombre()),
-										statusSubasta.getMensaje(), null);
-								alert.show();
-							}
+							alert = getAlert(AlertType.INFORMATION,
+									"Subasta Finalizada", String.format(
+											"Subastar %s", SubastaController
+													.getInstance()
+													.getTarjetaSubasta()
+													.getNombre()),
+									statusSubasta.getMensaje(), null);
+
+								if (statusSubasta.jugadorActual
+										.equals(getMyPlayer())) {
+									alert.setContentText(alert.getContentText()
+											+ ". Finalizó su turno.");
+									alert.showAndWait();
+									finalizarTurno();
+								} else
+									alert.show();
+								
 							return null;
 						}
 					});

@@ -22,8 +22,7 @@ public class Estado implements Serializable {
 				"Jugador Jugando"), ESPERANDO_TURNO(
 				"Esperando que el jugador termine su turno"), PRESO("Jugador en la cárcel"),
 				LIBRE("Queda libre de la cárcel"), DADOS_DOBLES("Jugando otro turno por dados dobles"),
-				FINALIZADO("finalizado"), ACTUALIZANDO_ESTADO("Actualizando el estado del juego"),
-				SUBASTA_FINALIZADA("Se finalizó la subasta");
+				FINALIZADO("finalizado"), ACTUALIZANDO_ESTADO("Actualizando el estado del juego");
 
 		private final String nombreEstadoJuego;
 

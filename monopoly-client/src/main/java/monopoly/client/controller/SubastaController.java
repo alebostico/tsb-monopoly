@@ -49,10 +49,10 @@ import monopoly.util.message.game.actions.AuctionPropertyMessage;
 public class SubastaController extends AnchorPane implements Initializable {
 
 	@FXML
-    private ImageView imgPropiedadFrente;
-	
+	private ImageView imgPropiedadFrente;
+
 	@FXML
-    private ImageView imgPropiedadDorso;
+	private ImageView imgPropiedadDorso;
 
 	@FXML
 	private TableView<SubastaHistoryProperty> tblSubasta;
@@ -153,19 +153,19 @@ public class SubastaController extends AnchorPane implements Initializable {
 
 	}
 
-	public void cargarImagenes() throws Exception{
+	public void cargarImagenes() throws Exception {
 		Image img;
-		
+
 		img = new Image(tarjetaSubasta.getPathImagenPropiedad());
 		imgPropiedadDorso.setImage(img);
-		
-		img = new Image(tarjetaSubasta.getPathImagenFrente());		
+
+		img = new Image(tarjetaSubasta.getPathImagenFrente());
 		imgPropiedadFrente.setImage(img);
-		
+
 		lblMessage.setText("");
-		
+
 	}
-	
+
 	private void pujarSubasta() {
 		Platform.runLater(new Runnable() {
 			int cantidadOfertada = 0;
@@ -187,7 +187,7 @@ public class SubastaController extends AnchorPane implements Initializable {
 
 					mejorOferta = Integer.parseInt(txtMejorOferta.getText());
 					cantidadOfertada = Integer.parseInt(txtMiOferta.getText());
-					
+
 					if (cantidadOfertada <= 0) {
 						txtMiOferta.setFocusTraversable(true);
 						throw new OfertaInvalidaException(
@@ -195,15 +195,13 @@ public class SubastaController extends AnchorPane implements Initializable {
 					}
 
 					minimo = (int) (tarjetaSubasta.getValorPropiedad() * 0.1);
-					if (cantidadOfertada < (mejorOferta + minimo )) {
+					if (cantidadOfertada < (mejorOferta + minimo)) {
 						txtMiOferta.setFocusTraversable(true);
 						throw new OfertaInvalidaException(
-								String.format(
-										"La oferta debe superar la mejor oferta + el 10% del valor de la propiedad (%s)",
-										String.valueOf(minimo)));
+								"La oferta debe superar la mejor oferta + el 10% del valor de la propiedad ("
+										+ minimo + ")");
 					}
 
-					
 					if (cantidadOfertada > jugador.getDinero()) {
 						btnAbandonarSubasta.setFocusTraversable(true);
 						throw new OfertaInvalidaException(
@@ -227,10 +225,10 @@ public class SubastaController extends AnchorPane implements Initializable {
 		});
 	}
 
-	private void bloquearBotones(boolean bHabilitado) {
+	private void bloquearBotones(boolean bBloquear) {
 		try {
-			btnPujar.setDisable(!bHabilitado);
-			btnAbandonarSubasta.setDisable(!bHabilitado);
+			btnPujar.setDisable(bBloquear);
+			btnAbandonarSubasta.setDisable(bBloquear);
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
 		}
@@ -244,7 +242,8 @@ public class SubastaController extends AnchorPane implements Initializable {
 				SubastaStatus subasta;
 				AuctionPropertyMessage msgSubastar;
 				AuctionFinishMessage msgFinish;
-
+				int monto = 0;
+				
 				try {
 					if (TableroController.getInstance().showYesNoMsgBox(
 							"Abandonar Subasta", null,
@@ -264,7 +263,8 @@ public class SubastaController extends AnchorPane implements Initializable {
 							bloquearBotones(true);
 							lblMessage
 									.setText("La pantalla seguirá activa hasta que finalice la subasta.");
-							msgFinish = new AuctionFinishMessage(idJuego,
+							monto = Integer.parseInt(txtMejorOferta.getText());
+							msgFinish = new AuctionFinishMessage(idJuego, monto, tarjetaSubasta,
 									"Abandonar Subasta.");
 							ConnectionController.getInstance().send(msgFinish);
 						}
@@ -278,11 +278,11 @@ public class SubastaController extends AnchorPane implements Initializable {
 
 	public void actualizarSubasta(SubastaStatus status) {
 		try {
-			
+
 			for (History history : status.historyList) {
 				agregarHistoriaDeSubasta(history);
 			}
-			
+
 			Platform.runLater(new Runnable() {
 
 				@Override
@@ -290,10 +290,10 @@ public class SubastaController extends AnchorPane implements Initializable {
 					try {
 						estadoSubasta = status.estado;
 						if (status.estado == EnumEstadoSubasta.JUGANDO) {
-							
 
 							if (status.jugadorActual.getNombre().equals(
 									jugador.getNombre())) {
+								lblMessage.setText("");
 								bloquearBotones(false);
 								txtMejorOferta.setText(String
 										.valueOf(status.montoSubasta));
@@ -325,7 +325,7 @@ public class SubastaController extends AnchorPane implements Initializable {
 
 					if (tblSubasta != null) {
 						tblSubasta.getItems().clear();
-						//configurarTabla();
+						// configurarTabla();
 						tblSubasta.setItems(historyObservableList);
 						// tblSubasta.getColumns().setAll(columnUsuario,
 						// columnHistorico);

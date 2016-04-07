@@ -230,7 +230,9 @@ public class MonopolyGame extends GameServer {
 			case ConstantesMensaje.AUCTION_FINISH_MESSAGE:
 				msgAuctionFinish = (AuctionFinishMessage) message;
 				PartidasController.getInstance().finalizarSubasta(
-						msgAuctionFinish.idJuego, senderId);
+						msgAuctionFinish.idJuego, senderId,
+						msgAuctionFinish.monto,
+						(TarjetaPropiedad) msgAuctionFinish.tarjeta);
 				break;
 
 			case ConstantesMensaje.BID_FOR_PROPERTY_MESSAGE:
