@@ -49,7 +49,7 @@ public class JugadorVirtualController implements Serializable {
 
 	/**
 	 * Cuando un TJ_EMPRESARIO o un TJ_COMPRADOR_PRIMERIZO pujan, cuanto más
-	 * ofrecen. El valor está en PESOS ($).
+	 * ofrecen. El valor está en PORCENTAJE (%).
 	 */
 	private static final int AUMENTO_PUJA = 10;
 
@@ -91,6 +91,8 @@ public class JugadorVirtualController implements Serializable {
 			return 0;
 		}
 
+		int montoAumento = (AUMENTO_PUJA * propiedad.getValorPropiedad());
+		
 		Random rnd = new Random();
 		int puja = 0;
 		int precioPropiedad = propiedad.getValorPropiedad();
@@ -162,7 +164,7 @@ public class JugadorVirtualController implements Serializable {
 				}
 			}
 			// Si ya hay puja
-			else if (maxActual + AUMENTO_PUJA < dineroJugador) {
+			else if (maxActual + montoAumento < dineroJugador) {
 				// Decido según el azar si pujo o no, en funcion de la siguiente
 				// probabilidad
 				int probabilidad = (dineroJugador - maxActual) * 100
@@ -172,7 +174,7 @@ public class JugadorVirtualController implements Serializable {
 
 				// Si el numero es menor que la probabilidad, pujo
 				if (resultado < probabilidad) {
-					puja = maxActual + AUMENTO_PUJA;
+					puja = maxActual + montoAumento;
 				}
 			}
 
@@ -189,7 +191,7 @@ public class JugadorVirtualController implements Serializable {
 				}
 			}
 			// Si ya hay puja
-			else if (maxActual + AUMENTO_PUJA < dineroJugador) {
+			else if (maxActual + montoAumento < dineroJugador) {
 				// Decido según el azar si pujo o no, en funcion de la siguiente
 				// probabilidad
 				int probabilidad = 50;
@@ -198,7 +200,7 @@ public class JugadorVirtualController implements Serializable {
 
 				// Si el numero es menor que la probabilidad, pujo
 				if (resultado < probabilidad) {
-					puja = maxActual + AUMENTO_PUJA;
+					puja = maxActual + montoAumento;
 				}
 			}
 
