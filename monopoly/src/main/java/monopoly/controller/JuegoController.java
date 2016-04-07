@@ -1874,8 +1874,8 @@ public class JuegoController implements Serializable {
 						// Incremento el monto minímo de la subasta para el
 						// jugador virtual.
 						montoSubastaVirtual = gestorJugadoresVirtuales.pujar(
-								tarjeta, montoSubasta + montoMinimoSubasta,
-								jugadorActual, (JugadorVirtual) jugadorTurno);
+								tarjeta, montoSubasta, jugadorActual,
+								(JugadorVirtual) jugadorTurno);
 
 						Thread.sleep(2000);
 
