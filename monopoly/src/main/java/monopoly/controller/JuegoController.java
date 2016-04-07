@@ -1841,7 +1841,6 @@ public class JuegoController implements Serializable {
 				historyList.add(history);
 
 				msgHistorySubasta = new AuctionNotifyMessage(historyList);
-				sendToAll(msgHistorySubasta);
 
 				Thread.sleep(1500);
 
@@ -1861,6 +1860,8 @@ public class JuegoController implements Serializable {
 					// Si es Virtual envío a todos el mensaje.
 					sendToAll(msgActualizarSubasta);
 
+				sendToAll(msgHistorySubasta);
+				
 				montoMinimoSubasta = (int) (tarjeta.getValorPropiedad() * 0.1);
 
 				/**
