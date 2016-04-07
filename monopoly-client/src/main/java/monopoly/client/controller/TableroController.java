@@ -1506,7 +1506,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							controller.setEstadoSubasta(statusSubasta.estado);
 							subastaStage.show();
 
-							if (VentaPropiedadController.getInstance() != null)
+							if (VentaPropiedadController.getInstance().getCurrentStage() != null)
 								VentaPropiedadController.getInstance()
 										.getCurrentStage().close();
 						}

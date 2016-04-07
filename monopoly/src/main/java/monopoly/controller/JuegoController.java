@@ -1842,7 +1842,7 @@ public class JuegoController implements Serializable {
 
 				msgHistorySubasta = new AuctionNotifyMessage(historyList);
 
-				Thread.sleep(1500);
+				//Thread.sleep(1500);
 
 				subastaStatus = new SubastaStatus(EnumEstadoSubasta.INICIADA,
 						new ArrayList<History>(), jugadorTurno, tarjeta,
@@ -1851,6 +1851,8 @@ public class JuegoController implements Serializable {
 				msgActualizarSubasta = new AuctionPropertyMessage(
 						juego.getUniqueID(), subastaStatus);
 
+				
+				
 				// Si el jugador actual es humano. Mando un mensaje al resto
 				// para que inicien sus respectivas pantallas.
 				if (jugadorActual.isHumano())
@@ -1859,7 +1861,9 @@ public class JuegoController implements Serializable {
 				else
 					// Si es Virtual envío a todos el mensaje.
 					sendToAll(msgActualizarSubasta);
-
+				
+				Thread.sleep(1500);
+				
 				sendToAll(msgHistorySubasta);
 				
 				montoMinimoSubasta = (int) (tarjeta.getValorPropiedad() * 0.1);
