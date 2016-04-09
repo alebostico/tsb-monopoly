@@ -473,8 +473,8 @@ public class JuegoController implements Serializable {
 					StringUtils.getFechaActual(), jugadorActual.getNombre(),
 					accion.getMensaje())));
 
-			jugarAccionEnCasilleroJV(accion, jugadorActual, casillero);
-			siguienteTurno(true);
+			if(jugarAccionEnCasilleroJV(accion, jugadorActual, casillero))
+				siguienteTurno(true);
 
 		} catch (CondicionInvalidaException | SinDineroException e) {
 			/*
@@ -506,7 +506,7 @@ public class JuegoController implements Serializable {
 	 * @throws SinDineroException
 	 * @throws Exception
 	 */
-	private void jugarAccionEnCasilleroJV(AccionEnCasillero accion,
+	private boolean jugarAccionEnCasilleroJV(AccionEnCasillero accion,
 			JugadorVirtual jugador, Casillero casillero)
 			throws CondicionInvalidaException, SinDineroException, Exception {
 
@@ -553,7 +553,7 @@ public class JuegoController implements Serializable {
 			} else {
 				mensaje = String.format(
 						"Decidió no comprar. Se subasta la propiedad %s.",
-						jugador.getNombre(), casillero.getNombreCasillero());
+						casillero.getNombreCasillero());
 				sendToAll(new HistoryGameMessage(new History(
 						StringUtils.getFechaActual(), jugador.getNombre(),
 						mensaje)));
@@ -568,8 +568,9 @@ public class JuegoController implements Serializable {
 					subastaStatus = new SubastaStatus(EnumEstadoSubasta.CREADA,
 							null, null, tarjetaPropiedad, montoAPagar);
 				}
-
+				
 				subastar(jugador, subastaStatus);
+				return false;
 			}
 			break;
 		case IMPUESTO_DE_LUJO:
@@ -620,6 +621,7 @@ public class JuegoController implements Serializable {
 			throw new CondicionInvalidaException(String.format(
 					"La acción %s es inválida.", accion.toString()));
 		}
+		return true;
 	}
 
 	/**
@@ -1886,9 +1888,6 @@ public class JuegoController implements Serializable {
 					montoSubasta);
 
 			apostar(jugadorCreador, jugadorTurno, subastaStatus);
-
-			enviarNotificacionSubasta("Turno para subastar.", jugadorTurno);
-
 			break;
 		}
 	}
@@ -1897,7 +1896,6 @@ public class JuegoController implements Serializable {
 			SubastaStatus subastaStatus) throws Exception {
 
 		AuctionPropertyMessage msgActualizarSubasta;
-		AuctionFinishMessage msgFinalizarSubasta;
 		TarjetaPropiedad tarjeta;
 		History history;
 
@@ -1978,62 +1976,75 @@ public class JuegoController implements Serializable {
 					gestorJugadores.getCurrentPlayer(), new ArrayList<History>(
 							Arrays.asList(history)), null));
 
+			mensaje = String.format(
+					"%s ganó la subasta de la propiedad %s con %s.",
+					jugadorTurno.getNombre()
+					, tarjeta.getNombre(),
+					StringUtils.formatearAMoneda(montoSubasta));
+			
 			if (jugadorTurno.isVirtual()) {
 				subastaStatus = new SubastaStatus(EnumEstadoSubasta.FINALIZADA,
-						new ArrayList<History>(), jugadorTurno, tarjeta,
+						new ArrayList<History>(), gestorSubasta.getJugadorCreador(), tarjeta,
 						montoSubasta);
 				subastaStatus.setMensaje(mensaje);
 				msgActualizarSubasta = new AuctionPropertyMessage("",
 						subastaStatus);
 				sendToAll(msgActualizarSubasta);
+				
 				if (gestorSubasta.getJugadorCreador().isVirtual()) {
 					siguienteTurno(true);
 					return;
 				}
+				return;
 			}
 
 			// Si viene aquí es porque:
 			// Ganador es humano
 			// Creador es humano
 
-			if (gestorSubasta.getJugadorCreador().equals(jugadorTurno)) {
+			if (/* Ganador ~~> */jugadorTurno.equals(gestorSubasta.getJugadorCreador())) {
+				senderId = ((JugadorHumano) jugadorTurno).getSenderID();
+				
 				subastaStatus = new SubastaStatus(EnumEstadoSubasta.FINALIZADA,
 						new ArrayList<History>(), jugadorTurno, tarjeta,
 						montoSubasta);
 				subastaStatus.setMensaje(mensaje);
 				msgActualizarSubasta = new AuctionPropertyMessage("",
-						subastaStatus);
-				senderId = ((JugadorHumano) jugadorTurno).getSenderID();
+						subastaStatus);				
 				sendToOther(senderId, msgActualizarSubasta);
 
 				mensaje = String.format(
 						"Ganaste la subasta de la propiedad %s con %s.",
 						tarjeta.getNombre(),
 						StringUtils.formatearAMoneda(montoSubasta));
-				msgFinalizarSubasta = new AuctionFinishMessage(null, mensaje);
-				sendToOne(senderId, msgFinalizarSubasta);
+				subastaStatus.setMensaje(mensaje);
+				msgActualizarSubasta = new AuctionPropertyMessage("",
+						subastaStatus);				
+				sendToOne(senderId, msgActualizarSubasta);
 			} else {
-				senderId = ((JugadorHumano) gestorSubasta.getJugadorCreador())
-						.getSenderID();
+				senderId = ((JugadorHumano) jugadorTurno).getSenderID();
 				subastaStatus = new SubastaStatus(EnumEstadoSubasta.FINALIZADA,
-						new ArrayList<History>(), jugadorTurno, tarjeta,
+						new ArrayList<History>(), gestorSubasta.getJugadorCreador(), tarjeta,
 						montoSubasta);
 				subastaStatus.setMensaje(mensaje);
 				msgActualizarSubasta = new AuctionPropertyMessage("",
 						subastaStatus);
 				sendToOther(senderId, msgActualizarSubasta);
 
-				msgFinalizarSubasta = new AuctionFinishMessage(null, mensaje);
-				sendToOne(senderId, msgFinalizarSubasta);
+				mensaje = String.format(
+						"Ganaste la subasta de la propiedad %s con %s.",
+						tarjeta.getNombre(),
+						StringUtils.formatearAMoneda(montoSubasta));
+				subastaStatus.setMensaje(mensaje);
+				msgActualizarSubasta = new AuctionPropertyMessage("",
+						subastaStatus);				
+				sendToOne(senderId, msgActualizarSubasta);
 			}
 		}
 		// Si es humano.
 		else {
-			mensaje = "Turno para subastar.";
-			history = new History(StringUtils.getFechaActual(),
-					jugadorTurno.getNombre(), mensaje);
 			subastaStatus = new SubastaStatus(EnumEstadoSubasta.JUGANDO,
-					new ArrayList<History>(Arrays.asList(history)),
+					new ArrayList<History>(),
 					jugadorTurno, tarjeta, montoSubasta);
 			msgActualizarSubasta = new AuctionPropertyMessage(
 					juego.getUniqueID(), subastaStatus);

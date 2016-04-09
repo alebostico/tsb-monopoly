@@ -1491,7 +1491,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		return null;
 	}
 
-	public void actualizarSubasta(SubastaStatus statusSubasta) {
+	public void actualizarSubasta(SubastaStatus statusSubasta) throws Exception{
 
 		if (statusSubasta.estado == EnumEstadoSubasta.INICIADA) {
 			Platform.runLater(new Runnable() {
@@ -1519,6 +1519,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							controller.setJugador(getMyPlayer());
 							controller.setIdJuego(juego.getUniqueID());
 							controller.setEstadoSubasta(statusSubasta.estado);
+							controller.cargarImagenes();
+							controller.bloquearBotones(true);
 							subastaStage.show();
 
 							if (VentaPropiedadController.getInstance()
@@ -1532,6 +1534,8 @@ public class TableroController extends AnchorPane implements Serializable,
 				}
 			});
 
+			Thread.sleep(1500);
+			
 			for (History history : statusSubasta.historyList) {
 				SubastaController.getInstance().agregarHistoriaDeSubasta(
 						history);

@@ -225,7 +225,7 @@ public class SubastaController extends AnchorPane implements Initializable {
 		});
 	}
 
-	private void bloquearBotones(boolean bBloquear) {
+	public void bloquearBotones(boolean bBloquear) {
 		try {
 			btnPujar.setDisable(bBloquear);
 			btnAbandonarSubasta.setDisable(bBloquear);
@@ -248,10 +248,10 @@ public class SubastaController extends AnchorPane implements Initializable {
 					if (TableroController.getInstance().showYesNoMsgBox(
 							"Abandonar Subasta", null,
 							"¿Está seguro que desea abandonar la subasta?")) {
+						monto = Integer.parseInt(txtMejorOferta.getText());
 						if (estadoSubasta == EnumEstadoSubasta.CREADA) {
 							subasta = new SubastaStatus(estadoSubasta, null,
-									null, tarjetaSubasta, (int) (tarjetaSubasta
-											.getValorPropiedad() * 0.1));
+									null, tarjetaSubasta, monto);
 							msgSubastar = new AuctionPropertyMessage(idJuego,
 									subasta);
 							ConnectionController.getInstance()
@@ -263,7 +263,7 @@ public class SubastaController extends AnchorPane implements Initializable {
 							bloquearBotones(true);
 							lblMessage
 									.setText("La pantalla seguirá activa hasta que finalice la subasta.");
-							monto = Integer.parseInt(txtMejorOferta.getText());
+							
 							msgFinish = new AuctionFinishMessage(idJuego, monto, tarjetaSubasta,
 									"Abandonar Subasta.");
 							ConnectionController.getInstance().send(msgFinish);

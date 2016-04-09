@@ -51,6 +51,11 @@ public enum AccionEnCasillero implements Serializable {
 	 * Cárcel de visita) String[descripción]
 	 */
 	DESCANSO("Casillero %s, debe descansar.", null, 0),
+	
+	/**
+	 * Cuando el jugador virtual inicia una subasta.
+	 */
+	EN_SUBASTA("En Subasta, esperando por apuestas.", null, 0),
 
 	/**
 	 * Cuándo el casillero corresponde a Impuesto de lujo

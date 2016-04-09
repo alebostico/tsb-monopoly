@@ -78,7 +78,7 @@
                         <Button fx:id="btnAbandonarSubasta" mnemonicParsing="false" onAction="#processDejarSubasta" prefWidth="250.0" text="Abandonar Subasta" />
                      </children>
                   </HBox>
-                  <Label fx:id="lblMessage" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" styleClass="labelError" text="Label" VBox.vgrow="ALWAYS" />
+                  <Label fx:id="lblMessage" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" styleClass="labelError" text="" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
          </children>
