@@ -1504,6 +1504,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					SubastaController controller;
 
 					try {
+						
 						if (!getMyPlayer().getNombre().equals(
 								statusSubasta.jugadorActual.getNombre())) {
 							fxml = ConstantesFXML.FXML_SUBASTA;
@@ -1521,6 +1522,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							controller.setEstadoSubasta(statusSubasta.estado);
 							controller.cargarImagenes();
 							controller.bloquearBotones(true);
+							controller.agregarHistoriaDeSubasta(statusSubasta.historyList);
 							subastaStage.show();
 
 							if (VentaPropiedadController.getInstance()
@@ -1534,12 +1536,6 @@ public class TableroController extends AnchorPane implements Serializable,
 				}
 			});
 
-			Thread.sleep(1500);
-			
-			for (History history : statusSubasta.historyList) {
-				SubastaController.getInstance().agregarHistoriaDeSubasta(
-						history);
-			}
 		} else {
 			if (statusSubasta.estado == EnumEstadoSubasta.FINALIZADA) {
 
