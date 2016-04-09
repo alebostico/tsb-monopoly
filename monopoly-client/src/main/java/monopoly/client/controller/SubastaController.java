@@ -279,15 +279,12 @@ public class SubastaController extends AnchorPane implements Initializable {
 	public void actualizarSubasta(SubastaStatus status) {
 		try {
 
-			for (History history : status.historyList) {
-				agregarHistoriaDeSubasta(history);
-			}
-
 			Platform.runLater(new Runnable() {
 
 				@Override
 				public void run() {
 					try {
+						agregarHistoriaDeSubasta(status.historyList);
 						estadoSubasta = status.estado;
 						if (status.estado == EnumEstadoSubasta.JUGANDO) {
 
@@ -341,6 +338,22 @@ public class SubastaController extends AnchorPane implements Initializable {
 		}
 	}
 
+	public void agregarHistoriaDeSubasta(final List<History> historyList){
+		for (History history : historyList) {
+			historyList.add(history);
+			historyFilterList.add(new SubastaHistoryProperty(history
+					.getUsuario(), history.getMensaje()));
+
+			historyObservableList = FXCollections
+					.observableArrayList(historyFilterList);
+
+			if (tblSubasta != null) {
+				tblSubasta.getItems().clear();
+				tblSubasta.setItems(historyObservableList);
+			}
+		}
+	}
+	
 	@FXML
 	void processPujar(ActionEvent event) {
 		try {
