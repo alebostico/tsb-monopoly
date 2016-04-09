@@ -1993,7 +1993,6 @@ public class JuegoController implements Serializable {
 				
 				if (gestorSubasta.getJugadorCreador().isVirtual()) {
 					siguienteTurno(true);
-					return;
 				}
 				return;
 			}
@@ -2039,6 +2038,10 @@ public class JuegoController implements Serializable {
 				msgActualizarSubasta = new AuctionPropertyMessage("",
 						subastaStatus);				
 				sendToOne(senderId, msgActualizarSubasta);
+				if (gestorSubasta.getJugadorCreador().isVirtual()) {
+					siguienteTurno(true);
+					return;
+				}				
 			}
 		}
 		// Si es humano.
