@@ -83,7 +83,7 @@ public class JugadorVirtualController implements Serializable {
 			Jugador ultimoApostador, JugadorVirtual jugadorActual) {
 
 		int montoMinimo = (int)((PORC_PUJA_MINIMA / 100) * propiedad.getValorPropiedad());
-		int montoAumento = AUMENTO_PUJA + montoMinimo + maxActual;
+		int montoPuja = (int)((AUMENTO_PUJA / 100) * propiedad.getValorPropiedad());
 		
 		// Si no tiene dinero no ofrece nada sin importar el tipo de jugador que
 		// sea
@@ -165,7 +165,7 @@ public class JugadorVirtualController implements Serializable {
 				}
 			}
 			// Si ya hay puja
-			else if (maxActual + montoAumento < dineroJugador) {
+			else if (montoPuja < dineroJugador) {
 				// Decido según el azar si pujo o no, en funcion de la siguiente
 				// probabilidad
 				int probabilidad = (dineroJugador - maxActual) * 100
@@ -175,7 +175,7 @@ public class JugadorVirtualController implements Serializable {
 
 				// Si el numero es menor que la probabilidad, pujo
 				if (resultado < probabilidad) {
-					puja = maxActual + montoAumento;
+					puja = montoPuja;
 				}
 			}
 
@@ -192,7 +192,7 @@ public class JugadorVirtualController implements Serializable {
 				}
 			}
 			// Si ya hay puja
-			else if (maxActual + montoAumento < dineroJugador) {
+			else if (montoPuja < dineroJugador) {
 				// Decido según el azar si pujo o no, en funcion de la siguiente
 				// probabilidad
 				int probabilidad = 50;
@@ -201,7 +201,7 @@ public class JugadorVirtualController implements Serializable {
 
 				// Si el numero es menor que la probabilidad, pujo
 				if (resultado < probabilidad) {
-					puja = maxActual + montoAumento;
+					puja = montoPuja;
 				}
 			}
 
