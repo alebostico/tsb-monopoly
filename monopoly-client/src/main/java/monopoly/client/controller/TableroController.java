@@ -1375,6 +1375,8 @@ public class TableroController extends AnchorPane implements Serializable,
 					idJuego = juego.getUniqueID();
 					jugadorActual = estadoActual.currentPlayer;
 					msgSinDinero = "No cuentas con suficiente dinero para pagar %s. Vende hoteles, casas o hipoteca propiedades para continuar con el juego.";
+					boolean tercerTurno = jugadorActual
+							.getCantidadTurnosCarcel() >= 3;
 
 					ButtonType buttonPagar;
 					ButtonType buttonUsarTarjeta;
@@ -1385,18 +1387,31 @@ public class TableroController extends AnchorPane implements Serializable,
 					buttonPagar = new ButtonType(String.format("Pagar %s",
 							StringUtils.formatearAMoneda(50)));
 					buttonUsarTarjeta = new ButtonType("Usar Tarjeta");
-					buttonTirarDados = new ButtonType("Sacar dados dobles");
+
+					if (tercerTurno)
+						buttonTirarDados = new ButtonType("Tirar dados");
+					else
+						buttonTirarDados = new ButtonType("Sacar dados dobles");
+
 					buttons = new ArrayList<ButtonType>();
-					buttons.add(buttonPagar);
+
 					if (jugadorActual.getTarjetaCarcelList().size() > 0) {
 						buttons.add(buttonUsarTarjeta);
 					}
+
+					if (!tercerTurno) {
+						buttons.add(buttonPagar);
+					}
+
 					buttons.add(buttonTirarDados);
 
 					alert = new Alert(AlertType.CONFIRMATION);
 					alert.setTitle("Comisaria");
 					alert.setHeaderText("Estás en la cárcel, debes salir.");
-					alert.setContentText("Elige una opción para salir de la cárcel.");
+					if (tercerTurno)
+						alert.setContentText("Es tu tercer turno en la carcel, quedas libre.");
+					else
+						alert.setContentText("Elige una opción para salir de la cárcel.");
 					alert.getButtonTypes().setAll(buttons);
 					result = alert.showAndWait();
 
@@ -1506,7 +1521,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							controller.setEstadoSubasta(statusSubasta.estado);
 							subastaStage.show();
 
-							if (VentaPropiedadController.getInstance().getCurrentStage() != null)
+							if (VentaPropiedadController.getInstance()
+									.getCurrentStage() != null)
 								VentaPropiedadController.getInstance()
 										.getCurrentStage().close();
 						}
@@ -1541,15 +1557,15 @@ public class TableroController extends AnchorPane implements Serializable,
 													.getNombre()),
 									statusSubasta.getMensaje(), null);
 
-								if (statusSubasta.jugadorActual
-										.equals(getMyPlayer())) {
-									alert.setContentText(alert.getContentText()
-											+ ". Finalizó su turno.");
-									alert.showAndWait();
-									finalizarTurno();
-								} else
-									alert.show();
-								
+							if (statusSubasta.jugadorActual
+									.equals(getMyPlayer())) {
+								alert.setContentText(alert.getContentText()
+										+ ". Finalizó su turno.");
+								alert.showAndWait();
+								finalizarTurno();
+							} else
+								alert.show();
+
 							return null;
 						}
 					});
