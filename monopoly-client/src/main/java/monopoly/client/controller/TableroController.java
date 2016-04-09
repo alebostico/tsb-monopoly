@@ -45,7 +45,10 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -1491,7 +1494,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		return null;
 	}
 
-	public void actualizarSubasta(SubastaStatus statusSubasta) throws Exception{
+	public void actualizarSubasta(SubastaStatus statusSubasta) throws Exception {
 
 		if (statusSubasta.estado == EnumEstadoSubasta.INICIADA) {
 			Platform.runLater(new Runnable() {
@@ -1535,7 +1538,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			});
 
 			Thread.sleep(1500);
-			
+
 			for (History history : statusSubasta.historyList) {
 				SubastaController.getInstance().agregarHistoriaDeSubasta(
 						history);
@@ -3283,8 +3286,24 @@ public class TableroController extends AnchorPane implements Serializable,
 		Alert alert;
 		Optional<ButtonType> result = null;
 
-		Spinner<Integer> spinner = new Spinner<Integer>(0, Integer.MAX_VALUE,
-				valorPropiedad);
+		// normal setup of spinner
+		// Spinner<Integer> spinner = new Spinner<Integer>(0, Integer.MAX_VALUE,
+		// valorPropiedad);
+		SpinnerValueFactory<Integer> factory = new IntegerSpinnerValueFactory(
+				0, Integer.MAX_VALUE, valorPropiedad);
+		Spinner<Integer> spinner = new Spinner<Integer>(factory);
+		spinner.setEditable(true);
+
+		/* **************************
+		 * Creamos un Formatter y se lo asignamos al spinner para que se
+		 * actualice el valor del monto ofrecido cuando lo escribimos a mano
+		 */
+		// hook in a formatter with the same properties as the factory
+		TextFormatter<Integer> formatter = new TextFormatter<Integer>(
+				factory.getConverter(), factory.getValue());
+		spinner.getEditor().setTextFormatter(formatter);
+		// bidi-bind the values
+		factory.valueProperty().bindBidirectional(formatter.valueProperty());
 
 		Label lblText = new Label(message);
 		Label lblDesc = new Label(desc);
