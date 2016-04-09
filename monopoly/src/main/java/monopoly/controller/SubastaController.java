@@ -13,7 +13,7 @@ public class SubastaController implements Serializable {
 
 	private List<Jugador> jugadoresList;
 	
-	private Jugador jugadorGanador;
+	private Jugador jugadorCreador;
 
 	private Jugador[] indexList;
 
@@ -21,7 +21,13 @@ public class SubastaController implements Serializable {
 
 	private TarjetaPropiedad propiedadSubastada;
 
-	public SubastaController(TarjetaPropiedad pPropiedadSubastada) {
+	/**
+	 * Constructor de la subasta.
+	 * @param jugador Jugador que creó la subasta.
+	 * @param pPropiedadSubastada Propiedad a subastar.
+	 */
+	public SubastaController(Jugador jugador, TarjetaPropiedad pPropiedadSubastada) {
+		this.jugadorCreador = jugador;
 		this.jugadoresList = new ArrayList<Jugador>();
 		this.propiedadSubastada = pPropiedadSubastada;
 	}
@@ -48,7 +54,6 @@ public class SubastaController implements Serializable {
 			indexList[i] = jugadoresList.get(i);
 		}
 		indexActual = 0;
-		jugadorGanador = indexList[indexActual];
 	}
 	
 	public void reordenarTurnos() throws Exception
@@ -59,11 +64,9 @@ public class SubastaController implements Serializable {
 		}
 		if (indexActual > indexList.length - 1)
 			indexActual = 0;
-		jugadorGanador = indexList[indexActual];
 	}
 
 	public Jugador siguienteTurno() throws Exception {
-		jugadorGanador = indexList[indexActual];
 		if (indexActual < indexList.length - 1)
 			indexActual++;
 		else
@@ -91,12 +94,12 @@ public class SubastaController implements Serializable {
 		return jugadoresList;
 	}
 
-	public Jugador getJugadorGanador() {
-		return jugadorGanador;
+	public Jugador getJugadorCreador() {
+		return jugadorCreador;
 	}
 
-	public void setJugadorGanador(Jugador jugadorGanador) {
-		this.jugadorGanador = jugadorGanador;
+	public void setJugadorCreador(Jugador jugadorCreador) {
+		this.jugadorCreador = jugadorCreador;
 	}
 
 }

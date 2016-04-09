@@ -45,7 +45,7 @@ public class JugadorVirtualController implements Serializable {
 	 * porcentaje de puja mínima. La puja inicial será este porcentaje del valor
 	 * de la propiedad. El valor está en PORCENTAJE (%).
 	 */
-	private static final int PORC_PUJA_MINIMA = 25;
+	private static final int PORC_PUJA_MINIMA = 10;
 
 	/**
 	 * Cuando un TJ_EMPRESARIO o un TJ_COMPRADOR_PRIMERIZO pujan, cuanto más
@@ -82,16 +82,17 @@ public class JugadorVirtualController implements Serializable {
 	public int pujar(TarjetaPropiedad propiedad, int maxActual,
 			Jugador ultimoApostador, JugadorVirtual jugadorActual) {
 
+		int montoMinimo = (int)((PORC_PUJA_MINIMA / 100) * propiedad.getValorPropiedad());
+		int montoAumento = AUMENTO_PUJA + montoMinimo + maxActual;
+		
 		// Si no tiene dinero no ofrece nada sin importar el tipo de jugador que
 		// sea
-		if (maxActual >= jugadorActual.getDinero()) {
+		if ((maxActual + montoMinimo)  >= jugadorActual.getDinero()) {
 			GestorLogs.registrarDebug("El jugador " + jugadorActual.getNombre()
 					+ " no tiene dinero para pujar por "
 					+ propiedad.getNombre());
 			return 0;
 		}
-
-		int montoAumento = (AUMENTO_PUJA * propiedad.getValorPropiedad());
 		
 		Random rnd = new Random();
 		int puja = 0;
@@ -209,6 +210,8 @@ public class JugadorVirtualController implements Serializable {
 		}
 
 		if (puja != 0) {
+			if (puja < maxActual + montoMinimo)
+				puja = puja + montoMinimo;
 			GestorLogs.registrarDebug("El jugador " + jugadorActual.getNombre()
 					+ " ofreció $" + puja + " por " + propiedad.getNombre());
 		} else {
