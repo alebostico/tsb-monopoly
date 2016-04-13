@@ -345,10 +345,10 @@ public class TarjetaController implements Serializable {
 			accion = AccionEnTarjeta.PAGAR_POR_CASA_HOTEL;
 			accion.setPrecioPorCasa(25);
 			accion.setPrecioPorHotel(100);
-			String.format(
+			accion.setMensaje(String.format(
 					"Paga %s por cada casa y %s por cada hotel a causa de reparaciones.",
 					StringUtils.formatearAMoneda(25),
-					StringUtils.formatearAMoneda(100));
+					StringUtils.formatearAMoneda(100)));
 			break;
 		// banco.cobrarPorCasaYHotel(jugador, 25, 100);
 		// return true;
@@ -356,10 +356,10 @@ public class TarjetaController implements Serializable {
 			accion = AccionEnTarjeta.PAGAR_POR_CASA_HOTEL;
 			accion.setPrecioPorCasa(40);
 			accion.setPrecioPorHotel(115);
-			String.format(
+			accion.setMensaje(String.format(
 					"Paga %s por cada casa y %s por cada hotel a causa de reparaciones.",
 					StringUtils.formatearAMoneda(40),
-					StringUtils.formatearAMoneda(115));
+					StringUtils.formatearAMoneda(115)));
 			break;
 		// banco.cobrarPorCasaYHotel(jugador, 40, 115);
 		// return true;
