@@ -125,7 +125,7 @@ public class MonopolyClient extends GameClient {
 							.getInstance()
 							.showMessageBox(AlertType.INFORMATION,
 									"Información", "No hay juegos",
-									"No se encontró ningún juego guardado para el usuario.");
+									"No se encontró ningún juego guardado para el usuario.", null);
 				}
 				break;
 
@@ -249,7 +249,8 @@ public class MonopolyClient extends GameClient {
 
 			case ConstantesMensaje.EXCEPTION_MESSAGE:
 				Exception ex = (Exception) ((ExceptionMessage) message).message;
-				TableroController.getInstance().showException(ex);
+				mensaje = message.getClass().getSimpleName();
+				TableroController.getInstance().showException(ex, mensaje);
 				break;
 
 			case "String":
@@ -261,7 +262,8 @@ public class MonopolyClient extends GameClient {
 			}
 		} catch (Exception ex) {
 			GestorLogs.registrarException(ex);
-			TableroController.getInstance().showException(ex);
+			mensaje = message.getClass().getSimpleName();
+			TableroController.getInstance().showException(ex, mensaje);
 		}
 
 	}
