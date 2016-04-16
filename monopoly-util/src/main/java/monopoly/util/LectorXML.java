@@ -117,6 +117,20 @@ public class LectorXML {
 	}
 
 	/**
+	 * 
+	 * @return Devuelve la ruta dentro de resource de la carpeta logos.
+	 */
+	public static String getPathLogos() {
+		String path = "";
+		for (Element folderElement : getNodosFolder()) {
+			if (folderElement.getAttributeValue("id").equals("logos")) {
+				path = folderElement.getChild("path").getValue();
+			}
+		}
+		return path;
+	}
+	
+	/**
 	 * Método para obtener la ip del servidor.
 	 * 
 	 * @return Devuelve la ip con el cual se conectará la aplicación cliente.

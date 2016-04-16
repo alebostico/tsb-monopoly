@@ -145,14 +145,14 @@ public class HipotecarController extends AnchorPane implements Initializable {
 					"Propiedad hipotecada",
 					String.format("La propiedad %s se hipotecó por %s",
 							propiedad.getNombre(),
-							propiedad.getValorHipotecario()));
+							propiedad.getValorHipotecario()), null);
 		} else {
 			TableroController.getInstance().showMessageBox(
 					AlertType.ERROR,
 					"Error",
 					"Error de hipoteca",
 					String.format("La propiedad %s no se pudo hipotecar",
-							propiedad.getNombre()));
+							propiedad.getNombre()), null);
 		}
 	}
 

@@ -1,22 +1,69 @@
-.dialog {
-	-fx-background-image: url("../images/background/background_tablero.png");
-	-fx-background-repeat: repeat;
-	-fx-background-color:
-		linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
-		linear-gradient(#20262b, #191d22),
-		radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
-	-fx-padding: 0.416667em; /* 5px */
-	-fx-text-fill: #ffffff;
-	/*-fx-font-size: 20px;*/
+/* ------- CUSTOM COLOR DIALOG ------- */
+
+.dialog > .color-rect-pane {	
+	-fx-spacing: 0.75em;	
+	-fx-pref-height: 16.666667em;	
+	-fx-alignment: top-left;	
+	-fx-fill-height: true;
 }
 
-.dialog > .dialog-pane {
-	-fx-background-color: linear-gradient(#ffffff,#f3f3f4);
+.dialog .color-rect-pane .color-rect {	
+	-fx-min-width: 16.666667em;	
+	-fx-min-height: 16.666667em;
+}
+
+.dialog .color-rect-pane .color-rect-border {	
+	-fx-border-color: #565654;
+}
+
+.dialog > .color-rect-pane #color-rect-indicator {	
+	-fx-background-color: #292929;
+	-fx-border-color: white;
+	-fx-border-radius: 0.4166667em;
+	-fx-translate-x: -0.4166667em;
+	-fx-translate-y: -0.4166667em;
+	-fx-pref-width: 0.833333em;
+	-fx-pref-height: 0.833333em;
+	/*-fx-effect: dropshadow(three-pass-box, black, 2, 0.0, 0, 1);*/
+}
+
+.dialog > .color-rect-pane > .color-bar {
+	-fx-min-width: 1.666667em;
+	-fx-min-height: 16.666667em;
+	-fx-max-width: 1.666667em;
+	-fx-border-color: #565654;
+}
+
+.dialog > .color-rect-pane > .color-bar > #color-bar-indicator {
+	-fx-border-radius: 0.333333em;	
+	-fx-border-color: white;
+	-fx-effect: dropshadow(three-pass-box, black, 2, 0.0, 0, 1);
+	-fx-pref-width: 2em;
+	-fx-pref-height: 0.833333em;
+	-fx-translate-x: -0.1666667em;
+	-fx-translate-y: -0.4166667em;
+}
+
+.dialog  {
+	-fx-background-image: url("../images/background/bg_dark.jpg");
+	-fx-background-repeat: repeat;
+	/*-fx-background-color: #1d1d1d;*/
+	-fx-padding: 1.05em;	
+	-fx-spacing: 1.05em;
+}
+
+.dialog > .dialog-pane {	
 	-fx-border-width: 1px;
 	-fx-border-color: #b4b4b4 transparent #b4b4b4 transparent;
-	-fx-font-size: 12px; /*13px;*/
-	-fx-text-fill: #ffffff;
-	-fx-padding: 0.416667em; /* 5px */
+	-fx-font-size: 12px;
+	-fx-padding: 0.416667em;
+}
+
+.dialog > *.label.content{
+	-fx-font-family: "Arial";
+	-fx-font-size: 15px;	
+	-fx-text-fill: #C0C0C0;
+	/*-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 1.9 );*/
 }
 
 .dialog > .dialog-pane > .button-bar {
@@ -28,56 +75,51 @@
 }
 
 .dialog > .dialog-pane > .expandable-content {
-	-fx-padding: 0.666667em; /* 8px */
+	-fx-padding: 0.666667em;
 }
 
 .dialog > .dialog-pane > .button-bar > .container {
-	-fx-padding: 0.833333em; /* 10px */
+	-fx-padding: 0.833333em;
 }
 
 .dialog > .dialog-pane > .content.label {
 	-fx-alignment: top-left;
-	-fx-padding: 0.833333em 0.833333em 0 0.833333em; /* 0 10 0 10 */
+	-fx-padding: 0.833333em 0.833333em 0 0.833333em;
 	-fx-font-family: "Arial";
 	-fx-font-size: 18px;
 	-fx-font-style: italic;
-	-fx-text-fill: #ffffff;
-	-fx-effect: dropshadow( one-pass-box , #FFFFFF, 0.1, 0.1 , 0.1 , 1.9 );
-	/*-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 1.9 );*/ 
-}
-.dialog > .dialog-pane > .content {
-	-fx-padding: 0.833333em; /* 10 */
 }
 
-.dialog:no-header > .dialog-pane .graphic-container {
-	-fx-padding: 0.833333em 1.166667em 0.833333em 1.166667em; /* 10px 14px 10px 14px */
+.dialog > .dialog-pane > .content {
+	-fx-padding: 0.833333em;
+}
+
+.dialog:no-header > .dialog-pane .graphic-container {	
+	-fx-padding: 0.833333em 1.166667em 0.833333em 1.166667em;
+}
+
+.dialog:header *.header-panel{
+	-fx-background-color: transparent;
 }
 
 .dialog:header > .dialog-pane .header-panel {
 	-fx-padding: 0.833333em 0.833333em 0 0.833333em;
 	-fx-background-insets: 0 -1 0 -1, 0 -1 1 -1;
-	-fx-background-image: url("../images/background/background_tablero.png");
-	-fx-background-repeat: repeat;
-	-fx-background-color:
-		linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%),
-		linear-gradient(#20262b, #191d22),
-		radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
-	-fx-padding: 0;
 }
 
-.dialog:header > .dialog-pane .header-panel .label {
-	-fx-font-family: "Arial";
-	-fx-font-size: 20px;
-	-fx-font-weight: bold;
-	-fx-wrap-text: true;
-	-fx-text-fill: #ffffff;
-	-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 1.9 );
+.dialog:header *.header-panel *.label{
 	-fx-padding: 0.833333em 1.166667em 0.833333em 1.166667em;
+	-fx-font-family: "Arial";
+	-fx-font-size: 16px;
+	-fx-font-style: italic;
+	-fx-font-weight: bold;
+	-fx-text-fill: #FAF0E6;
+	-fx-effect: dropshadow( one-pass-box , #808080, 0.1, 0.1 , 0.1 , 1.9 );
 }
 
 .dialog:header > .dialog-pane .header-panel .graphic-container {
 	/* This prevents the text in the header running directly into the graphic */
-	-fx-padding: 0.833333em 1.166667em 0.833333em 1.166667em; /* 10px 14px 10px 14px */
+	-fx-padding: 0.833333em 1.166667em 0.833333em 1.166667em;
 }
 
 .dialog > .dialog-pane > .button-bar > .container > .details-button  {
@@ -87,10 +129,118 @@
 	-fx-font-size: 1em;
 }
 
+.dialog .controls-pane .current-new-color-grid #current-new-color-border {	
+	-fx-border-color: #565654;	
+	-fx-border-width: 2px;
+}
+
+
+.dialog .controls-pane .current-new-color-grid .color-rect {	
+	-fx-min-width: 10.666667em;	
+	-fx-min-height: 1.75em;	
+	-fx-pref-width: 10.666667em;	
+	-fx-pref-height: 1.75em;
+}
+
+
+.dialog .transparent-pattern {
+	-fx-background-image: url("../images/background/background_tablero.png");
+	-fx-background-repeat: repeat;
+	-fx-background-size: auto;
+}
+
+
+.dialog .controls-pane #spacer1 {	
+	-fx-min-height: 0.1666667em;	
+	-fx-max-height: 0.1666667em;	
+	-fx-pref-height: 0.1666667em;
+}
+
+
+.dialog .controls-pane #spacer2 {	
+	-fx-min-height: 1em;	
+	-fx-max-height: 1em;	
+	-fx-pref-height: 1em;
+}
+
+
+.dialog .controls-pane #settings-pane {	
+	-fx-hgap: 0.4166667em;	
+	-fx-vgap: 0.3333333em;
+}
+
+
+.dialog .controls-pane #settings-pane .settings-label {	
+	-fx-min-width: 5.75em;
+}
+
+
+.dialog .controls-pane #settings-pane .settings-unit {	
+	-fx-max-width: 1em;
+}
+
+
+.dialog .controls-pane #settings-pane .slider {	
+	-fx-pref-width: 8.25em;
+}
+
+
+.dialog .controls-pane .color-input-field {	
+	-fx-pref-column-count: 3;	
+	-fx-max-width: 3.25em;	
+	-fx-min-width: 3.25em;	
+	-fx-pref-width: 3.25em;
+}
+
+
+.dialog .controls-pane .web-field {	
+	-fx-pref-column-count: 6;	
+	-fx-pref-width: 8.25em;
+}
+
+
+.dialog .controls-pane #spacer-side {	
+	-fx-min-width: 0.5em;	
+	-fx-pref-width: 0.5em;
+}
+
+
+.dialog .controls-pane #spacer-bottom {	
+	-fx-pref-height: 0.833333em;	
+	-fx-min-height: 0.833333em;
+}
+
+
+.dialog .controls-pane .customcolor-controls-background {
+	-fx-background-insets: 	
+	    0.8333333em 0 0.4166667em 0,	
+	    1em 0.166667em 0.5833333em 0.166667em;	
+	-fx-background-radius: 0.3333333em, 0.166667em;
+}
+
+
+.dialog .controls-pane .current-new-color-grid .label {	
+	-fx-padding: 0 0 0 0.4166667em;
+}
+
+
+.dialog .controls-pane #buttons-hbox {	
+	-fx-spacing: 0.333333em;	
+	-fx-padding: 1em 0 0 0;	
+	-fx-alignment: bottom-right;
+}
+
+
+/* The fix for RT-37494 forces the web color text's major direction to
+
+ * LTR. The following keeps the text right-aligned when in RTL mode. 
+
+.dialog .webcolor-field:dir(rtl) > .text-field:dir(ltr) {	
+	-fx-alignment: baseline-right;
+}*/
 
 .dialog > .dialog-pane > .button-bar > .container > .details-button.more {
 	-fx-graphic: url("../images/iconos/dialog-more-details.png");
-
 }
 
 .dialog > .dialog-pane > .button-bar > .container > .details-button.less {
@@ -104,21 +254,20 @@
 .alert.confirmation.dialog-pane,
 .text-input-dialog.dialog-pane,
 .choice-dialog.dialog-pane {
-    -fx-graphic: url("../images/iconos/dialog-confirm.png");
+	-fx-graphic: url("../images/iconos/dialog-confirm.png");
 }
 
 .alert.information.dialog-pane {
-    -fx-graphic: url("../images/iconos/dialog-information.png");
+	-fx-graphic: url("../images/iconos/dialog-information.png");
 }
 
 .alert.error.dialog-pane {
-    -fx-graphic: url("../images/iconos/dialog-error.png");
+	-fx-graphic: url("../images/iconos/dialog-error.png");
 }
 
 .alert.warning.dialog-pane {
-    -fx-graphic: url("../images/iconos/dialog-warning.png");
+	-fx-graphic: url("../images/iconos/dialog-warning.png");
 }
-
 
 .button {
 	-fx-background-color:
@@ -137,4 +286,3 @@
 	-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 0.1 );
     	-fx-padding: 5 5 5 5;
 }
-

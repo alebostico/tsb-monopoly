@@ -121,7 +121,7 @@ public class ReanudarJuegoController extends AnchorPane implements
 			controller.setCurrentStage(stage);
 			controller.setPrevStage(currentStage);
 		} catch (Exception ex) {
-			TableroController.getInstance().showException(ex);
+			TableroController.getInstance().showException(ex, "processLoadGame");
 			GestorLogs.registrarError(ex);
 		}
 
@@ -153,7 +153,7 @@ public class ReanudarJuegoController extends AnchorPane implements
 					senderID, juego);
 			ConnectionController.getInstance().send(msg);
 		} catch (Exception ex) {
-			TableroController.getInstance().showException(ex);
+			TableroController.getInstance().showException(ex,"finishLoadGame");
 			GestorLogs.registrarError(ex);
 		}
 

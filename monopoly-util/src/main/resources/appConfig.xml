@@ -17,6 +17,9 @@
 				<path>/images/tarjetas/dorso/</path>
 			</dorso>
 		</folder>
+		<folder id="logos">
+			<path>/images/logos/</path>
+		</folder>
 	</path_folders>
 	
 	<socket>
