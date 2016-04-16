@@ -1304,7 +1304,9 @@ public class JugadorVirtualController implements Serializable {
 	 */
 	public int pagarAJugador(JugadorVirtual jugadorPaga, Jugador jugadorCobra,
 			int monto) {
-		if (this.pagar(jugadorPaga, monto) == monto) {
+		//int dineroAntes = jugadorPaga.getDinero();
+		//int dineroDespues = this.pagar(jugadorPaga, monto);
+		if (this.pagar(jugadorPaga, monto) != -1) {
 			jugadorCobra.cobrar(monto);
 			return monto;
 		} else {

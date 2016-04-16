@@ -311,7 +311,7 @@ public class JuegoController implements Serializable {
 		List<Jugador> turnosList;
 		List<History> historyList = new ArrayList<History>();
 
-		switch (accion) {
+		switch (accion.getAccion()) {
 		case TARJETA_SUERTE:
 			tarjetaSelected = gestorTablero.getTarjetaSuerte();
 			accion.setMonto(((TarjetaSuerte) tarjetaSelected).getIdTarjeta());
@@ -519,8 +519,11 @@ public class JuegoController implements Serializable {
 		Jugador duenio;
 		String mensaje;
 		int montoAPagar;
+		
+		// Traigo el casillero del tablero...
+		//casillero = gestorTablero.getCasillero(casillero.getNumeroCasillero());
 
-		switch (accion) {
+		switch (accion.getAccion()) {
 		case TARJETA_SUERTE:
 			tarjetaSelected = gestorTablero.getTarjetaSuerte();
 			realizarObjetivoTarjeta(jugador, tarjetaSelected);

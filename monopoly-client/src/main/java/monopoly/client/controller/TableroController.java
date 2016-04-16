@@ -874,7 +874,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		int monto = estadoActual.getMonto();
 
 		try {
-			switch (accionCasillero) {
+			switch (accionCasillero.getAccion()) {
 
 			case DESCANSO:
 				// mensaje = String.format("Casillero %s, debe descansar.",
