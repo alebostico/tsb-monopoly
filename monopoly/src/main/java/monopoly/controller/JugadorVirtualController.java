@@ -48,8 +48,15 @@ public class JugadorVirtualController implements Serializable {
 	private static final int PORC_PUJA_MINIMA = 10;
 
 	/**
-	 * Cuando un TJ_EMPRESARIO o un TJ_COMPRADOR_PRIMERIZO pujan, cuanto más
-	 * ofrecen. El valor está en PORCENTAJE (%).
+	 * El porcentaje mínimo de aumento de la puja de un TJ_EMPRESARIO o un
+	 * TJ_COMPRADOR_PRIMERIZO. El valor está en PORCENTAJE (%) y es referente al
+	 * valor de la propiedad, no al último valor pujado. <br>
+	 * Ej: con los siguientes valores: <code><ul>
+	 * <li>AUMENTO_PUJA = 10%</li>
+	 * <li>UTIMO_MONTO_PUJA = $60</li>
+	 * <li>VALOR_PROPIEDAD = $150</li>
+	 * </ul></code> el monto mínimo que se puede aumentar en la próxima puja es:<br>
+	 * <code>$60 + $15 = $75 ($15 = $150 x 10%)</code>
 	 */
 	private static final int AUMENTO_PUJA = 10;
 
@@ -74,26 +81,32 @@ public class JugadorVirtualController implements Serializable {
 	 * razonamiento, y el aleatorio por puro azar.
 	 * 
 	 * @param propiedad
+	 *            La propiedad que se está subastando
 	 * @param maxActual
+	 *            El monto de puja actual
 	 * @param ultimoApostador
+	 *            El último jugador que pujó
 	 * @param jugadorActual
-	 * @return
+	 *            El jugador que está por pujar
+	 * @return El monto a ofrecer en la puja o 0 (cero) si decide no pujar
 	 */
 	public int pujar(TarjetaPropiedad propiedad, int maxActual,
 			Jugador ultimoApostador, JugadorVirtual jugadorActual) {
 
-		int montoMinimo = (int)((PORC_PUJA_MINIMA / 100) * propiedad.getValorPropiedad());
-		int montoPuja = (int)((AUMENTO_PUJA / 100) * propiedad.getValorPropiedad());
-		
+		int montoMinimo = (int) ((PORC_PUJA_MINIMA / 100) * propiedad
+				.getValorPropiedad());
+		int montoPuja = (int) ((AUMENTO_PUJA / 100) * propiedad
+				.getValorPropiedad());
+
 		// Si no tiene dinero no ofrece nada sin importar el tipo de jugador que
 		// sea
-		if ((maxActual + montoMinimo)  >= jugadorActual.getDinero()) {
+		if ((maxActual + montoMinimo) >= jugadorActual.getDinero()) {
 			GestorLogs.registrarDebug("El jugador " + jugadorActual.getNombre()
 					+ " no tiene dinero para pujar por "
 					+ propiedad.getNombre());
 			return 0;
 		}
-		
+
 		Random rnd = new Random();
 		int puja = 0;
 		int precioPropiedad = propiedad.getValorPropiedad();
@@ -1232,9 +1245,14 @@ public class JugadorVirtualController implements Serializable {
 	 *            El jugador que debe pagar
 	 * @param cantidad
 	 *            La cantidad que tiene que pagar
-	 * @return El dinero que le quedó al jugador después de pagar
+	 * @return El dinero que le quedó al jugador después de pagar o -1 si no
+	 *         pudo conseguir dinero para pagar y debe quedar en estado de
+	 *         BANCARROTA
 	 */
 	public int pagar(JugadorVirtual jugador, int cantidad) {
+		JuegoController juegoController = PartidasController.getInstance()
+				.buscarControladorJuego(jugador.getJuego().getUniqueID());
+		
 		// 1. Intento vender edificios si no tengo dinero suficiente
 		if (cantidad > jugador.getDinero()) {
 			int dineroNecesario = cantidad - jugador.getDinero();
@@ -1285,6 +1303,7 @@ public class JugadorVirtualController implements Serializable {
 			GestorLogs.registrarLog("El jugador " + jugador.getNombre()
 					+ " quedó en bancarrota porque no puede pagar " + cantidad
 					+ " €");
+			juegoController.pasarABancarrota(jugador);
 			return -1;
 		}
 		return jugador.getDinero();
@@ -1304,8 +1323,8 @@ public class JugadorVirtualController implements Serializable {
 	 */
 	public int pagarAJugador(JugadorVirtual jugadorPaga, Jugador jugadorCobra,
 			int monto) {
-		//int dineroAntes = jugadorPaga.getDinero();
-		//int dineroDespues = this.pagar(jugadorPaga, monto);
+		// int dineroAntes = jugadorPaga.getDinero();
+		// int dineroDespues = this.pagar(jugadorPaga, monto);
 		if (this.pagar(jugadorPaga, monto) != -1) {
 			jugadorCobra.cobrar(monto);
 			return monto;

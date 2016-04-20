@@ -1,4 +1,4 @@
-package monopoly.util.message.game;
+package monopoly.util.message.game.actions;
 
 import java.io.Serializable;
 

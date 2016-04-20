@@ -29,22 +29,23 @@ import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
 import monopoly.util.message.ExceptionMessage;
 import monopoly.util.message.LoginMessage;
-import monopoly.util.message.game.BidForPropertyMessage;
-import monopoly.util.message.game.BidResultMessage;
-import monopoly.util.message.game.BuildMessage;
+import monopoly.util.message.game.BankruptcyMessage;
 import monopoly.util.message.game.ChatGameMessage;
-import monopoly.util.message.game.DemortgageMessage;
 import monopoly.util.message.game.GetSavedGamesMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.JoinGameMessage;
-import monopoly.util.message.game.MortgageMessage;
 import monopoly.util.message.game.ReloadSavedGameMessage;
 import monopoly.util.message.game.SaveGameMessage;
 import monopoly.util.message.game.actions.AuctionDecideMessage;
-import monopoly.util.message.game.UnbuildMessage;
 import monopoly.util.message.game.actions.AuctionFinishMessage;
 import monopoly.util.message.game.actions.AuctionNotifyMessage;
 import monopoly.util.message.game.actions.AuctionPropertyMessage;
+import monopoly.util.message.game.actions.BidForPropertyMessage;
+import monopoly.util.message.game.actions.BidResultMessage;
+import monopoly.util.message.game.actions.BuildMessage;
+import monopoly.util.message.game.actions.DemortgageMessage;
+import monopoly.util.message.game.actions.MortgageMessage;
+import monopoly.util.message.game.actions.UnbuildMessage;
 
 /**
  * @author Bostico Alejandro
@@ -103,8 +104,13 @@ public class MonopolyClient extends GameClient {
 				CrearJuegoController.getInstance().showCrearJuego(juego);
 				break;
 
+			case ConstantesMensaje.BANKRUPTCY_MESSAGE:
+				mensaje = ((BankruptcyMessage)message).message;
+				TableroController.getInstance().informarBancarrota(mensaje);
+				break;
+				
 			case ConstantesMensaje.SAVE_GAME_MESSAGE:
-				// La IOExceptino ES null si el juego se guardó correctamente
+				// La IOException ES null si el juego se guardó correctamente
 				IOException exception = (IOException) ((SaveGameMessage) message).exception;
 				TableroController.getInstance().showJuegoGuardado(exception);
 				break;

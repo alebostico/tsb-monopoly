@@ -28,34 +28,35 @@ import monopoly.util.message.CreateGameMessage;
 import monopoly.util.message.ExceptionMessage;
 import monopoly.util.message.LoginMessage;
 import monopoly.util.message.game.AdvanceInBoardMessage;
-import monopoly.util.message.game.BidForPropertyMessage;
-import monopoly.util.message.game.BidResultMessage;
-import monopoly.util.message.game.BuildMessage;
+import monopoly.util.message.game.BankruptcyMessage;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.ConfirmGameReloadedMessage;
-import monopoly.util.message.game.DemortgageMessage;
 import monopoly.util.message.game.GetSavedGamesMessage;
 import monopoly.util.message.game.HistoryGameMessage;
 import monopoly.util.message.game.JoinGameMessage;
 import monopoly.util.message.game.LoadGameMessage;
-import monopoly.util.message.game.MortgageMessage;
 import monopoly.util.message.game.ReloadSavedGameMessage;
 import monopoly.util.message.game.SaveGameMessage;
 import monopoly.util.message.game.StartGameMessage;
-import monopoly.util.message.game.UnbuildMessage;
 import monopoly.util.message.game.actions.AuctionFinishMessage;
 import monopoly.util.message.game.actions.AuctionPropertyMessage;
+import monopoly.util.message.game.actions.BidForPropertyMessage;
+import monopoly.util.message.game.actions.BidResultMessage;
+import monopoly.util.message.game.actions.BuildMessage;
 import monopoly.util.message.game.actions.BuyPropertyMessage;
 import monopoly.util.message.game.actions.ChanceCardMessage;
 import monopoly.util.message.game.actions.CommunityCardMessage;
+import monopoly.util.message.game.actions.DemortgageMessage;
 import monopoly.util.message.game.actions.DoubleDiceJailMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
+import monopoly.util.message.game.actions.MortgageMessage;
 import monopoly.util.message.game.actions.PayRentMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
 import monopoly.util.message.game.actions.PayToLeaveJailMessage;
 import monopoly.util.message.game.actions.PayToPlayerMessage;
 import monopoly.util.message.game.actions.SuperTaxMessage;
+import monopoly.util.message.game.actions.UnbuildMessage;
 
 /**
  * @author Bostico Alejandro
@@ -99,6 +100,16 @@ public class MonopolyGame extends GameServer {
 
 		GestorLogs.registrarLog(String.format(
 				"El jugador \"%s\" se desconectó", playerID));
+
+		/**
+		 * TODO Cuando se recive un mensaje de desconcexión del cliente ya sea
+		 * porque cierra la ventana o porque presionó sobre
+		 * "Pasar a bancarrota", se debe eliminar al jugador de NetworkPlayers y
+		 * verificar si queda algún jugador humano en el juego. En caso de que
+		 * no quede nadie, se debe eliminar el juego completo y parar los
+		 * threads.
+		 */
+
 		// shutdownServer();
 	}
 
@@ -122,6 +133,7 @@ public class MonopolyGame extends GameServer {
 		TarjetaCalle tarjetaCalle;
 		ChatGameMessage msgChatGameMessage;
 		StartGameMessage msgStartGameMessage;
+		BankruptcyMessage msgBankruptcyMessage;
 		AdvanceInBoardMessage msgAdvanceInBoard;
 		BuyPropertyMessage msgBuyProperty;
 		ChanceCardMessage msgChanceCard;
@@ -173,6 +185,12 @@ public class MonopolyGame extends GameServer {
 			case ConstantesMensaje.JOIN_GAME_MESSAGE:
 				jugador = (Jugador) ((JoinGameMessage) message).message;
 				PartidasController.getInstance().joinPlayerGame(jugador);
+				break;
+
+			case ConstantesMensaje.BANKRUPTCY_MESSAGE:
+				msgBankruptcyMessage = (BankruptcyMessage) message;
+				PartidasController.getInstance().pasarABancarrota(senderId,
+						msgBankruptcyMessage.UniqueIdJuego);
 				break;
 
 			case ConstantesMensaje.GET_SAVED_GAMES_MESSAGES:

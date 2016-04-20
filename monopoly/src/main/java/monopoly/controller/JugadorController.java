@@ -42,6 +42,12 @@ public class JugadorController implements Serializable {
 		this.jugadoresList = new ArrayList<Jugador>();
 	}
 
+	/**
+	 * Agrega un jugador al juego
+	 * 
+	 * @param jugador
+	 *            El jugador que se va a agregar.
+	 */
 	public void addPlayer(Jugador jugador) {
 		JugadorHumano jh;
 
@@ -57,19 +63,58 @@ public class JugadorController implements Serializable {
 		}
 
 	}
-	
+
+	/**
+	 * Elimina a un jugador del juego.
+	 * 
+	 * @param jugador
+	 *            El jugador que se va a eliminar
+	 * @return boolean as defined in {@link List#remove(Object)}
+	 */
+	public boolean removePlayerFromTurnos(Jugador jugador) {
+		// eliminamos al jugador de la CircularList
+		Integer borrado = indexList.pop(jugadoresList.indexOf(jugador));
+
+		if (borrado == null)
+			return false;
+
+		// Si el jugador que acabamos de borrar es el que estaba jugando,
+		// tomamos el anterior para que cuando se llame a siguienteTurno()
+		// no saltee al currentPlayer.getNext().
+		if (borrado.intValue() == currentPlayer.getKey().intValue())
+			currentPlayer = currentPlayer.getPrev();
+
+		// Eliminamos al jugador del listado de jugadores
+		// return jugadoresList.remove(jugador);
+		return true;
+	}
+
+	/**
+	 * Elimina un {@code JugadorHumano} de la lista de netwrokPlayers.
+	 * 
+	 * @param jugador
+	 *            El {@code JugadorHumano} que se quiere eliminar
+	 * @return {@code JugadorHumano} as defined in
+	 *         {@link TreeMap#remove(Object)}
+	 */
+	public JugadorHumano removeNetworkPlayer(JugadorHumano jugador) {
+		return networkPlayers.remove(jugador.getSenderID());
+	}
+
 	/**
 	 * Elimina todos los Network Players
 	 */
-	public void cleanNetworkPlayers(){
+	public void cleanNetworkPlayers() {
 		networkPlayers.clear();
 	}
-	
+
 	/**
-	 * Agrega un Network Player al Juego 
-	 * @param jugador El jugador que se va a agregar
+	 * Agrega un Network Player al Juego
+	 * 
+	 * @param jugador
+	 *            El jugador que se va a agregar
 	 */
-	public void addNetworkPlayer(Jugador jugador){
+	public void addNetworkPlayer(Jugador jugador) {
 		if (jugador instanceof JugadorHumano) {
 			JugadorHumano jh = (JugadorHumano) jugador;
 			if (!networkPlayers.containsKey(jh.getSenderID())) {
@@ -109,6 +154,7 @@ public class JugadorController implements Serializable {
 
 	public int cantJugadoresConectados() {
 		return this.jugadoresList.size();
+		//return indexList.size();
 	}
 
 	public JugadorHumano getJugadorHumano(int key) {
@@ -128,24 +174,40 @@ public class JugadorController implements Serializable {
 
 		Node<Integer> aux = currentPlayer;
 
-		do{
+		do {
 			turnos.add(jugadoresList.get(aux.getKey()));
 			aux = aux.getNext();
-		}
-		while (currentPlayer != aux);
+		} while (currentPlayer != aux);
 
-//		int index = 0;
-//		int jugadorActual = jugadoresList.get(currentPlayer.getKey());
-//
-//		while (index < jugadoresList.size()) {
-//			if (jugadorActual >= jugadoresList.size())
-//				jugadorActual = 0;
-//			turnos.add(jugadoresList.get(jugadorActual));
-//			jugadorActual++;
-//			index++;
-//		}
+		// int index = 0;
+		// int jugadorActual = jugadoresList.get(currentPlayer.getKey());
+		//
+		// while (index < jugadoresList.size()) {
+		// if (jugadorActual >= jugadoresList.size())
+		// jugadorActual = 0;
+		// turnos.add(jugadoresList.get(jugadorActual));
+		// jugadorActual++;
+		// index++;
+		// }
 
 		return turnos;
+	}
+
+	/**
+	 * Retorna el Jugador de la lista de turnos de jugadores con el nombre
+	 * {@code nombre}.
+	 * 
+	 * @param nombre
+	 *            El nombre del jugador
+	 * @return El {@code Jugador} si se encuentra. {@code null} si no se
+	 *         encuentra.
+	 */
+	public Jugador getPlayerFromTurnosList(String nombre) {
+		for (Jugador jugador : jugadoresList) {
+			if (jugador.getNombre().equals(nombre))
+				return jugador;
+		}
+		return null;
 	}
 
 	public Jugador getCurrentPlayer() {

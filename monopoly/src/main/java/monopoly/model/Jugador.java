@@ -462,7 +462,6 @@ public abstract class Jugador implements Serializable {
 	 *         carcel.
 	 */
 	public int addTurnoCarcel() {
-		// TODO: verificar que no sea mas de tres y tirar una excepcion
 		this.contTurnosCarcel++;
 		return this.contTurnosCarcel;
 	}
