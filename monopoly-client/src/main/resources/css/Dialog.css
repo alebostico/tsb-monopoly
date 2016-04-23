@@ -254,11 +254,11 @@
 .alert.confirmation.dialog-pane,
 .text-input-dialog.dialog-pane,
 .choice-dialog.dialog-pane {
-	-fx-graphic: url("../images/iconos/dialog-confirm.png");
+	-fx-graphic: url("../images/iconos/monopoly5.png");
 }
 
 .alert.information.dialog-pane {
-	-fx-graphic: url("../images/iconos/dialog-information.png");
+	-fx-graphic: url("../images/iconos/monopoly5.png");
 }
 
 .alert.error.dialog-pane {

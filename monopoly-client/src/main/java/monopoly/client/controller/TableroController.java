@@ -6,7 +6,6 @@ package monopoly.client.controller;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -77,7 +76,6 @@ import javafx.util.Duration;
 import monopoly.client.connection.ConnectionController;
 import monopoly.client.controller.TirarDadosController.TipoTiradaEnum;
 import monopoly.client.util.FXUtils;
-import monopoly.client.util.GestorPathResources;
 import monopoly.model.AccionEnCasillero;
 import monopoly.model.Banco;
 import monopoly.model.Deuda;
@@ -1077,6 +1075,7 @@ public class TableroController extends AnchorPane implements Serializable,
 				String idJuego;
 				Alert alert;
 				DialogPane dialogPane;
+				Image img;
 
 				try {
 					idJuego = juego.getUniqueID();
@@ -1098,9 +1097,11 @@ public class TableroController extends AnchorPane implements Serializable,
 
 					//
 					dialogPane = alert.getDialogPane();
-					dialogPane.setGraphic(new ImageView(Paths.get(
-							GestorPathResources.getPathLogos(),
-							"impuestoalcapital.png").toString()));
+					img = new Image(
+							TableroController.class
+									.getResourceAsStream("/images/logos/impuestoalcapital.png"),
+							48, 48, true, true);
+					dialogPane.setGraphic(new ImageView(img));
 
 					result = alert.showAndWait();
 
@@ -1184,6 +1185,7 @@ public class TableroController extends AnchorPane implements Serializable,
 				String mensajeAux;
 				Alert alert;
 				DialogPane dialogPane;
+				Image img;
 
 				try {
 					idJuego = juego.getUniqueID();
@@ -1193,9 +1195,13 @@ public class TableroController extends AnchorPane implements Serializable,
 							"Impuesto de lujo...", "Debes pagar el impuesto.",
 							mensaje, null);
 					dialogPane = alert.getDialogPane();
-					dialogPane.setGraphic(new ImageView(Paths.get(
-							GestorPathResources.getPathLogos(),
-							"luxury_tax.gif").toString()));
+
+					img = new Image(
+							TableroController.class
+									.getResourceAsStream("/images/logos/luxury_tax.gif"),
+							48, 48, true, true);
+
+					dialogPane.setGraphic(new ImageView(img));
 
 					alert.showAndWait();
 
@@ -1314,14 +1320,8 @@ public class TableroController extends AnchorPane implements Serializable,
 	private void irALaCarcel(final String mensaje) {
 		try {
 			GoToJailMessage msgGoToJailMessage;
-
-			showMessageBox(
-					AlertType.INFORMATION,
-					"Marche preso...",
-					null,
-					mensaje,
-					Paths.get(GestorPathResources.getPathLogos(),
-							"in_prision.png").toString());
+			showMessageBox(AlertType.INFORMATION, "Marche preso...", null,
+					mensaje, "/images/logos/in_prision.png");
 			// enviar mensaje;
 			msgGoToJailMessage = new GoToJailMessage(juego.getUniqueID());
 			ConnectionController.getInstance().send(msgGoToJailMessage);
@@ -1391,9 +1391,12 @@ public class TableroController extends AnchorPane implements Serializable,
 							buttons);
 
 					DialogPane dialog = alert.getDialogPane();
-					dialog.setGraphic(new ImageView(Paths.get(
-							GestorPathResources.getPathLogos(),
-							"in_prision.png").toString()));
+
+					Image img = new Image(
+							TableroController.class
+									.getResourceAsStream("/images/logos/in_prision.png"),
+							48, 48, true, true);
+					dialog.setGraphic(new ImageView(img));
 
 					result = alert.showAndWait();
 
@@ -1441,8 +1444,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			mostrarTirarDados(true);
 			showMessageBox(AlertType.INFORMATION, "Turno de juego...",
 					"Dados dobles.", "Es tu turno nuevamente.",
-					Paths.get(GestorPathResources.getPathLogos(), "dice.png")
-							.toString());
+					"/images/logos/dice.png");
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
 			showException(ex, "showDadosDobles...");
@@ -1470,7 +1472,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 		return null;
 	}
-	
 
 	public void actualizarSubasta(SubastaStatus statusSubasta) throws Exception {
 
@@ -2371,7 +2372,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		return hBox_inner;
 	}
 
-	
 	/**
 	 * Clase para la acción de "Hipotecar" del {@code ContextMenu}
 	 * 
@@ -2959,9 +2959,9 @@ public class TableroController extends AnchorPane implements Serializable,
 							message, null);
 
 					// Setteo la Imagen si es necesario
-					DialogPane dialogPane = alert.getDialogPane();
 					if (!StringUtils.IsNullOrEmpty(urlGraphic)) {
-						dialogPane.setGraphic(new ImageView(urlGraphic));
+						Image img = new Image(this.getClass().getResource(urlGraphic).toString(), 48,48,true, true);
+						alert.setGraphic(new ImageView(img));
 					}
 
 					alert.showAndWait();
@@ -3150,6 +3150,8 @@ public class TableroController extends AnchorPane implements Serializable,
 		Alert alert = null;
 		ButtonType buttonAceptar = null;
 		DialogPane dialogPane;
+		Image img;
+		Stage stage;
 
 		try {
 			alert = new Alert(type);
@@ -3181,6 +3183,19 @@ public class TableroController extends AnchorPane implements Serializable,
 					.forEach(
 							node -> ((Label) node)
 									.setMinHeight(Region.USE_PREF_SIZE));
+
+			// Seteo el icono de la cabecera.
+			stage = (Stage) alert.getDialogPane().getScene().getWindow();				
+			img = new Image(
+					TableroController.class
+							.getResourceAsStream("/images/logos/monopoly3.png"));
+			stage.getIcons().add(img);
+			
+			if (type == AlertType.INFORMATION) {
+				// Set the icon (must be included in the project).
+				img = new Image(this.getClass().getResource("/images/iconos/monopoly5.png").toString(), 48,48,true, true);
+				alert.setGraphic(new ImageView(img));
+			}
 
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
@@ -3394,8 +3409,6 @@ public class TableroController extends AnchorPane implements Serializable,
 	// --------------------------- Eventos ------------------------------- //
 	// ------------------------------------------------------------------- //
 
-	
-	
 	// ======================================================================//
 	// ============================== Event Fx ==============================//
 	// ======================================================================//
