@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 import monopoly.model.AccionEnCasillero;
+import monopoly.model.AccionEnCasillero.Accion;
 import monopoly.model.Banco;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
@@ -172,7 +173,7 @@ public class TableroController implements Serializable {
 	 *            La cantidad de casilleros a mover el jugador. Si es positivo
 	 *            mueve hacia adelante. Si es negativo hacia atras (es lo mismo
 	 *            que llamar al método 'moverAtras').
-	 * @param out
+	 * @param cobraSalida
 	 *            cobraSalida true en el caso que el jugador deba cobrar los
 	 *            $200 si pasa por la salida. false si no los cobra.
 	 * @return El casillero al cual se movió el jugador.
@@ -1174,8 +1175,9 @@ public class TableroController implements Serializable {
 		nroCasas = pCasillero.getNroCasas();
 		monto = pCasillero.getTarjetaCalle().calcularAlquiler(nroCasas);
 
-		if (esUnicoPoseedorMonopolio(pCasillero, pCasillero.getTarjetaCalle()
-				.getJugador()))
+		if (nroCasas == 0
+				&& esUnicoPoseedorMonopolio(pCasillero, pCasillero
+						.getTarjetaCalle().getJugador()))
 			monto = monto * 2;
 		return monto;
 	}
@@ -1276,7 +1278,8 @@ public class TableroController implements Serializable {
 			tarjetaPropiedad = (TarjetaPropiedad) tarjetaCasillero;
 			// ~~~> Nadie es propietario de la tarjeta.
 			if (tarjetaPropiedad.getJugador() == null) {
-				accionEnCasillero = AccionEnCasillero.DISPONIBLE_PARA_VENDER;
+				accionEnCasillero = new AccionEnCasillero(
+						Accion.DISPONIBLE_PARA_VENDER);
 				accionEnCasillero.setMensaje("Disponible para la venta.");
 
 			} else {
@@ -1287,19 +1290,22 @@ public class TableroController implements Serializable {
 				// ~~~> Si la propiedad pertenece al Jugador actual no hago
 				// nada.
 				if (nombreJugadorPropietario.equals(nombreJugadorActual)) {
-					accionEnCasillero = AccionEnCasillero.MI_PROPIEDAD;
+					accionEnCasillero = new AccionEnCasillero(
+							Accion.MI_PROPIEDAD);
 				} else // ~~~> Si la propiedad pertenece a otro jugador
 				{
 					// ~~~> Si está hipotecada
 					if (tarjetaPropiedad.isHipotecada()) {
-						accionEnCasillero = AccionEnCasillero.HIPOTECADA;
+						accionEnCasillero = new AccionEnCasillero(
+								Accion.HIPOTECADA);
 						mensaje = String.format(accionEnCasillero.getMensaje(),
 								pCasillero.getNombreCasillero(),
 								nombreJugadorPropietario);
 						accionEnCasillero.setMensaje(mensaje);
 					} else // ~~~> calculo el alquiler
 					{
-						accionEnCasillero = AccionEnCasillero.PAGAR_ALQUILER;
+						accionEnCasillero = new AccionEnCasillero(
+								Accion.PAGAR_ALQUILER);
 						switch (pCasillero.getTipoCasillero()
 								.getNombreTipoCasillero()) {
 						case Casillero.CASILLERO_CALLE:
@@ -1331,32 +1337,34 @@ public class TableroController implements Serializable {
 
 		case Casillero.CASILLERO_IRACARCEL:
 			// ir a la carcel.
-			accionEnCasillero = AccionEnCasillero.IR_A_LA_CARCEL;
+			accionEnCasillero = new AccionEnCasillero(Accion.IR_A_LA_CARCEL);
 			break;
 		case Casillero.CASILLERO_IMPUESTO:
 			if (pCasillero.getNumeroCasillero() == 5) {
-				accionEnCasillero = AccionEnCasillero.IMPUESTO_SOBRE_CAPITAL;
+				accionEnCasillero = new AccionEnCasillero(
+						Accion.IMPUESTO_SOBRE_CAPITAL);
 			} else {
-				accionEnCasillero = AccionEnCasillero.IMPUESTO_DE_LUJO;
+				accionEnCasillero = new AccionEnCasillero(
+						Accion.IMPUESTO_DE_LUJO);
 			}
 			break;
 		case Casillero.CASILLERO_SUERTE:
-			accionEnCasillero = AccionEnCasillero.TARJETA_SUERTE;
+			accionEnCasillero = new AccionEnCasillero(Accion.TARJETA_SUERTE);
 			break;
 		case Casillero.CASILLERO_COMUNIDAD:
 			// Adjuntar tarjeta comunidad
-			accionEnCasillero = AccionEnCasillero.TARJETA_COMUNIDAD;
+			accionEnCasillero = new AccionEnCasillero(Accion.TARJETA_COMUNIDAD);
 			break;
 		case Casillero.CASILLERO_CARCEL:
-			accionEnCasillero = AccionEnCasillero.DESCANSO;
+			accionEnCasillero = new AccionEnCasillero(Accion.DESCANSO);
 			accionEnCasillero.setMensaje("En cárcel sólo de visita.");
 			break;
 		case Casillero.CASILLERO_DESCANSO:
-			accionEnCasillero = AccionEnCasillero.DESCANSO;
+			accionEnCasillero = new AccionEnCasillero(Accion.DESCANSO);
 			accionEnCasillero.setMensaje("Parking Gratuito");
 			break;
 		case Casillero.CASILLERO_SALIDA:
-			accionEnCasillero = AccionEnCasillero.DESCANSO;
+			accionEnCasillero = new AccionEnCasillero(Accion.DESCANSO);
 			mensaje = String.format(accionEnCasillero.getMensaje(),
 					pCasillero.getNombreCasillero());
 			accionEnCasillero.setMensaje(mensaje);
@@ -1539,7 +1547,16 @@ public class TableroController implements Serializable {
 			throw new IllegalArgumentException("No se pueden colocar '"
 					+ cantidad + "' edificios");
 
-		Jugador jugador = casillero.getTarjetaCalle().getJugador();
+		/* ***************************************
+		 * El CasilleroCalle que nos mandan por parametro es una COPIA del
+		 * casillero original del tablero. Así que buscamos el ORIGINAL en el
+		 * tablero. De ahi sacamos el Jugador correcto al que le tenemos que
+		 * descontar el dinero.
+		 */
+		CasilleroCalle casilleroTablero = (CasilleroCalle) (getCasillero(casillero
+				.getNumeroCasillero()));
+
+		Jugador jugador = casilleroTablero.getTarjetaCalle().getJugador();
 		JuegoController juegoController = PartidasController.getInstance()
 				.buscarControladorJuego(jugador.getJuego().getUniqueID());
 		Banco banco = juegoController.getGestorBanco().getBanco();

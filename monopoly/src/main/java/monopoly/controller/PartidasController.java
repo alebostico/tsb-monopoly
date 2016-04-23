@@ -122,6 +122,22 @@ public class PartidasController {
 		return juegoController;
 	}
 
+	/**
+	 * Pone a un jugador en estado de Bancarrota, lo elimina del juego y pasa al
+	 * siguiente turno.
+	 * 
+	 * @param senderID
+	 *            El jugador que se debe pasar a bancarrota
+	 * @param idJuego
+	 *            El juedo del jugador
+	 * @throws Exception
+	 */
+	public void pasarABancarrota(int senderID, String idJuego) throws Exception {
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.pasarABancarrota(senderID);
+		juegoController.siguienteTurno(false);
+	}
+
 	public void establecerTurnoJugador(int senderId, String idJuego, Dado dados)
 			throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
@@ -442,7 +458,8 @@ public class PartidasController {
 		juegoController.subastar(senderId, subastaStatus);
 	}
 
-	public void finalizarSubasta(String idJuego, int senderId, int monto, TarjetaPropiedad tarjeta) throws Exception {
+	public void finalizarSubasta(String idJuego, int senderId, int monto,
+			TarjetaPropiedad tarjeta) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
 		juegoController.finalizarSubasta(senderId, monto, tarjeta);
 	}

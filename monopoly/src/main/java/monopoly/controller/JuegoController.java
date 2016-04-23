@@ -12,6 +12,7 @@ import monopoly.model.AccionEnTarjeta;
 import monopoly.model.Dado;
 import monopoly.model.Estado;
 import monopoly.model.Estado.EstadoJuego;
+import monopoly.model.Estado.EstadoJugador;
 import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
@@ -41,8 +42,7 @@ import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.exception.SinDineroException;
 import monopoly.util.exception.SinEdificiosException;
 import monopoly.util.message.ExceptionMessage;
-import monopoly.util.message.game.BidForPropertyMessage;
-import monopoly.util.message.game.BidResultMessage;
+import monopoly.util.message.game.BankruptcyMessage;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
 import monopoly.util.message.game.HistoryGameMessage;
@@ -51,6 +51,8 @@ import monopoly.util.message.game.actions.AuctionDecideMessage;
 import monopoly.util.message.game.actions.AuctionFinishMessage;
 import monopoly.util.message.game.actions.AuctionNotifyMessage;
 import monopoly.util.message.game.actions.AuctionPropertyMessage;
+import monopoly.util.message.game.actions.BidForPropertyMessage;
+import monopoly.util.message.game.actions.BidResultMessage;
 import monopoly.util.message.game.actions.PayToPlayerMessage;
 
 import org.apache.commons.lang.mutable.MutableBoolean;
@@ -251,6 +253,108 @@ public class JuegoController implements Serializable {
 	}
 
 	/**
+	 * Pasa a un Jugador al estado de bancarrota. Ejecuta las siguientes
+	 * acciones:
+	 * <ol>
+	 * <li>Pone al jugador en estado de BANCARROTA y lo saca del listado de
+	 * turnos.</li>
+	 * <li>Recorre las propiedades y vende los edificios (si tienen)</li>
+	 * <li>Pasa todas las propiedades al banco y deshipoteca las que estén
+	 * hipotecadas.</li>
+	 * <li>Si el jugador es Humano, desconecta la sesión.</li>
+	 * </ol>
+	 * 
+	 * @param jugador
+	 *            El jugador que se quiere pasar a bancarrota
+	 */
+	public void pasarABancarrota(Jugador jugador) {
+		List<History> historyList = new ArrayList<History>();
+		EstadoJuego estadoJuegoJugadorActual = EstadoJuego.ACTUALIZANDO_ESTADO;
+		MonopolyGameStatus status;
+		String mensaje;
+		List<Jugador> turnosList;
+
+		TarjetaCalle pCalle;
+		Jugador player = gestorJugadores.getPlayerFromTurnosList(jugador
+				.getNombre());
+
+		// 1. Ponemos al Jugador en estado de bancarrota
+		player.setEstadoJugador(EstadoJugador.EJ_BANCARROTA);
+
+		// 2. Eliminamos los edificios que tiene el jugador.
+		for (TarjetaPropiedad propiedad : player.getTarjPropiedadList()) {
+			if (propiedad.isPropiedadCalle()) {
+				pCalle = (TarjetaCalle) propiedad;
+				if (pCalle.getNroCasas() > 0) {
+					if (pCalle.getNroCasas() == 5) {
+						gestorBanco.getBanco().addHoteles(1);
+					} else {
+						gestorBanco.getBanco().addCasas(pCalle.getNroCasas());
+					}
+					pCalle.getCasillero().setNroCasas(0);
+				}
+
+			}
+			// 3. Deshipotemos la propiedad si estaba en ese estado
+			propiedad.setHipotecada(false);
+			// 4. Volvemos la propiedad al banco
+			propiedad.setJugador(null);
+		}
+
+		// 5. Eliminamos las propiedades del jugador
+		player.getTarjPropiedadList().clear();
+
+		// 6. Volvemos las tarjetas de "libre de carcel" a los pozos
+		for (Tarjeta tarjetaCarcel : player.getTarjetaCarcelList()) {
+			gestorTablero.getGestorTarjetas().agregarTarjetaLibreDeCarcel(
+					tarjetaCarcel);
+		}
+
+		// 7. Eliminamos al jugador de la lista de jugadores
+		gestorJugadores.removePlayerFromTurnos(player);
+		cantJugadores--;
+
+		// 8. Si es un jugador humano, lo eliminamos de la lista de
+		// NetworkPlayer
+		if (player.isHumano())
+			gestorJugadores.removeNetworkPlayer((JugadorHumano) player);
+
+		// Informamos a todos los jugadores de la bancarrota...
+		mensaje = String.format(
+				"El jugador '%s' se declaró en bancarrota y salió del Juego.",
+				player.getNombre());
+
+		// ... y actualizamos el estado del juego
+		historyList.add(new History(StringUtils.getFechaActual(), player
+				.getNombre(), "Se declaró en bancarrota y salío del Juego"));
+		turnosList = gestorJugadores.getTurnoslist();
+		status = new MonopolyGameStatus(turnosList, gestorBanco.getBanco(),
+				gestorTablero.getTablero(), estadoJuegoJugadorActual, null,
+				gestorJugadores.getCurrentPlayer(), historyList, null);
+
+		try {
+			sendToAll(new BankruptcyMessage(this.getJuego().getUniqueID(),
+					mensaje));
+			sendToAll(status);
+		} catch (Exception e) {
+			GestorLogs.registrarError(e);
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Pasa a un Jugador al estado de bancarrota.
+	 * 
+	 * @see #pasarABancarrota(Jugador)
+	 * @param senderID
+	 *            El ID del jugador que se pasa a bancarrota
+	 */
+	public void pasarABancarrota(int senderID) {
+		JugadorHumano jugador = gestorJugadores.getJugadorHumano(senderID);
+		pasarABancarrota(jugador);
+	}
+
+	/**
 	 * Método para avanzar de casillero en base al suma de datos que arrojó el
 	 * jugador.
 	 * 
@@ -311,7 +415,7 @@ public class JuegoController implements Serializable {
 		List<Jugador> turnosList;
 		List<History> historyList = new ArrayList<History>();
 
-		switch (accion) {
+		switch (accion.getAccion()) {
 		case TARJETA_SUERTE:
 			tarjetaSelected = gestorTablero.getTarjetaSuerte();
 			accion.setMonto(((TarjetaSuerte) tarjetaSelected).getIdTarjeta());
@@ -473,7 +577,7 @@ public class JuegoController implements Serializable {
 					StringUtils.getFechaActual(), jugadorActual.getNombre(),
 					accion.getMensaje())));
 
-			if(jugarAccionEnCasilleroJV(accion, jugadorActual, casillero))
+			if (jugarAccionEnCasilleroJV(accion, jugadorActual, casillero))
 				siguienteTurno(true);
 
 		} catch (CondicionInvalidaException | SinDineroException e) {
@@ -520,7 +624,11 @@ public class JuegoController implements Serializable {
 		String mensaje;
 		int montoAPagar;
 
-		switch (accion) {
+		// Traigo el casillero del tablero...
+		// casillero =
+		// gestorTablero.getCasillero(casillero.getNumeroCasillero());
+
+		switch (accion.getAccion()) {
 		case TARJETA_SUERTE:
 			tarjetaSelected = gestorTablero.getTarjetaSuerte();
 			realizarObjetivoTarjeta(jugador, tarjetaSelected);
@@ -568,7 +676,7 @@ public class JuegoController implements Serializable {
 					subastaStatus = new SubastaStatus(EnumEstadoSubasta.CREADA,
 							null, null, tarjetaPropiedad, montoAPagar);
 				}
-				
+
 				subastar(jugador, subastaStatus);
 				return false;
 			}
@@ -1978,19 +2086,19 @@ public class JuegoController implements Serializable {
 
 			mensaje = String.format(
 					"%s ganó la subasta de la propiedad %s con %s.",
-					jugadorTurno.getNombre()
-					, tarjeta.getNombre(),
+					jugadorTurno.getNombre(), tarjeta.getNombre(),
 					StringUtils.formatearAMoneda(montoSubasta));
-			
+
 			if (jugadorTurno.isVirtual()) {
 				subastaStatus = new SubastaStatus(EnumEstadoSubasta.FINALIZADA,
-						new ArrayList<History>(), gestorSubasta.getJugadorCreador(), tarjeta,
+						new ArrayList<History>(),
+						gestorSubasta.getJugadorCreador(), tarjeta,
 						montoSubasta);
 				subastaStatus.setMensaje(mensaje);
 				msgActualizarSubasta = new AuctionPropertyMessage("",
 						subastaStatus);
 				sendToAll(msgActualizarSubasta);
-				
+
 				if (gestorSubasta.getJugadorCreador().isVirtual()) {
 					siguienteTurno(true);
 				}
@@ -2001,29 +2109,12 @@ public class JuegoController implements Serializable {
 			// Ganador es humano
 			// Creador es humano
 
-			if (/* Ganador ~~> */jugadorTurno.equals(gestorSubasta.getJugadorCreador())) {
+			if (/* Ganador ~~> */jugadorTurno.equals(gestorSubasta
+					.getJugadorCreador())) {
 				senderId = ((JugadorHumano) jugadorTurno).getSenderID();
-				
+
 				subastaStatus = new SubastaStatus(EnumEstadoSubasta.FINALIZADA,
 						new ArrayList<History>(), jugadorTurno, tarjeta,
-						montoSubasta);
-				subastaStatus.setMensaje(mensaje);
-				msgActualizarSubasta = new AuctionPropertyMessage("",
-						subastaStatus);				
-				sendToOther(senderId, msgActualizarSubasta);
-
-				mensaje = String.format(
-						"Ganaste la subasta de la propiedad %s con %s.",
-						tarjeta.getNombre(),
-						StringUtils.formatearAMoneda(montoSubasta));
-				subastaStatus.setMensaje(mensaje);
-				msgActualizarSubasta = new AuctionPropertyMessage("",
-						subastaStatus);				
-				sendToOne(senderId, msgActualizarSubasta);
-			} else {
-				senderId = ((JugadorHumano) jugadorTurno).getSenderID();
-				subastaStatus = new SubastaStatus(EnumEstadoSubasta.FINALIZADA,
-						new ArrayList<History>(), gestorSubasta.getJugadorCreador(), tarjeta,
 						montoSubasta);
 				subastaStatus.setMensaje(mensaje);
 				msgActualizarSubasta = new AuctionPropertyMessage("",
@@ -2036,19 +2127,38 @@ public class JuegoController implements Serializable {
 						StringUtils.formatearAMoneda(montoSubasta));
 				subastaStatus.setMensaje(mensaje);
 				msgActualizarSubasta = new AuctionPropertyMessage("",
-						subastaStatus);				
+						subastaStatus);
+				sendToOne(senderId, msgActualizarSubasta);
+			} else {
+				senderId = ((JugadorHumano) jugadorTurno).getSenderID();
+				subastaStatus = new SubastaStatus(EnumEstadoSubasta.FINALIZADA,
+						new ArrayList<History>(),
+						gestorSubasta.getJugadorCreador(), tarjeta,
+						montoSubasta);
+				subastaStatus.setMensaje(mensaje);
+				msgActualizarSubasta = new AuctionPropertyMessage("",
+						subastaStatus);
+				sendToOther(senderId, msgActualizarSubasta);
+
+				mensaje = String.format(
+						"Ganaste la subasta de la propiedad %s con %s.",
+						tarjeta.getNombre(),
+						StringUtils.formatearAMoneda(montoSubasta));
+				subastaStatus.setMensaje(mensaje);
+				msgActualizarSubasta = new AuctionPropertyMessage("",
+						subastaStatus);
 				sendToOne(senderId, msgActualizarSubasta);
 				if (gestorSubasta.getJugadorCreador().isVirtual()) {
 					siguienteTurno(true);
 					return;
-				}				
+				}
 			}
 		}
 		// Si es humano.
 		else {
 			subastaStatus = new SubastaStatus(EnumEstadoSubasta.JUGANDO,
-					new ArrayList<History>(),
-					jugadorTurno, tarjeta, montoSubasta);
+					new ArrayList<History>(), jugadorTurno, tarjeta,
+					montoSubasta);
 			msgActualizarSubasta = new AuctionPropertyMessage(
 					juego.getUniqueID(), subastaStatus);
 			sendToAll(msgActualizarSubasta);

@@ -1,4 +1,4 @@
-package monopoly.util.message.game;
+package monopoly.util.message.game.actions;
 
 import java.io.Serializable;
 
@@ -7,9 +7,9 @@ import java.io.Serializable;
  * @author Moreno Pablo
  *
  */
-public class BuildMessage implements Serializable {
+public class UnbuildMessage implements Serializable {
 
-	private static final long serialVersionUID = 9192503494367249059L;
+	private static final long serialVersionUID = 103904810959880819L;
 	public final int senderID; // The ID of the client who sent that message.
 	public final String idJuego;
 	public final Object message; // Original message from a client.
@@ -23,7 +23,7 @@ public class BuildMessage implements Serializable {
 	 * @param message
 	 *            La propiedad que se quiere hipotecar.
 	 */
-	public BuildMessage(int senderID, String idJuego, Object message,
+	public UnbuildMessage(int senderID, String idJuego, Object message,
 			Integer cantidad) {
 		this.senderID = senderID;
 		this.idJuego = idJuego;

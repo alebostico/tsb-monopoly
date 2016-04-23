@@ -77,8 +77,18 @@ public class BancoController implements Serializable {
 		JuegoController juegoController = PartidasController.getInstance()
 				.buscarControladorJuego(jugador.getJuego().getUniqueID());
 		if (jugador.isVirtual()) {
-			juegoController.getGestorJugadoresVirtuales().pagar(
-					(JugadorVirtual) jugador, monto);
+			if (juegoController.getGestorJugadoresVirtuales().pagar(
+					(JugadorVirtual) jugador, monto) == -1) {
+				/*
+				 * Si el jugador no pudo pagar porque no consiguio dinero,
+				 * retorna una SinDineroException para informar de la situación.
+				 * En este punto el jugador ya se pasó a estado BANCARROTA.
+				 */
+				throw new SinDineroException(
+						String.format(
+								"El jugador %s no posee dinero suficiente para pagar %s € y quedó en Bancarrota.",
+								jugador.getNombre(), monto));
+			}
 		} else {
 			if (!jugador.pagar(monto)) {
 				throw new SinDineroException(
@@ -273,7 +283,7 @@ public class BancoController implements Serializable {
 		this.cobrar(jugador, tarjetaPropiedad.getValorPropiedad());
 		jugador.adquirirPropiedad(tarjetaPropiedad);
 	}
-	
+
 	/**
 	 * Adquiere una propiedad a un monto determinado.
 	 * 
@@ -283,7 +293,8 @@ public class BancoController implements Serializable {
 	 * @throws SinDineroException
 	 */
 	public void adquirirPropiedad(Jugador jugador,
-			TarjetaPropiedad tarjetaPropiedad, int monto) throws SinDineroException {
+			TarjetaPropiedad tarjetaPropiedad, int monto)
+			throws SinDineroException {
 		this.cobrar(jugador, monto);
 		jugador.adquirirPropiedad(tarjetaPropiedad);
 	}
@@ -365,6 +376,5 @@ public class BancoController implements Serializable {
 		}
 
 	}
-
 
 }

@@ -58,8 +58,11 @@ public class TarjetaSuerteController extends AnchorPane implements
 	
 	public void mostrarTarjeta(TarjetaSuerte tarjeta){
 		this.tarjetaSeleccionada = tarjeta;
+		//String txtReplaced = this.tarjetaSeleccionada.getObjetivo().replace("\\n", "<br />");
 		if(lblMensaje != null){
 			lblMensaje.setText(tarjetaSeleccionada.getObjetivo());
+			//lblMensaje.setWrapText(true);
+			//lblMensaje.setText(txtReplaced);
 		}
 	}
 

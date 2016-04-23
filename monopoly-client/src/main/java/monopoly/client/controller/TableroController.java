@@ -103,21 +103,22 @@ import monopoly.util.constantes.EnumEstadoSubasta;
 import monopoly.util.constantes.EnumSalidaCarcel;
 import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
-import monopoly.util.message.game.BidForPropertyMessage;
-import monopoly.util.message.game.BidResultMessage;
-import monopoly.util.message.game.BuildMessage;
+import monopoly.util.message.game.BankruptcyMessage;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
-import monopoly.util.message.game.DemortgageMessage;
-import monopoly.util.message.game.MortgageMessage;
 import monopoly.util.message.game.SaveGameMessage;
-import monopoly.util.message.game.UnbuildMessage;
 import monopoly.util.message.game.actions.AuctionDecideMessage;
+import monopoly.util.message.game.actions.BidForPropertyMessage;
+import monopoly.util.message.game.actions.BidResultMessage;
+import monopoly.util.message.game.actions.BuildMessage;
+import monopoly.util.message.game.actions.DemortgageMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
+import monopoly.util.message.game.actions.MortgageMessage;
 import monopoly.util.message.game.actions.PayRentMessage;
 import monopoly.util.message.game.actions.PayToBankMessage;
 import monopoly.util.message.game.actions.PayToLeaveJailMessage;
 import monopoly.util.message.game.actions.SuperTaxMessage;
+import monopoly.util.message.game.actions.UnbuildMessage;
 
 /**
  * @author Bostico Alejandro
@@ -868,7 +869,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		int monto = estadoActual.getMonto();
 
 		try {
-			switch (accionCasillero) {
+			switch (accionCasillero.getAccion()) {
 
 			case DESCANSO:
 				showMessageBox(AlertType.INFORMATION, "Descanso...", null,
@@ -2750,6 +2751,18 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	/**
+	 * Muestra un MessageBox informando que un jugador se fué del juego debido a
+	 * que cayó en bancarrota.
+	 * 
+	 * @param mensaje
+	 *            El mensaje que se va a mostrar
+	 */
+	public void informarBancarrota(String mensaje) {
+		showMessageBox(AlertType.INFORMATION, "Bancarrota",
+				"Un jugador se retiró", mensaje, null);
+	}
+
+	/**
 	 * Acopla al contenedor un panel.
 	 * 
 	 * @param node
@@ -3512,6 +3525,25 @@ public class TableroController extends AnchorPane implements Serializable,
 	@FXML
 	void processBancarrota(ActionEvent event) {
 
+		boolean answer = false;
+		answer = showYesNoMsgBox("Abandonar juego", null,
+				"¿Está seguro que desea declararse en bancarrota y abandonar el juego?");
+
+		if (answer) {
+			BankruptcyMessage bancarrota = new BankruptcyMessage(getJuego()
+					.getUniqueID(), getPlayer(getUsuarioLogueado()).getNombre());
+
+			ConnectionController.getInstance().send(bancarrota);
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				GestorLogs.registrarException(e);
+				e.printStackTrace();
+			}
+
+			this.cerrar(true);
+		}
 	}
 
 	/**

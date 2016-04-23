@@ -1,6 +1,3 @@
-/**
- * 
- */
 package monopoly.util.list;
 
 import java.io.Serializable;
@@ -14,18 +11,16 @@ import java.util.List;
  */
 public class CircularList<T> implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = -653455962441180014L;
 	private Node<T> head;
 
 	public CircularList() {
 		head = null;
 	}
 
-	/*
-	 * Description: Elimina el nodo cabecera de la lista enlazada y retorna
-	 * el valor del nodo cabecera.
-	 * Precondition: La  lista no debería ser nula.
+	/**
+	 * Description: Elimina el nodo cabecera de la lista enlazada y retorna el
+	 * valor del nodo cabecera. Precondition: La lista no debería ser nula.
 	 * Postcondition: El nodo cabecera es eliminado.
 	 * 
 	 * @return T, retorna el valor del nodo eliminado
@@ -39,7 +34,7 @@ public class CircularList<T> implements Serializable {
 		if (head == head.getNext()) {
 			head = null;
 		} else {
-			Node<T> h = head; 
+			Node<T> h = head;
 			Node<T> p = head.getPrev();
 			p.setNext(h.getNext());
 			head = head.getNext();
@@ -49,10 +44,42 @@ public class CircularList<T> implements Serializable {
 		return k;
 	}
 
-	/*
-	 * Description: Elimina el último nodo de la lista enlazada y retorna 
-	 * el valor del nodo eliminado
-	 * Precondition: La  lista no debería ser nula.
+	/**
+	 * Borra el Nodo t de la lista si lo encuentra.
+	 * 
+	 * @param t
+	 *            El valor del nodo que se quiere eliminar
+	 * @return T, retorna el valor del nodo eliminado si se encuentró o {@code null} si
+	 *         no se encuentró o la lista estaba vacía.
+	 */
+	public T pop(T t) {
+		if (isEmpty())
+			return null;
+
+		Node<T> aux = head;
+
+		do {
+			if (aux.getKey() == t) {
+				if (aux == aux.getNext()) {
+					head = null;
+					return aux.getKey();
+				} else {
+					Node<T> h = aux;
+					Node<T> p = aux.getPrev();
+					p.setNext(h.getNext());
+					aux = aux.getNext();
+					aux.setPrev(p);
+					return h.getKey();
+				}
+			}
+			aux = aux.getNext();
+		} while (!aux.equals(head));
+		return null;
+	}
+
+	/**
+	 * Description: Elimina el último nodo de la lista enlazada y retorna el
+	 * valor del nodo eliminado Precondition: La lista no debería ser nula.
 	 * Postcondition: El último nodo es eliminado.
 	 * 
 	 * @return T, retorna el valor del nodo eliminado.
@@ -91,11 +118,11 @@ public class CircularList<T> implements Serializable {
 
 	/**
 	 * Description: Inserta un nuevo nodo x al final de la lista enlazada.
-	 * Precondition: La  lista no debería ser nula.
-	 * Postcondition: El nodo x con valor pasado por parametro k
-	 * es insertado al final de la lista enlazada.
+	 * Precondition: La lista no debería ser nula. Postcondition: El nodo x con
+	 * valor pasado por parametro k es insertado al final de la lista enlazada.
 	 * 
-	 * @param k, valor del nodo que se va a insertar al final de la lista.
+	 * @param k
+	 *            , valor del nodo que se va a insertar al final de la lista.
 	 */
 	public void push_back(T k) {
 		Node<T> x = new Node<T>(k);
@@ -104,8 +131,8 @@ public class CircularList<T> implements Serializable {
 
 	/**
 	 * Description: Inserta un nodo x al final de la lista enlazada.
-	 * Precondition: El nodo x debería ser insertado.
-	 * Postcondition: El nodo x es insertado al final de la lista enlazada.
+	 * Precondition: El nodo x debería ser insertado. Postcondition: El nodo x
+	 * es insertado al final de la lista enlazada.
 	 * 
 	 * @param x
 	 */
@@ -125,9 +152,9 @@ public class CircularList<T> implements Serializable {
 
 	/**
 	 * Description: Inserta un nodo x al principio de la lista enlazada
-	 * Precondition: La  lista no debería ser nula.
-	 * Postcondition: El nodo x con el valor pasado por parametro k
-	 * es insertado al principio de la lista enlazada.
+	 * Precondition: La lista no debería ser nula. Postcondition: El nodo x con
+	 * el valor pasado por parametro k es insertado al principio de la lista
+	 * enlazada.
 	 * 
 	 * @param k
 	 */
@@ -138,8 +165,8 @@ public class CircularList<T> implements Serializable {
 
 	/**
 	 * Description: Inserta un nodo x al principio de la lista enlazada.
-	 * Precondition: El nodo x debería ser insertado.
-	 * Postcondition: El nodo x es insertado al principio de la lista enlazada.
+	 * Precondition: El nodo x debería ser insertado. Postcondition: El nodo x
+	 * es insertado al principio de la lista enlazada.
 	 * 
 	 * @param x
 	 */
@@ -198,8 +225,8 @@ public class CircularList<T> implements Serializable {
 	public boolean isEmpty() {
 		return (head == null);
 	}
-	
-	public Node<T> getHeader(){
+
+	public Node<T> getHeader() {
 		if (isEmpty())
 			return null;
 
@@ -207,10 +234,11 @@ public class CircularList<T> implements Serializable {
 	}
 
 	/**
-	 * @param head the head to set
+	 * @param head
+	 *            the head to set
 	 */
 	public void setHead(Node<T> head) {
 		this.head = head;
 	}
-	
+
 }

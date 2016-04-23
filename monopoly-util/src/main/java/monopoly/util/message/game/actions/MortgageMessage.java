@@ -1,4 +1,4 @@
-package monopoly.util.message.game;
+package monopoly.util.message.game.actions;
 
 import java.io.Serializable;
 
@@ -7,13 +7,13 @@ import java.io.Serializable;
  * @author Moreno Pablo
  *
  */
-public class UnbuildMessage implements Serializable {
+public class MortgageMessage implements Serializable {
 
-	private static final long serialVersionUID = 103904810959880819L;
+	private static final long serialVersionUID = 7732230402922511921L;
+
 	public final int senderID; // The ID of the client who sent that message.
 	public final String idJuego;
 	public final Object message; // Original message from a client.
-	public final Integer cantidad; // La cantidad de casas a construir
 
 	/**
 	 * Create a ForwadedMessage to wrap a message sent by a client.
@@ -23,12 +23,10 @@ public class UnbuildMessage implements Serializable {
 	 * @param message
 	 *            La propiedad que se quiere hipotecar.
 	 */
-	public UnbuildMessage(int senderID, String idJuego, Object message,
-			Integer cantidad) {
+	public MortgageMessage(int senderID, String idJuego, Object message) {
 		this.senderID = senderID;
 		this.idJuego = idJuego;
 		this.message = message;
-		this.cantidad = cantidad;
 	}
 
 }

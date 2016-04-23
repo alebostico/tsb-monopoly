@@ -28,6 +28,7 @@ public class ConstantesMensaje {
 	public final static String HISTORY_GAME_MESSAGE = "HistoryGameMessage";
 	public final static String CHAT_GAME_MESSAGE = "ChatGameMessage";
 	public final static String ADVANCE_IN_BOARD_MESSAGE = "AdvanceInBoardMessage";
+	public final static String BANKRUPTCY_MESSAGE = "BankruptcyMessage";
 
 	public final static String AUCTION_PROPERTY_MESSAGE = "AuctionPropertyMessage";
 	public final static String BUY_PROPERTY_MESSAGE = "BuyPropertyMessage";
@@ -36,14 +37,14 @@ public class ConstantesMensaje {
 	public final static String PAY_TO_BANK_MESSAGE = "PayToBankMessage";
 	public final static String GO_TO_JAIL_MESSAGE = "GoToJailMessage";
 	public final static String SUPER_TAX_MESSAGE = "SuperTaxMessage";
-	
+
 	public final static String MORTGAGE_MESSAGE = "MortgageMessage";
 	public final static String DEMORTGAGE_MESSAGE = "DemortgageMessage";
 	public final static String BUILD_MESSAGE = "BuildMessage";
 	public final static String UNBUILD_MESSAGE = "UnbuildMessage";
 	public final static String BID_FOR_PROPERTY_MESSAGE = "BidForPropertyMessage";
 	public final static String BID_RESULT_MESSAGE = "BidResultMessage";
-	
+
 	public final static String COMPLETE_TURN_MESSAGE = "CompleteTurnMessage";
 	public final static String PAY_TO_PLAYER_MESSAGE = "PayToPlayerMessage";
 	public final static String DOUBLE_DICE_JAIL_MESSAGE = "DoubleDiceJailMessage";

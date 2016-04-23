@@ -25,7 +25,7 @@ import monopoly.client.connection.ConnectionController;
 import monopoly.model.Usuario;
 import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
-import monopoly.util.message.game.MortgageMessage;
+import monopoly.util.message.game.actions.MortgageMessage;
 
 public class HipotecarController extends AnchorPane implements Initializable {
 

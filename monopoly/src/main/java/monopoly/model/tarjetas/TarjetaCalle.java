@@ -522,6 +522,16 @@ public class TarjetaCalle extends TarjetaPropiedad implements Serializable {
 		}
 		return monopolio;
 	}
+	
+	/**
+	 * Devuelve el CasilleroCalle de la tarjeta
+	 * 
+	 * @return El Casillero de la tarjeta
+	 */
+	@Override
+	public CasilleroCalle getCasillero(){
+		return (CasilleroCalle) super.getCasillero();
+	}
 
 	// /**
 	// *
