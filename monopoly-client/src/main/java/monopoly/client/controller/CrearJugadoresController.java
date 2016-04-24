@@ -160,9 +160,8 @@ public class CrearJugadoresController extends AnchorPane implements
 
 		Tooltip t = new Tooltip("Crear Jugador Virtual");
 		Tooltip.install(imgOk, t);
-
+		
 		settearActions();
-
 	}
 
 	@FXML

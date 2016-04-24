@@ -118,7 +118,7 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 						.cargarStage(stageCrearJugadores, fxml,
 								"Monopoly - Nuevo Juego",
 								false, false, Modality.APPLICATION_MODAL,
-								StageStyle.UNDECORATED);
+								StageStyle.UTILITY);
 
 				controller.setPrevStage(prevStage);
 				controller.setJuego(nuevoJuego);

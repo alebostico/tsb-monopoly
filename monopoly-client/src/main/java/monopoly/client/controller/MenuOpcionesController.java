@@ -77,7 +77,7 @@ public class MenuOpcionesController extends AnchorPane implements Initializable 
 
 		try {
 			
-			fxml = ConstantesFXML.FXML_MENU_OPCIONES;
+			fxml = ConstantesFXML.FXML_CREAR_JUEGO;
 			stage = new Stage();
 			controller = (CrearJuegoController) FXUtils.cargarStage(
 					stage, fxml, "Monopoly - Nuevo Juego", false,

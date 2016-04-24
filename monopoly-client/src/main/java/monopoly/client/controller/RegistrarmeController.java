@@ -7,7 +7,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
-
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -197,6 +196,12 @@ public class RegistrarmeController extends AnchorPane implements Initializable {
 			txtRepeatPassword.requestFocus();
 			throw new CampoVacioException(
 					"¡El Campo Confirmar Contraseña no puede estar vacio!");
+		}
+		
+		if(!txtPassword.getText().equals(txtRepeatPassword.getText())){
+			txtRepeatPassword.requestFocus();
+			throw new CampoVacioException(
+					"¡El Campo Contraseña y Confirmar Contraseña deben coincidir!");
 		}
 		return true;
 	}
