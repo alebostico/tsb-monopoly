@@ -38,7 +38,9 @@ public class Tablero implements Serializable {
 	}
 
 	/**
-	 * @return the casillerosList
+	 * Devuelve un array con todos los casilleros del juego
+	 * 
+	 * @return Casillero[], Un array con todos los casilleros
 	 */
 	public Casillero[] getCasillerosList() {
 		return casillerosList;

@@ -45,7 +45,7 @@ public class TarjetaController implements Serializable {
 	private int proximaTarjetaComunidad;
 
 	private static ApplicationContext appContext;
-
+	
 	public TarjetaController() {
 		tarjetasSuerteList = tarjetasSuerteList();
 		tarjetasComunidadList = tarjetasComunidadList();

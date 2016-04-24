@@ -61,6 +61,7 @@ public class ConstantesMensaje {
 	 * Mensajes de conexión
 	 */
 	public final static String DISCONNECT_MESSAGE = "DisconnectMessage";
+	public final static String DISCONNECT_PLAYER_MESSAGE = "DisconnectPlayerMessage";
 	public final static String RESET_SIGNAL_MESSAGE = "ResetSignal";
 	public final static String EXCEPTION_MESSAGE = "ExceptionMessage";
 
@@ -75,6 +76,7 @@ public class ConstantesMensaje {
 	public final static String THROW_DICE_TURNS_MESSAGE = "ThrowDiceTurnsMessage";
 	public final static String THROW_DICE_ADVANCE_MESSAGE = "ThrowDiceAdvanceMessage";
 	public final static String DOUBLE_DICE_MESSAGE = "DoubleDiceMessage";
+	public final static String WIN_MESSAGE = "WinMessage";
 
 	/*************************************************************************************/
 }

@@ -34,6 +34,7 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.model.tarjetas.TarjetaSuerte;
 import monopoly.util.GestorLogs;
 import monopoly.util.StringUtils;
+import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.constantes.EnumAction;
 import monopoly.util.constantes.EnumEstadoSubasta;
 import monopoly.util.constantes.EnumSalidaCarcel;
@@ -93,6 +94,12 @@ public class JuegoController implements Serializable {
 
 	public final int tiempoDeEspera = 2000;
 
+	/**
+	 * Para pruebas, hace al creador del juego dueño de todas las propiedades.
+	 * Usado para probar la funcionalidad de bancarrota.
+	 */
+	private static final boolean BANCARROTA_TESTING = true;
+
 	public JuegoController(Usuario creador, String nombre) {
 		this.gestorTablero = new TableroController();
 		this.gestorBanco = new BancoController(gestorTablero.getTablero()
@@ -103,6 +110,56 @@ public class JuegoController implements Serializable {
 		this.gestorJugadores = new JugadorController();
 		this.gestorJugadoresVirtuales = new JugadorVirtualController();
 		this.contadorPagos = 0;
+	}
+
+	/**
+	 * ¡¡¡ OJO CON ESTO !!!<br>
+	 * Hace al jugador {@code owner} dueño de <b>TODAS</b> las propiedades del
+	 * juego, antes de arrancar el juego. Se usa solo para <b>TESTING</b>.
+	 * 
+	 * @param owner
+	 *            El jugador que va a ser dueño de TODAS las propiedade
+	 */
+	private void make_owner(Jugador owner) {
+		// Jugador jugador = this.getJugadorHumano(owner);
+
+		for (Casillero casillero : this.gestorTablero.getTablero()
+				.getCasillerosList()) {
+			switch (casillero.getTipoCasillero()) {
+			case C_CALLE:
+				owner.adquirirPropiedad(((CasilleroCalle) casillero)
+						.getTarjetaCalle());
+				break;
+			case C_COMPANIA:
+				owner.adquirirPropiedad(((CasilleroCompania) casillero)
+						.getTarjetaCompania());
+				break;
+			case C_ESTACION:
+				owner.adquirirPropiedad(((CasilleroEstacion) casillero)
+						.getTarjetaEstacion());
+				break;
+			default:
+				break;
+			}
+		}
+		owner.setDinero(100000);
+	}
+
+	/**
+	 * Retorna el JugadorHumano asociado a un usuario
+	 * 
+	 * @param usuario
+	 *            El usuario que se quiere buscar
+	 * @return El JugadorHumano de ese usuario
+	 */
+	public JugadorHumano getJugadorHumano(Usuario usuario) {
+		for (JugadorHumano jugador : this.getGestorJugadores()
+				.getListaJugadoresHumanos()) {
+			if (jugador.getUsuario().getUserName()
+					.equals(usuario.getUserName()))
+				return jugador;
+		}
+		return null;
 	}
 
 	/**
@@ -129,6 +186,14 @@ public class JuegoController implements Serializable {
 			estadoJuego.actualizarEstadoJuego();
 			gestorJugadores.establecerTurnos();
 		}
+
+		// Para pruebas, hace al creador del juego dueño de todas las
+		// propiedades. Usado para probar la funcionalidad de bancarrota.
+		if (BANCARROTA_TESTING
+				&& jugador.isHumano()
+				&& ((JugadorHumano) jugador).getUsuario().equals(
+						juego.getOwner()))
+			make_owner(jugador);
 	}
 
 	/**
@@ -253,6 +318,18 @@ public class JuegoController implements Serializable {
 	}
 
 	/**
+	 * Pasa a un Jugador al estado de bancarrota.
+	 * 
+	 * @see #pasarABancarrota(Jugador)
+	 * @param senderID
+	 *            El ID del jugador que se pasa a bancarrota
+	 */
+	public void pasarABancarrota(int senderID) {
+		JugadorHumano jugador = gestorJugadores.getJugadorHumano(senderID);
+		pasarABancarrota(jugador);
+	}
+
+	/**
 	 * Pasa a un Jugador al estado de bancarrota. Ejecuta las siguientes
 	 * acciones:
 	 * <ol>
@@ -331,7 +408,6 @@ public class JuegoController implements Serializable {
 		status = new MonopolyGameStatus(turnosList, gestorBanco.getBanco(),
 				gestorTablero.getTablero(), estadoJuegoJugadorActual, null,
 				gestorJugadores.getCurrentPlayer(), historyList, null);
-
 		try {
 			sendToAll(new BankruptcyMessage(this.getJuego().getUniqueID(),
 					mensaje));
@@ -340,18 +416,66 @@ public class JuegoController implements Serializable {
 			GestorLogs.registrarError(e);
 			e.printStackTrace();
 		}
+
+		this.verificarEstadoJuego();
 	}
 
 	/**
-	 * Pasa a un Jugador al estado de bancarrota.
+	 * Verifica la cantidad de jugadores humanos y virtuales que están Jugando y
+	 * toma acciones al respecto. Si solo queda un humano y ningún virtual, le
+	 * manda un mensaje informando que es el ganador. Si no quedan más humanos,
+	 * termina el juego. En cualquier otro caso no hace nada.
 	 * 
-	 * @see #pasarABancarrota(Jugador)
-	 * @param senderID
-	 *            El ID del jugador que se pasa a bancarrota
+	 * @return true si realizó alguna acción. false en caso contrario.
 	 */
-	public void pasarABancarrota(int senderID) {
-		JugadorHumano jugador = gestorJugadores.getJugadorHumano(senderID);
-		pasarABancarrota(jugador);
+	private boolean verificarEstadoJuego() {
+		int cantJHumanos = 0;
+		int cantJVirtuales = 0;
+		Jugador lastPlayer = null;
+
+		List<Jugador> jugadores = gestorJugadores.getTurnoslist();
+
+		for (Jugador jugador : jugadores) {
+			if (jugador.isHumano()) {
+				cantJHumanos++;
+				lastPlayer = jugador;
+			} else
+				cantJVirtuales++;
+		}
+
+		if (cantJHumanos == 1 && cantJVirtuales == 0) {
+			// Enviar mensaje informando que ganó
+			try {
+				GestorLogs.registrarLog(String.format(
+						"El jugador %s ganó el juego %s.", lastPlayer.getNombre(),
+						this.getJuego().getNombreJuego()));
+				sendToAll(ConstantesMensaje.WIN_MESSAGE);
+				return true;
+			} catch (Exception e) {
+				GestorLogs.registrarError(e);
+				e.printStackTrace();
+			}
+		}
+		if (cantJHumanos == 0) {
+			// terminar el juego
+			PartidasController.getInstance().removeJuego(this);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Informa de la desconexión de un jugador y verifica el estado del juego
+	 * 
+	 * @param senderID
+	 *            El id del jugador que se desconectó.
+	 */
+	public void desconectarJugador(int senderID, String nombreJugador) {
+		//JugadorHumano jugador = gestorJugadores.getJugadorHumano(senderID);
+		GestorLogs.registrarLog(String.format(
+				"El jugador %s se salió del juego %s.", nombreJugador,
+				this.getJuego().getNombreJuego()));
+		verificarEstadoJuego();
 	}
 
 	/**
@@ -792,12 +916,12 @@ public class JuegoController implements Serializable {
 				}
 			} else {
 				jugadorActual.resetCatidadDadosDobles();
-				if (jugadorActual.isHumano()) {
-					senderId = ((JugadorHumano) jugadorActual).getSenderID();
-					irALaCarcel(senderId);
-				} else {
-					irALaCarcel(jugadorActual);
-				}
+				// if (jugadorActual.isHumano()) {
+				// senderId = ((JugadorHumano) jugadorActual).getSenderID();
+				// irALaCarcel(senderId);
+				// } else {
+				irALaCarcel(jugadorActual);
+				// }
 			}
 		} else {
 			jugadorActual.resetCatidadDadosDobles();
@@ -1467,8 +1591,8 @@ public class JuegoController implements Serializable {
 				StringUtils.getFechaActual(), jugador.getNombre(),
 				"Fue a la cárcel")));
 
-		if (jugador.isHumano())
-			siguienteTurno(false);
+		// if (jugador.isHumano())
+		siguienteTurno(false);
 	}
 
 	/**

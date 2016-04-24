@@ -42,8 +42,9 @@ public class GestorPathResources {
 	}
 	
 	public static String getPathLogos() {
-		String pathResource = LectorXML.getPathLogos();
-		URL url = loader.getResource(pathResource);
-		return url.getPath();
+		//TODO String pathResource = LectorXML.getPathLogos();
+		//TODO URL url = loader.getResource(pathResource);
+		//TODO: return url.getPath();
+		return null;
 	}
 }

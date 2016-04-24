@@ -25,6 +25,7 @@ import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.constantes.EnumSalidaCarcel;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
+import monopoly.util.message.DisconnectPlayerMessage;
 import monopoly.util.message.ExceptionMessage;
 import monopoly.util.message.LoginMessage;
 import monopoly.util.message.game.AdvanceInBoardMessage;
@@ -152,6 +153,7 @@ public class MonopolyGame extends GameServer {
 		AuctionFinishMessage msgAuctionFinish;
 		BidForPropertyMessage msgBidForPropertyMessage;
 		BidResultMessage msgBidResultMessage;
+		DisconnectPlayerMessage msgDisconnectPlayerMessage;
 
 		try {
 			switch (message.getClass().getSimpleName()) {
@@ -394,7 +396,17 @@ public class MonopolyGame extends GameServer {
 				break;
 
 			case ConstantesMensaje.DISCONNECT_MESSAGE:
+				// El DisconnectMessage se recibe y trata en la clase interna
+				// GameServer -> ConnectionToClient -> ReceiveThread
+				// El mensaje nunca llega hasta MonopolyGame. Entonces generamos
+				// un DisconnectPlayerMessage que se trate en esta clase.
+				break;
 
+			case ConstantesMensaje.DISCONNECT_PLAYER_MESSAGE:
+				msgDisconnectPlayerMessage = ((DisconnectPlayerMessage) message);
+				PartidasController.getInstance().desconectarJugador(senderId,
+						msgDisconnectPlayerMessage.juegoId,
+						msgDisconnectPlayerMessage.nombreJugador);
 				break;
 
 			case "String":

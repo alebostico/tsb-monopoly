@@ -138,6 +138,11 @@ public class PartidasController {
 		juegoController.siguienteTurno(false);
 	}
 
+	public void desconectarJugador(int senderID, String idJuego, String jugador) {
+		juegoController = juegosControllerList.get(idJuego);
+		juegoController.desconectarJugador(senderID, jugador);
+	}
+
 	public void establecerTurnoJugador(int senderId, String idJuego, Dado dados)
 			throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
@@ -505,6 +510,36 @@ public class PartidasController {
 			return null;
 		GestorLogs.registrarLog("Creando un nuevo juego...");
 		return jc.getJuego();
+	}
+
+	/**
+	 * Elimina un gestor de juego.
+	 * 
+	 * @param jc
+	 *            El {@code JuegoController} que se quiere eliminar
+	 * @return El {@code JuegoController} que se eliminó o {@code null} si no se
+	 *         encontró. (Según está definido en
+	 *         <code>{@link TreeMap#remove(Object)}</code>).
+	 */
+	public JuegoController removeJuego(JuegoController jc) {
+		return removeJuego(jc.getJuego().getUniqueID());
+	}
+
+	/**
+	 * Elimina un gestor de juego.
+	 * 
+	 * @param idJuego
+	 *            El id del Juego del {@code JuegoController} que se quiere
+	 *            eliminar
+	 * @return El {@code JuegoController} que se eliminó o {@code null} si no se
+	 *         encontró. (Según está definido en
+	 *         <code>{@link TreeMap#remove(Object)}</code>).
+	 */
+	public JuegoController removeJuego(String idJuego) {
+		JuegoController toReturn = juegosControllerList.remove(idJuego);
+		System.gc();
+		GestorLogs.registrarLog(String.format("Juego %s eliminado", idJuego));
+		return toReturn;
 	}
 
 	/**
