@@ -17,12 +17,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
@@ -39,10 +37,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import monopoly.client.connection.ConnectionController;
-import monopoly.client.util.ScreensFramework;
+import monopoly.client.util.FXUtils;
 import monopoly.model.Ficha;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
@@ -53,16 +53,11 @@ import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesFXML;
 import monopoly.util.message.game.LoadGameMessage;
 
-import org.controlsfx.control.action.Action;
-import org.controlsfx.dialog.Dialog;
-import org.controlsfx.dialog.Dialogs;
-
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
  *
  */
-@SuppressWarnings("deprecation")
 public class CrearJugadoresController extends AnchorPane implements
 		Initializable {
 
@@ -179,8 +174,9 @@ public class CrearJugadoresController extends AnchorPane implements
 	@FXML
 	void processStartGame(ActionEvent event) {
 		String nombre = juego.getOwner().getUserName();
-		Jugador playerOwner = new JugadorHumano(nombre, fichaPlayer, juego, null,
-				juego.getOwner(), ConnectionController.getInstance().getIdPlayer());
+		Jugador playerOwner = new JugadorHumano(nombre, fichaPlayer, juego,
+				null, juego.getOwner(), ConnectionController.getInstance()
+						.getIdPlayer());
 		juego.addJugador(playerOwner);
 		int cantSldJugadores = !txtNroJugadores.getText().isEmpty() ? Integer
 				.parseInt(txtNroJugadores.getText()) : 0;
@@ -190,41 +186,41 @@ public class CrearJugadoresController extends AnchorPane implements
 					+ jugadoresVirtualesList.size());
 			for (VirtualPlayer j : jugadoresVirtualesList) {
 				juego.addJugador(new JugadorVirtual(j.name.get().getNombre(),
-						j.nameFicha.get(), juego, null,j.nameTipo.get()));
+						j.nameFicha.get(), juego, null, j.nameTipo.get()));
 			}
 
-			String fxml = ConstantesFXML.FXML_MOSTRAR_TABLERO;
+			TableroController controller = null;
+			String fxml = "";
+			Stage stage = null;
 
 			try {
-				Parent root;
-				Stage stage = new Stage();
-				FXMLLoader loader = ScreensFramework.getLoader(fxml);
+				fxml = ConstantesFXML.FXML_MOSTRAR_TABLERO;
+				stage = new Stage();
 
-				root = (Parent) loader.load();
-				TableroController controller = (TableroController) loader
-						.getController();
+				controller = (TableroController) FXUtils.cargarStage(stage,
+						fxml, "Monopoly - Tablero - "
+								+ juego.getOwner().getNombre(), false, false,
+						Modality.APPLICATION_MODAL, StageStyle.DECORATED);
 				controller.setPrevStage(currentStage);
 				controller.setJuego(juego);
 				controller.setUsuarioLogueado(juego.getOwner());
-
-				Scene scene = new Scene(root);
-				stage.setScene(scene);
-				stage.setTitle("Monopoly - Tablero - " + juego.getOwner().getNombre());
-				stage.centerOnScreen();
 				controller.setCurrentStage(stage);
 				controller.showTableroDeJuego();
-				
+
 				int senderId = ConnectionController.getInstance().getIdPlayer();
 				ConnectionController.getInstance().send(
 						new LoadGameMessage(senderId, juego));
 
 			} catch (Exception ex) {
-				GestorLogs.registrarError(ex.getMessage());
+				GestorLogs.registrarException(ex);
+				FXUtils.getAlert(AlertType.ERROR, "Error...", null,
+						ex.getMessage()).showAndWait();
 			}
 		} else {
-			Dialogs.create().owner(currentStage).title("Advertencia")
-			.masthead("Límites de jugadores").message("¡El juego permite un mínimo de 2 jugadores en total!")
-			.showWarning();
+			FXUtils.getAlert(AlertType.WARNING, "Error...",
+					"Límites de jugadores",
+					"¡El juego permite un mínimo de 2 jugadores en total!")
+					.showAndWait();
 			return;
 		}
 	}
@@ -250,6 +246,7 @@ public class CrearJugadoresController extends AnchorPane implements
 	public void setPrevStage(Stage prevStage) {
 		this.prevStage = prevStage;
 	}
+
 	public Juego getJuego() {
 		return juego;
 	}
@@ -446,19 +443,21 @@ public class CrearJugadoresController extends AnchorPane implements
 
 						if (!fichaPlayerVirtual.isSelected()) {
 							Jugador jv = new JugadorVirtual(txtNombreVirtual
-									.getText(), fichaPlayerVirtual, juego, null,
-									tipoJugador);
+									.getText(), fichaPlayerVirtual, juego,
+									null, tipoJugador);
 							VirtualPlayer vp = new VirtualPlayer(jv);
 							jugadoresVirtualesList.add(vp);
 							fichaPlayerVirtual.setSelected(true);
 							ajustarSlider(5 - jugadoresVirtualesList.size());
 						} else {
-							Dialogs.create().owner(currentStage).title("Advertencia")
-							.masthead("Ficha Seleccionada")
-							.message("¡La Ficha "
-									+ fichaPlayerVirtual.getNombre()
-									+ " ya está seleccionada, por favor seleccione otra!")
-							.showWarning();
+							FXUtils.getAlert(
+									AlertType.WARNING,
+									"Advertencia...",
+									"Ficha Seleccionada",
+									"¡La Ficha "
+											+ fichaPlayerVirtual.getNombre()
+											+ " ya está seleccionada, por favor seleccione otra!")
+									.showAndWait();
 						}
 
 						configurarTable();
@@ -470,17 +469,16 @@ public class CrearJugadoresController extends AnchorPane implements
 								colNombreJugador, colFicha, colTipoJugador,
 								colAction);
 					} else {
-						Dialogs.create().owner(currentStage).title("Advertencia")
-						.masthead("Límites de jugadores")
-						.message("¡El juego permite un máximo de 6 jugadores en total!")
-						.showWarning();
-						
+						FXUtils.getAlert(AlertType.WARNING, "Advertencia...",
+								"Límites de jugadores",
+								"¡El juego permite un máximo de 6 jugadores en total!")
+								.showAndWait();
 					}
 				} else {
-					Dialogs.create().owner(currentStage).title("Advertencia")
-					.masthead("Límites de jugadores")
-					.message("¡El juego permite un máximo de 6 jugadores en total!")
-					.showWarning();
+					FXUtils.getAlert(AlertType.WARNING, "Advertencia...",
+							"Límites de jugadores",
+							"¡El juego permite un máximo de 6 jugadores en total!")
+							.showAndWait();
 				}
 			}
 		});
@@ -545,12 +543,12 @@ public class CrearJugadoresController extends AnchorPane implements
 									img.setOnMouseClicked(new EventHandler<MouseEvent>() {
 										@Override
 										public void handle(MouseEvent e) {
-											Action response = Dialogs.create().owner(currentStage).title("Advertencia")
-											.masthead("Elimnar Jugador Virtual")
-											.message("¿Está seguro que desea eliminar este jugador virtual?")
-											.showConfirm();
 
-											if (response == Dialog.ACTION_YES) {
+											if (FXUtils
+													.getAlertSioNo(
+															"Advertencia...",
+															"Elimnar Jugador Virtual",
+															"¿Está seguro que desea eliminar este jugador virtual?")) {
 												// ... user
 												// chose YES
 												jugadoresVirtualesList
@@ -565,7 +563,6 @@ public class CrearJugadoresController extends AnchorPane implements
 														.setSelected(false);
 												ajustarSlider(5 - jugadoresVirtualesList
 														.size());
-
 											}
 										}
 									});

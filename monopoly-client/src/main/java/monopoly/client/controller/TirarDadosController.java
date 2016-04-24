@@ -10,7 +10,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -21,6 +20,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import monopoly.client.connection.ConnectionController;
+import monopoly.client.util.FXUtils;
 import monopoly.model.Dado;
 import monopoly.model.History;
 import monopoly.util.GestorLogs;
@@ -183,10 +183,7 @@ public class TirarDadosController extends AnchorPane implements Initializable {
 			}
 		} catch (Exception ex) {
 			GestorLogs.registrarException(ex);
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setContentText(ex.getMessage());
-			alert.setTitle("Error...");
-			alert.showAndWait();
+			FXUtils.getAlert(AlertType.ERROR, "Error...", null, ex.getMessage()).showAndWait();
 		}
 	}
 

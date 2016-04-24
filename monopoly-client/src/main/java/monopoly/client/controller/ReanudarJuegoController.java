@@ -25,10 +25,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import monopoly.client.connection.ConnectionController;
+import monopoly.client.util.FXUtils;
 import monopoly.client.util.ScreensFramework;
 import monopoly.model.Juego;
 import monopoly.model.MonopolyGameStatus;
@@ -121,8 +123,8 @@ public class ReanudarJuegoController extends AnchorPane implements
 			controller.setCurrentStage(stage);
 			controller.setPrevStage(currentStage);
 		} catch (Exception ex) {
-			TableroController.getInstance().showException(ex, "processLoadGame");
-			GestorLogs.registrarError(ex);
+			GestorLogs.registrarException(ex);
+			FXUtils.getAlert(AlertType.ERROR, "Error...", null, ex.getMessage()).showAndWait();
 		}
 
 		ReloadSavedGameMessage msg = new ReloadSavedGameMessage(senderID,
@@ -153,8 +155,8 @@ public class ReanudarJuegoController extends AnchorPane implements
 					senderID, juego);
 			ConnectionController.getInstance().send(msg);
 		} catch (Exception ex) {
-			TableroController.getInstance().showException(ex,"finishLoadGame");
-			GestorLogs.registrarError(ex);
+			GestorLogs.registrarException(ex);
+			FXUtils.getAlert(AlertType.ERROR, "Error...", null, ex.getMessage()).showAndWait();
 		}
 
 	}

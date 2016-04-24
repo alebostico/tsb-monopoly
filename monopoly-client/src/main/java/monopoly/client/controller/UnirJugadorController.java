@@ -9,18 +9,18 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import monopoly.client.connection.ConnectionController;
-import monopoly.client.util.ScreensFramework;
+import monopoly.client.util.FXUtils;
 import monopoly.model.Ficha;
 import monopoly.model.Juego;
 import monopoly.model.Jugador;
@@ -90,25 +90,23 @@ public class UnirJugadorController extends AnchorPane implements Initializable {
 		Jugador jugador = new  JugadorHumano(usuarioLogueado.getUserName(),
 											fichaPlayer, juegoSelected, null, usuarioLogueado, senderID);
 		
-		String fxml = ConstantesFXML.FXML_MOSTRAR_TABLERO;
+		TableroController controller = null;
+		String fxml = "";
+		Stage stage = null;
 
 		try {
-			Parent root;
-			Stage stage = new Stage();
-			FXMLLoader loader = ScreensFramework.getLoader(fxml);
-
-			root = (Parent) loader.load();
-			TableroController controller = (TableroController) loader
-					.getController();
+			GestorLogs.registrarLog("Visualizar tablero del juego.");
+			
+			fxml = ConstantesFXML.FXML_MOSTRAR_TABLERO;
+			stage = new Stage();
+			controller = (TableroController) FXUtils.cargarStage(
+					stage, fxml, "Monopoly - Tablero - " + usuarioLogueado.getNombre(), false,
+					false, Modality.APPLICATION_MODAL,
+					StageStyle.DECORATED);
+			controller.setCurrentStage(stage);
 			controller.setPrevStage(currentStage);
 			controller.setJuego(juegoSelected);
 			controller.setUsuarioLogueado(usuarioLogueado);
-
-			Scene scene = new Scene(root);
-			stage.setScene(scene);
-			stage.setTitle("Monopoly - Tablero - " + usuarioLogueado.getNombre());
-			stage.centerOnScreen();
-			controller.setCurrentStage(stage);
 			controller.showTableroDeJuego();
 			
 			JoinGameMessage msg = new JoinGameMessage(jugador);
@@ -119,6 +117,7 @@ public class UnirJugadorController extends AnchorPane implements Initializable {
 
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
+			FXUtils.getAlert(AlertType.ERROR, "Error...", null, ex.getMessage()).showAndWait();
 		}
 	}
 

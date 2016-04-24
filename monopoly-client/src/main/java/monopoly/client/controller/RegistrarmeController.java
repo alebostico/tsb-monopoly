@@ -3,28 +3,27 @@
  */
 package monopoly.client.controller;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import org.controlsfx.dialog.Dialogs;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import monopoly.client.connection.ConnectionController;
-import monopoly.client.util.ScreensFramework;
+import monopoly.client.util.FXUtils;
 import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesFXML;
@@ -37,11 +36,16 @@ import monopoly.util.exception.EmailInvalidoException;
  * @author pablo
  *
  */
-@SuppressWarnings("deprecation")
 public class RegistrarmeController extends AnchorPane implements Initializable {
 
 	@FXML
-	private Button btnCancelar;
+	private Label lblMsgError;
+
+	@FXML
+	private PasswordField txtRepeatPassword;
+
+	@FXML
+	private PasswordField txtPassword;
 
 	@FXML
 	private TextField txtNombre;
@@ -56,13 +60,7 @@ public class RegistrarmeController extends AnchorPane implements Initializable {
 	private Button btnGuardar;
 
 	@FXML
-	private PasswordField txtRepeatPassword;
-
-	@FXML
-	private PasswordField txtPassword;
-
-	@FXML
-	private Label lblMsgError;
+	private Button btnCancelar;
 
 	@FXML
 	public Stage prevStage;
@@ -86,10 +84,7 @@ public class RegistrarmeController extends AnchorPane implements Initializable {
 					public void changed(
 							ObservableValue<? extends Boolean> observable,
 							Boolean oldValue, Boolean newValue) {
-						if (newValue.booleanValue()) {
-							System.out.println("textfield focused");
-						} else {
-							System.out.println("textfield is not focused");
+						if (!newValue.booleanValue())
 							if (!txtPassword.getText().equals(
 									txtRepeatPassword.getText())) {
 								lblMsgError.setVisible(true);
@@ -97,7 +92,6 @@ public class RegistrarmeController extends AnchorPane implements Initializable {
 							} else {
 								lblMsgError.setVisible(false);
 							}
-						}
 					}
 				});
 	}
@@ -130,44 +124,57 @@ public class RegistrarmeController extends AnchorPane implements Initializable {
 
 				usuario.setNombre(nombre);
 
-				ConnectionController.getInstance().iniciarConexionToAccount(usuario);
+				ConnectionController.getInstance().iniciarConexionToAccount(
+						usuario);
 			}
 		} catch (EmailInvalidoException eie) {
-			Dialogs.create().owner(currentStage).title("Advertencia")
-			.masthead("Campo Inválido").message(eie.getMessage())
-			.showWarning();
+			lblMsgError.setText(eie.getMessage());
 		} catch (CampoVacioException cve) {
-			Dialogs.create().owner(currentStage).title("Advertencia")
-			.masthead("Campo Obligatorio").message(cve.getMessage())
-			.showWarning();
+			lblMsgError.setText(cve.getMessage());
+		} catch(Exception ex){
+			lblMsgError.setText(ex.getMessage());
 		}
 	}
-	
-	public void iniciarSesion(final Usuario user) {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				if (user != null) {
-					try {
-						FXMLLoader loader = ScreensFramework.getLoader(ConstantesFXML.FXML_MENU_OPCIONES);
-						Parent root = (Parent) loader.load();
-						MenuOpcionesController controller = (MenuOpcionesController) loader
-								.getController();
-						controller.setPrevStage(currentStage);
-						controller.setUsuarioLogueado(user);
-						controller.showOptionMenu(root);
 
-					} catch (IOException e) {
-						GestorLogs.registrarException(e);
-					}
+	public void iniciarSesion(final Usuario user) throws Exception{
+		FutureTask<Void> taskMostrarOpciones = null;
+
+		taskMostrarOpciones = new FutureTask<Void>(new Callable<Void>() {
+
+			private Stage stage = null;
+
+			@Override
+			public Void call() throws Exception {
+
+				MenuOpcionesController controller = null;
+				String fxml = "";
+
+				if (user != null) {
+
+					GestorLogs.registrarLog("Desplegar Menú de Opciones desde registrar..");
+
+					fxml = ConstantesFXML.FXML_MENU_OPCIONES;
+					stage = new Stage();
+					controller = (MenuOpcionesController) FXUtils.cargarStage(
+							stage, fxml, "Monopoly - Menú de Opciones", false,
+							false, Modality.APPLICATION_MODAL,
+							StageStyle.DECORATED);
+					controller.setCurrentStage(stage);
+					controller.setUsuarioLogueado(user);
+					prevStage.close();
+					controller.getCurrentStage().showAndWait();
+
 				} else {
-					lblMsgError.setText("Usuario / Contraseña inválida");
+					lblMsgError.setText("Usuario produjo un error.");
 				}
+				return null;
 			}
 		});
+		Platform.runLater(taskMostrarOpciones);
 	}
 
 	private boolean validarCampos() throws CampoVacioException {
+		lblMsgError.setText("");
 		if (txtNombre.getText().isEmpty()) {
 			txtNombre.requestFocus();
 			throw new CampoVacioException(

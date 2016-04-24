@@ -11,20 +11,17 @@ import java.util.concurrent.FutureTask;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import monopoly.client.connection.ConnectionController;
-import monopoly.client.util.ScreensFramework;
+import monopoly.client.util.FXUtils;
 import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesFXML;
@@ -39,26 +36,24 @@ import monopoly.util.exception.CampoVacioException;
 public class LoginController extends AnchorPane implements Initializable {
 
 	@FXML
-	private Button btnSalir;
-
-	@FXML
-	private Button btnConfig;
-
-	@FXML
 	private TextField txtUserName;
 
 	@FXML
-	private Button btnRegistrarme;
-
-	@FXML
-	private Button btnLohgin;
+	private PasswordField txtPassword;
 
 	@FXML
 	private Label lblMsgError;
 
 	@FXML
-	private PasswordField txtPassword;
+	private Button btnLogin;
 
+	@FXML
+	private Button btnRegistrarme;
+
+	@FXML
+	private Button btnSalir;
+
+	@FXML
 	private Stage primaryStage;
 
 	private static LoginController instance = null;
@@ -85,15 +80,14 @@ public class LoginController extends AnchorPane implements Initializable {
 				validarUsuario(userName, password);
 			}
 		} catch (CampoVacioException cve) {
-			Alert alert = new Alert(AlertType.WARNING);
-			alert.setTitle("Advertencia");
-			alert.setHeaderText("Campo Obligatorio");
-			alert.setContentText(cve.getMessage());
-			alert.showAndWait();
+			lblMsgError.setText(cve.getMessage());
+		} catch (Exception ex) {
+			lblMsgError.setText(ex.getMessage());
 		}
 	}
 
-	public void validarUsuario(String userName, String password) {
+	public void validarUsuario(String userName, String password)
+			throws Exception {
 		String passwordEnc = new String(password);
 		Encrypter enc = new VernamEncrypter(passwordEnc);
 
@@ -110,39 +104,41 @@ public class LoginController extends AnchorPane implements Initializable {
 		ConnectionController.getInstance().iniciarConexionToLogin(usuario);
 	}
 
-	public void iniciarSesion(final Usuario user) {
-		final String fxml = ConstantesFXML.FXML_MENU_OPCIONES;
+	public void iniciarSesion(final Usuario user) throws Exception {
 
 		FutureTask<Void> taskMostrarOpciones = null;
-		try {
-			taskMostrarOpciones = new FutureTask<Void>(new Callable<Void>() {
-				@Override
-				public Void call() throws Exception {
-					try {
-						if (user != null) {
 
-							FXMLLoader loader = ScreensFramework.getLoader(fxml);
-							Parent root = (Parent) loader.load();
-							MenuOpcionesController controller = (MenuOpcionesController) loader
-									.getController();
-							controller.setPrevStage(primaryStage);
-							controller.setUsuarioLogueado(user);
-							controller.showOptionMenu(root);
+		taskMostrarOpciones = new FutureTask<Void>(new Callable<Void>() {
 
-						} else {
-							lblMsgError.setText("Usuario / Contraseña inválida");
-						}
-					} catch (Exception e) {
-						GestorLogs.registrarError(e);
-					}
-					return null;
+			private Stage stage = null;
+
+			@Override
+			public Void call() throws Exception {
+
+				MenuOpcionesController controller = null;
+				String fxml = "";
+
+				if (user != null) {
+
+					GestorLogs.registrarLog("Desplegar Menú de Opciones..");
+
+					fxml = ConstantesFXML.FXML_MENU_OPCIONES;
+					stage = new Stage();
+					controller = (MenuOpcionesController) FXUtils.cargarStage(
+							stage, fxml, "Monopoly - Menú de Opciones", false,
+							false, Modality.APPLICATION_MODAL,
+							StageStyle.DECORATED);
+					controller.setCurrentStage(stage);
+					controller.setUsuarioLogueado(user);
+					primaryStage.close();
+					controller.getCurrentStage().showAndWait();
+				} else {
+					lblMsgError.setText("Usuario / Contraseña inválida");
 				}
-			});
-			Platform.runLater(taskMostrarOpciones);
-		
-		} catch (Exception e) {
-			GestorLogs.registrarError(e);
-		}
+				return null;
+			}
+		});
+		Platform.runLater(taskMostrarOpciones);
 	}
 
 	/**
@@ -152,6 +148,7 @@ public class LoginController extends AnchorPane implements Initializable {
 	 * @return
 	 */
 	private boolean validarCampos() throws CampoVacioException {
+		lblMsgError.setText("");
 		if (txtUserName.getText().equals("")) {
 			txtUserName.requestFocus();
 			throw new CampoVacioException(
@@ -172,35 +169,26 @@ public class LoginController extends AnchorPane implements Initializable {
 	}
 
 	@FXML
-	void processConfig(ActionEvent event) {
-
-	}
-
-	@FXML
 	public void processCreateAccount(ActionEvent event) {
-		GestorLogs.registrarLog("Registrar Juego...");
-		Parent root;
+		
+		GestorLogs.registrarLog("Registrar Usuario...");
+		
+		Stage stage = null;
 		String fxml = ConstantesFXML.FXML_REGISTRARME;
+		RegistrarmeController controller = null;
 
 		try {
-			Stage stage = new Stage();
-			FXMLLoader loader = ScreensFramework.getLoader(fxml);
-
-			root = (Parent) loader.load();
-			RegistrarmeController controller = (RegistrarmeController) loader
-					.getController();
-			controller.setPrevStage(primaryStage);
-
-			Scene scene = new Scene(root);
-			stage.setScene(scene);
-			stage.setTitle("Monopoly - Registrar Usuario");
-			stage.centerOnScreen();
-			primaryStage.hide();
+			stage = new Stage();
+			controller = (RegistrarmeController) FXUtils.cargarStage(
+					stage, fxml, "Monopoly - Registrar Usuario", false,
+					false, Modality.APPLICATION_MODAL,
+					StageStyle.DECORATED);
 			controller.setCurrentStage(stage);
-			stage.show();
+			primaryStage.hide();
+			controller.getCurrentStage().show();
 
 		} catch (Exception ex) {
-			GestorLogs.registrarException(ex);
+			lblMsgError.setText(ex.getMessage());
 		}
 	}
 

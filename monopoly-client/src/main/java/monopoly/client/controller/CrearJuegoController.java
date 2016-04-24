@@ -12,7 +12,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -38,19 +37,19 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 	private TextField txtUserName;
 
 	@FXML
-	private Button btnCrearJuego;
-
-	@FXML
 	private TextField txtNombreJuego;
 
 	@FXML
 	private TextField txtFechaCreacion;
 
 	@FXML
-	private Button btnCancelar;
+	private TextField txtIdJuego;
 
 	@FXML
-	private TextField txtIdJuego;
+	private Button btnCrearJuego;
+
+	@FXML
+	private Button btnCancelar;
 
 	@FXML
 	private Stage currentStage;
@@ -104,7 +103,6 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 
 	@FXML
 	void processCreateGame(ActionEvent event) {
-		Alert alert;
 		String fxml ;
 		Stage stageCrearJugadores;
 		CrearJugadoresController controller;
@@ -130,18 +128,10 @@ public class CrearJuegoController extends AnchorPane implements Initializable {
 				stageCrearJugadores.show();
 			}
 		} catch (CampoVacioException cve) {
-			alert = new Alert(AlertType.WARNING);
-			alert.setTitle("Advertencia");
-			alert.setHeaderText("Campo Obligatorio");
-			alert.setContentText(cve.getMessage());
-			alert.showAndWait();
+			FXUtils.getAlert(AlertType.WARNING, "Advertencia...", "Campo Obligatorio", cve.getMessage()).showAndWait();
 		} catch (Exception ex) {
 			GestorLogs.registrarException(ex);
-			alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error...");
-			alert.setHeaderText("Error mediante una excepción");
-			alert.setContentText(ex.getMessage());
-			alert.showAndWait();
+			FXUtils.getAlert(AlertType.ERROR, "Error...", null, ex.getMessage()).showAndWait();
 		}
 	}
 

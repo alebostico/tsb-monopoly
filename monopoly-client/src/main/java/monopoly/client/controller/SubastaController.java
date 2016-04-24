@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
-
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -113,8 +112,6 @@ public class SubastaController extends AnchorPane implements Initializable {
 							if (newValue.intValue() > oldValue.intValue()) {
 								char ch = txtMiOferta.getText().charAt(
 										oldValue.intValue());
-								System.out.println("Length:" + oldValue + "  "
-										+ newValue + " " + ch);
 
 								// Check if the new character is the number or
 								// other's

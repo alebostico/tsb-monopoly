@@ -7,7 +7,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -55,7 +54,7 @@ public class VentaPropiedadController extends AnchorPane implements
 	private TarjetaPropiedad tarjetaSelected;
 
 	private JugadorHumano jugadorComprador;
-	
+
 	private String idJuego;
 
 	private static VentaPropiedadController instance;
@@ -71,22 +70,17 @@ public class VentaPropiedadController extends AnchorPane implements
 				ConnectionController.getInstance().send(msg);
 				currentStage.close();
 			} else {
-				Alert alert = new Alert(AlertType.WARNING);
-				alert.setTitle("Comprar Propiedad "
-						+ tarjetaSelected.getNombre());
-				alert.setHeaderText("Dinero insufiente para pagar propiedad.");
-				alert.setContentText(String
-						.format("No dispone de suficiente dinero para comprar la propiedad %s. Debe subastar la propiedad.",
-								tarjetaSelected.getNombre()));
-				alert.showAndWait();
+				FXUtils.getAlert(
+						AlertType.WARNING,
+						"Comprar Propiedad " + tarjetaSelected.getNombre(),
+						"Dinero insufiente para pagar propiedad.",
+						String.format(
+								"No dispone de suficiente dinero para comprar la propiedad %s. Debe subastar la propiedad.",
+								tarjetaSelected.getNombre())).showAndWait();
 			}
 		} catch (Exception ex) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("ERROR");
-			alert.setHeaderText(null);
-			alert.setContentText(ex.getMessage());
-			alert.showAndWait();
 			GestorLogs.registrarError(ex);
+			FXUtils.getAlert(AlertType.ERROR, "Error...", null, ex.getMessage()).showAndWait();
 		}
 	}
 
@@ -118,8 +112,9 @@ public class VentaPropiedadController extends AnchorPane implements
 						VentaPropiedadController.getInstance()
 								.getCurrentStage().close();
 
-				} catch (Exception e) {
-					GestorLogs.registrarError(e);
+				} catch (Exception ex) {
+					GestorLogs.registrarError(ex);
+					FXUtils.getAlert(AlertType.ERROR, "Error...", null, ex.getMessage()).showAndWait();
 				}
 			}
 		});

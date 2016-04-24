@@ -7,8 +7,9 @@ import java.io.IOException;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import monopoly.client.controller.LoginController;
-import monopoly.client.util.ScreensFramework;
+import monopoly.client.util.FXUtils;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesFXML;
 
@@ -37,11 +38,13 @@ public class IniciarAplicacion extends Application {
 		String fxml = ConstantesFXML.FXML_INICIAR_SESION;
 		LoginController loginController;
 		try {
-			loginController = (LoginController) ScreensFramework
-					.replaceSceneContent(fxml, primaryStage);
+			loginController = (LoginController) FXUtils
+					.cargarStage(primaryStage, fxml,
+							"Monopoly - Iniciar Sesión", false,
+							false, null,
+							StageStyle.DECORATED);
 
 			loginController.setPrimaryStage(primaryStage);
-			primaryStage.setTitle("Monopoly - Iniciar Sesión");
 			primaryStage.show();
 
 		} catch (Exception ex) {

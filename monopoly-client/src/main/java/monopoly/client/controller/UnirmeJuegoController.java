@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,11 +17,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -46,14 +42,26 @@ import monopoly.util.constantes.ConstantesFXML;
 public class UnirmeJuegoController extends AnchorPane implements Initializable {
 
 	@FXML
-	private TableView<JuegoSimpleProperty> tblJuegos;
-	private List<Juego> juegosList;
-	private List<JuegoSimpleProperty> filtersJuegosList;
-	private ObservableList<JuegoSimpleProperty> obsJuegosList;
-
-	@FXML
 	private TextField txtUserName;
 
+	@FXML
+	private TextField txtNombreJuego;
+
+	@FXML
+	private TextField txtFechaHasta;
+
+	@FXML
+	private TextField txtFechaDesde;
+
+	@FXML
+	private Button btnUnirmeJuego;
+
+	@FXML
+	private Button btnCancelar;
+
+	@FXML
+	private Button btnBuscar;
+	
 	@FXML
 	private TableColumn<JuegoSimpleProperty, String> colNombre;
 
@@ -67,23 +75,11 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 	private TableColumn<JuegoSimpleProperty, String> colParticipantes;
 
 	@FXML
-	private Button btnUnirmeJuego;
-
-	@FXML
-	private TextField txtNombreJuego;
-
-	@FXML
-	private Button btnCancelar;
-
-	@FXML
-	private TextField txtFechaHasta;
-
-	@FXML
-	private TextField txtFechaDesde;
-
-	@FXML
-	private Button btnBuscar;
-
+	private TableView<JuegoSimpleProperty> tblJuegos;
+	private List<Juego> juegosList;
+	private List<JuegoSimpleProperty> filtersJuegosList;
+	private ObservableList<JuegoSimpleProperty> obsJuegosList;
+	
 	@FXML
 	private Stage currentStage;
 
@@ -190,13 +186,8 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 			juegoSelected = tblJuegos.getSelectionModel().getSelectedItem();
 			unirmeAlJuego(juegoSelected);
 		} catch (Exception ex) {
-			GestorLogs.registrarError(ex);
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error");
-			alert.setContentText(ex.getMessage());
-			alert.getButtonTypes().setAll(
-					new ButtonType("Aceptar", ButtonData.OK_DONE));
-			alert.showAndWait();
+			GestorLogs.registrarException(ex);
+			FXUtils.getAlert(AlertType.ERROR, "Error...", null, ex.getMessage()).showAndWait();
 		}
 	}
 
@@ -239,13 +230,8 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 					controller.setUsuarioLogueado(usuarioLogueado);
 					unirmeJuegoStage.showAndWait();
 				} catch (Exception ex) {
-					GestorLogs.registrarError(ex);
-					Alert alert = new Alert(AlertType.ERROR);
-					alert.setTitle("Error");
-					alert.setContentText(ex.getMessage());
-					alert.getButtonTypes().setAll(
-							new ButtonType("Aceptar", ButtonData.OK_DONE));
-					alert.showAndWait();
+					GestorLogs.registrarException(ex);
+					FXUtils.getAlert(AlertType.ERROR, "Error...", null, ex.getMessage()).showAndWait();
 				}
 			}
 		});
