@@ -105,10 +105,10 @@ public class MonopolyClient extends GameClient {
 				break;
 
 			case ConstantesMensaje.BANKRUPTCY_MESSAGE:
-				mensaje = ((BankruptcyMessage)message).message;
+				mensaje = ((BankruptcyMessage) message).message;
 				TableroController.getInstance().informarBancarrota(mensaje);
 				break;
-				
+
 			case ConstantesMensaje.SAVE_GAME_MESSAGE:
 				// La IOException ES null si el juego se guardó correctamente
 				IOException exception = (IOException) ((SaveGameMessage) message).exception;
@@ -129,9 +129,12 @@ public class MonopolyClient extends GameClient {
 							.getUsuarioLogueado();
 					TableroController
 							.getInstance()
-							.showMessageBox(AlertType.INFORMATION,
-									"Información", "No hay juegos",
-									"No se encontró ningún juego guardado para el usuario.", null);
+							.showMessageBox(
+									AlertType.INFORMATION,
+									"Información",
+									"No hay juegos",
+									"No se encontró ningún juego guardado para el usuario.",
+									null);
 				}
 				break;
 
@@ -206,8 +209,8 @@ public class MonopolyClient extends GameClient {
 				msgAuctionDecide = (AuctionDecideMessage) message;
 				TableroController.getInstance().decidirSubasta(
 						msgAuctionDecide.mensaje, msgAuctionDecide.monto,
-						(TarjetaPropiedad)msgAuctionDecide.propiedad, 
-						(Jugador)msgAuctionDecide.jugadorInicial);
+						(TarjetaPropiedad) msgAuctionDecide.propiedad,
+						(Jugador) msgAuctionDecide.jugadorInicial);
 
 				break;
 
@@ -287,6 +290,10 @@ public class MonopolyClient extends GameClient {
 
 		case ConstantesMensaje.DOUBLE_DICE_MESSAGE:
 			TableroController.getInstance().showDadosDobles();
+			break;
+
+		case ConstantesMensaje.WIN_MESSAGE:
+			TableroController.getInstance().showWinMessage();
 			break;
 
 		default:

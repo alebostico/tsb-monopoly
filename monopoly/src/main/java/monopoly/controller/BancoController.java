@@ -30,7 +30,7 @@ public class BancoController implements Serializable {
 
 	private static final long serialVersionUID = -8147338284085100737L;
 	private Banco banco;
-
+	
 	public BancoController(Casillero[] casilleros) {
 		List<TarjetaPropiedad> tarjetasList = new ArrayList<TarjetaPropiedad>();
 		for (Casillero casillero : casilleros) {

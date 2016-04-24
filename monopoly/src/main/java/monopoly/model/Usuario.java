@@ -192,9 +192,9 @@ public class Usuario implements Serializable {
 	}
 
 	/**
-	 * Devuelve el nombre completo del usuario
+	 * Devuelve el nombre de usuario
 	 * 
-	 * @return the userName del usuario
+	 * @return El nombre de usuario
 	 */
 	public String getUserName() {
 		return userName;

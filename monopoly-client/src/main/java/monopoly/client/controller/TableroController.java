@@ -103,6 +103,7 @@ import monopoly.util.constantes.EnumEstadoSubasta;
 import monopoly.util.constantes.EnumSalidaCarcel;
 import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
+import monopoly.util.message.DisconnectPlayerMessage;
 import monopoly.util.message.game.BankruptcyMessage;
 import monopoly.util.message.game.ChatGameMessage;
 import monopoly.util.message.game.CompleteTurnMessage;
@@ -722,6 +723,9 @@ public class TableroController extends AnchorPane implements Serializable,
 					"¿Está seguro que desea abandonar el juego? Se perderá el progreso del juego.");
 		}
 		if (force || answer) {
+			ConnectionController.getInstance().send(
+					new DisconnectPlayerMessage(getJuego().getUniqueID(),
+							usuarioLogueado.getUserName()));
 			GestorLogs.registrarLog("Saliendo de monopolio...");
 			ConnectionController.getInstance().cerrarConexion();
 			currentStage.close();
@@ -2759,7 +2763,18 @@ public class TableroController extends AnchorPane implements Serializable,
 	 */
 	public void informarBancarrota(String mensaje) {
 		showMessageBox(AlertType.INFORMATION, "Bancarrota",
-				"Un jugador se retiró", mensaje, null);
+				"Un jugador se retiró", mensaje, "/images/logos/bancarrota.png");
+	}
+
+	public void showWinMessage() {
+		this.showMessageBox(
+				AlertType.INFORMATION,
+				"Ganaste",
+				"¡¡¡FELICITACIONES!!!",
+				"Ganaste el juego porque todos los jugadores se declararon en bancarrota",
+				"/images/logos/winner.jpg");
+
+		this.cerrar(true);
 	}
 
 	/**
