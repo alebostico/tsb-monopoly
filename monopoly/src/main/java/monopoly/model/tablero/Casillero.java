@@ -81,6 +81,8 @@ public class Casillero implements Serializable {
 	 * 
 	 * @param numeroCasillero
 	 *            El número de casillero en el tablero.
+	 * @param nombre
+	 *            El nombre del casillero
 	 * @param tipoCasillero
 	 *            El tipo de casillero.
 	 */
@@ -179,8 +181,8 @@ public class Casillero implements Serializable {
 	/**
 	 * Pregunta si es un casillero calle.
 	 * 
-	 * @return <code>True</code> si es casillero calle. 
-	 * <code>False</code> caso contrario.
+	 * @return <code>True</code> si es casillero calle. <code>False</code> caso
+	 *         contrario.
 	 */
 	public boolean isCasilleroCalle() {
 		return this instanceof CasilleroCalle;
@@ -189,8 +191,8 @@ public class Casillero implements Serializable {
 	/**
 	 * Pregunta si es un casillero estación
 	 * 
-	 * @return <code>True</code> si es casillero estación.
-	 * <code>False</code> caso contrario.
+	 * @return <code>True</code> si es casillero estación. <code>False</code>
+	 *         caso contrario.
 	 */
 	public boolean isCasilleroEstacion() {
 		return this instanceof CasilleroEstacion;
@@ -199,8 +201,8 @@ public class Casillero implements Serializable {
 	/**
 	 * Pregunta si es un casillero companía.
 	 * 
-	 * @return <code>True</code> si es casillero companía.
-	 * <code>False</code> caso contrario.
+	 * @return <code>True</code> si es casillero companía. <code>False</code>
+	 *         caso contrario.
 	 */
 	public boolean isCasilleroCompania() {
 		return this instanceof CasilleroCompania;

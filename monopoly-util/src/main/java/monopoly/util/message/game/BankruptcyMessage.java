@@ -23,7 +23,12 @@ public class BankruptcyMessage implements Serializable {
 										// message.
 
 	/**
-	 * Create a ForwadedMessage to wrap a message sent by a client.
+	 * Crea un nuevo mensaje de bancarrota
+	 * 
+	 * @param UniqueIdJuego
+	 *            El UniqueId del juego
+	 * @param mensaje
+	 *            El mensaje
 	 * 
 	 */
 	public BankruptcyMessage(String UniqueIdJuego, String mensaje) {

@@ -6,6 +6,7 @@ package monopoly.client.controller;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
+import java.nio.channels.SeekableByteChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -342,13 +344,14 @@ public class TableroController extends AnchorPane implements Serializable,
 	}
 
 	/**
+	 * Éste método muestra el tablero y muestra un messagebox informando al
+	 * jugador que debe esperar a que se unan al juego otros oponentes.
 	 * 
-	 * Éste método muestra el tablero y muestra un messagebox
-	 * informando al jugador que debe esperar a que se unan al juego otros
-	 * oponentes.
-	 * 
+	 * @throws IllegalStateException
+	 *             if the FX runtime has not been initialized.
+	 *             {@linkplain Platform#runLater(Runnable)}
 	 */
-	public void showTableroDeJuego() throws Exception {
+	public void showTableroDeJuego() throws IllegalStateException {
 		loadStage();
 		this.clockLabelTextProperty = lblStopwatch.textProperty();
 
@@ -360,15 +363,18 @@ public class TableroController extends AnchorPane implements Serializable,
 
 		esperarJugadores();
 	}
-	
+
 	/**
 	 * 
 	 * Éste método muestra el tablero y muestra un messagebox informando al
 	 * jugador que debe esperar a que se unan al juego otros oponentes.
 	 * 
+	 * @throws IllegalStateException
+	 *             if the FX runtime has not been initialized.
+	 *             {@linkplain Platform#runLater(Runnable)}
 	 */
 	public void restaurarJuego(MonopolyGameStatus monopolyGameStatus)
-			throws Exception {
+			throws IllegalStateException {
 
 		Platform.runLater(new Runnable() {
 
@@ -381,14 +387,15 @@ public class TableroController extends AnchorPane implements Serializable,
 				} catch (Exception ex) {
 					GestorLogs.registrarError(ex);
 					showNoFutureMessageBox(AlertType.ERROR, "Error..",
-							"Error al restaurar el juego", ex.getMessage());
+							"Error al restaurar el juego", ex.getMessage(),
+							null);
 				}
 			}
 		});
 
 		this.actualizarEstadoJuego(monopolyGameStatus);
 	}
-	
+
 	/**
 	 * Envía al servidor un mensaje para guardar en juego en un archivo para
 	 * continuarlo más adelante
@@ -401,11 +408,10 @@ public class TableroController extends AnchorPane implements Serializable,
 		ConnectionController.getInstance().send(saveMessage);
 	}
 
-	
 	/**
 	 * Oculta el Menú de Opciones y muestra el tablero.
 	 * 
-	 * @return
+	 * @return El <code>Stage</code> del tablero.
 	 */
 	private Stage loadStage() {
 		// currentStage.setFullScreen(true);
@@ -429,7 +435,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 		return currentStage;
 	}
-	
+
 	/**
 	 * Inicializa el reloj del tablero.
 	 */
@@ -449,7 +455,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		timeline.play();
 	}
 
-	
 	/**
 	 * Método que muestra un messagebox informando que el jugador debe esperar
 	 * por oponentes.
@@ -474,10 +479,10 @@ public class TableroController extends AnchorPane implements Serializable,
 		} catch (Exception ex) {
 			GestorLogs.registrarException(ex);
 			showNoFutureMessageBox(AlertType.ERROR, "Error...", null,
-					ex.getMessage());
+					ex.getMessage(), null);
 		}
 	}
-	
+
 	/**
 	 * Cierra la ventana del tablero y se desconecta
 	 * 
@@ -507,8 +512,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
-
-	
 	/**
 	 * Agrega un history al panel de información que se utilizará para llevar un
 	 * registro sobre jugadas o acciones que se realizan en el juego.
@@ -519,10 +522,12 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * @param mensaje
 	 *            mensaje que se mostrará, para informar a los jugadores sobre
 	 *            las acciones que se realizaró
-	 * 
+	 * @throws IllegalStateException
+	 *             if the FX runtime has not been initialized.
+	 *             {@linkplain Platform#runLater(Runnable)}
 	 */
 	private void addHistoryGame(String usuario, String mensaje)
-			throws Exception {
+			throws IllegalStateException {
 		History history = new History(StringUtils.getFechaActual(), usuario,
 				mensaje);
 		addHistoryGame(history);
@@ -531,13 +536,18 @@ public class TableroController extends AnchorPane implements Serializable,
 	/**
 	 * Agrega una history al panel de información que se utilizará para llevar
 	 * un registro sobre jugadas o acciones que se realizan en el juego.
+	 * Exception
 	 * 
 	 * @param history
 	 *            objeto historia que contiene información sobre el usuario,
 	 *            descripción del mensaje, y fecha en el que se produjó el
 	 *            evento.
+	 * @throws IllegalStateException
+	 *             if the FX runtime has not been initialized.
+	 *             {@linkplain Platform#runLater(Runnable)}
 	 */
-	public void addHistoryGame(final History history) throws Exception {
+	public void addHistoryGame(final History history)
+			throws IllegalStateException {
 		FutureTask<Void> taskAddHistory = null;
 		taskAddHistory = new FutureTask<Void>(new Callable<Void>() {
 			@Override
@@ -563,8 +573,13 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * Agrega una historia al juego.
 	 * 
 	 * @param chatHistory
+	 *            El <code>History</code> con el mensaje de chat
+	 * @throws IllegalStateException
+	 *             if the FX runtime has not been initialized.
+	 *             {@linkplain Platform#runLater(Runnable)}
 	 */
-	public void addChatHistoryGame(final History chatHistory) throws Exception {
+	public void addChatHistoryGame(final History chatHistory)
+			throws IllegalStateException {
 
 		FutureTask<Void> taskAddHistory = null;
 		taskAddHistory = new FutureTask<Void>(new Callable<Void>() {
@@ -646,18 +661,18 @@ public class TableroController extends AnchorPane implements Serializable,
 		} catch (Exception ex) {
 			GestorLogs.registrarException(ex);
 			showNoFutureMessageBox(AlertType.ERROR, "Error...", null,
-					ex.getMessage());
+					ex.getMessage(), null);
 		}
 	}
-	
+
 	/**
 	 * Realiza las diferentes acciones que se puede realizar en el juego en base
 	 * al casillero al cual avanzó en el caso de que haya sido su turno. Si no
 	 * lo fue informa al usuario las direntes estrategias realizada por los
 	 * contrincantes.
 	 * 
-	 * @param estadoTurno
-	 *            Toda las información del juego.
+	 * @param monopolyGameStatus
+	 *            el estado del juego.
 	 */
 	public void actualizarEstadoJuego(MonopolyGameStatus monopolyGameStatus) {
 
@@ -718,7 +733,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			showException(ex, estadoActual.estadoTurno.name());
 		}
 	}
-	
+
 	/**
 	 * Muestra la pantalla para tirar dados.
 	 * 
@@ -833,7 +848,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					"Se ha producido un error al realizar el movimiento en el casillero.");
 		}
 	}
-	
+
 	/**
 	 * Muestra un mensaje con información sobre la propiedad que se encuentra en
 	 * venta.
@@ -878,8 +893,6 @@ public class TableroController extends AnchorPane implements Serializable,
 			showException(ex, "disponibleParaLaVenta");
 		}
 	}
-	
-
 
 	/**
 	 * Muestra la pantalla para vender un propiedad.
@@ -955,7 +968,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			}
 		});
 	}
-	
+
 	/**
 	 * Muestra el objetivo de la Tarjeta Comunidad.
 	 * 
@@ -991,7 +1004,6 @@ public class TableroController extends AnchorPane implements Serializable,
 			}
 		});
 	}
-	
 
 	/**
 	 * Muestra un mensaje para pagar el impuesto de lujo.
@@ -1131,7 +1143,6 @@ public class TableroController extends AnchorPane implements Serializable,
 			}
 		});
 	}
-	
 
 	/**
 	 * Muestra un mensaje informando cuando debe pagar al alquiler al jugador
@@ -1172,7 +1183,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
-
 	/**
 	 * Muestra un mensaje informando que el jugador irá a la cárcel.
 	 * 
@@ -1191,7 +1201,6 @@ public class TableroController extends AnchorPane implements Serializable,
 			showException(ex, "irALaCarcel...");
 		}
 	}
-
 
 	/**
 	 * Muestra un mensaje con el resultado del guardado del juego.
@@ -1414,8 +1423,9 @@ public class TableroController extends AnchorPane implements Serializable,
 
 		grid.add(lblDesc, 0, 0);
 		grid.add(lblText, 0, 2);
-		grid.add(new HBox(new Label("   "), spinner, new Label("  "
-				+ msgSpinner + ": "), lblCost), 0, 3);
+		HBox hboxGrid = new HBox(new Label("   "), spinner, new Label("  "
+				+ msgSpinner + ": "), lblCost);
+		grid.add(hboxGrid, 0, 3);
 
 		try {
 			ButtonType buttonOk;
@@ -1433,6 +1443,10 @@ public class TableroController extends AnchorPane implements Serializable,
 							buttonCancel)));
 
 			alert.getDialogPane().setContent(grid);
+
+			// Le seteamos el estilo al Grid
+			setStyle(grid);
+			setStyle(hboxGrid);
 
 			result = alert.showAndWait();
 		} catch (Exception ex) {
@@ -1471,6 +1485,8 @@ public class TableroController extends AnchorPane implements Serializable,
 	 *            Una descripción con una explicación
 	 * @param message
 	 *            El mensaje a mostrar
+	 * @param msgSpinner
+	 *            El mensaje colocaldo a la derecha del spinner
 	 * @param valorPropiedad
 	 *            El valor de de la propiedad que se oferta
 	 * @return El valor seleccionado por el usuario o -1 si presionó "Cancelar"
@@ -1515,7 +1531,8 @@ public class TableroController extends AnchorPane implements Serializable,
 
 		grid.add(lblDesc, 0, 0);
 		grid.add(lblText, 0, 1);
-		grid.add(new HBox(spinner, new Label(" € ")), 0, 2);
+		HBox hboxGrid = new HBox(spinner, new Label(" € "));
+		grid.add(hboxGrid, 0, 2);
 
 		try {
 			ButtonType buttonOk;
@@ -1534,6 +1551,10 @@ public class TableroController extends AnchorPane implements Serializable,
 
 			alert.getDialogPane().setContent(grid);
 
+			// Le seteamos el estilo al Grid
+			setStyle(grid);
+			setStyle(hboxGrid);
+
 			result = alert.showAndWait();
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
@@ -1546,6 +1567,28 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	}
 
+	/**
+	 * Setea el estilo definido para los Dialogs. Se usa para componentes
+	 * internos del dialog que no toman los estilos.
+	 * 
+	 * @param panel
+	 *            El Pane al que se le aplica los estilos
+	 * @return El Pane actualizado
+	 */
+	private javafx.scene.layout.Pane setStyle(javafx.scene.layout.Pane panel) {
+
+		panel.getStylesheets().add(
+				getClass().getResource("/css/Dialog.css").toExternalForm());
+		panel.getStyleClass().add("dialog");
+
+		panel.getChildren().stream().filter(node -> node instanceof Label)
+				.forEach(node -> ((Label) node).getStyleClass().add("content"));
+		return panel;
+	}
+
+	/**
+	 * Muestra un mensaje al jugador para informarle que ganó el juego.
+	 */
 	public void showWinMessage() {
 		this.showMessageBox(
 				AlertType.INFORMATION,
@@ -1642,7 +1685,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 	}
 
-
 	public void decidirSubasta(String mensaje, int monto,
 			TarjetaPropiedad propiedad, Jugador jugadorInicial)
 			throws Exception {
@@ -1669,7 +1711,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		Platform.runLater(taskMessage);
 		taskMessage.get();
 	}
-	
+
 	/**
 	 * 
 	 * 
@@ -1914,7 +1956,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		showMessageBox(AlertType.INFORMATION, "Comprar propiedad", titulo,
 				mensaje, null);
 	}
-	
 
 	/**
 	 * Cuando no posee dinero sufiente para realizar una acción registra la
@@ -1932,7 +1973,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		deudaPendiente = new Deuda(pMonto);
 
 	}
-
 
 	/**
 	 * Finaliza el turno actual para continuar el juego.
@@ -1969,19 +2009,8 @@ public class TableroController extends AnchorPane implements Serializable,
 
 				@Override
 				public Void call() throws Exception {
-
-					final Alert alert = getAlert(type, title, headerText,
-							message, null);
-
-					// Setteo la Imagen si es necesario
-					if (!StringUtils.IsNullOrEmpty(urlGraphic)) {
-						Image img = new Image(this.getClass()
-								.getResource(urlGraphic).toString(), 48, 48,
-								true, true);
-						alert.setGraphic(new ImageView(img));
-					}
-
-					alert.showAndWait();
+					showNoFutureMessageBox(type, title, headerText, message,
+							urlGraphic);
 					return null;
 
 				}
@@ -2009,8 +2038,16 @@ public class TableroController extends AnchorPane implements Serializable,
 	 *            El mensaje a mostrar
 	 */
 	public void showNoFutureMessageBox(AlertType type, String title,
-			String headerText, String message) {
-		Alert alert = getAlert(type, title, headerText, message, null);
+			String headerText, String message, final String urlGraphic) {
+		final Alert alert = getAlert(type, title, headerText, message, null);
+
+		// Setteo la Imagen si es necesario
+		if (!StringUtils.IsNullOrEmpty(urlGraphic)) {
+			Image img = new Image(this.getClass().getResource(urlGraphic)
+					.toString(), 48, 48, true, true);
+			alert.setGraphic(new ImageView(img));
+		}
+
 		alert.showAndWait();
 	}
 
@@ -2154,7 +2191,8 @@ public class TableroController extends AnchorPane implements Serializable,
 			if (exception != null)
 				msgGuardado = exception.getMessage();
 
-			showNoFutureMessageBox(AlertType.ERROR, title, header, msgGuardado);
+			showNoFutureMessageBox(AlertType.ERROR, title, header, msgGuardado,
+					null);
 		} catch (Exception ex) {
 			GestorLogs.registrarException(ex);
 		}
@@ -2748,7 +2786,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			}
 		});
 	}
-	
+
 	/**
 	 * Actualiza en el tablero el jugador del turno actual.
 	 * 
@@ -3490,9 +3528,12 @@ public class TableroController extends AnchorPane implements Serializable,
 		if (cantJugadoresHumanos() == 1)
 			this.guardarJuego();
 		else
-			showNoFutureMessageBox(AlertType.ERROR, "No se puede guardar",
+			showNoFutureMessageBox(
+					AlertType.ERROR,
+					"No se puede guardar",
 					null,
-					"No se puede guardar el juego cuando hay mas de un jugador humano.");
+					"No se puede guardar el juego cuando hay mas de un jugador humano.",
+					null);
 
 		// this.cerrar(true);
 		/*

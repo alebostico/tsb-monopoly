@@ -1016,7 +1016,7 @@ public class JugadorVirtualController implements Serializable {
 	}
 
 	/**
-	 * Deshipoteca las cantidades de una forma aleatoria en funci�n de unas
+	 * Deshipoteca las cantidades de una forma aleatoria en función de unas
 	 * probabilidades dadas
 	 * 
 	 * @param jugadorActual

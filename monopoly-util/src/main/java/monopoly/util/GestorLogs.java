@@ -122,7 +122,7 @@ public class GestorLogs {
 
 	/**
 	 * Registra una Exception en el log. Usar el método
-	 * {@link #registrarException(exception)}
+	 * {@link #registrarException(Exception)}
 	 * 
 	 * @param error
 	 *            La {@code Exception} para loguear.
@@ -315,9 +315,10 @@ public class GestorLogs {
 	/**
 	 * Retorna el estado de la impresión a consola
 	 * 
-	 * @return {@code true} si imprime en la pantalla los mensajes que ingresan
-	 *         y tienen un nivel de detalle mayor o igual al cofigurado
 	 * @see {@link #setLoggingDetailLevel(int)}
+	 * 
+	 * @return {@code true} si imprime en la pantalla los mensajes que ingresan
+	 *         y tienen un nivel de detalle mayor o igual al configurado
 	 */
 	public static boolean isPrintToConsole() {
 		return printToConsole;

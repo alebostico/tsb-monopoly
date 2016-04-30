@@ -18,6 +18,8 @@ public class ListUtils {
 	 * 
 	 * @param lista
 	 *            La lista que se quiere desordenar
+	 * @param <T>
+	 *            El tipo de la lista que se va a ordenar
 	 * @return La lista desordenada
 	 */
 	public static <T> List<T> randomizeList(List<T> lista) {

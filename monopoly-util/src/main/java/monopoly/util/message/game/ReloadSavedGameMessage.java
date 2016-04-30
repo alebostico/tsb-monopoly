@@ -14,7 +14,6 @@ public class ReloadSavedGameMessage implements Serializable {
 
 	private static final long serialVersionUID = 5062728760709246684L;
 
-
 	public final Object juego; // Original message from a client.
 	public final Object juegoStatus; // El Status del juego
 	public final int senderID; // The ID of the client who sent that message.
@@ -26,6 +25,8 @@ public class ReloadSavedGameMessage implements Serializable {
 	 *            the ID number of the original sender.
 	 * @param juego
 	 *            el juego que se quiere restaurar.
+	 * @param gameStatus
+	 *            El estado del juego
 	 */
 	public ReloadSavedGameMessage(int senderID, Object juego, Object gameStatus) {
 		this.senderID = senderID;

@@ -22,7 +22,7 @@ public class GetSavedGamesMessage implements Serializable {
 	 * 
 	 * @param senderID
 	 *            the ID number of the original sender.
-	 * @param usuario
+	 * @param message
 	 *            El usuario del cual se quieren mostrar los juegos.
 	 */
 	public GetSavedGamesMessage(int senderID, Object message) {

@@ -10,16 +10,19 @@ import java.io.Serializable;
  * @author Moreno Pablo
  *
  */
-public class HistoryGameMessage implements Serializable { 
+public class HistoryGameMessage implements Serializable {
 
 	private static final long serialVersionUID = -7458872200667918597L;
 
 	public final Object history; // Original message from a client.
 
 	public final String idJuego;
+
 	/**
 	 * Create a ForwadedMessage to wrap a message sent by a client.
 	 * 
+	 * @param idJuego
+	 *            El UniqueId del juego
 	 * @param message
 	 *            the original message.
 	 */
@@ -27,8 +30,14 @@ public class HistoryGameMessage implements Serializable {
 		this.history = message;
 		this.idJuego = idJuego;
 	}
-	
-	public HistoryGameMessage(Object message){
+
+	/**
+	 * Create a ForwadedMessage to wrap a message sent by a client.
+	 * 
+	 * @param message
+	 *            the original message.
+	 */
+	public HistoryGameMessage(Object message) {
 		this.history = message;
 		this.idJuego = "";
 	}

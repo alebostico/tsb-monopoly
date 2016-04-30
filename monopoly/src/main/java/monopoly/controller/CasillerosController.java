@@ -36,9 +36,9 @@ public class CasillerosController implements Serializable {
 	private final static int cantCasilleros = 40;
 
 	/**
-	 * Método que genera los casilleros del tablero. Probablemente al pedo
-	 * porque lo m&aacute;s seguro es que los carguemos directamente desde la
-	 * base de datos. Pero para pruebas sirve.
+	 * Método que genera los casilleros del tablero. 
+	 * 
+	 * @return Casillero[], un array con los casillero creados.
 	 */
 	public static Casillero[] getCasilleros() {
 		Casillero[] vCasilleros = new Casillero[40];
@@ -116,7 +116,8 @@ public class CasillerosController implements Serializable {
 				tarjetaCalleDao.findByNombre("PUERTA DEL SOL"));
 		vCasilleros[32] = new CasilleroCalle(33,
 				tarjetaCalleDao.findByNombre("CALLE ALCALÁ"));
-		vCasilleros[33] = new Casillero(34, "CAJA DE LA COMUNIDAD",TipoCasillero.C_COMUNIDAD);
+		vCasilleros[33] = new Casillero(34, "CAJA DE LA COMUNIDAD",
+				TipoCasillero.C_COMUNIDAD);
 		vCasilleros[34] = new CasilleroCalle(35,
 				tarjetaCalleDao.findByNombre("GRAN VÍA"));
 		vCasilleros[35] = new CasilleroEstacion(36,
@@ -124,7 +125,8 @@ public class CasillerosController implements Serializable {
 		vCasilleros[36] = new Casillero(37, "SUERTE", TipoCasillero.C_SUERTE);
 		vCasilleros[37] = new CasilleroCalle(38,
 				tarjetaCalleDao.findByNombre("PASEO DE LA CASTELLANA"));
-		vCasilleros[38] = new Casillero(39, "IMPUESTO DE LUJO",TipoCasillero.C_IMPUESTO);
+		vCasilleros[38] = new Casillero(39, "IMPUESTO DE LUJO",
+				TipoCasillero.C_IMPUESTO);
 		vCasilleros[39] = new CasilleroCalle(40,
 				tarjetaCalleDao.findByNombre("PASEO DEL PRADO"));
 

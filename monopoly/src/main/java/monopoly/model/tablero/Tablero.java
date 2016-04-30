@@ -31,6 +31,9 @@ public class Tablero implements Serializable {
 
 	/**
 	 * Constructor por defecto.
+	 * 
+	 * @param casillerosList
+	 *            El vector de casilleros del tablero
 	 */
 	public Tablero(Casillero[] casillerosList) {
 		this.casillerosList = casillerosList; // Cargar los casilleros.
@@ -59,7 +62,7 @@ public class Tablero implements Serializable {
 	 * el N&uacute;mero de casillero [1-40], NO el indice del vector. Si el
 	 * 'nroCasillero' es inv&aacute;lido (menor a 1 o mayor a 40) devuelve null.
 	 * 
-	 * @param nroCasillero
+	 * @param pNroCasillero
 	 *            El n&uacute;mero del casillero a devolver.
 	 * @return El casillero correspondiente al n&uacute;mero pasado por
 	 *         par&aacute;metro o null si no existe.

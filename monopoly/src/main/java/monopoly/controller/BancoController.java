@@ -30,7 +30,7 @@ public class BancoController implements Serializable {
 
 	private static final long serialVersionUID = -8147338284085100737L;
 	private Banco banco;
-	
+
 	public BancoController(Casillero[] casilleros) {
 		List<TarjetaPropiedad> tarjetasList = new ArrayList<TarjetaPropiedad>();
 		for (Casillero casillero : casilleros) {
@@ -118,7 +118,6 @@ public class BancoController implements Serializable {
 	 * 
 	 * @param jugador
 	 *            jugador que va a cobrar.
-	 * @return
 	 */
 	public void pagarPasoSalida(Jugador jugador) {
 		jugador.cobrar(200);
@@ -256,6 +255,7 @@ public class BancoController implements Serializable {
 	 * @param tarjetaPropiedad
 	 *            la propiedad que deshipoteca el jugador
 	 * @throws SinDineroException
+	 *             Si no tiene dinero para deshipotecar
 	 * @deprecated Usar {@link #deshipotecarPropiedad(TarjetaPropiedad)} que le
 	 *             resta el dinero al dueño de la propiedad. No es necesario
 	 *             enviarle el jugador. Además, este método no verifica si la
@@ -277,6 +277,7 @@ public class BancoController implements Serializable {
 	 * @param tarjetaPropiedad
 	 *            la propiedad compra el jugador
 	 * @throws SinDineroException
+	 *             Si el comprador no tiene dinero para pagar la propiedad
 	 */
 	public void venderPropiedad(Jugador jugador,
 			TarjetaPropiedad tarjetaPropiedad) throws SinDineroException {
@@ -288,9 +289,13 @@ public class BancoController implements Serializable {
 	 * Adquiere una propiedad a un monto determinado.
 	 * 
 	 * @param jugador
+	 *            El jugador que compra la propiedad
 	 * @param tarjetaPropiedad
+	 *            La tarjeta de la propiedad que adquiere
 	 * @param monto
+	 *            El precio que paga por la propiedad
 	 * @throws SinDineroException
+	 *             Si no le alcanza en dinero para adquirir la propiedad
 	 */
 	public void adquirirPropiedad(Jugador jugador,
 			TarjetaPropiedad tarjetaPropiedad, int monto)
@@ -345,11 +350,6 @@ public class BancoController implements Serializable {
 	 *            El jugador que cobra
 	 * @param cantidad
 	 *            La cantidad que cobra de cada jugador
-	 * @throws SinDineroException
-	 *             Si algún Jugador Humano no tiene dinero para pagar, lanza una
-	 *             {@code SinDineroExeption}. Sin un Jugador Virtual no tiene
-	 *             dinero para pagar (aún vendiendo edificios e hipotecando
-	 *             propiedades), se declara en bancarrota
 	 */
 	public void cobrarATodosPagarAUno(Jugador jugadorCobra, int cantidad) {
 

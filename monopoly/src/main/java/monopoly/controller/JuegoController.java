@@ -98,7 +98,7 @@ public class JuegoController implements Serializable {
 	 * Para pruebas, hace al creador del juego dueño de todas las propiedades.
 	 * Usado para probar la funcionalidad de bancarrota.
 	 */
-	private static final boolean BANCARROTA_TESTING = true;
+	private static final boolean BANCARROTA_TESTING = false;
 
 	public JuegoController(Usuario creador, String nombre) {
 		this.gestorTablero = new TableroController();
@@ -170,7 +170,9 @@ public class JuegoController implements Serializable {
 	 * turnos.
 	 * 
 	 * @param jugador
+	 *            El jugador que se va a agregar al Juego
 	 */
+	@SuppressWarnings("unused")
 	public void addPlayer(Jugador jugador) throws Exception {
 		this.gestorJugadores.addPlayer(jugador);
 		this.juego.addJugador(jugador);
@@ -446,9 +448,11 @@ public class JuegoController implements Serializable {
 		if (cantJHumanos == 1 && cantJVirtuales == 0) {
 			// Enviar mensaje informando que ganó
 			try {
-				GestorLogs.registrarLog(String.format(
-						"El jugador %s ganó el juego %s.", lastPlayer.getNombre(),
-						this.getJuego().getNombreJuego()));
+				GestorLogs
+						.registrarLog(String.format(
+								"El jugador %s ganó el juego %s.", lastPlayer
+										.getNombre(), this.getJuego()
+										.getNombreJuego()));
 				sendToAll(ConstantesMensaje.WIN_MESSAGE);
 				return true;
 			} catch (Exception e) {
@@ -471,10 +475,10 @@ public class JuegoController implements Serializable {
 	 *            El id del jugador que se desconectó.
 	 */
 	public void desconectarJugador(int senderID, String nombreJugador) {
-		//JugadorHumano jugador = gestorJugadores.getJugadorHumano(senderID);
+		// JugadorHumano jugador = gestorJugadores.getJugadorHumano(senderID);
 		GestorLogs.registrarLog(String.format(
-				"El jugador %s se salió del juego %s.", nombreJugador,
-				this.getJuego().getNombreJuego()));
+				"El jugador %s se salió del juego %s.", nombreJugador, this
+						.getJuego().getNombreJuego()));
 		verificarEstadoJuego();
 	}
 

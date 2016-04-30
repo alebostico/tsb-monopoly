@@ -127,9 +127,11 @@ public class StringUtils {
 	}
 
 	/**
+	 * Desglosa un mensaje en varios {@code String} de acuerdo a un delimitador.
 	 * 
 	 * @param mensajeContenido
-	 * @return
+	 *            El mensaje completo
+	 * @return Un {@code ArrayList<String>} con el mensaje dividido.
 	 */
 	@SuppressWarnings("resource")
 	public static ArrayList<String> analizarCadena(String mensajeContenido) {
@@ -148,7 +150,7 @@ public class StringUtils {
 	/**
 	 * Devuelve la FECHA actual en el formato {@code "dd/MM/yy HH:mm"}
 	 * 
-	 * @return La fecha actual
+	 * @return La fecha actual como String
 	 */
 	public static String getFechaActual() {
 		Calendar calendar = GregorianCalendar.getInstance();
