@@ -2097,7 +2097,7 @@ public class JuegoController implements Serializable {
 			jugadorTurno = gestorSubasta.siguienteTurno();
 
 			subastaStatus = new SubastaStatus(EnumEstadoSubasta.INICIADA,
-					new ArrayList<History>(), jugadorTurno, tarjeta,
+					new ArrayList<History>(), jugadorCreador, tarjeta,
 					montoSubasta);
 
 			msgActualizarSubasta = new AuctionPropertyMessage(

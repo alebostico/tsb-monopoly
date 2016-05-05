@@ -6,7 +6,6 @@ package monopoly.client.controller;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
-import java.nio.channels.SeekableByteChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -1631,9 +1630,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							controller.setEstadoSubasta(statusSubasta.estado);
 							controller.cargarImagenes();
 							controller.bloquearBotones(true);
-							controller
-									.agregarHistoriaDeSubasta(statusSubasta.historyList);
 							subastaStage.show();
+							controller.agregarHistoriaDeSubasta(statusSubasta.historyList);
 
 							if (VentaPropiedadController.getInstance()
 									.getCurrentStage() != null)

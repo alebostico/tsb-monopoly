@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
+
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -281,7 +282,6 @@ public class SubastaController extends AnchorPane implements Initializable {
 				@Override
 				public void run() {
 					try {
-						agregarHistoriaDeSubasta(status.historyList);
 						estadoSubasta = status.estado;
 						if (status.estado == EnumEstadoSubasta.JUGANDO) {
 
@@ -293,6 +293,7 @@ public class SubastaController extends AnchorPane implements Initializable {
 										.valueOf(status.montoSubasta));
 							}
 						}
+						agregarHistoriaDeSubasta(status.historyList);
 					} catch (Exception ex) {
 						GestorLogs.registrarException(ex);
 					}
@@ -382,6 +383,8 @@ public class SubastaController extends AnchorPane implements Initializable {
 	}
 
 	public static SubastaController getInstance() {
+		if (instance == null)
+			instance = new SubastaController();
 		return instance;
 	}
 
