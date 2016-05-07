@@ -93,10 +93,9 @@ public class JugadorVirtualController implements Serializable {
 	public int pujar(TarjetaPropiedad propiedad, int maxActual,
 			Jugador ultimoApostador, JugadorVirtual jugadorActual) {
 
-		int montoMinimo = (int) ((PORC_PUJA_MINIMA / 100) * propiedad
-				.getValorPropiedad());
-		int montoPuja = (int) ((AUMENTO_PUJA / 100) * propiedad
-				.getValorPropiedad());
+		int montoMinimo = ((PORC_PUJA_MINIMA * propiedad.getValorPropiedad()) / 100);
+		int montoPuja = ((AUMENTO_PUJA * propiedad.getValorPropiedad()) / 100)
+				+ maxActual;
 
 		// Si no tiene dinero no ofrece nada sin importar el tipo de jugador que
 		// sea
@@ -159,11 +158,13 @@ public class JugadorVirtualController implements Serializable {
 			} else
 
 			// Si tengo mucho dinero pujo
-			if (maxActual > precioPropiedad && maxActual * 5 < dineroJugador) {
-				puja = maxActual + ((maxActual * 5) / 100);
-			} else
+			if (maxActual > precioPropiedad
+					&& maxActual * (dineroJugador / precioPropiedad / 2) < dineroJugador
+							- (400 - precioPropiedad)) {
+				puja = maxActual + ((maxActual * 10) / 100);
+			}
 
-				break;
+			break;
 
 		case TJ_EMPRESARIO:
 			// Si no hay puja
@@ -180,9 +181,11 @@ public class JugadorVirtualController implements Serializable {
 			// Si ya hay puja
 			else if (montoPuja < dineroJugador) {
 				// Decido según el azar si pujo o no, en funcion de la siguiente
-				// probabilidad
-				int probabilidad = (dineroJugador - maxActual) * 100
-						/ dineroJugador;
+				// probabilidad. 400 es el precio de la propiedad más cara,
+				// mientras mas cara sea la propiedad, más voy a tratar de
+				// comprarla.
+				int probabilidad = (dineroJugador - maxActual - (400 - precioPropiedad))
+						* 100 / dineroJugador;
 
 				int resultado = rnd.nextInt(100);
 
@@ -224,7 +227,7 @@ public class JugadorVirtualController implements Serializable {
 
 		if (puja != 0) {
 			if (puja < maxActual + montoMinimo)
-				puja = puja + montoMinimo;
+				puja = montoPuja; // puja + montoMinimo;
 			GestorLogs.registrarDebug("El jugador " + jugadorActual.getNombre()
 					+ " ofreció $" + puja + " por " + propiedad.getNombre());
 		} else {
@@ -1252,7 +1255,7 @@ public class JugadorVirtualController implements Serializable {
 	public int pagar(JugadorVirtual jugador, int cantidad) {
 		JuegoController juegoController = PartidasController.getInstance()
 				.buscarControladorJuego(jugador.getJuego().getUniqueID());
-		
+
 		// 1. Intento vender edificios si no tengo dinero suficiente
 		if (cantidad > jugador.getDinero()) {
 			int dineroNecesario = cantidad - jugador.getDinero();

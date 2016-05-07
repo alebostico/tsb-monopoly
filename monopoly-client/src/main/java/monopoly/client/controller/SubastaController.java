@@ -79,6 +79,9 @@ public class SubastaController extends AnchorPane implements Initializable {
 	private Label lblMessage;
 
 	@FXML
+	private Label lblPujaMinima;
+
+	@FXML
 	private Stage currentStage;
 
 	private List<History> historyList;
@@ -241,7 +244,7 @@ public class SubastaController extends AnchorPane implements Initializable {
 				AuctionPropertyMessage msgSubastar;
 				AuctionFinishMessage msgFinish;
 				int monto = 0;
-				
+
 				try {
 					if (TableroController.getInstance().showYesNoMsgBox(
 							"Abandonar Subasta", null,
@@ -261,9 +264,9 @@ public class SubastaController extends AnchorPane implements Initializable {
 							bloquearBotones(true);
 							lblMessage
 									.setText("La pantalla seguirá activa hasta que finalice la subasta.");
-							
-							msgFinish = new AuctionFinishMessage(idJuego, monto, tarjetaSubasta,
-									"Abandonar Subasta.");
+
+							msgFinish = new AuctionFinishMessage(idJuego,
+									monto, tarjetaSubasta, "Abandonar Subasta.");
 							ConnectionController.getInstance().send(msgFinish);
 						}
 					}
@@ -283,6 +286,8 @@ public class SubastaController extends AnchorPane implements Initializable {
 				public void run() {
 					try {
 						estadoSubasta = status.estado;
+						int pujaMinima = (int) (status.montoSubasta + status.propiedadSubastada
+								.getValorPropiedad() * 0.10);
 						if (status.estado == EnumEstadoSubasta.JUGANDO) {
 
 							if (status.jugadorActual.getNombre().equals(
@@ -291,6 +296,7 @@ public class SubastaController extends AnchorPane implements Initializable {
 								bloquearBotones(false);
 								txtMejorOferta.setText(String
 										.valueOf(status.montoSubasta));
+								setPujaMinima(pujaMinima);
 							}
 						}
 						agregarHistoriaDeSubasta(status.historyList);
@@ -302,6 +308,11 @@ public class SubastaController extends AnchorPane implements Initializable {
 		} catch (Exception ex) {
 			GestorLogs.registrarException(ex);
 		}
+	}
+
+	public void setPujaMinima(int pujaMinima) {
+		txtMiOferta.setText(String.valueOf(pujaMinima));
+		lblPujaMinima.setText("min: " + pujaMinima + " €");
 	}
 
 	public void agregarHistoriaDeSubasta(final History history) {
@@ -336,7 +347,7 @@ public class SubastaController extends AnchorPane implements Initializable {
 		}
 	}
 
-	public void agregarHistoriaDeSubasta(final List<History> historyList){
+	public void agregarHistoriaDeSubasta(final List<History> historyList) {
 		for (History history : historyList) {
 			historyList.add(history);
 			historyFilterList.add(new SubastaHistoryProperty(history
@@ -351,7 +362,7 @@ public class SubastaController extends AnchorPane implements Initializable {
 			}
 		}
 	}
-	
+
 	@FXML
 	void processPujar(ActionEvent event) {
 		try {

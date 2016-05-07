@@ -1610,7 +1610,8 @@ public class TableroController extends AnchorPane implements Serializable,
 
 					String fxml;
 					SubastaController controller;
-
+					int pujaMinima = (int) (statusSubasta.propiedadSubastada
+							.getValorPropiedad() * 0.10);
 					try {
 
 						if (!getMyPlayer().getNombre().equals(
@@ -1631,7 +1632,9 @@ public class TableroController extends AnchorPane implements Serializable,
 							controller.cargarImagenes();
 							controller.bloquearBotones(true);
 							subastaStage.show();
-							controller.agregarHistoriaDeSubasta(statusSubasta.historyList);
+							controller
+									.agregarHistoriaDeSubasta(statusSubasta.historyList);
+							controller.setPujaMinima(pujaMinima);
 
 							if (VentaPropiedadController.getInstance()
 									.getCurrentStage() != null)
