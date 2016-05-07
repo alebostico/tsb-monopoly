@@ -77,6 +77,7 @@ import monopoly.client.connection.ConnectionController;
 import monopoly.client.controller.TirarDadosController.TipoTiradaEnum;
 import monopoly.client.util.FXUtils;
 import monopoly.model.AccionEnCasillero;
+import monopoly.model.AccionEnCasillero.Accion;
 import monopoly.model.Banco;
 import monopoly.model.Deuda;
 import monopoly.model.History;
@@ -102,8 +103,8 @@ import monopoly.util.StringUtils;
 import monopoly.util.constantes.ConstantesFXML;
 import monopoly.util.constantes.EnumEstadoSubasta;
 import monopoly.util.constantes.EnumSalidaCarcel;
-import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
+import monopoly.util.exception.SinDineroException;
 import monopoly.util.message.DisconnectPlayerMessage;
 import monopoly.util.message.game.BankruptcyMessage;
 import monopoly.util.message.game.ChatGameMessage;
@@ -816,7 +817,7 @@ public class TableroController extends AnchorPane implements Serializable,
 				break;
 
 			case IMPUESTO_SOBRE_CAPITAL:
-				showImpuestoSobreElCapital(jugadorActual, mensaje, monto);
+				showImpuestoSobreElCapital(jugadorActual, mensaje);
 				break;
 
 			case MI_PROPIEDAD:
@@ -1024,8 +1025,6 @@ public class TableroController extends AnchorPane implements Serializable,
 				String idJuego;
 				String mensajeAux;
 				Alert alert;
-				DialogPane dialogPane;
-				Image img;
 
 				try {
 					idJuego = juego.getUniqueID();
@@ -1034,26 +1033,28 @@ public class TableroController extends AnchorPane implements Serializable,
 					alert = getAlert(AlertType.INFORMATION,
 							"Impuesto de lujo...", "Debes pagar el impuesto.",
 							mensaje, null);
-					dialogPane = alert.getDialogPane();
 
-					img = new Image(
-							TableroController.class
-									.getResourceAsStream("/images/logos/luxury_tax.gif"),
-							48, 48, true, true);
-
-					dialogPane.setGraphic(new ImageView(img));
+					alert.setGraphic(new ImageView(
+							new Image(
+									TableroController.class
+											.getResourceAsStream("/images/logos/luxury_tax.gif"),
+									48, 48, true, true)));
 
 					alert.showAndWait();
 
+					mensajeAux = String.format(
+							"Ha pagado al banco %s de impuesto de lujo.",
+							StringUtils.formatearAMoneda(100));
 					if (jugadorActual.getDinero() >= monto) {
-						mensajeAux = String.format(
-								"Ha pagado al banco %s de impuesto de lujo.",
-								StringUtils.formatearAMoneda(100));
+
 						msgPayToBank = new PayToBankMessage(idJuego, 100,
 								mensajeAux);
 						ConnectionController.getInstance().send(msgPayToBank);
 					} else {
-						registrarDeuda(monto);
+						Deuda deuda = new Deuda(estadoActual.accionCasillero
+								.getAccion(), 100);
+						deuda.setMensajeAux(mensajeAux);
+						registrarDeuda(deuda);
 						showMessageBox(AlertType.WARNING,
 								"Impuesto de lujo...",
 								"Debes pagar el impuesto.",
@@ -1076,7 +1077,7 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * @param monto
 	 */
 	private void showImpuestoSobreElCapital(final Jugador jugadorActual,
-			final String mensaje, final int monto) {
+			final String mensaje) {
 		Platform.runLater(new Runnable() {
 
 			@Override
@@ -1084,8 +1085,7 @@ public class TableroController extends AnchorPane implements Serializable,
 				String msgSinDinero;
 				String idJuego;
 				Alert alert;
-				DialogPane dialogPane;
-				Image img;
+				int monto;
 
 				try {
 					idJuego = juego.getUniqueID();
@@ -1105,33 +1105,32 @@ public class TableroController extends AnchorPane implements Serializable,
 							"Debes pagar el impuesto.", mensaje,
 							Arrays.asList(buttonPorcentaje, buttonMonto));
 
-					//
-					dialogPane = alert.getDialogPane();
-					img = new Image(
-							TableroController.class
-									.getResourceAsStream("/images/logos/impuestoalcapital.png"),
-							48, 48, true, true);
-					dialogPane.setGraphic(new ImageView(img));
+					alert.setGraphic(new ImageView(
+							new Image(
+									TableroController.class
+											.getResourceAsStream("/images/logos/impuestoalcapital.png"),
+									48, 48, true, true)));
 
 					result = alert.showAndWait();
 
 					if (result.get() == buttonPorcentaje) {
-						msgSuperTax = new SuperTaxMessage(juego.getUniqueID(),
-								EnumsTipoImpuesto.TIPO_IMPUESTO_PORCENTAJE);
+						monto = (int) (jugadorActual.getCapital() * 0.1);
 					} else {
-						msgSuperTax = new SuperTaxMessage(idJuego,
-								EnumsTipoImpuesto.TIPO_IMPUESTO_MONTO);
-
-						if (jugadorActual.getDinero() < 200) {
-							registrarDeuda(monto);
-							showMessageBox(AlertType.WARNING,
-									"Impuesto de sobre el capital...",
-									"Debes pagar el impuesto.",
-									String.format(msgSinDinero, "el impuesto"),
-									null);
-							return;
-						}
+						monto = 200;
 					}
+
+					if (jugadorActual.getDinero() < monto) {
+						registrarDeuda(new Deuda(estadoActual.accionCasillero
+								.getAccion(), 200));
+						showMessageBox(AlertType.WARNING,
+								"Impuesto de sobre el capital...",
+								"Debes pagar el impuesto.",
+								String.format(msgSinDinero, "el impuesto"),
+								null);
+						return;
+					}
+					msgSuperTax = new SuperTaxMessage(idJuego,
+							monto);
 					ConnectionController.getInstance().send(msgSuperTax);
 
 				} catch (Exception ex) {
@@ -1171,7 +1170,9 @@ public class TableroController extends AnchorPane implements Serializable,
 						casilleroActual.getNumeroCasillero());
 				ConnectionController.getInstance().send(msgPayRent);
 			} else {
-				registrarDeuda(monto);
+				registrarDeuda(new Deuda(
+						estadoActual.accionCasillero.getAccion(), monto,
+						casilleroActual.getNumeroCasillero(), null));
 				showMessageBox(AlertType.WARNING, "Alquiler...",
 						"Debes pagar el alquiler.",
 						String.format(msgSinDinero, "el alquiler"), null);
@@ -1291,13 +1292,11 @@ public class TableroController extends AnchorPane implements Serializable,
 							"Estás en la cárcel, debes salir.", contentText,
 							buttons);
 
-					DialogPane dialog = alert.getDialogPane();
-
-					Image img = new Image(
-							TableroController.class
-									.getResourceAsStream("/images/logos/in_prision.png"),
-							48, 48, true, true);
-					dialog.setGraphic(new ImageView(img));
+					alert.setGraphic(new ImageView(
+							new Image(
+									TableroController.class
+											.getResourceAsStream("/images/logos/in_prision.png"),
+									48, 48, true, true)));
 
 					result = alert.showAndWait();
 
@@ -1312,7 +1311,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					} else {
 
 						if (jugadorActual.getDinero() < 50) {
-							registrarDeuda(50);
+							registrarDeuda(new Deuda(Accion.IR_A_LA_CARCEL, 50));
 							showMessageBox(AlertType.WARNING, "Comisaria",
 									"Debes pagar para salir de la cárcel.",
 									String.format(msgSinDinero,
@@ -1631,7 +1630,8 @@ public class TableroController extends AnchorPane implements Serializable,
 							controller.cargarImagenes();
 							controller.bloquearBotones(true);
 							subastaStage.show();
-							controller.agregarHistoriaDeSubasta(statusSubasta.historyList);
+							controller
+									.agregarHistoriaDeSubasta(statusSubasta.historyList);
 
 							if (VentaPropiedadController.getInstance()
 									.getCurrentStage() != null)
@@ -1964,11 +1964,11 @@ public class TableroController extends AnchorPane implements Serializable,
 	 * 
 	 * @throws Exception
 	 */
-	private void registrarDeuda(int pMonto) throws Exception {
+	private void registrarDeuda(Deuda deuda) throws Exception {
 		// bloquearAcciones(false);
 		mostrarTirarDados(false);
 		mostrarFinalizarTurno(true);
-		deudaPendiente = new Deuda(pMonto);
+		deudaPendiente = deuda;
 
 	}
 
@@ -1982,6 +1982,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		CompleteTurnMessage msg = new CompleteTurnMessage(getJuego()
 				.getUniqueID(), null, null);
 		ConnectionController.getInstance().send(msg);
+
 	}
 
 	/**
@@ -2170,7 +2171,6 @@ public class TableroController extends AnchorPane implements Serializable,
 		} catch (Exception ex) {
 			GestorLogs.registrarException(ex);
 		}
-
 	}
 
 	/**
@@ -2195,6 +2195,41 @@ public class TableroController extends AnchorPane implements Serializable,
 			GestorLogs.registrarException(ex);
 		}
 
+	}
+	
+	/**
+	 * Muestra un mensaje de error.
+	 * 
+	 * @param exception
+	 *            La {@code Exception} con el error.
+	 */
+	public void showSinDineroException(SinDineroException exception) {
+		
+		Platform.runLater(new Runnable() {
+			
+			Deuda deuda = null;
+			String msgGuardado;
+			
+			@Override
+			public void run() {
+				
+				try {
+					
+					msgGuardado = "Se ha producido un error desconocido";
+
+					if (exception != null)
+						msgGuardado = exception.getMessage();
+
+					deuda = new Deuda((Accion)exception.accion, exception.monto);
+					registrarDeuda(deuda);
+					
+					showNoFutureMessageBox(AlertType.ERROR, "Sin Dinero", "", msgGuardado,
+							null);
+				} catch (Exception ex) {
+					GestorLogs.registrarException(ex);
+				}
+			}
+		});
 	}
 
 	private Alert getAlert(AlertType type, String title, String headerText,
@@ -3483,8 +3518,57 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	@FXML
 	void processfinalizarTurno(ActionEvent event) {
+		PayRentMessage msgPayRent = null;
+		PayToBankMessage msgPayToBank = null;
+		SuperTaxMessage msgSuperTax = null;
+		PayToLeaveJailMessage msgPayToLeaveJail;
+		String idJuego;
+
 		try {
-			finalizarTurno();
+			String mensaje = "No cuentas con suficiente dinero para pagar %s. Vende hoteles, casas o hipoteca propiedades para continuar con el juego.";
+			if (deudaPendiente.getMonto() >= getMyPlayer().getDinero()) {
+				showNoFutureMessageBox(
+						AlertType.WARNING,
+						"Pagar Deuda",
+						"Aún no posees suficiente dinero para completar la deuda.",
+						mensaje, null);
+
+			} else {
+				idJuego = juego.getUniqueID();
+
+				switch (deudaPendiente.getAccion()) {
+				case PAGAR_ALQUILER:
+					msgPayRent = new PayRentMessage(idJuego,
+							deudaPendiente.getNroCasillero());
+					ConnectionController.getInstance().send(msgPayRent);
+					break;
+				case IMPUESTO_DE_LUJO:
+					msgPayToBank = new PayToBankMessage(idJuego,
+							deudaPendiente.getMonto(),
+							deudaPendiente.getMensajeAux());
+					ConnectionController.getInstance().send(msgPayToBank);
+					break;
+
+				case IMPUESTO_SOBRE_CAPITAL:
+					msgSuperTax = new SuperTaxMessage(idJuego,
+							deudaPendiente.getMonto());
+					ConnectionController.getInstance().send(msgSuperTax);
+					break;
+
+				case IR_A_LA_CARCEL:
+					msgPayToLeaveJail = new PayToLeaveJailMessage(idJuego,
+							EnumSalidaCarcel.PAGAR);
+					ConnectionController.getInstance().send(msgPayToLeaveJail);
+					break;
+
+				default:
+					break;
+				}
+
+				mostrarTirarDados(false);
+				mostrarFinalizarTurno(true);
+				deudaPendiente = new Deuda();
+			}
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
 			showMessageBox(AlertType.ERROR, "Error...", null, ex.getMessage(),

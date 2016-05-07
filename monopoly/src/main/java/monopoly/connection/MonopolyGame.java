@@ -103,7 +103,7 @@ public class MonopolyGame extends GameServer {
 				"El jugador \"%s\" se desconectó", playerID));
 
 		/**
-		 * TODO Cuando se recive un mensaje de desconcexión del cliente ya sea
+		 * Cuando se recive un mensaje de desconcexión del cliente ya sea
 		 * porque cierra la ventana o porque presionó sobre
 		 * "Pasar a bancarrota", se debe eliminar al jugador de NetworkPlayers y
 		 * verificar si queda algún jugador humano en el juego. En caso de que
@@ -330,7 +330,7 @@ public class MonopolyGame extends GameServer {
 			case ConstantesMensaje.SUPER_TAX_MESSAGE:
 				msgSuperTax = (SuperTaxMessage) message;
 				PartidasController.getInstance().impuestoAlCapital(senderId,
-						msgSuperTax.idJuego, msgSuperTax.tipoImpuesto);
+						msgSuperTax.idJuego, msgSuperTax.montoAPagar);
 				break;
 
 			case ConstantesMensaje.DOUBLE_DICE_JAIL_MESSAGE:

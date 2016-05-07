@@ -38,7 +38,6 @@ import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.constantes.EnumAction;
 import monopoly.util.constantes.EnumEstadoSubasta;
 import monopoly.util.constantes.EnumSalidaCarcel;
-import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.CondicionInvalidaException;
 import monopoly.util.exception.SinDineroException;
 import monopoly.util.exception.SinEdificiosException;
@@ -1606,35 +1605,32 @@ public class JuegoController implements Serializable {
 	 *            id de conexión del jugador humano
 	 * @param tipoImpuesto
 	 */
-	public void impuestoAlCapital(int senderId, EnumsTipoImpuesto tipoImpuesto)
+	public void impuestoAlCapital(int senderId, int montoAPagar)
 			throws Exception {
-		int monto = 0;
+		//int monto = 0;
 		History history;
 		HistoryGameMessage msgHistory;
 		Jugador jugador;
 
 		jugador = gestorJugadores.getJugadorHumano(senderId);
-		if (tipoImpuesto == EnumsTipoImpuesto.TIPO_IMPUESTO_MONTO)
-			monto = 200;
-		else
-			monto = (int) (jugador.getCapital() * 0.1);
+		
 
-		if (jugador.getDinero() >= monto) {
-			gestorBanco.cobrar(jugador, monto);
+		if (jugador.getDinero() >= montoAPagar) {
+			gestorBanco.cobrar(jugador, montoAPagar);
 			history = new History();
 			history.setFecha(StringUtils.getFechaActual());
 			history.setUsuario(jugador.getNombre());
 			history.setMensaje(String.format("Pagó %s de impuesto al capital.",
-					monto));
+					montoAPagar));
 			msgHistory = new HistoryGameMessage(history);
 			sendToAll(msgHistory);
 		} else {
-			// TODO completar acción cuando el jugador quiere pagar por
 			SinDineroException sde = new SinDineroException(
 					String.format(
 							"No posees suficiente dinero para pagar el impuesto. Debes pagar %s.",
-							StringUtils.formatearAMoneda(monto)));
-			sendToOne(senderId, sde);
+							StringUtils.formatearAMoneda(montoAPagar)), montoAPagar);
+			sde.setAccion(AccionEnCasillero.Accion.IMPUESTO_SOBRE_CAPITAL);
+			throw sde;
 		}
 		if (jugador.isHumano())
 			siguienteTurno(true);
@@ -1723,7 +1719,7 @@ public class JuegoController implements Serializable {
 			// ~~> Sigue jugando
 			casillero = gestorTablero.moverAdelante(jugador, dados.getSuma(),
 					cobraSalida);
-			// TODO corregir paso de
+			// TODO Verificar si cuando cae en el casillero de salida cobra los 200 o no.
 			if (cobraSalida.booleanValue())
 				gestorBanco.pagarPasoSalida(jugador);
 

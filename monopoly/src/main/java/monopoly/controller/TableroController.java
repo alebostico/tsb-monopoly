@@ -1893,7 +1893,6 @@ public class TableroController implements Serializable {
 	public void transferirPropiedad(TarjetaPropiedad tarjeta,
 			JugadorHumano comprador, Jugador vendedor, int monto)
 			throws SinDineroException {
-		// TODO: debería llamar al método adquirir propiedad que hizo Pablo
 
 		JugadorHumano newDueno = comprador;
 		Jugador oldDueno = vendedor;

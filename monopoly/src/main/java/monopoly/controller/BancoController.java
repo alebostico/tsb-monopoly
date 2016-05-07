@@ -351,7 +351,7 @@ public class BancoController implements Serializable {
 	 * @param cantidad
 	 *            La cantidad que cobra de cada jugador
 	 */
-	public void cobrarATodosPagarAUno(Jugador jugadorCobra, int cantidad) {
+	public void cobrarATodosPagarAUno(Jugador jugadorCobra, int cantidad) throws SinDineroException, Exception {
 
 		JuegoController juegoController = PartidasController.getInstance()
 				.buscarControladorJuego(jugadorCobra.getJuego().getUniqueID());
@@ -366,12 +366,7 @@ public class BancoController implements Serializable {
 							.pagarAJugador((JugadorVirtual) jugador,
 									jugadorCobra, cantidad);
 				else
-					try {
-						jugador.pagarAJugador(jugadorCobra, cantidad);
-					} catch (SinDineroException sde) {
-						// TODO: enviar mensaje
-
-					}
+					jugador.pagarAJugador(jugadorCobra, cantidad);
 			}
 		}
 

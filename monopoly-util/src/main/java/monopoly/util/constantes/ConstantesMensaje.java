@@ -64,6 +64,7 @@ public class ConstantesMensaje {
 	public final static String DISCONNECT_PLAYER_MESSAGE = "DisconnectPlayerMessage";
 	public final static String RESET_SIGNAL_MESSAGE = "ResetSignal";
 	public final static String EXCEPTION_MESSAGE = "ExceptionMessage";
+	public final static String SIN_DINERO_EXCEPTION_MESSAGE = "SinDineroException";
 
 	/*************************************************************************************/
 

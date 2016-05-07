@@ -25,6 +25,7 @@ import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesMensaje;
+import monopoly.util.exception.SinDineroException;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
 import monopoly.util.message.ExceptionMessage;
@@ -85,6 +86,7 @@ public class MonopolyClient extends GameClient {
 		MonopolyGameStatus status;
 		SubastaStatus subastaStatus;
 		AuctionDecideMessage msgAuctionDecide;
+		ExceptionMessage exceptionMessage;
 		TarjetaCalle tarjetaCalle;
 
 		try {
@@ -257,9 +259,16 @@ public class MonopolyClient extends GameClient {
 				break;
 
 			case ConstantesMensaje.EXCEPTION_MESSAGE:
-				Exception ex = (Exception) ((ExceptionMessage) message).message;
-				mensaje = message.getClass().getSimpleName();
-				TableroController.getInstance().showException(ex, mensaje);
+				exceptionMessage = (ExceptionMessage) message;
+				if (exceptionMessage.message instanceof SinDineroException) {
+					SinDineroException sdex = (SinDineroException) exceptionMessage.message;
+					TableroController.getInstance()
+							.showSinDineroException(sdex);
+				} else {
+					mensaje = message.getClass().getSimpleName();
+					TableroController.getInstance().showException(
+							exceptionMessage.message, mensaje);
+				}
 				break;
 
 			case "String":
