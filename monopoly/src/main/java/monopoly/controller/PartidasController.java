@@ -23,7 +23,6 @@ import monopoly.model.tarjetas.TarjetaCalle;
 import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.EnumSalidaCarcel;
-import monopoly.util.constantes.EnumsTipoImpuesto;
 import monopoly.util.exception.SinDineroException;
 import monopoly.util.message.game.SaveGameMessage;
 
@@ -392,9 +391,9 @@ public class PartidasController {
 	 * @throws Exception
 	 */
 	public void impuestoAlCapital(int senderId, String idJuego,
-			EnumsTipoImpuesto tipoImpuesto) throws Exception {
+			int montoAPagar) throws Exception {
 		juegoController = juegosControllerList.get(idJuego);
-		juegoController.impuestoAlCapital(senderId, tipoImpuesto);
+		juegoController.impuestoAlCapital(senderId, montoAPagar);
 	}
 
 	/**

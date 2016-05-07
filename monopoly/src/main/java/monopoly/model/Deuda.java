@@ -14,37 +14,48 @@ public class Deuda implements Serializable {
 	
 	private static final long serialVersionUID = -2502135553679354179L;
 	
+	private AccionEnCasillero.Accion accion;
 	private boolean pagada;
 	private int monto;
+	private int nroCasillero;
+	private String mensajeAux;
 	private Jugador jugadorAPagar;
 	
 	public Deuda()
 	{
 		pagada = false;
 	}
-	
-	
 
 	/**
 	 * @param pagada
 	 * @param monto
 	 * @param jugadorAPagar
 	 */
-	public Deuda(int monto, Jugador jugadorAPagar) {
+	public Deuda(AccionEnCasillero.Accion accion, int monto, int nroCasillero, Jugador jugadorAPagar) {
 		super();
+		this.accion = accion;
 		this.pagada = false;
 		this.monto = monto;
+		this.nroCasillero = nroCasillero;
 		this.jugadorAPagar = jugadorAPagar;
 	}
 	
-	public Deuda(int monto) {
+	public Deuda(AccionEnCasillero.Accion accion, int monto) {
 		super();
+		this.accion = accion;
 		this.pagada = false;
 		this.monto = monto;
 		this.jugadorAPagar = null;
+		this.nroCasillero = 0;
 	}
 
+	public AccionEnCasillero.Accion getAccion() {
+		return accion;
+	}
 
+	public void setAccion(AccionEnCasillero.Accion accion) {
+		this.accion = accion;
+	}
 
 	public boolean isPagada() {
 		return pagada;
@@ -62,6 +73,22 @@ public class Deuda implements Serializable {
 		this.monto = monto;
 	}
 
+	public int getNroCasillero() {
+		return nroCasillero;
+	}
+
+	public void setNroCasillero(int nroCasillero) {
+		this.nroCasillero = nroCasillero;
+	}
+
+	public String getMensajeAux() {
+		return mensajeAux;
+	}
+
+	public void setMensajeAux(String mensajeAux) {
+		this.mensajeAux = mensajeAux;
+	}
+
 	public Jugador getJugadorAPagar() {
 		return jugadorAPagar;
 	}
@@ -69,6 +96,5 @@ public class Deuda implements Serializable {
 	public void setJugadorAPagar(Jugador jugadorAPagar) {
 		this.jugadorAPagar = jugadorAPagar;
 	}
-	
 	
 }

@@ -23,7 +23,6 @@ import monopoly.util.GestorLogs;
 public class JuegoDao extends CustomHibernateDaoSupport implements IJuegoDao {
 
 	public JuegoDao() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/*
