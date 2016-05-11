@@ -79,7 +79,7 @@ public class BancoController implements Serializable {
 		if (jugador.isVirtual()) {
 			if (juegoController.getGestorJugadoresVirtuales().pagar(
 					(JugadorVirtual) jugador, monto) == -1) {
-				/*
+				/* TODO: Verificar
 				 * Si el jugador no pudo pagar porque no consiguio dinero,
 				 * retorna una SinDineroException para informar de la situación.
 				 * En este punto el jugador ya se pasó a estado BANCARROTA.
@@ -87,14 +87,14 @@ public class BancoController implements Serializable {
 				throw new SinDineroException(
 						String.format(
 								"El jugador %s no posee dinero suficiente para pagar %s € y quedó en Bancarrota.",
-								jugador.getNombre(), monto));
+								jugador.getNombre(), monto), monto);
 			}
 		} else {
 			if (!jugador.pagar(monto)) {
 				throw new SinDineroException(
 						String.format(
 								"El jugador %s no posee dinero suficiente para pagar %s €",
-								jugador.getNombre(), monto));
+								jugador.getNombre(), monto), monto);
 			}
 		}
 	}
@@ -241,7 +241,7 @@ public class BancoController implements Serializable {
 							"El jugador %s no tiene %s en efectivo para deshipotecar %s",
 							jugador.getNombre(),
 							propiedad.getValorDeshipotecario(),
-							propiedad.getNombre()));
+							propiedad.getNombre()),propiedad.getValorDeshipotecario());
 		}
 
 	}

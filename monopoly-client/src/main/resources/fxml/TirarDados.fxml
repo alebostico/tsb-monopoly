@@ -8,9 +8,9 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane maxHeight="226.0" maxWidth="539.0" minHeight="142.0" minWidth="326.0" prefHeight="156.0" prefWidth="326.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.TirarDadosController">
+<StackPane maxHeight="226.0" maxWidth="539.0" minHeight="142.0" minWidth="326.0" prefHeight="156.0" prefWidth="326.0" styleClass="background_tablero" stylesheets="@../css/Sheet_tablero.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.TirarDadosController">
    <children>
-      <AnchorPane>
+      <AnchorPane StackPane.alignment="CENTER">
          <children>
             <VBox fx:id="vbPanel" alignment="CENTER" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
@@ -38,10 +38,9 @@
                </children>
             </VBox>
          </children>
+         <StackPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </StackPane.margin>
       </AnchorPane>
    </children>
-   <stylesheets>
-      <URL value="@../css/Images_Background.css" />
-      <URL value="@../css/Sheet.css" />
-   </stylesheets>
 </StackPane>

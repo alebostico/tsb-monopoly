@@ -1272,7 +1272,7 @@ public class TableroController implements Serializable {
 			if (tarjetaPropiedad.getJugador() == null) {
 				accionEnCasillero = new AccionEnCasillero(
 						Accion.DISPONIBLE_PARA_VENDER);
-				accionEnCasillero.setMensaje("Disponible para la venta.");
+				accionEnCasillero.setMensaje(tarjetaPropiedad.getNombre() + " disponible para la venta.");
 
 			} else {
 				nombreJugadorActual = pJugador.getNombre().toLowerCase();
@@ -1575,7 +1575,8 @@ public class TableroController implements Serializable {
 		if (!jugador.puedePagarConEfectivo((cantidad)
 				* casillero.getTarjetaCalle().getPrecioCadaCasa()))
 			throw new SinDineroException("El jugador " + jugador.getNombre()
-					+ " no tiene dinero para pagar " + cantidad + " casas.");
+					+ " no tiene dinero para pagar " + cantidad + " casas.", (cantidad)
+					* casillero.getTarjetaCalle().getPrecioCadaCasa());
 
 		for (CasilleroCalle casilleroCalle : monopolio) {
 			if (casilleroCalle.getTarjetaCalle().isHipotecada()) {
@@ -1861,7 +1862,7 @@ public class TableroController implements Serializable {
 		if (!jugador.puedePagarConEfectivo(tarjeta.getValorPropiedad())) {
 			throw new SinDineroException("El jugador " + jugador.getNombre()
 					+ " no tiene dinero suficiente para comprar la propiedad "
-					+ tarjeta.getNombre());
+					+ tarjeta.getNombre(), tarjeta.getValorPropiedad());
 		}
 
 		this.getBancoController(jugador.getJuego()).venderPropiedad(jugador,

@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -18,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -128,50 +130,74 @@ public class RegistrarmeController extends AnchorPane implements Initializable {
 			}
 		} catch (EmailInvalidoException eie) {
 			lblMsgError.setText(eie.getMessage());
+			lblMsgError.setMinHeight(Region.USE_PREF_SIZE);
 		} catch (CampoVacioException cve) {
 			lblMsgError.setText(cve.getMessage());
-		} catch(Exception ex){
+			lblMsgError.setMinHeight(Region.USE_PREF_SIZE);
+		} catch (Exception ex) {
 			lblMsgError.setText(ex.getMessage());
-		}
+			lblMsgError.setMinHeight(Region.USE_PREF_SIZE);
+		}		
 	}
 
-	public void iniciarSesion(final Usuario user) throws Exception{
+	public void iniciarSesion(final Usuario user) throws Exception {
+
 		FutureTask<Void> taskMostrarOpciones = null;
 
 		taskMostrarOpciones = new FutureTask<Void>(new Callable<Void>() {
 
 			private Stage stage = null;
+			MenuOpcionesController controller = null;
+			String fxml = "";
 
 			@Override
 			public Void call() throws Exception {
+				try {
+					if (user != null) {
+						GestorLogs
+								.registrarLog("Desplegar Menú de Opciones desde registrar..");
 
-				MenuOpcionesController controller = null;
-				String fxml = "";
+						fxml = ConstantesFXML.FXML_MENU_OPCIONES;
+						stage = new Stage();
+						controller = (MenuOpcionesController) FXUtils
+								.cargarStage(stage, fxml,
+										"Monopoly - Menú de Opciones", false,
+										false, Modality.APPLICATION_MODAL,
+										StageStyle.DECORATED);
+						controller.setCurrentStage(stage);
+						controller.setUsuarioLogueado(user);
+						currentStage.hide();
+						controller.getCurrentStage().show();
+						prevStage.close();
+						currentStage.close();
 
-				if (user != null) {
-
-					GestorLogs.registrarLog("Desplegar Menú de Opciones desde registrar..");
-
-					fxml = ConstantesFXML.FXML_MENU_OPCIONES;
-					stage = new Stage();
-					controller = (MenuOpcionesController) FXUtils.cargarStage(
-							stage, fxml, "Monopoly - Menú de Opciones", false,
-							false, Modality.APPLICATION_MODAL,
-							StageStyle.DECORATED);
-					controller.setCurrentStage(stage);
-					controller.setUsuarioLogueado(user);
-					prevStage.close();
-					controller.getCurrentStage().showAndWait();
-
-				} else {
-					lblMsgError.setText("Usuario produjo un error.");
+					} else {
+						lblMsgError.setText("Usuario produjo un error.");
+						lblMsgError.setMinHeight(Region.USE_PREF_SIZE);
+					}
+				} catch (Exception ex) {
+					lblMsgError.setText(ex.getMessage());
+					lblMsgError.setMinHeight(Region.USE_PREF_SIZE);
 				}
 				return null;
 			}
+
 		});
 		Platform.runLater(taskMostrarOpciones);
 	}
 
+	public void showMensaje(String message) {
+		Platform.runLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				lblMsgError.setVisible(true);
+				lblMsgError.setText(message);
+				lblMsgError.setMinHeight(Region.USE_PREF_SIZE);
+			}
+		});
+	}
+	
 	private boolean validarCampos() throws CampoVacioException {
 		lblMsgError.setText("");
 		if (txtNombre.getText().isEmpty()) {
@@ -197,8 +223,8 @@ public class RegistrarmeController extends AnchorPane implements Initializable {
 			throw new CampoVacioException(
 					"¡El Campo Confirmar Contraseña no puede estar vacio!");
 		}
-		
-		if(!txtPassword.getText().equals(txtRepeatPassword.getText())){
+
+		if (!txtPassword.getText().equals(txtRepeatPassword.getText())) {
 			txtRepeatPassword.requestFocus();
 			throw new CampoVacioException(
 					"¡El Campo Contraseña y Confirmar Contraseña deben coincidir!");
