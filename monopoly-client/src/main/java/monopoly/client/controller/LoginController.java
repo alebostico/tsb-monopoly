@@ -208,9 +208,6 @@ public class LoginController extends AnchorPane implements Initializable {
 	}
 
 	public static LoginController getInstance() {
-		// yeah I know, NULL check and synchronize are missing...
-		// the getInstance() method is seldom used - usually only for
-		// message passing between stages
 		return instance;
 	}
 

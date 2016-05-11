@@ -25,4 +25,6 @@ public interface IUsuarioDao {
 	
 	Usuario validarUsuario(String userName, String password);
 	
+	Usuario validarUsuario(String userName);
+	
 }

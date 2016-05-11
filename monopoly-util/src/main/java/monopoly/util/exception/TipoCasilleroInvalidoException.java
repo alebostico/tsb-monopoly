@@ -1,6 +1,8 @@
 package monopoly.util.exception;
 
-public class TipoCasilleroInvalidoException extends Exception {
+import java.io.Serializable;
+
+public class TipoCasilleroInvalidoException extends Exception implements Serializable{
 
 	/**
 	 * 

@@ -1664,7 +1664,7 @@ public class TableroController extends AnchorPane implements Serializable,
 								statusSubasta.getMensaje(), null);
 
 						if (statusSubasta.jugadorActual.equals(getMyPlayer())) {
-							alert.setContentText(alert.getContentText()
+							alert.setContentText(statusSubasta.getMensaje()
 									+ ". Finalizó su turno.");
 							alert.showAndWait();
 							finalizarTurno();
@@ -2254,24 +2254,6 @@ public class TableroController extends AnchorPane implements Serializable,
 				alert.getButtonTypes().setAll(buttonAceptar);
 			}
 
-			dialogPane = alert.getDialogPane();
-
-			dialogPane.getStylesheets().add(
-					getClass().getResource("/css/Dialog.css").toExternalForm());
-			dialogPane.getStyleClass().add("dialog");
-
-			/*
-			 * workaround para el problema del tamaño de labels:
-			 * http://stackoverflow.com/a/33905734
-			 */
-			alert.getDialogPane()
-					.getChildren()
-					.stream()
-					.filter(node -> node instanceof Label)
-					.forEach(
-							node -> ((Label) node)
-									.setMinHeight(Region.USE_PREF_SIZE));
-
 			// Seteo el icono de la cabecera.
 			stage = (Stage) alert.getDialogPane().getScene().getWindow();
 			img = new Image(
@@ -2287,6 +2269,24 @@ public class TableroController extends AnchorPane implements Serializable,
 								.toString(), 48, 48, true, true);
 				alert.setGraphic(new ImageView(img));
 			}
+			
+			dialogPane = alert.getDialogPane();
+
+			dialogPane.getStylesheets().add(
+					getClass().getResource("/css/Dialog.css").toExternalForm());
+			dialogPane.getStyleClass().add("dialog");
+			
+			/*
+			 * workaround para el problema del tamaño de labels:
+			 * http://stackoverflow.com/a/33905734
+			 */
+			alert.getDialogPane()
+					.getChildren()
+					.stream()
+					.filter(node -> node instanceof Label)
+					.forEach(
+							node -> ((Label) node)
+									.setMinHeight(Region.USE_PREF_SIZE));
 
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);

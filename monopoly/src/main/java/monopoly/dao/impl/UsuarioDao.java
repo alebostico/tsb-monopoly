@@ -91,15 +91,27 @@ public class UsuarioDao extends CustomHibernateDaoSupport implements
 		List<?> list = session.createCriteria(Usuario.class)
 				.add(Restrictions.eq("userName", userName))
 				.add(Restrictions.eq("password", password)).list();
-		if(list.isEmpty())
-		{
-			String log = "No existe un usuario en la base de datos para los parámetros: userName:" 
-						+ userName + ", password: " + password + ".";
-			GestorLogs
-					.registrarWarning(log);
+		if (list.isEmpty()) {
+			String log = "No existe un usuario en la base de datos para los parámetros: userName:"
+					+ userName + ", password: " + password + ".";
+			GestorLogs.registrarWarning(log);
 			return null;
 		}
-		return (Usuario)list.get(0);
+		return (Usuario) list.get(0);
+	}
+	
+	@Override
+	public Usuario validarUsuario(String userName) {
+		Session session = this.getSession();
+		List<?> list = session.createCriteria(Usuario.class)
+				.add(Restrictions.eq("userName", userName)).list();
+		if (list.isEmpty()) {
+			String log = "Ya existe un usuario registrado con nombre de usuario: "
+					+ userName;
+			GestorLogs.registrarWarning(log);
+			return null;
+		}
+		return (Usuario) list.get(0);
 	}
 
 }

@@ -699,7 +699,7 @@ public abstract class Jugador implements Serializable {
 			throw new SinDineroException(
 					String.format(
 							"El jugador %s no posee dinero suficiente para pagar %s € al jugador %s",
-							this.getNombre(), monto, jugador.getNombre()));
+							this.getNombre(), monto, jugador.getNombre()), monto);
 	}
 
 	/**

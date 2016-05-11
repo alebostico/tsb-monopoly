@@ -26,6 +26,7 @@ import monopoly.model.tarjetas.TarjetaPropiedad;
 import monopoly.util.GestorLogs;
 import monopoly.util.constantes.ConstantesMensaje;
 import monopoly.util.exception.SinDineroException;
+import monopoly.util.exception.UsuarioExistenteException;
 import monopoly.util.message.CreateAccountMessage;
 import monopoly.util.message.CreateGameMessage;
 import monopoly.util.message.ExceptionMessage;
@@ -260,14 +261,24 @@ public class MonopolyClient extends GameClient {
 
 			case ConstantesMensaje.EXCEPTION_MESSAGE:
 				exceptionMessage = (ExceptionMessage) message;
-				if (exceptionMessage.message instanceof SinDineroException) {
+				mensaje = exceptionMessage.message.getClass().getSimpleName();
+				
+				switch (mensaje) {
+				case "SinDineroException":
 					SinDineroException sdex = (SinDineroException) exceptionMessage.message;
 					TableroController.getInstance()
 							.showSinDineroException(sdex);
-				} else {
-					mensaje = message.getClass().getSimpleName();
+					break;
+					
+				case "UsuarioExistenteException":
+					UsuarioExistenteException uee = (UsuarioExistenteException) exceptionMessage.message;
+					RegistrarmeController.getInstance().showMensaje(uee.getMessage());
+					break;
+
+				default:
 					TableroController.getInstance().showException(
 							exceptionMessage.message, mensaje);
+					break;
 				}
 				break;
 

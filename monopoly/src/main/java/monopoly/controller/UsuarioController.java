@@ -2,6 +2,7 @@ package monopoly.controller;
 
 import monopoly.dao.IUsuarioDao;
 import monopoly.model.Usuario;
+import monopoly.util.exception.UsuarioExistenteException;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -20,10 +21,13 @@ public class UsuarioController {
 			"spring/config/BeanLocations.xml");
 
 	
-	public static Usuario saveUsuario(Usuario usuario)
+	public static Usuario saveUsuario(Usuario usuario) throws UsuarioExistenteException 
 	{
 		IUsuarioDao usuarioDao = (IUsuarioDao) appContext.getBean("usuarioDao");
-		usuarioDao.save(usuario);
+		if(usuarioDao.validarUsuario(usuario.getUserName()) == null)
+			usuarioDao.save(usuario);
+		else
+			throw new UsuarioExistenteException(String.format("Ya existe el usuario %s. Ingrese otro por favor.", usuario.getUserName()));
 		return usuario;
 	}
 	

@@ -67,7 +67,7 @@
                         <Insets />
                      </VBox.margin>
                   </GridPane>
-                  <Label fx:id="lblMsgError" alignment="CENTER" styleClass="labelError" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+                  <Label fx:id="lblMsgError" alignment="CENTER" styleClass="labelError" textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS">
                      <VBox.margin>
                         <Insets bottom="10.0" />
                      </VBox.margin>
