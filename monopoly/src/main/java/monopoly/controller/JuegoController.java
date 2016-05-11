@@ -1551,8 +1551,10 @@ public class JuegoController implements Serializable {
 				jugarAccionCasillero(accionEnCasillero, jugador, casillero,
 						senderId);
 			} else {
-				jugarAccionEnCasilleroJV(accionEnCasillero,
-						(JugadorVirtual) jugador, casillero);
+				if (jugarAccionEnCasilleroJV(accionEnCasillero, (JugadorVirtual) jugador, casillero))
+					siguienteTurno(true);
+				// jugarAccionEnCasilleroJV(accionEnCasillero,
+				// (JugadorVirtual) jugador, casillero);
 			}
 			break;
 		case IR_A_CARCEL:
@@ -1607,13 +1609,12 @@ public class JuegoController implements Serializable {
 	 */
 	public void impuestoAlCapital(int senderId, int montoAPagar)
 			throws Exception {
-		//int monto = 0;
+		// int monto = 0;
 		History history;
 		HistoryGameMessage msgHistory;
 		Jugador jugador;
 
 		jugador = gestorJugadores.getJugadorHumano(senderId);
-		
 
 		if (jugador.getDinero() >= montoAPagar) {
 			gestorBanco.cobrar(jugador, montoAPagar);
@@ -1628,7 +1629,8 @@ public class JuegoController implements Serializable {
 			SinDineroException sde = new SinDineroException(
 					String.format(
 							"No posees suficiente dinero para pagar el impuesto. Debes pagar %s.",
-							StringUtils.formatearAMoneda(montoAPagar)), montoAPagar);
+							StringUtils.formatearAMoneda(montoAPagar)),
+					montoAPagar);
 			sde.setAccion(AccionEnCasillero.Accion.IMPUESTO_SOBRE_CAPITAL);
 			throw sde;
 		}
@@ -1719,7 +1721,8 @@ public class JuegoController implements Serializable {
 			// ~~> Sigue jugando
 			casillero = gestorTablero.moverAdelante(jugador, dados.getSuma(),
 					cobraSalida);
-			// TODO Verificar si cuando cae en el casillero de salida cobra los 200 o no.
+			// TODO Verificar si cuando cae en el casillero de salida cobra los
+			// 200 o no.
 			if (cobraSalida.booleanValue())
 				gestorBanco.pagarPasoSalida(jugador);
 
