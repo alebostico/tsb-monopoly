@@ -65,9 +65,8 @@ public class AccionEnCasillero implements Serializable {
 		 * Cuándo el casillero corresponde a Impuesto de lujo
 		 * String[Descripción][Monto]
 		 */
-		IMPUESTO_DE_LUJO(String.format(
-				"El banco te cobró %s por el impuesto de lujo.",
-				StringUtils.formatearAMoneda(100)), null),
+		IMPUESTO_DE_LUJO("El banco te cobró 100 € por el impuesto de lujo.",
+				null),
 
 		/**
 		 * Cuándo el casillero corresponde a Impuesto sobre el capital.
@@ -196,7 +195,7 @@ public class AccionEnCasillero implements Serializable {
 		return accion;
 	}
 
-	public String toString(){
+	public String toString() {
 		return getAccion().toString();
 	}
 }

@@ -335,6 +335,7 @@ public class SubastaController extends AnchorPane implements Initializable {
 						tblSubasta.setItems(historyObservableList);
 						// tblSubasta.getColumns().setAll(columnUsuario,
 						// columnHistorico);
+						tblSubasta.scrollTo(tblSubasta.getItems().size() - 1);
 					}
 					return null;
 				}
@@ -359,6 +360,7 @@ public class SubastaController extends AnchorPane implements Initializable {
 			if (tblSubasta != null) {
 				tblSubasta.getItems().clear();
 				tblSubasta.setItems(historyObservableList);
+				tblSubasta.scrollTo(tblSubasta.getItems().size() - 1);
 			}
 		}
 	}

@@ -45,20 +45,20 @@
 }
 
 .dialog  {
-	-fx-background-image: url("../images/background/bg_dark.jpg");
-	-fx-background-repeat: repeat;
-	/*-fx-background-color: #1d1d1d;*/
-	-fx-padding: 1.05em;	
-	-fx-spacing: 1.05em;
+    -fx-background-image: url("../images/background/background_tablero.png");
+    -fx-background-repeat: repeat;
+    /*-fx-background-color: #1d1d1d;*/
+    -fx-padding: 1.05em;    
+    -fx-spacing: 1.05em;
 }
 
-.dialog > .dialog-pane {	
-	-fx-border-width: 1px;
-	-fx-border-color: #b4b4b4 transparent #b4b4b4 transparent;
-	-fx-font-size: 10px;
-	-fx-padding: 0.416667em;
-	-fx-pref-width: 120px;
-	-fx-pref-height: 80px;
+.dialog > .dialog-pane {    
+    -fx-border-width: 1px;
+    -fx-border-color: #b4b4b4 transparent #b4b4b4 transparent;
+    -fx-font-size: 10px;
+    -fx-padding: 0.416667em;
+    -fx-pref-width: 120px;
+    -fx-pref-height: 80px;
 }
 
 .dialog > *.label.content{

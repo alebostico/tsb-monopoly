@@ -1046,7 +1046,9 @@ public class TableroController extends AnchorPane implements Serializable,
 											.getResourceAsStream("/images/logos/luxury_tax.gif"),
 									48, 48, true, true)));
 
-					alert.showAndWait();
+					alert.setHeight(alert.getHeight() + 15);
+
+					fixAlertLabels(alert).showAndWait();
 
 					mensajeAux = String.format(
 							"Ha pagado al banco %s de impuesto de lujo.",
@@ -1117,7 +1119,7 @@ public class TableroController extends AnchorPane implements Serializable,
 											.getResourceAsStream("/images/logos/impuestoalcapital.png"),
 									48, 48, true, true)));
 
-					result = alert.showAndWait();
+					result = fixAlertLabels(alert).showAndWait();
 
 					if (result.get() == buttonPorcentaje) {
 						monto = (int) (jugadorActual.getCapital() * 0.1);
@@ -1135,8 +1137,7 @@ public class TableroController extends AnchorPane implements Serializable,
 								null);
 						return;
 					}
-					msgSuperTax = new SuperTaxMessage(idJuego,
-							monto);
+					msgSuperTax = new SuperTaxMessage(idJuego, monto);
 					ConnectionController.getInstance().send(msgSuperTax);
 
 				} catch (Exception ex) {
@@ -1304,7 +1305,7 @@ public class TableroController extends AnchorPane implements Serializable,
 											.getResourceAsStream("/images/logos/in_prision.png"),
 									48, 48, true, true)));
 
-					result = alert.showAndWait();
+					result = fixAlertLabels(alert).showAndWait();
 
 					if (result.get() == buttonTirarDados) {
 						// bloquearAcciones(false);
@@ -1674,7 +1675,7 @@ public class TableroController extends AnchorPane implements Serializable,
 						if (statusSubasta.jugadorActual.equals(getMyPlayer())) {
 							alert.setContentText(statusSubasta.getMensaje()
 									+ ". Finalizó su turno.");
-							alert.showAndWait();
+							fixAlertLabels(alert).showAndWait();
 							finalizarTurno();
 						} else
 							alert.show();
@@ -1742,7 +1743,7 @@ public class TableroController extends AnchorPane implements Serializable,
 				VentaPropiedadController.getInstance().getCurrentStage()
 						.close();
 
-				alert.showAndWait();
+				fixAlertLabels(alert).showAndWait();
 
 				finalizarTurno();
 
@@ -2055,7 +2056,7 @@ public class TableroController extends AnchorPane implements Serializable,
 			alert.setGraphic(new ImageView(img));
 		}
 
-		alert.showAndWait();
+		fixAlertLabels(alert).showAndWait();
 	}
 
 	/**
@@ -2093,7 +2094,7 @@ public class TableroController extends AnchorPane implements Serializable,
 					new ArrayList<ButtonType>(Arrays
 							.asList(buttonYes, buttonNo)));
 
-			result = alert.showAndWait();
+			result = fixAlertLabels(alert).showAndWait();
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
 		}
@@ -2144,7 +2145,7 @@ public class TableroController extends AnchorPane implements Serializable,
 							new ArrayList<ButtonType>(Arrays.asList(buttonYes,
 									buttonNo)));
 
-					result = alert.showAndWait();
+					result = fixAlertLabels(alert).showAndWait();
 					return new Boolean(
 							result.get().getButtonData() == ButtonData.YES);
 				}
@@ -2204,7 +2205,7 @@ public class TableroController extends AnchorPane implements Serializable,
 		}
 
 	}
-	
+
 	/**
 	 * Muestra un mensaje de error.
 	 * 
@@ -2212,27 +2213,28 @@ public class TableroController extends AnchorPane implements Serializable,
 	 *            La {@code Exception} con el error.
 	 */
 	public void showSinDineroException(SinDineroException exception) {
-		
+
 		Platform.runLater(new Runnable() {
-			
+
 			Deuda deuda = null;
 			String msgGuardado;
-			
+
 			@Override
 			public void run() {
-				
+
 				try {
-					
+
 					msgGuardado = "Se ha producido un error desconocido";
 
 					if (exception != null)
 						msgGuardado = exception.getMessage();
 
-					deuda = new Deuda((Accion)exception.accion, exception.monto);
+					deuda = new Deuda((Accion) exception.accion,
+							exception.monto);
 					registrarDeuda(deuda);
-					
-					showNoFutureMessageBox(AlertType.ERROR, "Sin Dinero", "", msgGuardado,
-							null);
+
+					showNoFutureMessageBox(AlertType.ERROR, "Sin Dinero", "",
+							msgGuardado, null);
 				} catch (Exception ex) {
 					GestorLogs.registrarException(ex);
 				}
@@ -2299,6 +2301,21 @@ public class TableroController extends AnchorPane implements Serializable,
 		} catch (Exception ex) {
 			GestorLogs.registrarError(ex);
 		}
+		return alert;
+	}
+
+	private Alert fixAlertLabels(Alert alert) {
+		/*
+		 * workaround para el problema del tamaño de labels:
+		 * http://stackoverflow.com/a/33905734
+		 */
+		alert.getDialogPane()
+				.getChildren()
+				.stream()
+				.filter(node -> node instanceof Label)
+				.forEach(
+						node -> ((Label) node)
+								.setMinHeight(Region.USE_PREF_SIZE));
 		return alert;
 	}
 
