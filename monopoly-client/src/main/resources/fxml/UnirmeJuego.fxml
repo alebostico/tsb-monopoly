@@ -7,7 +7,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="530.0" minWidth="703.0" prefHeight="530.0" prefWidth="703.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.UnirmeJuegoController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="530.0" minWidth="703.0" prefHeight="530.0" prefWidth="703.0" styleClass="background_tablero" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="monopoly.client.controller.UnirmeJuegoController">
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="200.0">
          <children>
@@ -47,7 +47,7 @@
                   </GridPane>
                   <HBox alignment="CENTER">
                      <children>
-                        <TableView id="tblJuegos" fx:id="tblJuegos" maxHeight="200.0" minHeight="200.0" minWidth="650.0">
+                        <TableView id="tblJuegos" fx:id="tblJuegos" maxHeight="200.0" maxWidth="650.0" minHeight="200.0" minWidth="650.0" prefHeight="200.0" prefWidth="650.0">
                            <columns>
                               <TableColumn id="collumnNombre" fx:id="colNombre" maxWidth="300.0" minWidth="190.0" prefWidth="190.0" text="Nombre" />
                               <TableColumn id="collumnCreador" fx:id="colCreador" maxWidth="300.0" minWidth="180.0" prefWidth="180.0" text="Creador" />
@@ -69,7 +69,7 @@
       </AnchorPane>
    </children>
    <stylesheets>
-      <URL value="@../css/Sheet.css" />
+      <URL value="@../css/Sheet_tablero.css" />
       <URL value="@../css/Images_Background.css" />
    </stylesheets>
 </StackPane>

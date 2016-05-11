@@ -5,10 +5,13 @@ package monopoly.client.controller;
 
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -28,10 +31,13 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import monopoly.client.controller.SubastaController.SubastaHistoryProperty;
 import monopoly.client.util.FXUtils;
+import monopoly.model.History;
 import monopoly.model.Juego;
 import monopoly.model.Usuario;
 import monopoly.util.GestorLogs;
+import monopoly.util.StringUtils;
 import monopoly.util.constantes.ConstantesFXML;
 
 /**
@@ -61,7 +67,7 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 
 	@FXML
 	private Button btnBuscar;
-	
+
 	@FXML
 	private TableColumn<JuegoSimpleProperty, String> colNombre;
 
@@ -79,7 +85,7 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 	private List<Juego> juegosList;
 	private List<JuegoSimpleProperty> filtersJuegosList;
 	private ObservableList<JuegoSimpleProperty> obsJuegosList;
-	
+
 	@FXML
 	private Stage currentStage;
 
@@ -161,13 +167,13 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 						"participantes"));
 
 		colNombre.prefWidthProperty().bind(
-				tblJuegos.widthProperty().multiply(0.30));
+				tblJuegos.widthProperty().multiply(0.24));
 		colFecha.prefWidthProperty().bind(
-				tblJuegos.widthProperty().multiply(0.15));
-		colCreador.prefWidthProperty().bind(
-				tblJuegos.widthProperty().multiply(0.25));
-		colParticipantes.prefWidthProperty().bind(
 				tblJuegos.widthProperty().multiply(0.30));
+		colCreador.prefWidthProperty().bind(
+				tblJuegos.widthProperty().multiply(0.24));
+		colParticipantes.prefWidthProperty().bind(
+				tblJuegos.widthProperty().multiply(0.20));
 
 	}
 
@@ -187,18 +193,77 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 			unirmeAlJuego(juegoSelected);
 		} catch (Exception ex) {
 			GestorLogs.registrarException(ex);
-			FXUtils.getAlert(AlertType.ERROR, "Error...", null, ex.getMessage()).showAndWait();
+			FXUtils.getAlert(AlertType.ERROR, "Error...", null, ex.getMessage())
+					.showAndWait();
 		}
 	}
 
-    @FXML
-    void processCancel(ActionEvent event) {
+	@FXML
+	void processCancel(ActionEvent event) {
 		currentStage.close();
 		prevStage.show();
-    }
+	}
 
 	@FXML
 	void processSearch(ActionEvent event) {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+		List<Juego> tmpJuegosList = new ArrayList<Juego>(juegosList);
+		String nombreJuego = txtNombreJuego.getText().toLowerCase();
+		String usuario = txtUserName.getText().toLowerCase();
+		Date fechaDesde = null;
+		Date fechaHasta = null;
+		try {
+			fechaDesde = (StringUtils.IsNullOrEmpty(txtFechaDesde.getText()) ? null
+					: formatter.parse(txtFechaDesde.getText()));
+			fechaHasta = (StringUtils.IsNullOrEmpty(txtFechaHasta.getText()) ? null
+					: formatter.parse(txtFechaHasta.getText()));
+		} catch (ParseException ex) {
+			GestorLogs.registrarException(ex);
+			FXUtils.getAlert(AlertType.ERROR, "Error...", null, ex.getMessage())
+					.showAndWait();
+		}
+
+		for (Juego juego : juegosList) {
+			if (!StringUtils.IsNullOrEmpty(nombreJuego)
+					&& !juego.getNombreJuego().toLowerCase()
+							.contains(nombreJuego)) {
+				tmpJuegosList.remove(juego);
+				continue;
+			}
+
+			if (!StringUtils.IsNullOrEmpty(usuario)
+					&& !juego.getOwner().getUserName().toLowerCase()
+							.contains(usuario)) {
+				tmpJuegosList.remove(juego);
+				continue;
+			}
+
+			if (!(fechaDesde == null) && (juego.getFechaCreacion().before(fechaDesde))){
+				tmpJuegosList.remove(juego);
+				continue;
+			}
+			
+			if (!(fechaHasta == null) && (juego.getFechaCreacion().after(fechaHasta))){
+				tmpJuegosList.remove(juego);
+				continue;
+			}
+
+		}
+		
+		filtersJuegosList = new ArrayList<JuegoSimpleProperty>();
+		for (Juego juego : tmpJuegosList) {
+			filtersJuegosList.add(new JuegoSimpleProperty(juego));
+		}		
+		
+		obsJuegosList = FXCollections
+				.observableArrayList(filtersJuegosList);
+		
+		if (tblJuegos != null) {
+			tblJuegos.getItems().clear();
+			tblJuegos.setItems(obsJuegosList);
+		}
+		
 	}
 
 	/**
@@ -210,7 +275,6 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 	private void unirmeAlJuego(final JuegoSimpleProperty juegoSelected) {
 		Platform.runLater(new Runnable() {
 			private Stage unirmeJuegoStage;
-
 
 			@Override
 			public void run() {
@@ -231,7 +295,8 @@ public class UnirmeJuegoController extends AnchorPane implements Initializable {
 					unirmeJuegoStage.showAndWait();
 				} catch (Exception ex) {
 					GestorLogs.registrarException(ex);
-					FXUtils.getAlert(AlertType.ERROR, "Error...", null, ex.getMessage()).showAndWait();
+					FXUtils.getAlert(AlertType.ERROR, "Error...", null,
+							ex.getMessage()).showAndWait();
 				}
 			}
 		});

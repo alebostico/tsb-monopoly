@@ -567,8 +567,8 @@ public class TableroController implements Serializable {
 	 *         del monopolio.
 	 */
 	public boolean esUnicoPoseedorMonopolio(Casillero casillero, Jugador jugador) {
-		return (this.propNoCompradasMonopolio(casillero, jugador) > 0) ? true
-				: false;
+		//return (this.propNoCompradasMonopolio(casillero, jugador) > 0);
+		return this.verificarPropietarios(casillero, jugador) == 1;
 	}
 
 	/**
@@ -771,11 +771,7 @@ public class TableroController implements Serializable {
 	 */
 	public boolean esUltimaPropiedadMonopolio(Casillero casillero,
 			Jugador jugador) {
-		if (this.propNoCompradasMonopolio(casillero, jugador) == 1) {
-			return true;
-		} else {
-			return false;
-		}
+		return this.propNoCompradasMonopolio(casillero, jugador) == 1;
 	}
 
 	/**
@@ -788,11 +784,7 @@ public class TableroController implements Serializable {
 	 * @return {@code true} si tiene todas las propiedades del mismo color
 	 */
 	public boolean tieneMonopolioCompleto(Casillero casillero, Jugador jugador) {
-		if (this.propNoCompradasMonopolio(casillero, jugador) == 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return this.propNoCompradasMonopolio(casillero, jugador) == 0;
 	}
 
 	/**
