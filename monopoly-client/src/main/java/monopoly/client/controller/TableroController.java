@@ -754,10 +754,16 @@ public class TableroController extends AnchorPane implements Serializable,
 					controller = (TirarDadosController) FXUtils.cargarStage(
 							tirarDadosStage, fxml,
 							"Monopoly - Tirar Dados para turnos", false, false,
-							Modality.APPLICATION_MODAL, StageStyle.UNDECORATED);
+							Modality.APPLICATION_MODAL, StageStyle.UNIFIED);
 					controller.setCurrentStage(tirarDadosStage);
 					controller.settearDatos(usuarioLogueado.getNombre());
 					controller.setTipoTirada(TipoTiradaEnum.TIRAR_TURNO);
+					tirarDadosStage.setMaximized(false);
+					tirarDadosStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+						public void handle(WindowEvent we) {
+							we.consume();
+						}
+					});
 					SplashController.getInstance().getCurrentStage().close();
 					tirarDadosStage.showAndWait();
 				} catch (Exception ex) {
@@ -2040,7 +2046,7 @@ public class TableroController extends AnchorPane implements Serializable,
 	 */
 	public void showNoFutureMessageBox(AlertType type, String title,
 			String headerText, String message, final String urlGraphic) {
-		final Alert alert = getAlert(type, title, headerText, message, null);
+		Alert alert = getAlert(type, title, headerText, message, null);
 
 		// Setteo la Imagen si es necesario
 		if (!StringUtils.IsNullOrEmpty(urlGraphic)) {
@@ -2257,11 +2263,11 @@ public class TableroController extends AnchorPane implements Serializable,
 			}
 
 			// Seteo el icono de la cabecera.
-			stage = (Stage) alert.getDialogPane().getScene().getWindow();
-			img = new Image(
-					TableroController.class
-							.getResourceAsStream("/images/logos/monopoly3.png"));
-			stage.getIcons().add(img);
+						stage = (Stage) alert.getDialogPane().getScene().getWindow();
+						img = new Image(
+								TableroController.class
+										.getResourceAsStream("/images/logos/monopoly3.png"));
+						stage.getIcons().add(img);
 
 			if (type == AlertType.INFORMATION) {
 				// Set the icon (must be included in the project).

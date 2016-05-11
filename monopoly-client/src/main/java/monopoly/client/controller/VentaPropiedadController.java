@@ -93,7 +93,8 @@ public class VentaPropiedadController extends AnchorPane implements
 			public void run() {
 				String fxml;
 				SubastaController controller;
-
+				int pujaMinima = (int) (tarjetaSelected
+						.getValorPropiedad() * 0.10);
 				try {
 
 					fxml = ConstantesFXML.FXML_SUBASTA;
@@ -107,6 +108,7 @@ public class VentaPropiedadController extends AnchorPane implements
 					controller.setJugador(jugadorComprador);
 					controller.setIdJuego(idJuego);
 					controller.cargarImagenes();
+					controller.setPujaMinima(pujaMinima);
 					subastaStage.show();
 					if (VentaPropiedadController.getInstance() != null)
 						VentaPropiedadController.getInstance()

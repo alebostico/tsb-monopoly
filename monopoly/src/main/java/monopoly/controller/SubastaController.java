@@ -41,19 +41,14 @@ public class SubastaController implements Serializable {
 
 	public void quitarJugadorDeSubasta(Jugador jugador) throws Exception {
 		int index = 0;
-		JugadorEnSubasta jugadorEnSubasta = null;
-		
-		for (int i = 0; i < indexList.length; i++) {
-			if (indexList[i].equals(jugador)) {
+		jugadoresList.get(indexActual).setPrimeraVez(false);
+		for (int i = 0; i < jugadoresList.size(); i++) {
+			if (jugadoresList.get(i).jugadorEnSubasta.equals(jugador)) {
 				index = i;
 				break;
 			}
 		}
-		for (JugadorEnSubasta jug : jugadoresList) {
-			if(jug.equals(indexList[index]))
-				jugadorEnSubasta = jug;
-		}
-		jugadoresList.remove(jugadorEnSubasta);
+		jugadoresList.remove(index);
 		reordenarTurnos();		
 	}
 
@@ -99,6 +94,17 @@ public class SubastaController implements Serializable {
 			}
 		}
 		return jugadoresList.get(index).isPrimeraVez();
+	}
+	
+	public void marcarComoPostor(Jugador jugador) throws Exception {
+		int index = 0;
+		for (int i = 0; i < jugadoresList.size(); i++) {
+			if (jugadoresList.get(i).jugadorEnSubasta.equals(jugador)) {
+				index = i;
+				break;
+			}
+		}
+		jugadoresList.get(index).setPrimeraVez(false);
 	}
 
 	public TarjetaPropiedad getPropiedadSubastada() {
