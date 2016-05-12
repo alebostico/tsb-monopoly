@@ -430,7 +430,8 @@ public class TableroController extends AnchorPane implements Serializable,
 																		// menú
 		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent we) {
-				cerrar(false);
+				callBancarrota();
+				// cerrar(false);
 				we.consume();
 			}
 		});
@@ -511,6 +512,31 @@ public class TableroController extends AnchorPane implements Serializable,
 			currentStage.close();
 			Platform.exit();
 			System.exit(0);
+		}
+	}
+
+	/**
+	 * Gestiona el proceso de bancarrota de un Jugador
+	 */
+	private void callBancarrota() {
+		boolean answer = false;
+		answer = showYesNoMsgBox("Abandonar juego", null,
+				"¿Está seguro que desea declararse en bancarrota y abandonar el juego?");
+
+		if (answer) {
+			BankruptcyMessage bancarrota = new BankruptcyMessage(getJuego()
+					.getUniqueID(), getPlayer(getUsuarioLogueado()).getNombre());
+
+			ConnectionController.getInstance().send(bancarrota);
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				GestorLogs.registrarException(e);
+				e.printStackTrace();
+			}
+
+			this.cerrar(true);
 		}
 	}
 
@@ -2295,6 +2321,10 @@ public class TableroController extends AnchorPane implements Serializable,
 			 * workaround para el problema del tamaño de labels:
 			 * http://stackoverflow.com/a/33905734
 			 */
+			alert.getDialogPane().getChildren().stream()
+					.filter(node -> node instanceof Label)
+					.forEach(node -> ((Label) node).setWrapText(true));
+
 			alert.getDialogPane()
 					.getChildren()
 					.stream()
@@ -3621,26 +3651,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	@FXML
 	void processBancarrota(ActionEvent event) {
-
-		boolean answer = false;
-		answer = showYesNoMsgBox("Abandonar juego", null,
-				"¿Está seguro que desea declararse en bancarrota y abandonar el juego?");
-
-		if (answer) {
-			BankruptcyMessage bancarrota = new BankruptcyMessage(getJuego()
-					.getUniqueID(), getPlayer(getUsuarioLogueado()).getNombre());
-
-			ConnectionController.getInstance().send(bancarrota);
-
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				GestorLogs.registrarException(e);
-				e.printStackTrace();
-			}
-
-			this.cerrar(true);
-		}
+		this.callBancarrota();
 	}
 
 	/**

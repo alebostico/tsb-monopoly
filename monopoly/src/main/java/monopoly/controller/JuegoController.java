@@ -1555,8 +1555,10 @@ public class JuegoController implements Serializable {
 				jugarAccionCasillero(accionEnCasillero, jugador, casillero,
 						senderId);
 			} else {
-				jugarAccionEnCasilleroJV(accionEnCasillero,
-						(JugadorVirtual) jugador, casillero);
+				if (jugarAccionEnCasilleroJV(accionEnCasillero, (JugadorVirtual) jugador, casillero))
+					siguienteTurno(true);
+				// jugarAccionEnCasilleroJV(accionEnCasillero,
+				// (JugadorVirtual) jugador, casillero);
 			}
 			break;
 		case IR_A_CARCEL:

@@ -151,6 +151,11 @@ public class SubastaController extends AnchorPane implements Initializable {
 			columnHistorico
 					.setCellValueFactory(new PropertyValueFactory<SubastaHistoryProperty, String>(
 							"historia"));
+		
+		columnUsuario.prefWidthProperty().bind(
+				tblSubasta.widthProperty().multiply(0.33));
+		columnHistorico.prefWidthProperty().bind(
+				tblSubasta.widthProperty().multiply(0.60));
 
 	}
 
