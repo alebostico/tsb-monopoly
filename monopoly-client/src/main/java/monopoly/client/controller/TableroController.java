@@ -428,7 +428,8 @@ public class TableroController extends AnchorPane implements Serializable,
 																		// menú
 		currentStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			public void handle(WindowEvent we) {
-				cerrar(false);
+				callBancarrota();
+				// cerrar(false);
 				we.consume();
 			}
 		});
@@ -509,6 +510,31 @@ public class TableroController extends AnchorPane implements Serializable,
 			currentStage.close();
 			Platform.exit();
 			System.exit(0);
+		}
+	}
+
+	/**
+	 * Gestiona el proceso de bancarrota de un Jugador
+	 */
+	private void callBancarrota() {
+		boolean answer = false;
+		answer = showYesNoMsgBox("Abandonar juego", null,
+				"¿Está seguro que desea declararse en bancarrota y abandonar el juego?");
+
+		if (answer) {
+			BankruptcyMessage bancarrota = new BankruptcyMessage(getJuego()
+					.getUniqueID(), getPlayer(getUsuarioLogueado()).getNombre());
+
+			ConnectionController.getInstance().send(bancarrota);
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				GestorLogs.registrarException(e);
+				e.printStackTrace();
+			}
+
+			this.cerrar(true);
 		}
 	}
 
@@ -759,11 +785,12 @@ public class TableroController extends AnchorPane implements Serializable,
 					controller.settearDatos(usuarioLogueado.getNombre());
 					controller.setTipoTirada(TipoTiradaEnum.TIRAR_TURNO);
 					tirarDadosStage.setMaximized(false);
-					tirarDadosStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-						public void handle(WindowEvent we) {
-							we.consume();
-						}
-					});
+					tirarDadosStage
+							.setOnCloseRequest(new EventHandler<WindowEvent>() {
+								public void handle(WindowEvent we) {
+									we.consume();
+								}
+							});
 					SplashController.getInstance().getCurrentStage().close();
 					tirarDadosStage.showAndWait();
 				} catch (Exception ex) {
@@ -2265,11 +2292,11 @@ public class TableroController extends AnchorPane implements Serializable,
 			}
 
 			// Seteo el icono de la cabecera.
-						stage = (Stage) alert.getDialogPane().getScene().getWindow();
-						img = new Image(
-								TableroController.class
-										.getResourceAsStream("/images/logos/monopoly3.png"));
-						stage.getIcons().add(img);
+			stage = (Stage) alert.getDialogPane().getScene().getWindow();
+			img = new Image(
+					TableroController.class
+							.getResourceAsStream("/images/logos/monopoly3.png"));
+			stage.getIcons().add(img);
 
 			if (type == AlertType.INFORMATION) {
 				// Set the icon (must be included in the project).
@@ -2279,17 +2306,21 @@ public class TableroController extends AnchorPane implements Serializable,
 								.toString(), 48, 48, true, true);
 				alert.setGraphic(new ImageView(img));
 			}
-			
+
 			dialogPane = alert.getDialogPane();
 
 			dialogPane.getStylesheets().add(
 					getClass().getResource("/css/Dialog.css").toExternalForm());
 			dialogPane.getStyleClass().add("dialog");
-			
+
 			/*
 			 * workaround para el problema del tamaño de labels:
 			 * http://stackoverflow.com/a/33905734
 			 */
+			alert.getDialogPane().getChildren().stream()
+					.filter(node -> node instanceof Label)
+					.forEach(node -> ((Label) node).setWrapText(true));
+
 			alert.getDialogPane()
 					.getChildren()
 					.stream()
@@ -3603,26 +3634,7 @@ public class TableroController extends AnchorPane implements Serializable,
 
 	@FXML
 	void processBancarrota(ActionEvent event) {
-
-		boolean answer = false;
-		answer = showYesNoMsgBox("Abandonar juego", null,
-				"¿Está seguro que desea declararse en bancarrota y abandonar el juego?");
-
-		if (answer) {
-			BankruptcyMessage bancarrota = new BankruptcyMessage(getJuego()
-					.getUniqueID(), getPlayer(getUsuarioLogueado()).getNombre());
-
-			ConnectionController.getInstance().send(bancarrota);
-
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				GestorLogs.registrarException(e);
-				e.printStackTrace();
-			}
-
-			this.cerrar(true);
-		}
+		this.callBancarrota();
 	}
 
 	/**

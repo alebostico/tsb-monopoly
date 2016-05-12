@@ -153,9 +153,9 @@ public class SubastaController extends AnchorPane implements Initializable {
 							"historia"));
 		
 		columnUsuario.prefWidthProperty().bind(
-				tblSubasta.widthProperty().multiply(0.30));
+				tblSubasta.widthProperty().multiply(0.33));
 		columnHistorico.prefWidthProperty().bind(
-				tblSubasta.widthProperty().multiply(0.65));
+				tblSubasta.widthProperty().multiply(0.60));
 
 	}
 

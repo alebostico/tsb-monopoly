@@ -169,7 +169,7 @@
                                     <MenuButton fx:id="btnMenu" alignment="CENTER" minWidth="140.0" mnemonicParsing="false" onAction="#processMenu" popupSide="TOP" styleClass="context-menu" text="Menú">
                                       <items>
                                         <MenuItem mnemonicParsing="false" onAction="#processGuardar" text="Guardar y salir" />
-                                        <MenuItem mnemonicParsing="false" onAction="#processAbandonar" text="Abandonar juego" />
+                                        <MenuItem mnemonicParsing="false" onAction="#processAbandonar" text="Abandonar juego" visible="false" />
                                           <MenuItem fx:id="btnBancarrota" mnemonicParsing="false" onAction="#processBancarrota" text="Declararme en Bancarrota" />
                                       </items>
                                     </MenuButton>
