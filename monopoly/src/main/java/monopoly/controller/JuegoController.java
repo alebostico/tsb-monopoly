@@ -1709,7 +1709,7 @@ public class JuegoController implements Serializable {
 
 		jugador.setUltimoResultado(dados);
 
-		if (dados.EsDoble() || jugador.getCantidadTurnosCarcel() >= 3) {
+		if (dados.EsDoble() || jugador.getCantidadTurnosCarcel() >= 2) {
 			// ~~~> Sacó dobles, sale de la carcel.
 			jugador.resetCantidadTurnosCarcel();
 			jugador.setPreso(false);
@@ -2559,7 +2559,7 @@ public class JuegoController implements Serializable {
 						tarjetaPropiedad.getNombre(),
 						StringUtils.formatearAMoneda(monto));
 				history = new History(StringUtils.getFechaActual(),
-						jugadorActual.getNombre(), mensaje);
+						jugadorTurno.getNombre(), mensaje);
 
 				sendToAll(new MonopolyGameStatus(
 						gestorJugadores.getTurnoslist(),
