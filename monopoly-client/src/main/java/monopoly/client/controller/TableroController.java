@@ -2321,6 +2321,10 @@ public class TableroController extends AnchorPane implements Serializable,
 					.filter(node -> node instanceof Label)
 					.forEach(node -> ((Label) node).setWrapText(true));
 
+			alert.getDialogPane().getChildren().stream()
+					.filter(node -> node instanceof Text)
+					.forEach(node -> ((Text) node).setWrappingWidth(250));
+
 			alert.getDialogPane()
 					.getChildren()
 					.stream()
@@ -2340,6 +2344,14 @@ public class TableroController extends AnchorPane implements Serializable,
 		 * workaround para el problema del tamaño de labels:
 		 * http://stackoverflow.com/a/33905734
 		 */
+		alert.getDialogPane().getChildren().stream()
+				.filter(node -> node instanceof Label)
+				.forEach(node -> ((Label) node).setWrapText(true));
+
+		alert.getDialogPane().getChildren().stream()
+				.filter(node -> node instanceof Text)
+				.forEach(node -> ((Text) node).setWrappingWidth(250));
+
 		alert.getDialogPane()
 				.getChildren()
 				.stream()
