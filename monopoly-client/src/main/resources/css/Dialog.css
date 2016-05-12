@@ -50,6 +50,10 @@
     /*-fx-background-color: #1d1d1d;*/
     -fx-padding: 1.05em;    
     -fx-spacing: 1.05em;
+    -fx-min-width: 350px;
+    /*-fx-min-height: 150px;*/
+    -fx-pref-width: 400px;
+    /*-fx-pref-height: 200px;*/
 }
 
 .dialog > .dialog-pane {    
@@ -57,14 +61,14 @@
     -fx-border-color: #b4b4b4 transparent #b4b4b4 transparent;
     -fx-font-size: 10px;
     -fx-padding: 0.416667em;
-    -fx-pref-width: 120px;
-    -fx-pref-height: 80px;
 }
 
 .dialog > *.label.content{
 	-fx-font-family: "Arial";
-	-fx-font-size: 13px;	
+	-fx-font-size: 14px;	
 	-fx-text-fill: #C0C0C0;
+	-fx-min-height: 80px;
+	-fx-pref-height: 80px;
 	/*-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 1.9 );*/
 }
 
@@ -88,12 +92,13 @@
 	-fx-alignment: top-left;
 	-fx-padding: 0.833333em 0.833333em 0 0.833333em;
 	-fx-font-family: "Arial";
-	-fx-font-size: 15px;
+	-fx-font-size: 17px;
 	-fx-font-style: italic;
 }
 
 .dialog > .dialog-pane > .content {
 	-fx-padding: 0.833333em;
+	/*-fx-min-height: 200px;*/
 }
 
 .dialog:no-header > .dialog-pane .graphic-container {	
@@ -107,12 +112,16 @@
 .dialog:header > .dialog-pane .header-panel {
 	-fx-padding: 0.833333em 0.833333em 0 0.833333em;
 	-fx-background-insets: 0 -1 0 -1, 0 -1 1 -1;
+	-fx-min-width: 250px;
+	/*-fx-min-height: 150px;*/
+	-fx-pref-width: 300px;
+	/*-fx-pref-height: 200px;*/
 }
 
 .dialog:header *.header-panel *.label{
 	-fx-padding: 0.833333em 1.166667em 0.833333em 1.166667em;
 	-fx-font-family: "Arial";
-	-fx-font-size: 14px;
+	-fx-font-size: 16px;
 	-fx-font-style: italic;
 	-fx-font-weight: bold;
 	-fx-text-fill: #FAF0E6;
@@ -283,7 +292,7 @@
 	-fx-background-radius: 7, 6, 5, 4, 3, 5;
 	-fx-background-insets: -3 -3 -4 -3, -3, 0, 1, 2, 0;
 	-fx-font-family: "Arial";
-	-fx-font-size: 18;
+	-fx-font-size: 15px;
 	-fx-text-fill: rgb(255,255,255);
 	-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 0.1 );
     	-fx-padding: 5 5 5 5;
