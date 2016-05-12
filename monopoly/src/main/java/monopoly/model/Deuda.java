@@ -5,6 +5,8 @@ package monopoly.model;
 
 import java.io.Serializable;
 
+import monopoly.model.tarjetas.Tarjeta;
+
 /**
  * @author Bostico Alejandro
  * @author Moreno Pablo
@@ -20,6 +22,7 @@ public class Deuda implements Serializable {
 	private int nroCasillero;
 	private String mensajeAux;
 	private Jugador jugadorAPagar;
+	private Tarjeta tarjeta;
 	
 	public Deuda()
 	{
@@ -95,6 +98,14 @@ public class Deuda implements Serializable {
 
 	public void setJugadorAPagar(Jugador jugadorAPagar) {
 		this.jugadorAPagar = jugadorAPagar;
+	}
+
+	public Tarjeta getTarjeta() {
+		return tarjeta;
+	}
+
+	public void setTarjeta(Tarjeta tarjeta) {
+		this.tarjeta = tarjeta;
 	}
 	
 }

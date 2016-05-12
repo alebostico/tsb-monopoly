@@ -17,6 +17,8 @@ public class SinDineroException extends Exception implements Serializable{
 	public final int monto;
 	
 	public Object accion;
+	
+	public Object tarjeta;
 
 	public SinDineroException() {
 		super();
@@ -35,7 +37,7 @@ public class SinDineroException extends Exception implements Serializable{
 		this.monto= monto;
 		this.accion = accion;
 	}
-
+	
 	public SinDineroException(String message) {
 		super(message);
 		this.monto= 0;
@@ -73,6 +75,14 @@ public class SinDineroException extends Exception implements Serializable{
 
 	public void setAccion(Object accion) {
 		this.accion = accion;
+	}
+
+	public Object getTarjeta() {
+		return tarjeta;
+	}
+
+	public void setTarjeta(Object tarjeta) {
+		this.tarjeta = tarjeta;
 	}
 
 }

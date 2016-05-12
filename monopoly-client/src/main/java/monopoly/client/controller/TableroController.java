@@ -114,6 +114,8 @@ import monopoly.util.message.game.actions.AuctionDecideMessage;
 import monopoly.util.message.game.actions.BidForPropertyMessage;
 import monopoly.util.message.game.actions.BidResultMessage;
 import monopoly.util.message.game.actions.BuildMessage;
+import monopoly.util.message.game.actions.ChanceCardMessage;
+import monopoly.util.message.game.actions.CommunityCardMessage;
 import monopoly.util.message.game.actions.DemortgageMessage;
 import monopoly.util.message.game.actions.GoToJailMessage;
 import monopoly.util.message.game.actions.MortgageMessage;
@@ -759,11 +761,12 @@ public class TableroController extends AnchorPane implements Serializable,
 					controller.settearDatos(usuarioLogueado.getNombre());
 					controller.setTipoTirada(TipoTiradaEnum.TIRAR_TURNO);
 					tirarDadosStage.setMaximized(false);
-					tirarDadosStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-						public void handle(WindowEvent we) {
-							we.consume();
-						}
-					});
+					tirarDadosStage
+							.setOnCloseRequest(new EventHandler<WindowEvent>() {
+								public void handle(WindowEvent we) {
+									we.consume();
+								}
+							});
 					SplashController.getInstance().getCurrentStage().close();
 					tirarDadosStage.showAndWait();
 				} catch (Exception ex) {
@@ -2221,7 +2224,6 @@ public class TableroController extends AnchorPane implements Serializable,
 
 			@Override
 			public void run() {
-
 				try {
 
 					msgGuardado = "Se ha producido un error desconocido";
@@ -2231,10 +2233,13 @@ public class TableroController extends AnchorPane implements Serializable,
 
 					deuda = new Deuda((Accion) exception.accion,
 							exception.monto);
+					if (exception.tarjeta != null)
+						deuda.setTarjeta((Tarjeta)exception.tarjeta);
 					registrarDeuda(deuda);
 
-					showNoFutureMessageBox(AlertType.ERROR, "Sin Dinero", "",
-							msgGuardado, null);
+					showNoFutureMessageBox(AlertType.INFORMATION, "Sin Dinero",
+							null, msgGuardado, "/images/logos/sinDinero.png");
+
 				} catch (Exception ex) {
 					GestorLogs.registrarException(ex);
 				}
@@ -2265,11 +2270,11 @@ public class TableroController extends AnchorPane implements Serializable,
 			}
 
 			// Seteo el icono de la cabecera.
-						stage = (Stage) alert.getDialogPane().getScene().getWindow();
-						img = new Image(
-								TableroController.class
-										.getResourceAsStream("/images/logos/monopoly3.png"));
-						stage.getIcons().add(img);
+			stage = (Stage) alert.getDialogPane().getScene().getWindow();
+			img = new Image(
+					TableroController.class
+							.getResourceAsStream("/images/logos/monopoly3.png"));
+			stage.getIcons().add(img);
 
 			if (type == AlertType.INFORMATION) {
 				// Set the icon (must be included in the project).
@@ -2279,13 +2284,13 @@ public class TableroController extends AnchorPane implements Serializable,
 								.toString(), 48, 48, true, true);
 				alert.setGraphic(new ImageView(img));
 			}
-			
+
 			dialogPane = alert.getDialogPane();
 
 			dialogPane.getStylesheets().add(
 					getClass().getResource("/css/Dialog.css").toExternalForm());
 			dialogPane.getStyleClass().add("dialog");
-			
+
 			/*
 			 * workaround para el problema del tamaño de labels:
 			 * http://stackoverflow.com/a/33905734
@@ -3546,7 +3551,9 @@ public class TableroController extends AnchorPane implements Serializable,
 		PayRentMessage msgPayRent = null;
 		PayToBankMessage msgPayToBank = null;
 		SuperTaxMessage msgSuperTax = null;
-		PayToLeaveJailMessage msgPayToLeaveJail;
+		PayToLeaveJailMessage msgPayToLeaveJail = null;
+		ChanceCardMessage msgChanceCardMessage = null;
+		CommunityCardMessage msgCommunityCardMessage = null;
 		String idJuego;
 
 		try {
@@ -3586,12 +3593,23 @@ public class TableroController extends AnchorPane implements Serializable,
 					ConnectionController.getInstance().send(msgPayToLeaveJail);
 					break;
 
+				case TARJETA_SUERTE:
+					msgChanceCardMessage = new ChanceCardMessage(idJuego, deudaPendiente.getTarjeta());
+					ConnectionController.getInstance().send(msgChanceCardMessage);
+					break;
+					
+				case TARJETA_COMUNIDAD:
+					msgCommunityCardMessage = new CommunityCardMessage(idJuego,
+							deudaPendiente.getTarjeta());
+					ConnectionController.getInstance().send(msgCommunityCardMessage);
+					break;
+					
 				default:
 					break;
 				}
 
 				mostrarTirarDados(false);
-				mostrarFinalizarTurno(true);
+				mostrarFinalizarTurno(false);
 				deudaPendiente = new Deuda();
 			}
 		} catch (Exception ex) {

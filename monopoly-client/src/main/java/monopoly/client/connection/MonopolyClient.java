@@ -176,12 +176,6 @@ public class MonopolyClient extends GameClient {
 				break;
 
 			case ConstantesMensaje.COMPLETE_TURN_MESSAGE:
-				// CompleteTurnMessage msgCompleteTurnMessage =
-				// (CompleteTurnMessage) message;
-				// TableroController.getInstance().completarTurno(
-				// msgCompleteTurnMessage.message,
-				// msgCompleteTurnMessage.action,
-				// (MonopolyGameStatus) msgCompleteTurnMessage.status);
 				break;
 
 			case ConstantesMensaje.AUCTION_PROPERTY_MESSAGE:
@@ -327,25 +321,6 @@ public class MonopolyClient extends GameClient {
 
 		TableroController.getInstance().actualizarEstadoJuego(status);
 
-		// switch (status.estadoTurno) {
-		// case INICIADO:
-		// TableroController.getInstance().actualizarEstadoJuego(status);
-		// break;
-		//
-		// case ACTUALIZANDO_ESTADO:
-		// case TIRAR_DADO:
-		// case ESPERANDO_TURNO:
-		// case JUGANDO:
-		// case DADOS_DOBLES:
-		// case PRESO:
-		// case LIBRE:
-		// TableroController.getInstance().actualizarEstadoJuego(status);
-		// break;
-		//
-		// default:
-		// break;
-		//
-		// }
 	}
 
 	/**

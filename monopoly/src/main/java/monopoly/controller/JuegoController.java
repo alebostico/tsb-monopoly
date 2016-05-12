@@ -1402,16 +1402,26 @@ public class JuegoController implements Serializable {
 	 * @throws Exception
 	 */
 	private boolean realizarObjetivoTarjeta(Jugador jugador, Tarjeta tarjeta)
-			throws Exception {
+			throws SinDineroException, Exception {
 		AccionEnTarjeta accion = null;
-		if (tarjeta.isTarjetaComunidad()) {
-			accion = gestorTablero.getGestorTarjetas().jugarTarjetaComunidad(
-					jugador, (TarjetaComunidad) tarjeta);
-		} else {
-			accion = gestorTablero.getGestorTarjetas().jugarTarjetaSuerte(
-					jugador, (TarjetaSuerte) tarjeta);
+		try{
+			if (tarjeta.isTarjetaComunidad()) {
+				accion = gestorTablero.getGestorTarjetas().jugarTarjetaComunidad(
+						jugador, (TarjetaComunidad) tarjeta);
+			} else {
+				accion = gestorTablero.getGestorTarjetas().jugarTarjetaSuerte(
+						jugador, (TarjetaSuerte) tarjeta);
+			}
+			return jugarAccionTarjeta(jugador, accion);
 		}
-		return jugarAccionTarjeta(jugador, accion);
+		catch(SinDineroException sde){
+			if(tarjeta.isTarjetaComunidad())
+				sde.setAccion(AccionEnCasillero.Accion.TARJETA_COMUNIDAD);
+			else
+				sde.setAccion(AccionEnCasillero.Accion.TARJETA_SUERTE);
+			sde.setTarjeta(tarjeta);
+			throw sde;
+		}
 	}
 
 	/**
@@ -1464,13 +1474,7 @@ public class JuegoController implements Serializable {
 
 		// ~~~> El jugador paga, el banco cobra
 		case PAGAR:
-			try {
 				gestorBanco.cobrar(jugador, accionEnTarjeta.getMonto());
-			} catch (SinDineroException e) {
-				ExceptionMessage msg = new ExceptionMessage(e);
-				sendToOne(senderId, msg);
-				return false;
-			}
 			break;
 
 		// ~~~> Cobra a todos los jugadores de la partida.
@@ -2237,7 +2241,7 @@ public class JuegoController implements Serializable {
 
 						subastaStatus = new SubastaStatus(
 								EnumEstadoSubasta.FINALIZADA, null,
-								jugadorTurno, tarjeta,
+								gestorSubasta.getJugadorCreador(), tarjeta,
 								gestorSubasta.getUltimaPuja());
 						subastaStatus
 								.setMensaje(String
@@ -2326,12 +2330,6 @@ public class JuegoController implements Serializable {
 					return;
 				}
 
-				// Si viene aquí es porque:
-				// Ganador es humano
-				// Creador es humano
-
-//				if (/* Ganador ~~> */jugadorTurno.equals(gestorSubasta
-//						.getJugadorCreador())) {
 					senderId = ((JugadorHumano) jugadorTurno).getSenderID();
 
 					subastaStatus = new SubastaStatus(
@@ -2342,20 +2340,6 @@ public class JuegoController implements Serializable {
 					msgActualizarSubasta = new AuctionPropertyMessage("",
 							subastaStatus);
 					sendToAll(msgActualizarSubasta);
-//				} else {
-//					senderId = ((JugadorHumano) jugadorTurno).getSenderID();
-//					subastaStatus = new SubastaStatus(
-//							EnumEstadoSubasta.FINALIZADA,
-//							new ArrayList<History>(),
-//							gestorSubasta.getJugadorCreador(), tarjeta,
-//							montoSubasta);
-//					subastaStatus.setMensaje(mensaje);
-//					
-//					msgActualizarSubasta = new AuctionPropertyMessage("",
-//							subastaStatus);
-//					sendToAll(msgActualizarSubasta);
-//					return;
-//				}
 				
 				if (gestorSubasta.getJugadorCreador().isVirtual()) {
 					siguienteTurno(true);
@@ -2510,7 +2494,7 @@ public class JuegoController implements Serializable {
 
 						subastaStatus = new SubastaStatus(
 								EnumEstadoSubasta.FINALIZADA, null,
-								jugadorTurno, tarjeta,
+								gestorSubasta.getJugadorCreador(), tarjeta,
 								gestorSubasta.getUltimaPuja());
 						subastaStatus
 								.setMensaje(String
@@ -2583,7 +2567,7 @@ public class JuegoController implements Serializable {
 						new ArrayList<History>(Arrays.asList(history)), null));
 
 				subastaStatus = new SubastaStatus(EnumEstadoSubasta.FINALIZADA,
-						new ArrayList<History>(), jugadorTurno,
+						new ArrayList<History>(), gestorSubasta.getJugadorCreador(),
 						tarjetaPropiedad, monto);
 
 				msgActualizarSubasta = new AuctionPropertyMessage("",
