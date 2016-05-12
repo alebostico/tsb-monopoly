@@ -50,9 +50,9 @@
     /*-fx-background-color: #1d1d1d;*/
     -fx-padding: 1.05em;    
     -fx-spacing: 1.05em;
-    -fx-min-width: 350px;
+    -fx-min-width: 400px;
     /*-fx-min-height: 150px;*/
-    -fx-pref-width: 400px;
+    -fx-pref-width: 450px;
     /*-fx-pref-height: 200px;*/
 }
 
@@ -67,8 +67,8 @@
 	-fx-font-family: "Arial";
 	-fx-font-size: 14px;	
 	-fx-text-fill: #C0C0C0;
-	-fx-min-height: 80px;
-	-fx-pref-height: 80px;
+	/*-fx-min-height: 30px;*/
+	/*-fx-pref-height: 80px;*/
 	/*-fx-effect: dropshadow( one-pass-box , #5C5C5C, 0.1, 0.1 , 0.1 , 1.9 );*/
 }
 
